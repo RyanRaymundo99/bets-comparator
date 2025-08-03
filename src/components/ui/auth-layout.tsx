@@ -42,21 +42,6 @@ const AuthLayout = ({
       <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
 
       <div className="relative z-10 w-full max-w-md p-6">
-        {showLogo && (
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-block">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
-                  📈
-                </div>
-                <h1 className="text-2xl font-bold text-white">
-                  Build Strategy
-                </h1>
-              </div>
-            </Link>
-          </div>
-        )}
-
         <Card className="border border-white/10 bg-white/5 backdrop-blur-[20px] shadow-2xl shadow-black/50 relative overflow-hidden">
           {/* Mirror effect overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
@@ -64,6 +49,19 @@ const AuthLayout = ({
           <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
           <CardHeader className="space-y-1 pb-6 relative z-10">
+            {showLogo && (
+              <div className="text-center">
+                <Link href="/" className="inline-block">
+                  <div className="h-24 ml-8 overflow-hidden flex items-center">
+                    <img
+                      src="/shortname-logo.svg"
+                      alt="Build Strategy"
+                      className="h-[200px] w-[200px]"
+                    />
+                  </div>
+                </Link>
+              </div>
+            )}
             {showBackButton && onBack && (
               <div className="flex items-center justify-between">
                 <Button

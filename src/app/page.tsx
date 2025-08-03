@@ -4,20 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Shield, Zap, BarChart3, ArrowRight } from "lucide-react";
+import StarfallBackground from "@/components/ui/starfall-background";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="relative min-h-screen bg-black text-white">
+      <StarfallBackground />
       {/* Navigation */}
       <nav className="border-b border-white/10 bg-black/60 backdrop-blur-[20px] supports-[backdrop-filter]:bg-black/60">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
-              <TrendingUp className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-white">Build Strategy</span>
+          <div className="overflow-hidden">
+            <Link href="/" className="flex items-center overflow-hidden">
+              <div className="h-24 overflow-hidden flex items-center">
+                <img
+                  src="/fullname-logo.svg"
+                  alt="Build Strategy"
+                  className="h-[500px] w-[400px] -mt-16"
+                />
+              </div>
+            </Link>
           </div>
-          <div className="flex items-center space-x-4">
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center space-x-4">
             <Link href="/login">
               <Button
                 variant="ghost"
@@ -278,12 +286,15 @@ const Home = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">
-                Build Strategy
-              </span>
+              <Link href="/" className="flex items-center">
+                <div className="h-14 overflow-hidden flex items-center">
+                  <img
+                    src="/fullname-logo.svg"
+                    alt="Build Strategy"
+                    className="h-auto w-[240px]"
+                  />
+                </div>
+              </Link>
             </div>
             <div className="flex items-center space-x-6 text-sm text-gray-300">
               <span>© 2024 Build Strategy. Todos os direitos reservados.</span>

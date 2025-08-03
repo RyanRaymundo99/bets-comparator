@@ -14,7 +14,6 @@ import { authClient } from "@/lib/auth-client";
 import { AuthLayout } from "@/components/ui/auth-layout";
 import { SessionManager } from "@/lib/session";
 import { isLocalhostDev } from "@/lib/utils";
-import { EnvDebug } from "@/components/ui/env-debug";
 
 const REMEMBER_EMAIL_KEY = "remembered-email";
 const REMEMBER_PASSWORD_KEY = "remembered-password";
@@ -64,8 +63,6 @@ const Login = () => {
       try {
         setPending(true);
 
-        console.log("🔍 Attempting login for:", data.email);
-
         await authClient.signIn.email(
           {
             email: data.email,
@@ -85,11 +82,9 @@ const Login = () => {
                 localStorage.removeItem(REMEMBER_EMAIL_KEY);
                 localStorage.removeItem(REMEMBER_PASSWORD_KEY);
               }
-              console.log("✅ Login successful");
               router.push("/dashboard");
             },
             onError: (ctx) => {
-              console.error("❌ Login error:", ctx.error);
               toast({
                 variant: "destructive",
                 title: "Erro no login",
@@ -100,7 +95,6 @@ const Login = () => {
           }
         );
       } catch (error) {
-        console.error("❌ Unexpected login error:", error);
         toast({
           variant: "destructive",
           title: "Erro no login",
@@ -143,7 +137,7 @@ const Login = () => {
 
   return (
     <AuthLayout
-      title="Build Strategy"
+      title=""
       description={
         <>
           Não tem uma conta?{" "}
@@ -156,7 +150,7 @@ const Login = () => {
           .
         </>
       }
-      showLogo={false}
+      showLogo={true}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -273,9 +267,6 @@ const Login = () => {
         Ao fazer login, você concorda com nossos termos de serviço e política de
         privacidade.
       </div>
-
-      {/* Environment Debug - Only in development */}
-      <EnvDebug />
     </AuthLayout>
   );
 };
