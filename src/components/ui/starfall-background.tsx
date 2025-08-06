@@ -35,7 +35,8 @@ interface CelestialBody {
  */
 export default function StarfallBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
   const stars = useRef<Star[]>([]);
   const celestialBodies = useRef<CelestialBody[]>([]);
   const scrollY = useRef(0);
@@ -46,18 +47,21 @@ export default function StarfallBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let scrollTimeout: number;
+    // Capture ref values at the beginning of the effect
+    const currentAnimationRef = animationRef.current;
+    const currentScrollTimeoutRef = scrollTimeoutRef.current;
+
     let lastFrameTime = 0;
     const targetFPS = 30; // Limit to 30 FPS for better performance
     const frameInterval = 1000 / targetFPS;
 
     const handleScroll = () => {
       // Throttle scroll events to reduce lag
-      if (scrollTimeout) {
-        window.cancelAnimationFrame(scrollTimeout);
+      if (scrollTimeoutRef.current) {
+        window.cancelAnimationFrame(scrollTimeoutRef.current);
       }
 
-      scrollTimeout = window.requestAnimationFrame(() => {
+      scrollTimeoutRef.current = window.requestAnimationFrame(() => {
         scrollY.current = window.scrollY;
       });
     };
@@ -670,8 +674,9 @@ export default function StarfallBackground() {
     requestAnimationFrame(animate);
 
     return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (scrollTimeout) window.cancelAnimationFrame(scrollTimeout);
+      if (currentAnimationRef) cancelAnimationFrame(currentAnimationRef);
+      if (currentScrollTimeoutRef)
+        window.cancelAnimationFrame(currentScrollTimeoutRef);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
       canvas.removeEventListener("click", handleClick);

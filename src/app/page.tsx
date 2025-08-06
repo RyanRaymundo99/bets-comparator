@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,10 +17,11 @@ const Home = () => {
           <div className="overflow-hidden">
             <Link href="/" className="flex items-center overflow-hidden">
               <div className="h-24 overflow-hidden flex items-center">
-                <img
+                <Image
                   src="/fullname-logo.svg"
                   alt="Build Strategy"
-                  className="h-[500px] w-[400px] -mt-16"
+                  width={400}
+                  height={500}
                 />
               </div>
             </Link>
@@ -288,10 +290,11 @@ const Home = () => {
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <Link href="/" className="flex items-center">
                 <div className="h-14 overflow-hidden flex items-center">
-                  <img
+                  <Image
                     src="/fullname-logo.svg"
                     alt="Build Strategy"
-                    className="h-auto w-[240px]"
+                    width={240}
+                    height={50}
                   />
                 </div>
               </Link>

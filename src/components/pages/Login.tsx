@@ -94,7 +94,7 @@ const Login = () => {
             },
           }
         );
-      } catch (error) {
+      } catch {
         toast({
           variant: "destructive",
           title: "Erro no login",
