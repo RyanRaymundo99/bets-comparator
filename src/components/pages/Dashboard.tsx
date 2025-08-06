@@ -6,8 +6,7 @@ import Navbar from "@/components/ui/navbar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { SessionManager, setupSessionAutoExtension } from "@/lib/session";
-import { SessionStatus } from "@/components/ui/session-status";
+import { SessionManager } from "@/lib/session";
 import { isLocalhostDev } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 
@@ -81,11 +80,18 @@ export default function Dashboard() {
         setIsDevMode(true);
         setIsLoading(false);
 
-        // Show dev mode indicator with remaining time
-        toast({
-          title: "Developer Mode Active",
-          description: `You are logged in as a developer. Session expires in ${sessionInfo.remainingMinutes} minutes.`,
-        });
+        // Check if dev toast has been shown for this session
+        const hasShown = localStorage.getItem("dev-toast-shown");
+
+        // Show simple dev mode indicator only if not shown before
+        if (hasShown !== "true") {
+          toast({
+            title: "⚠️ Developer Mode",
+            description: "Logged in as developer",
+            variant: "default",
+          });
+          localStorage.setItem("dev-toast-shown", "true");
+        }
       } else {
         // No valid session, redirect to login
         if (sessionInfo.user) {
@@ -113,19 +119,10 @@ export default function Dashboard() {
     // Small delay to ensure localStorage is available
     const timeoutId = setTimeout(checkAuth, 100);
 
-    // Setup session auto-extension if user is logged in
-    let cleanupAutoExtension: (() => void) | undefined;
-    if (isDevMode) {
-      cleanupAutoExtension = setupSessionAutoExtension();
-    }
-
     return () => {
       clearTimeout(timeoutId);
-      if (cleanupAutoExtension) {
-        cleanupAutoExtension();
-      }
     };
-  }, [checkAuth, isDevMode]);
+  }, [checkAuth]);
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
@@ -133,6 +130,8 @@ export default function Dashboard() {
       // Clear dev session if in dev mode
       if (isDevMode) {
         SessionManager.clearSession();
+        // Clear the toast flag so it shows again on next login
+        localStorage.removeItem("dev-toast-shown");
       }
       window.location.href = "/login";
     } finally {
@@ -346,11 +345,6 @@ export default function Dashboard() {
           </div>
         </aside>
       </main>
-
-      {/* Session Status Component - Only on localhost:3000 */}
-      {isDevMode && isLocalhostDev() && (
-        <SessionStatus onLogout={handleLogout} />
-      )}
     </div>
   );
 }
