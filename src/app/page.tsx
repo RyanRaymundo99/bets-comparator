@@ -16,12 +16,13 @@ const Home = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="overflow-hidden">
             <Link href="/" className="flex items-center overflow-hidden">
-              <div className="h-24 overflow-hidden flex items-center">
+              <div className="h-16 overflow-hidden flex items-center">
                 <Image
                   src="/fullname-logo.svg"
                   alt="Build Strategy"
                   width={400}
                   height={500}
+                  className="-mt-24"
                 />
               </div>
             </Link>
