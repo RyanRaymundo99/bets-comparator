@@ -389,4 +389,39 @@
   ::-webkit-scrollbar {
     width: 8px;
   }
+
+  /* Disable complex animations on mobile for better performance */
+  .blur-hover::before,
+  .glass-blur::before,
+  .btn-blur::before,
+  .card-blur::before,
+  .text-blur::before,
+  .img-blur::before,
+  .nav-blur::before {
+    display: none;
+  }
+
+  /* Reduce animation complexity on mobile */
+  .animate-float {
+    animation: none;
+  }
+
+  .animate-glow-pulse {
+    animation: none;
+  }
+
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+/* Optimize backdrop-blur for better performance */
+.backdrop-blur-\[20px\] {
+  backdrop-filter: blur(10px);
+}
+
+@media (min-width: 768px) {
+  .backdrop-blur-\[20px\] {
+    backdrop-filter: blur(20px);
+  }
 }

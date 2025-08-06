@@ -157,28 +157,30 @@ export default function Dashboard() {
       <Navbar isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <main className="container mx-auto px-4 py-4 md:py-8 grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-8">
         {/* Left Column */}
-        <div className="lg:col-span-3 flex flex-col gap-8">
+        <div className="lg:col-span-3 flex flex-col gap-4 md:gap-8">
           {/* Balance and Top Movers */}
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
             {/* Balance */}
-            <div className="bg-black/60 border border-white/10 rounded-xl p-6 flex flex-col gap-4 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
+            <div className="bg-black/60 border border-white/10 rounded-xl p-4 md:p-6 flex flex-col gap-4 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
               {/* Mirror effect overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
               <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
-              <div className="text-lg font-bold mb-2 relative z-10">Saldo</div>
+              <div className="text-base md:text-lg font-bold mb-2 relative z-10">
+                Saldo
+              </div>
               <div className="flex justify-between items-center relative z-10">
                 <div>
                   <div className="text-sm text-gray-300">Disponível</div>
-                  <div className="text-2xl font-bold">R$0,00</div>
+                  <div className="text-xl md:text-2xl font-bold">R$0,00</div>
                 </div>
               </div>
               <div className="flex justify-between items-center mt-2 relative z-10">
                 <div className="text-sm text-gray-300">Em uso</div>
-                <div className="text-lg font-semibold">R$0,00</div>
+                <div className="text-base md:text-lg font-semibold">R$0,00</div>
               </div>
               <div className="flex flex-col gap-2 mt-4 relative z-10">
                 <Button
@@ -212,12 +214,12 @@ export default function Dashboard() {
             </div>
             {/* Top Movers */}
             <div className="md:col-span-2 flex flex-col gap-4">
-              <div className="text-lg font-bold mb-2">Em alta</div>
-              <div className="flex gap-4">
+              <div className="text-base md:text-lg font-bold mb-2">Em alta</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {TOP_MOVERS.map((coin) => (
                   <div
                     key={coin.name}
-                    className="bg-black/60 border border-white/10 rounded-xl p-4 flex-1 flex flex-col items-center shadow-2xl backdrop-blur-[20px] relative overflow-hidden"
+                    className="bg-black/60 border border-white/10 rounded-xl p-3 md:p-4 flex-1 flex flex-col items-center shadow-2xl backdrop-blur-[20px] relative overflow-hidden"
                   >
                     {/* Mirror effect overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
@@ -227,7 +229,7 @@ export default function Dashboard() {
                     <Badge className="mb-2 relative z-10 bg-white/10 text-white border-white/20">
                       {coin.name}
                     </Badge>
-                    <div className="text-lg font-bold relative z-10">
+                    <div className="text-base md:text-lg font-bold relative z-10">
                       {coin.price}
                     </div>
                     <div className="text-green-400 font-semibold relative z-10">
@@ -240,20 +242,20 @@ export default function Dashboard() {
           </div>
 
           {/* Portfolio and Statement */}
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             {/* Portfolio */}
-            <div className="bg-black/60 border border-white/10 rounded-xl p-6 flex flex-col gap-4 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
+            <div className="bg-black/60 border border-white/10 rounded-xl p-4 md:p-6 flex flex-col gap-4 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
               {/* Mirror effect overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
               <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
-              <div className="text-lg font-bold mb-2 relative z-10">
+              <div className="text-base md:text-lg font-bold mb-2 relative z-10">
                 Portfólio
               </div>
               <div className="flex justify-between items-center mb-2 relative z-10">
                 <div className="text-sm text-gray-300">Total</div>
-                <div className="text-2xl font-bold">R$0,00</div>
+                <div className="text-xl md:text-2xl font-bold">R$0,00</div>
                 <div className="text-green-400 font-semibold">0,00%</div>
               </div>
               <div className="divide-y divide-white/10 relative z-10">
@@ -291,7 +293,7 @@ export default function Dashboard() {
               </div>
             </div>
             {/* Statement */}
-            <div className="bg-black/60 border border-white/10 rounded-xl p-6 flex flex-col gap-4 items-center justify-center shadow-2xl backdrop-blur-[20px] relative overflow-hidden min-h-[200px]">
+            <div className="bg-black/60 border border-white/10 rounded-xl p-4 md:p-6 flex flex-col gap-4 items-center justify-center shadow-2xl backdrop-blur-[20px] relative overflow-hidden min-h-[200px]">
               {/* Mirror effect overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
@@ -311,14 +313,14 @@ export default function Dashboard() {
           </div>
         </div>
         {/* News */}
-        <aside className="lg:col-span-1 flex flex-col gap-8">
-          <div className="bg-black/60 border border-white/10 rounded-xl p-6 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
+        <aside className="lg:col-span-1 flex flex-col gap-4 md:gap-8">
+          <div className="bg-black/60 border border-white/10 rounded-xl p-4 md:p-6 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
             {/* Mirror effect overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
             <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
-            <div className="text-lg font-bold mb-4 relative z-10">
+            <div className="text-base md:text-lg font-bold mb-4 relative z-10">
               Novidades
             </div>
             <div className="flex flex-col gap-4 relative z-10">

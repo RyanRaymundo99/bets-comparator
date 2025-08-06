@@ -62,14 +62,14 @@ export default function ExtratoPage() {
       <Navbar isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Extrato</h1>
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold">Extrato</h1>
         </div>
 
         {/* Filter Section */}
-        <div className="bg-card rounded-xl p-6 mb-8 shadow-lg">
+        <div className="bg-card rounded-xl p-4 md:p-6 mb-4 md:mb-8 shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             {/* Transaction Type Filter */}
             <div>

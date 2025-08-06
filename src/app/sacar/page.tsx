@@ -72,15 +72,15 @@ export default function SacarPage() {
       <Navbar isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Sacar</h1>
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Sacar</h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-4 md:mb-8">
           {/* Left Panel - Withdrawal Form */}
-          <div className="bg-black/60 border border-white/10 rounded-xl p-6 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
+          <div className="bg-black/60 border border-white/10 rounded-xl p-4 md:p-6 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
             {/* Mirror effect overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>

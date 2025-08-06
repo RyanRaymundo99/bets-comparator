@@ -117,33 +117,37 @@ export default function PortfolioPage() {
       <Navbar isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Page Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Meu Portfólio</h1>
+        <div className="text-center mb-4 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            Meu Portfólio
+          </h1>
         </div>
 
         {/* Total Assets Summary */}
-        <div className="bg-black/60 border border-white/10 rounded-xl p-6 mb-8 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
+        <div className="bg-black/60 border border-white/10 rounded-xl p-4 md:p-6 mb-4 md:mb-8 shadow-2xl backdrop-blur-[20px] relative overflow-hidden">
           {/* Mirror effect overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
-          <div className="flex items-center justify-between relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
             <div>
-              <h2 className="text-lg font-semibold text-gray-300 mb-2">
+              <h2 className="text-base md:text-lg font-semibold text-gray-300 mb-2">
                 Patrimônio Total
               </h2>
               <div className="flex items-center gap-4">
-                <div className="text-3xl font-bold text-white">R$ 0,00</div>
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  R$ 0,00
+                </div>
                 <div className="flex items-center gap-1 text-green-500 font-semibold">
                   <TrendingUp className="w-4 h-4" />
                   +0,00%
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 md:gap-3">
               <Button
                 className="bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 transition-all duration-200 backdrop-blur-[10px] relative overflow-hidden"
                 style={{
@@ -184,14 +188,15 @@ export default function PortfolioPage() {
           </div>
         </div>
 
-        {/* Assets Table */}
+        {/* Assets - Desktop Table / Mobile Cards */}
         <div className="bg-black/60 border border-white/10 rounded-xl shadow-2xl backdrop-blur-[20px] overflow-hidden relative">
           {/* Mirror effect overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50"></div>
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
-          <div className="overflow-x-auto relative z-10">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto relative z-10">
             <table className="w-full">
               <thead className="bg-white/5 border-b border-white/10">
                 <tr>
@@ -287,6 +292,93 @@ export default function PortfolioPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden relative z-10">
+            <div className="p-4 space-y-4">
+              {portfolioAssets.map((asset) => (
+                <div
+                  key={asset.id}
+                  className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-3"
+                >
+                  {/* Asset Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${asset.iconBg}`}
+                      >
+                        {asset.icon}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-white">
+                          {asset.name}
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          {asset.symbol}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-white">
+                        {asset.value}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Balances */}
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">
+                        Disponível
+                      </div>
+                      <div className="font-semibold text-white text-sm">
+                        {asset.availableBalance}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">Em uso</div>
+                      <div className="font-semibold text-white text-sm">
+                        {asset.inUseBalance}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">Total</div>
+                      <div className="font-semibold text-white text-sm">
+                        {asset.totalBalance}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-2 border-t border-white/10">
+                    <button
+                      className="flex-1 text-blue-300 hover:text-blue-200 transition-colors flex items-center justify-center gap-1 text-sm py-2 rounded bg-white/5 hover:bg-white/10"
+                      onClick={() =>
+                        (window.location.href = "/negociacao-basica")
+                      }
+                    >
+                      <Zap className="w-3 h-3" />
+                      Negociar
+                    </button>
+                    <button
+                      className="flex-1 text-blue-300 hover:text-blue-200 transition-colors flex items-center justify-center gap-1 text-sm py-2 rounded bg-white/5 hover:bg-white/10"
+                      onClick={() => (window.location.href = "/depositar")}
+                    >
+                      <ArrowDown className="w-3 h-3" />
+                      Depositar
+                    </button>
+                    <button
+                      className="flex-1 text-blue-300 hover:text-blue-200 transition-colors flex items-center justify-center gap-1 text-sm py-2 rounded bg-white/5 hover:bg-white/10"
+                      onClick={() => (window.location.href = "/sacar")}
+                    >
+                      <ArrowUp className="w-3 h-3" />
+                      Sacar
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

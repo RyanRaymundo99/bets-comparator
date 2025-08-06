@@ -14,19 +14,66 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BS Consulting - Modern Investment Platform",
+  title: "Build Strategy - Plataforma de Negociação",
   description:
-    "Experience the future of investing with BS Consulting. AI-powered insights, automated trading strategies, and professional portfolio management.",
+    "Plataforma avançada de negociação de criptoativos com ferramentas profissionais",
+  keywords: "criptomoedas, negociação, bitcoin, ethereum, trading",
+  authors: [{ name: "Build Strategy" }],
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+  themeColor: "#000000",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <head>
+        {/* Preload critical resources */}
+        <link
+          rel="preload"
+          href="/shortname-logo.svg"
+          as="image"
+          type="image/svg+xml"
+        />
+        <link
+          rel="preload"
+          href="/user-profile.svg"
+          as="image"
+          type="image/svg+xml"
+        />
+
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+
+        {/* DNS prefetch for performance */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+        {/* Performance meta tags */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+      </head>
+      <body className={`${geistSans.className} antialiased`}>
         {children}
         <Toaster />
       </body>
