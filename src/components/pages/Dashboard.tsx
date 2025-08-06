@@ -154,13 +154,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Developer Mode Indicator */}
-      {isDevMode && (
-        <div className="fixed top-0 left-0 right-0 bg-yellow-600 text-black text-center py-1 text-xs font-medium z-[9999]">
-          🚀 DEVELOPER MODE ACTIVE - dev@buildstrategy.com
-        </div>
-      )}
-
       {/* Universal Navbar */}
       <Navbar isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
