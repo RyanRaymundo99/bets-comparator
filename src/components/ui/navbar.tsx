@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -133,18 +134,19 @@ export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
       {/* Desktop Header */}
       <header className="w-full bg-black/60 border-b border-white/10 backdrop-blur-[20px] flex items-center justify-between px-4 md:px-6 sticky top-0 z-50 hidden md:flex">
         <div className="flex items-center gap-6">
-          {/* Logo */}
-          <div
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => handleNavigation("/dashboard")}
-          >
-            <img
-              src="/shortname-logo.svg"
-              alt="Build Strategy"
-              width={100}
-              height={50}
-            />
-          </div>
+                     {/* Logo */}
+           <div
+             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+             onClick={() => handleNavigation("/dashboard")}
+           >
+             <Image
+               src="/shortname-logo.svg"
+               alt="Build Strategy"
+               width={100}
+               height={50}
+               priority
+             />
+           </div>
           {/* Desktop Navigation */}
           <nav className="flex gap-6 relative">
             {NAV_LINKS.map((link) => {
@@ -256,16 +258,18 @@ export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <img
-              src="/shortname-logo.svg"
-              alt="Build Strategy"
-              className="h-8 w-auto"
-            />
-            <span className="text-lg font-bold text-white">Menu</span>
-          </div>
+                 {/* Mobile Menu Header */}
+         <div className="flex items-center justify-between p-6 border-b border-white/10">
+           <div className="flex items-center gap-2">
+             <Image
+               src="/shortname-logo.svg"
+               alt="Build Strategy"
+               width={32}
+               height={32}
+               className="h-8 w-auto"
+             />
+             <span className="text-lg font-bold text-white">Menu</span>
+           </div>
           <Button
             variant="ghost"
             size="sm"
