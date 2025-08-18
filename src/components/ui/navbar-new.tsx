@@ -27,7 +27,7 @@ interface NavbarProps {
   handleLogout: () => void;
 }
 
-export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
+export default function NavbarNew({ isLoggingOut, handleLogout }: NavbarProps) {
   const [showCalculator, setShowCalculator] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

@@ -66,7 +66,7 @@ export default function CalculatorModal({
       to: toCurrency,
       amount: quantity,
     });
-    window.location.href = `/negociacao-basica?${params.toString()}`;
+            window.location.href = `/trade?${params.toString()}`;
   }, [fromCurrency, toCurrency, quantity]);
 
   const handleFromCurrencyChange = useCallback((currency: "BRL" | "BTC") => {

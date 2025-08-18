@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useCallback } from "react";
-import { PortfolioOverview } from "@/components/portfolio/PortfolioOverview";
+import { P2POffersList } from "@/components/p2p/P2POffersList";
 import NavbarNew from "@/components/ui/navbar-new";
 import { useRouter } from "next/navigation";
 
-export default function PortfolioPage() {
+export default function P2PPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
@@ -23,12 +23,12 @@ export default function PortfolioPage() {
       <NavbarNew isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Portfolio</h1>
+          <h1 className="text-3xl font-bold mb-2">P2P Trading</h1>
           <p className="text-muted-foreground">
-            View your balances and transaction history
+            Trade cryptocurrencies directly with other users
           </p>
         </div>
-        <PortfolioOverview />
+        <P2POffersList />
       </div>
     </div>
   );

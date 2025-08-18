@@ -20,10 +20,22 @@ model User {
   email         String
   emailVerified Boolean
   image         String?
+  kycStatus     KYCStatus @default(PENDING)
+  kycData       Json? // KYC information
   createdAt     DateTime
   updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+
+  // Relations
+  sessions     Session[]
+  accounts     Account[]
+  balances     Balance[]
+  deposits     Deposit[]
+  withdrawals  Withdrawal[]
+  orders       Order[]
+  p2pOffers    P2POffer[]
+  buyerTrades  P2PTrade[]    @relation("BuyerTrades")
+  sellerTrades P2PTrade[]    @relation("SellerTrades")
+  transactions Transaction[]
 
   @@unique([email])
   @@map("user")
@@ -72,4 +84,225 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+// Balance tracking
+model Balance {
+  id        String   @id @default(cuid())
+  userId    String
+  currency  String // BRL, BTC, ETH, USDT, etc.
+  amount    Decimal  @db.Decimal(20, 8)
+  locked    Decimal  @default(0) @db.Decimal(20, 8)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, currency])
+  @@map("balance")
+}
+
+// Deposit management
+model Deposit {
+  id            String        @id @default(cuid())
+  userId        String
+  amount        Decimal       @db.Decimal(20, 2)
+  currency      String        @default("BRL")
+  status        DepositStatus @default(PENDING)
+  paymentMethod String // "mercadopago", "inter"
+  externalId    String? // External payment ID
+  proofUrl      String? // Payment proof
+  confirmedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  transactionId String?      @unique
+
+  @@map("deposit")
+}
+
+// Withdrawal management
+model Withdrawal {
+  id            String           @id @default(cuid())
+  userId        String
+  amount        Decimal          @db.Decimal(20, 2)
+  currency      String           @default("BRL")
+  status        WithdrawalStatus @default(PENDING)
+  paymentMethod String // "mercadopago", "inter"
+  externalId    String? // External payment ID
+  bankAccount   Json? // Bank account details
+  processedAt   DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  transactionId String?      @unique
+
+  @@map("withdrawal")
+}
+
+// Crypto orders
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  type            OrderType // BUY, SELL
+  baseCurrency    String // BTC, ETH, USDT
+  quoteCurrency   String // BRL
+  amount          Decimal     @db.Decimal(20, 8)
+  price           Decimal     @db.Decimal(20, 2)
+  total           Decimal     @db.Decimal(20, 2)
+  status          OrderStatus @default(PENDING)
+  externalOrderId String? // Binance order ID
+  executedAt      DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  transactionId String?      @unique
+
+  @@map("order")
+}
+
+// P2P Trading
+model P2POffer {
+  id             String      @id @default(cuid())
+  userId         String
+  type           OfferType // BUY, SELL
+  cryptoCurrency String // BTC, ETH, USDT
+  fiatCurrency   String      @default("BRL")
+  cryptoAmount   Decimal     @db.Decimal(20, 8)
+  fiatAmount     Decimal     @db.Decimal(20, 2)
+  price          Decimal     @db.Decimal(20, 2)
+  status         OfferStatus @default(ACTIVE)
+  paymentMethods Json // Accepted payment methods
+  minTrade       Decimal     @db.Decimal(20, 2)
+  maxTrade       Decimal     @db.Decimal(20, 2)
+  expiresAt      DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades P2PTrade[]
+
+  @@map("p2p_offer")
+}
+
+model P2PTrade {
+  id             String      @id @default(cuid())
+  offerId        String
+  buyerId        String
+  sellerId       String
+  cryptoAmount   Decimal     @db.Decimal(20, 8)
+  fiatAmount     Decimal     @db.Decimal(20, 2)
+  status         TradeStatus @default(PENDING)
+  paymentProof   String? // Payment proof URL
+  cryptoReleased Boolean     @default(false)
+  fiatConfirmed  Boolean     @default(false)
+  disputeReason  String?
+  expiresAt      DateTime
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  offer               P2POffer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  buyer               User         @relation("BuyerTrades", fields: [buyerId], references: [id])
+  seller              User         @relation("SellerTrades", fields: [sellerId], references: [id])
+  buyerTransaction    Transaction? @relation("BuyerTransaction", fields: [buyerTransactionId], references: [id])
+  buyerTransactionId  String?      @unique
+  sellerTransaction   Transaction? @relation("SellerTransaction", fields: [sellerTransactionId], references: [id])
+  sellerTransactionId String?      @unique
+
+  @@map("p2p_trade")
+}
+
+// Transaction ledger
+model Transaction {
+  id          String          @id @default(cuid())
+  userId      String
+  type        TransactionType
+  amount      Decimal         @db.Decimal(20, 8)
+  currency    String
+  balance     Decimal         @db.Decimal(20, 8) // Balance after transaction
+  description String
+  metadata    Json? // Additional transaction data
+  createdAt   DateTime        @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deposit     Deposit?
+  withdrawal  Withdrawal?
+  order       Order?
+  buyerTrade  P2PTrade?   @relation("BuyerTransaction")
+  sellerTrade P2PTrade?   @relation("SellerTransaction")
+
+  @@map("transaction")
+}
+
+// Enums
+enum KYCStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DepositStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum OrderType {
+  BUY
+  SELL
+}
+
+enum OrderStatus {
+  PENDING
+  EXECUTING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum OfferType {
+  BUY
+  SELL
+}
+
+enum OfferStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+enum TradeStatus {
+  PENDING
+  PAYMENT_SENT
+  PAYMENT_CONFIRMED
+  CRYPTO_RELEASED
+  COMPLETED
+  DISPUTED
+  CANCELLED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  BUY_CRYPTO
+  SELL_CRYPTO
+  P2P_TRADE
+  FEE
+  REFUND
 }

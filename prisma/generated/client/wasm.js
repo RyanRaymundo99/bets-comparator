@@ -126,6 +126,8 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  kycStatus: 'kycStatus',
+  kycData: 'kycData',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -166,9 +168,124 @@ exports.Prisma.VerificationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BalanceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  currency: 'currency',
+  amount: 'amount',
+  locked: 'locked',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DepositScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  paymentMethod: 'paymentMethod',
+  externalId: 'externalId',
+  proofUrl: 'proofUrl',
+  confirmedAt: 'confirmedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  transactionId: 'transactionId'
+};
+
+exports.Prisma.WithdrawalScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  paymentMethod: 'paymentMethod',
+  externalId: 'externalId',
+  bankAccount: 'bankAccount',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  transactionId: 'transactionId'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  baseCurrency: 'baseCurrency',
+  quoteCurrency: 'quoteCurrency',
+  amount: 'amount',
+  price: 'price',
+  total: 'total',
+  status: 'status',
+  externalOrderId: 'externalOrderId',
+  executedAt: 'executedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  transactionId: 'transactionId'
+};
+
+exports.Prisma.P2POfferScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  cryptoCurrency: 'cryptoCurrency',
+  fiatCurrency: 'fiatCurrency',
+  cryptoAmount: 'cryptoAmount',
+  fiatAmount: 'fiatAmount',
+  price: 'price',
+  status: 'status',
+  paymentMethods: 'paymentMethods',
+  minTrade: 'minTrade',
+  maxTrade: 'maxTrade',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.P2PTradeScalarFieldEnum = {
+  id: 'id',
+  offerId: 'offerId',
+  buyerId: 'buyerId',
+  sellerId: 'sellerId',
+  cryptoAmount: 'cryptoAmount',
+  fiatAmount: 'fiatAmount',
+  status: 'status',
+  paymentProof: 'paymentProof',
+  cryptoReleased: 'cryptoReleased',
+  fiatConfirmed: 'fiatConfirmed',
+  disputeReason: 'disputeReason',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  buyerTransactionId: 'buyerTransactionId',
+  sellerTransactionId: 'sellerTransactionId'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  amount: 'amount',
+  currency: 'currency',
+  balance: 'balance',
+  description: 'description',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -176,17 +293,94 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.KYCStatus = exports.$Enums.KYCStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
 
+exports.DepositStatus = exports.$Enums.DepositStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.OrderType = exports.$Enums.OrderType = {
+  BUY: 'BUY',
+  SELL: 'SELL'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  EXECUTING: 'EXECUTING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.OfferType = exports.$Enums.OfferType = {
+  BUY: 'BUY',
+  SELL: 'SELL'
+};
+
+exports.OfferStatus = exports.$Enums.OfferStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
+exports.TradeStatus = exports.$Enums.TradeStatus = {
+  PENDING: 'PENDING',
+  PAYMENT_SENT: 'PAYMENT_SENT',
+  PAYMENT_CONFIRMED: 'PAYMENT_CONFIRMED',
+  CRYPTO_RELEASED: 'CRYPTO_RELEASED',
+  COMPLETED: 'COMPLETED',
+  DISPUTED: 'DISPUTED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TransactionType = exports.$Enums.TransactionType = {
+  DEPOSIT: 'DEPOSIT',
+  WITHDRAWAL: 'WITHDRAWAL',
+  BUY_CRYPTO: 'BUY_CRYPTO',
+  SELL_CRYPTO: 'SELL_CRYPTO',
+  P2P_TRADE: 'P2P_TRADE',
+  FEE: 'FEE',
+  REFUND: 'REFUND'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Balance: 'Balance',
+  Deposit: 'Deposit',
+  Withdrawal: 'Withdrawal',
+  Order: 'Order',
+  P2POffer: 'P2POffer',
+  P2PTrade: 'P2PTrade',
+  Transaction: 'Transaction'
 };
 
 /**
