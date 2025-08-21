@@ -1,13 +1,10 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import NavbarNew from "@/components/ui/navbar-new";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { SessionManager } from "@/lib/session";
 import { isLocalhostDev } from "@/lib/utils";
-import { authClient } from "@/lib/auth-client";
 import { PortfolioOverview } from "@/components/portfolio/PortfolioOverview";
 import { TradingInterface } from "@/components/trading/TradingInterface";
 
@@ -18,73 +15,72 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // Memoize the auth check function
+  // Simple auth check using localStorage
   const checkAuth = useCallback(() => {
-    if (isLocalhostDev()) {
-      const sessionInfo = SessionManager.getSessionInfo();
+    try {
+      console.log("Checking authentication...");
 
-      if (sessionInfo.isValid && sessionInfo.user) {
-        setIsDevMode(true);
+      // Check for simple session in localStorage
+      const hasSession = localStorage.getItem("auth-session");
+      const userStr = localStorage.getItem("auth-user");
+
+      console.log("Session check:", { hasSession, hasUser: !!userStr });
+
+      if (hasSession === "true" && userStr) {
+        const user = JSON.parse(userStr);
+        console.log("Valid session found for user:", user.email);
+
+        // Check if we're on localhost for dev mode features
+        const isLocalhost = isLocalhostDev();
+        setIsDevMode(isLocalhost);
         setIsLoading(false);
 
-        // Check if dev toast has been shown for this session
-        const hasShown = localStorage.getItem("dev-toast-shown");
-
-        // Show simple dev mode indicator only if not shown before
-        if (hasShown !== "true") {
-          toast({
-            title: "⚠️ Developer Mode",
-            description: "Logged in as developer",
-            variant: "default",
-          });
-          localStorage.setItem("dev-toast-shown", "true");
+        // Check if dev toast has been shown for this session (only on localhost)
+        if (isLocalhost) {
+          const hasShown = localStorage.getItem("dev-toast-shown");
+          if (hasShown !== "true") {
+            toast({
+              title: "⚠️ Developer Mode",
+              description: `Logged in as ${user.email}`,
+              variant: "default",
+            });
+            localStorage.setItem("dev-toast-shown", "true");
+          }
         }
       } else {
         // No valid session, redirect to login
-        if (sessionInfo.user) {
-          toast({
-            title: "Session Expired",
-            description: "Your session has expired. Please log in again.",
-            variant: "destructive",
-          });
-        }
+        console.log("No valid session found, redirecting to login");
         router.push("/login");
       }
-    } else {
-      // Production: check real session
-      authClient.getSession().then((session) => {
-        if (!session) {
-          router.push("/login");
-        } else {
-          setIsLoading(false);
-        }
-      });
+    } catch (error) {
+      console.error("Error checking session:", error);
+      router.push("/login");
     }
   }, [router, toast]);
 
   useEffect(() => {
-    // Small delay to ensure localStorage is available
-    const timeoutId = setTimeout(checkAuth, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    // Check auth immediately - no delays needed with localStorage
+    checkAuth();
   }, [checkAuth]);
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
     try {
-      // Clear dev session if in dev mode
-      if (isDevMode) {
-        SessionManager.clearSession();
-        // Clear the toast flag so it shows again on next login
-        localStorage.removeItem("dev-toast-shown");
-      }
+      // Clear simple session from localStorage
+      localStorage.removeItem("auth-session");
+      localStorage.removeItem("auth-user");
+      localStorage.removeItem("dev-toast-shown");
+
+      console.log("Logged out, redirecting to login");
+      router.push("/login");
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Force redirect even if logout fails
       window.location.href = "/login";
     } finally {
       setIsLoggingOut(false);
     }
-  }, [isDevMode]);
+  }, [router]);
 
   // Show loading state
   if (isLoading) {

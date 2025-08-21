@@ -15,11 +15,11 @@ export const getAuth = (): ReturnType<typeof betterAuth> => {
 
     authInstance = betterAuth({
       database: prismaAdapter(prisma, {
-        provider: "mongodb",
+        provider: "postgresql",
       }),
       emailAndPassword: {
         enabled: true,
-        requireEmailVerification: true,
+        requireEmailVerification: false,
         sendResetPassword: async ({ user, url }) => {
           await sendEmail({
             to: user.email,
@@ -46,31 +46,8 @@ export const getAuth = (): ReturnType<typeof betterAuth> => {
         cookieSameSite: "lax",
       },
       emailVerification: {
-        sendOnSignUp: true,
-        autoSignInAfterVerification: true,
-        sendVerificationEmail: async ({ user, token }) => {
-          console.log("🔍 Verification email requested for:", user.email);
-          console.log("🔍 Token:", token);
-          console.log("🔍 BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
-          console.log(
-            "🔍 EMAIL_VERIFICATION_CALLBACK_URL:",
-            process.env.EMAIL_VERIFICATION_CALLBACK_URL
-          );
-
-          const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}&callbackURL=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
-          console.log("🔍 Verification URL:", verificationUrl);
-
-          try {
-            const result = await sendEmail({
-              to: user.email,
-              subject: "Verify your email address",
-              text: `Click the link to verify your email address: ${verificationUrl}`,
-            });
-            console.log("🔍 Email send result:", result);
-          } catch (error) {
-            console.error("❌ Error in sendVerificationEmail:", error);
-          }
-        },
+        sendOnSignUp: false,
+        autoSignInAfterVerification: false,
       },
       plugins: [nextCookies()],
     });

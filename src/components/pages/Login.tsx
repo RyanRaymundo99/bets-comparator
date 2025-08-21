@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
-import { Mail, Lock, ArrowRight, Loader2, Code, Trash2 } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Lock, ArrowRight, Loader2, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -9,25 +8,28 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { InputField, CheckboxField } from "@/components/Auth/FormFields";
-import { LoginFormValues, loginSchema } from "@/lib/schema/loginSchema";
-import { authClient } from "@/lib/auth-client";
+import { EmailField } from "@/components/Auth/EmailField";
 import { AuthLayout } from "@/components/ui/auth-layout";
-import { SessionManager } from "@/lib/session";
-import { isLocalhostDev } from "@/lib/utils";
+
+// Define the form values type locally since we're not using Zod anymore
+interface LoginFormValues {
+  emailOrCpf: string;
+  password: string;
+  rememberMe: boolean;
+}
 
 const REMEMBER_EMAIL_KEY = "remembered-email";
 const REMEMBER_PASSWORD_KEY = "remembered-password";
 
 const Login = () => {
   const [pending, setPending] = useState(false);
-  const [hasDevSession, setHasDevSession] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
   const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      emailOrCpf: "",
       password: "",
       rememberMe: false,
     },
@@ -38,7 +40,7 @@ const Login = () => {
     const rememberedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY);
     const rememberedPassword = localStorage.getItem(REMEMBER_PASSWORD_KEY);
     if (rememberedEmail && rememberedPassword) {
-      form.setValue("email", rememberedEmail);
+      form.setValue("emailOrCpf", rememberedEmail);
       try {
         form.setValue("password", atob(rememberedPassword));
       } catch {
@@ -48,52 +50,85 @@ const Login = () => {
     }
   }, [form]);
 
-  // Check for existing dev session on mount - only on localhost:3000
+  // Check if we're on localhost
   useEffect(() => {
-    if (isLocalhostDev()) {
-      const sessionInfo = SessionManager.getSessionInfo();
-      setHasDevSession(sessionInfo.isValid);
-    } else {
-      setHasDevSession(false);
-    }
+    const isLocalhostCheck =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1") &&
+      window.location.port === "3000";
+
+    setIsLocalhost(isLocalhostCheck);
   }, []);
+
+  // Clear any existing form errors when component mounts
+  useEffect(() => {
+    form.clearErrors();
+  }, [form]);
 
   const onSubmit = useCallback(
     async (data: LoginFormValues) => {
+      // Custom validation
+      if (!data.emailOrCpf.trim()) {
+        toast({
+          variant: "destructive",
+          title: "Erro no login",
+          description: "Email ou CPF é obrigatório",
+        });
+        return;
+      }
+
+      if (!data.password.trim()) {
+        toast({
+          variant: "destructive",
+          title: "Erro no login",
+          description: "Senha é obrigatória",
+        });
+        return;
+      }
+
       try {
         setPending(true);
 
-        await authClient.signIn.email(
-          {
-            email: data.email,
-            password: data.password,
-            rememberMe: data.rememberMe,
+        // Use our simple custom login endpoint
+        console.log("Using custom login with email:", data.emailOrCpf);
+
+        const response = await fetch("/api/auth/custom-login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          {
-            onSuccess: () => {
-              // Remember Me logic
-              if (data.rememberMe) {
-                localStorage.setItem(REMEMBER_EMAIL_KEY, data.email);
-                localStorage.setItem(
-                  REMEMBER_PASSWORD_KEY,
-                  btoa(data.password)
-                );
-              } else {
-                localStorage.removeItem(REMEMBER_EMAIL_KEY);
-                localStorage.removeItem(REMEMBER_PASSWORD_KEY);
-              }
-              router.push("/dashboard");
-            },
-            onError: (ctx) => {
-              toast({
-                variant: "destructive",
-                title: "Erro no login",
-                description:
-                  ctx.error.message ?? "Ocorreu um erro ao fazer login",
-              });
-            },
+          body: JSON.stringify({
+            email: data.emailOrCpf,
+            password: data.password,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          // Remember Me logic
+          if (data.rememberMe) {
+            localStorage.setItem(REMEMBER_EMAIL_KEY, data.emailOrCpf);
+            localStorage.setItem(REMEMBER_PASSWORD_KEY, btoa(data.password));
+          } else {
+            localStorage.removeItem(REMEMBER_EMAIL_KEY);
+            localStorage.removeItem(REMEMBER_PASSWORD_KEY);
           }
-        );
+
+          // Store user session in localStorage for simple session management
+          localStorage.setItem("auth-user", JSON.stringify(result.user));
+          localStorage.setItem("auth-session", "true");
+
+          console.log("Login successful, redirecting to dashboard");
+          router.push("/dashboard");
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Erro no login",
+            description: result.error || "Ocorreu um erro ao fazer login",
+          });
+        }
       } catch {
         toast({
           variant: "destructive",
@@ -107,32 +142,69 @@ const Login = () => {
     [router, toast]
   );
 
-  const handleDevAccess = () => {
-    SessionManager.createSession({
-      email: "dev@buildstrategy.com",
-      name: "Developer",
-      role: "developer",
-    });
+  const handleCreateDevAccess = async () => {
+    try {
+      setPending(true);
 
-    setHasDevSession(true);
+      // Create a dev user with all permissions
+      const response = await fetch("/api/auth/create-dev-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "dev@buildstrategy.com",
+          password: "12345678",
+          name: "Developer User",
+          cpf: "12345678901",
+        }),
+      });
 
-    toast({
-      title: "Dev Access Granted",
-      description: "Welcome, Developer! You'll stay logged in for 1 hour.",
-    });
+      const result = await response.json();
 
-    // Redirect to dashboard
-    router.push("/dashboard");
-  };
+      if (response.ok && result.success) {
+        toast({
+          title: "Dev User Created!",
+          description: `Use ${result.credentials.email} / ${result.credentials.password} to login`,
+        });
 
-  const clearDevSession = () => {
-    SessionManager.clearSession();
-    setHasDevSession(false);
+        // Auto-fill the form with the unique credentials
+        form.setValue("emailOrCpf", result.credentials.email);
+        form.setValue("password", result.credentials.password);
 
-    toast({
-      title: "Dev Session Cleared",
-      description: "Developer session has been cleared",
-    });
+        // Show success message with credentials
+        console.log("Form auto-filled with:", {
+          email: result.credentials.email,
+          password: result.credentials.password,
+        });
+
+        // Focus on the password field for better UX
+        setTimeout(() => {
+          const passwordInput = document.querySelector(
+            'input[name="password"]'
+          ) as HTMLInputElement;
+          if (passwordInput) {
+            passwordInput.focus();
+            passwordInput.select(); // Select the password text for easy replacement
+          }
+        }, 100);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error Creating Dev User",
+          description: result.error || "Failed to create dev user",
+        });
+      }
+    } catch (error) {
+      console.error("Error creating dev user:", error);
+      toast({
+        variant: "destructive",
+        title: "Error Creating Dev User",
+        description: "Failed to create dev user",
+      });
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
@@ -154,14 +226,10 @@ const Login = () => {
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <InputField
-            control={form.control}
-            name="email"
-            label="Email"
-            placeholder="joao.silva@exemplo.com"
-            type="email"
-            icon={<Mail className="h-5 w-5 text-gray-300" />}
-            labelPosition="top"
+          <EmailField
+            value={form.watch("emailOrCpf")}
+            onChange={(value) => form.setValue("emailOrCpf", value)}
+            required
           />
 
           <div className="space-y-2">
@@ -220,46 +288,22 @@ const Login = () => {
         </form>
       </Form>
 
-      {/* Developer Access Section - Only on localhost:3000 */}
-      {isLocalhostDev() && (
+      {/* Create Dev Access Button - Only on localhost */}
+      {isLocalhost && (
         <div className="mt-6 pt-4 border-t border-white/10">
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              onClick={handleDevAccess}
-              variant="ghost"
-              className="flex-1 text-xs text-gray-400 hover:text-blue-300 hover:bg-white/5 transition-all duration-200 h-8 relative overflow-hidden"
-            >
-              {/* Mirror effect for button */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/2 opacity-20 pointer-events-none rounded-md"></div>
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+          <Button
+            type="button"
+            onClick={handleCreateDevAccess}
+            variant="ghost"
+            className="w-full text-xs text-gray-400 hover:text-blue-300 hover:bg-white/5 transition-all duration-200 h-8 relative overflow-hidden"
+          >
+            {/* Mirror effect for button */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/2 opacity-20 pointer-events-none rounded-md"></div>
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-              <Code className="h-3 w-3 mr-2 relative z-10" />
-              <span className="relative z-10">
-                {hasDevSession
-                  ? "DEV: Acessar Dashboard"
-                  : "DEV: Acesso Direto"}
-              </span>
-            </Button>
-
-            {hasDevSession && (
-              <Button
-                type="button"
-                onClick={clearDevSession}
-                variant="ghost"
-                className="text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200 h-8 px-2 relative overflow-hidden"
-                title="Clear Dev Session"
-              >
-                <Trash2 className="h-3 w-3 relative z-10" />
-              </Button>
-            )}
-          </div>
-
-          {hasDevSession && (
-            <div className="mt-2 text-xs text-yellow-400 text-center">
-              ⚠️ Dev session active - dev@buildstrategy.com
-            </div>
-          )}
+            <Code className="h-3 w-3 mr-2 relative z-10" />
+            <span className="relative z-10">Create Dev Access</span>
+          </Button>
         </div>
       )}
 

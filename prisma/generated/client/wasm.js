@@ -124,7 +124,10 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
+  cpf: 'cpf',
+  password: 'password',
   emailVerified: 'emailVerified',
+  approvalStatus: 'approvalStatus',
   image: 'image',
   kycStatus: 'kycStatus',
   kycData: 'kycData',
@@ -303,6 +306,12 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.ApprovalStatus = exports.$Enums.ApprovalStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.KYCStatus = exports.$Enums.KYCStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',

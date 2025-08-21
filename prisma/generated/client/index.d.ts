@@ -73,7 +73,16 @@ export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
  * Enums
  */
 export namespace $Enums {
-  export const KYCStatus: {
+  export const ApprovalStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
+
+
+export const KYCStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
@@ -166,6 +175,10 @@ export const TransactionType: {
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
 
 }
+
+export type ApprovalStatus = $Enums.ApprovalStatus
+
+export const ApprovalStatus: typeof $Enums.ApprovalStatus
 
 export type KYCStatus = $Enums.KYCStatus
 
@@ -1913,29 +1926,29 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    sessions: number
     accounts: number
     balances: number
     deposits: number
-    withdrawals: number
     orders: number
     p2pOffers: number
     buyerTrades: number
     sellerTrades: number
+    sessions: number
     transactions: number
+    withdrawals: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     balances?: boolean | UserCountOutputTypeCountBalancesArgs
     deposits?: boolean | UserCountOutputTypeCountDepositsArgs
-    withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
     p2pOffers?: boolean | UserCountOutputTypeCountP2pOffersArgs
     buyerTrades?: boolean | UserCountOutputTypeCountBuyerTradesArgs
     sellerTrades?: boolean | UserCountOutputTypeCountSellerTradesArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
+    withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
   }
 
   // Custom InputTypes
@@ -1947,13 +1960,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionWhereInput
   }
 
   /**
@@ -1975,13 +1981,6 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDepositsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DepositWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountWithdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WithdrawalWhereInput
   }
 
   /**
@@ -2015,8 +2014,22 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountWithdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WithdrawalWhereInput
   }
 
 
@@ -2069,7 +2082,10 @@ export namespace Prisma {
     id: string | null
     name: string | null
     email: string | null
+    cpf: string | null
+    password: string | null
     emailVerified: boolean | null
+    approvalStatus: $Enums.ApprovalStatus | null
     image: string | null
     kycStatus: $Enums.KYCStatus | null
     createdAt: Date | null
@@ -2080,7 +2096,10 @@ export namespace Prisma {
     id: string | null
     name: string | null
     email: string | null
+    cpf: string | null
+    password: string | null
     emailVerified: boolean | null
+    approvalStatus: $Enums.ApprovalStatus | null
     image: string | null
     kycStatus: $Enums.KYCStatus | null
     createdAt: Date | null
@@ -2091,7 +2110,10 @@ export namespace Prisma {
     id: number
     name: number
     email: number
+    cpf: number
+    password: number
     emailVerified: number
+    approvalStatus: number
     image: number
     kycStatus: number
     kycData: number
@@ -2105,7 +2127,10 @@ export namespace Prisma {
     id?: true
     name?: true
     email?: true
+    cpf?: true
+    password?: true
     emailVerified?: true
+    approvalStatus?: true
     image?: true
     kycStatus?: true
     createdAt?: true
@@ -2116,7 +2141,10 @@ export namespace Prisma {
     id?: true
     name?: true
     email?: true
+    cpf?: true
+    password?: true
     emailVerified?: true
+    approvalStatus?: true
     image?: true
     kycStatus?: true
     createdAt?: true
@@ -2127,7 +2155,10 @@ export namespace Prisma {
     id?: true
     name?: true
     email?: true
+    cpf?: true
+    password?: true
     emailVerified?: true
+    approvalStatus?: true
     image?: true
     kycStatus?: true
     kycData?: true
@@ -2212,7 +2243,10 @@ export namespace Prisma {
     id: string
     name: string
     email: string
+    cpf: string | null
+    password: string | null
     emailVerified: boolean
+    approvalStatus: $Enums.ApprovalStatus
     image: string | null
     kycStatus: $Enums.KYCStatus
     kycData: JsonValue | null
@@ -2241,22 +2275,25 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     email?: boolean
+    cpf?: boolean
+    password?: boolean
     emailVerified?: boolean
+    approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     balances?: boolean | User$balancesArgs<ExtArgs>
     deposits?: boolean | User$depositsArgs<ExtArgs>
-    withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     p2pOffers?: boolean | User$p2pOffersArgs<ExtArgs>
     buyerTrades?: boolean | User$buyerTradesArgs<ExtArgs>
     sellerTrades?: boolean | User$sellerTradesArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2264,7 +2301,10 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     email?: boolean
+    cpf?: boolean
+    password?: boolean
     emailVerified?: boolean
+    approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
@@ -2276,7 +2316,10 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     email?: boolean
+    cpf?: boolean
+    password?: boolean
     emailVerified?: boolean
+    approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
@@ -2288,7 +2331,10 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     email?: boolean
+    cpf?: boolean
+    password?: boolean
     emailVerified?: boolean
+    approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
@@ -2296,18 +2342,18 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "kycStatus" | "kycData" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "password" | "emailVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     balances?: boolean | User$balancesArgs<ExtArgs>
     deposits?: boolean | User$depositsArgs<ExtArgs>
-    withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     p2pOffers?: boolean | User$p2pOffersArgs<ExtArgs>
     buyerTrades?: boolean | User$buyerTradesArgs<ExtArgs>
     sellerTrades?: boolean | User$sellerTradesArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2316,22 +2362,25 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       balances: Prisma.$BalancePayload<ExtArgs>[]
       deposits: Prisma.$DepositPayload<ExtArgs>[]
-      withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
       orders: Prisma.$OrderPayload<ExtArgs>[]
       p2pOffers: Prisma.$P2POfferPayload<ExtArgs>[]
       buyerTrades: Prisma.$P2PTradePayload<ExtArgs>[]
       sellerTrades: Prisma.$P2PTradePayload<ExtArgs>[]
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
       email: string
+      cpf: string | null
+      password: string | null
       emailVerified: boolean
+      approvalStatus: $Enums.ApprovalStatus
       image: string | null
       kycStatus: $Enums.KYCStatus
       kycData: Prisma.JsonValue | null
@@ -2731,16 +2780,16 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     balances<T extends User$balancesArgs<ExtArgs> = {}>(args?: Subset<T, User$balancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BalancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     deposits<T extends User$depositsArgs<ExtArgs> = {}>(args?: Subset<T, User$depositsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepositPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     p2pOffers<T extends User$p2pOffersArgs<ExtArgs> = {}>(args?: Subset<T, User$p2pOffersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$P2POfferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     buyerTrades<T extends User$buyerTradesArgs<ExtArgs> = {}>(args?: Subset<T, User$buyerTradesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$P2PTradePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sellerTrades<T extends User$sellerTradesArgs<ExtArgs> = {}>(args?: Subset<T, User$sellerTradesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$P2PTradePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2773,7 +2822,10 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
+    readonly cpf: FieldRef<"User", 'String'>
+    readonly password: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'Boolean'>
+    readonly approvalStatus: FieldRef<"User", 'ApprovalStatus'>
     readonly image: FieldRef<"User", 'String'>
     readonly kycStatus: FieldRef<"User", 'KYCStatus'>
     readonly kycData: FieldRef<"User", 'Json'>
@@ -3167,30 +3219,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.sessions
-   */
-  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Session
-     */
-    select?: SessionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Session
-     */
-    omit?: SessionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionInclude<ExtArgs> | null
-    where?: SessionWhereInput
-    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
-    cursor?: SessionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
-  }
-
-  /**
    * User.accounts
    */
   export type User$accountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3260,30 +3288,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DepositScalarFieldEnum | DepositScalarFieldEnum[]
-  }
-
-  /**
-   * User.withdrawals
-   */
-  export type User$withdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Withdrawal
-     */
-    select?: WithdrawalSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Withdrawal
-     */
-    omit?: WithdrawalOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WithdrawalInclude<ExtArgs> | null
-    where?: WithdrawalWhereInput
-    orderBy?: WithdrawalOrderByWithRelationInput | WithdrawalOrderByWithRelationInput[]
-    cursor?: WithdrawalWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: WithdrawalScalarFieldEnum | WithdrawalScalarFieldEnum[]
   }
 
   /**
@@ -3383,6 +3387,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.sessions
+   */
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    cursor?: SessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
    * User.transactions
    */
   export type User$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3404,6 +3432,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.withdrawals
+   */
+  export type User$withdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Withdrawal
+     */
+    select?: WithdrawalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Withdrawal
+     */
+    omit?: WithdrawalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalInclude<ExtArgs> | null
+    where?: WithdrawalWhereInput
+    orderBy?: WithdrawalOrderByWithRelationInput | WithdrawalOrderByWithRelationInput[]
+    cursor?: WithdrawalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WithdrawalScalarFieldEnum | WithdrawalScalarFieldEnum[]
   }
 
   /**
@@ -8068,8 +8120,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deposit"]>
 
   export type DepositSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8085,8 +8137,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deposit"]>
 
   export type DepositSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8102,8 +8154,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deposit"]>
 
   export type DepositSelectScalar = {
@@ -8123,23 +8175,23 @@ export namespace Prisma {
 
   export type DepositOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "status" | "paymentMethod" | "externalId" | "proofUrl" | "confirmedAt" | "createdAt" | "updatedAt" | "transactionId", ExtArgs["result"]["deposit"]>
   export type DepositInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type DepositIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type DepositIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $DepositPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Deposit"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       transaction: Prisma.$TransactionPayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8548,8 +8600,8 @@ export namespace Prisma {
    */
   export interface Prisma__DepositClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     transaction<T extends Deposit$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Deposit$transactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9274,8 +9326,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["withdrawal"]>
 
   export type WithdrawalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9291,8 +9343,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["withdrawal"]>
 
   export type WithdrawalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9308,8 +9360,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["withdrawal"]>
 
   export type WithdrawalSelectScalar = {
@@ -9329,23 +9381,23 @@ export namespace Prisma {
 
   export type WithdrawalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "status" | "paymentMethod" | "externalId" | "bankAccount" | "processedAt" | "createdAt" | "updatedAt" | "transactionId", ExtArgs["result"]["withdrawal"]>
   export type WithdrawalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type WithdrawalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type WithdrawalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $WithdrawalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Withdrawal"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       transaction: Prisma.$TransactionPayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9754,8 +9806,8 @@ export namespace Prisma {
    */
   export interface Prisma__WithdrawalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     transaction<T extends Withdrawal$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Withdrawal$transactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10508,8 +10560,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Order$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10527,8 +10579,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Order$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10546,8 +10598,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Order$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectScalar = {
@@ -10569,23 +10621,23 @@ export namespace Prisma {
 
   export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "baseCurrency" | "quoteCurrency" | "amount" | "price" | "total" | "status" | "externalOrderId" | "executedAt" | "createdAt" | "updatedAt" | "transactionId", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Order$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Order$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     transaction?: boolean | Order$transactionArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Order"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       transaction: Prisma.$TransactionPayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10996,8 +11048,8 @@ export namespace Prisma {
    */
   export interface Prisma__OrderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     transaction<T extends Order$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Order$transactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13028,10 +13080,10 @@ export namespace Prisma {
     updatedAt?: boolean
     buyerTransactionId?: boolean
     sellerTransactionId?: boolean
-    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
     buyer?: boolean | UserDefaultArgs<ExtArgs>
-    seller?: boolean | UserDefaultArgs<ExtArgs>
     buyerTransaction?: boolean | P2PTrade$buyerTransactionArgs<ExtArgs>
+    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
+    seller?: boolean | UserDefaultArgs<ExtArgs>
     sellerTransaction?: boolean | P2PTrade$sellerTransactionArgs<ExtArgs>
   }, ExtArgs["result"]["p2PTrade"]>
 
@@ -13052,10 +13104,10 @@ export namespace Prisma {
     updatedAt?: boolean
     buyerTransactionId?: boolean
     sellerTransactionId?: boolean
-    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
     buyer?: boolean | UserDefaultArgs<ExtArgs>
-    seller?: boolean | UserDefaultArgs<ExtArgs>
     buyerTransaction?: boolean | P2PTrade$buyerTransactionArgs<ExtArgs>
+    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
+    seller?: boolean | UserDefaultArgs<ExtArgs>
     sellerTransaction?: boolean | P2PTrade$sellerTransactionArgs<ExtArgs>
   }, ExtArgs["result"]["p2PTrade"]>
 
@@ -13076,10 +13128,10 @@ export namespace Prisma {
     updatedAt?: boolean
     buyerTransactionId?: boolean
     sellerTransactionId?: boolean
-    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
     buyer?: boolean | UserDefaultArgs<ExtArgs>
-    seller?: boolean | UserDefaultArgs<ExtArgs>
     buyerTransaction?: boolean | P2PTrade$buyerTransactionArgs<ExtArgs>
+    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
+    seller?: boolean | UserDefaultArgs<ExtArgs>
     sellerTransaction?: boolean | P2PTrade$sellerTransactionArgs<ExtArgs>
   }, ExtArgs["result"]["p2PTrade"]>
 
@@ -13104,34 +13156,34 @@ export namespace Prisma {
 
   export type P2PTradeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "offerId" | "buyerId" | "sellerId" | "cryptoAmount" | "fiatAmount" | "status" | "paymentProof" | "cryptoReleased" | "fiatConfirmed" | "disputeReason" | "expiresAt" | "createdAt" | "updatedAt" | "buyerTransactionId" | "sellerTransactionId", ExtArgs["result"]["p2PTrade"]>
   export type P2PTradeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
     buyer?: boolean | UserDefaultArgs<ExtArgs>
-    seller?: boolean | UserDefaultArgs<ExtArgs>
     buyerTransaction?: boolean | P2PTrade$buyerTransactionArgs<ExtArgs>
+    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
+    seller?: boolean | UserDefaultArgs<ExtArgs>
     sellerTransaction?: boolean | P2PTrade$sellerTransactionArgs<ExtArgs>
   }
   export type P2PTradeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
     buyer?: boolean | UserDefaultArgs<ExtArgs>
-    seller?: boolean | UserDefaultArgs<ExtArgs>
     buyerTransaction?: boolean | P2PTrade$buyerTransactionArgs<ExtArgs>
+    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
+    seller?: boolean | UserDefaultArgs<ExtArgs>
     sellerTransaction?: boolean | P2PTrade$sellerTransactionArgs<ExtArgs>
   }
   export type P2PTradeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
     buyer?: boolean | UserDefaultArgs<ExtArgs>
-    seller?: boolean | UserDefaultArgs<ExtArgs>
     buyerTransaction?: boolean | P2PTrade$buyerTransactionArgs<ExtArgs>
+    offer?: boolean | P2POfferDefaultArgs<ExtArgs>
+    seller?: boolean | UserDefaultArgs<ExtArgs>
     sellerTransaction?: boolean | P2PTrade$sellerTransactionArgs<ExtArgs>
   }
 
   export type $P2PTradePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "P2PTrade"
     objects: {
-      offer: Prisma.$P2POfferPayload<ExtArgs>
       buyer: Prisma.$UserPayload<ExtArgs>
-      seller: Prisma.$UserPayload<ExtArgs>
       buyerTransaction: Prisma.$TransactionPayload<ExtArgs> | null
+      offer: Prisma.$P2POfferPayload<ExtArgs>
+      seller: Prisma.$UserPayload<ExtArgs>
       sellerTransaction: Prisma.$TransactionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -13545,10 +13597,10 @@ export namespace Prisma {
    */
   export interface Prisma__P2PTradeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    offer<T extends P2POfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, P2POfferDefaultArgs<ExtArgs>>): Prisma__P2POfferClient<$Result.GetResult<Prisma.$P2POfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     buyer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     buyerTransaction<T extends P2PTrade$buyerTransactionArgs<ExtArgs> = {}>(args?: Subset<T, P2PTrade$buyerTransactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    offer<T extends P2POfferDefaultArgs<ExtArgs> = {}>(args?: Subset<T, P2POfferDefaultArgs<ExtArgs>>): Prisma__P2POfferClient<$Result.GetResult<Prisma.$P2POfferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    seller<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     sellerTransaction<T extends P2PTrade$sellerTransactionArgs<ExtArgs> = {}>(args?: Subset<T, P2PTrade$sellerTransactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14277,12 +14329,12 @@ export namespace Prisma {
     description?: boolean
     metadata?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     deposit?: boolean | Transaction$depositArgs<ExtArgs>
-    withdrawal?: boolean | Transaction$withdrawalArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     buyerTrade?: boolean | Transaction$buyerTradeArgs<ExtArgs>
     sellerTrade?: boolean | Transaction$sellerTradeArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    withdrawal?: boolean | Transaction$withdrawalArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14325,12 +14377,12 @@ export namespace Prisma {
 
   export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "amount" | "currency" | "balance" | "description" | "metadata" | "createdAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     deposit?: boolean | Transaction$depositArgs<ExtArgs>
-    withdrawal?: boolean | Transaction$withdrawalArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     buyerTrade?: boolean | Transaction$buyerTradeArgs<ExtArgs>
     sellerTrade?: boolean | Transaction$sellerTradeArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    withdrawal?: boolean | Transaction$withdrawalArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -14342,12 +14394,12 @@ export namespace Prisma {
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       deposit: Prisma.$DepositPayload<ExtArgs> | null
-      withdrawal: Prisma.$WithdrawalPayload<ExtArgs> | null
       order: Prisma.$OrderPayload<ExtArgs> | null
       buyerTrade: Prisma.$P2PTradePayload<ExtArgs> | null
       sellerTrade: Prisma.$P2PTradePayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
+      withdrawal: Prisma.$WithdrawalPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14753,12 +14805,12 @@ export namespace Prisma {
    */
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     deposit<T extends Transaction$depositArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$depositArgs<ExtArgs>>): Prisma__DepositClient<$Result.GetResult<Prisma.$DepositPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    withdrawal<T extends Transaction$withdrawalArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$withdrawalArgs<ExtArgs>>): Prisma__WithdrawalClient<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     order<T extends Transaction$orderArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$orderArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     buyerTrade<T extends Transaction$buyerTradeArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$buyerTradeArgs<ExtArgs>>): Prisma__P2PTradeClient<$Result.GetResult<Prisma.$P2PTradePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sellerTrade<T extends Transaction$sellerTradeArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$sellerTradeArgs<ExtArgs>>): Prisma__P2PTradeClient<$Result.GetResult<Prisma.$P2PTradePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    withdrawal<T extends Transaction$withdrawalArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$withdrawalArgs<ExtArgs>>): Prisma__WithdrawalClient<$Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15212,25 +15264,6 @@ export namespace Prisma {
   }
 
   /**
-   * Transaction.withdrawal
-   */
-  export type Transaction$withdrawalArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Withdrawal
-     */
-    select?: WithdrawalSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Withdrawal
-     */
-    omit?: WithdrawalOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WithdrawalInclude<ExtArgs> | null
-    where?: WithdrawalWhereInput
-  }
-
-  /**
    * Transaction.order
    */
   export type Transaction$orderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15288,6 +15321,25 @@ export namespace Prisma {
   }
 
   /**
+   * Transaction.withdrawal
+   */
+  export type Transaction$withdrawalArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Withdrawal
+     */
+    select?: WithdrawalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Withdrawal
+     */
+    omit?: WithdrawalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalInclude<ExtArgs> | null
+    where?: WithdrawalWhereInput
+  }
+
+  /**
    * Transaction without action
    */
   export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15324,7 +15376,10 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     email: 'email',
+    cpf: 'cpf',
+    password: 'password',
     emailVerified: 'emailVerified',
+    approvalStatus: 'approvalStatus',
     image: 'image',
     kycStatus: 'kycStatus',
     kycData: 'kycData',
@@ -15582,6 +15637,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ApprovalStatus'
+   */
+  export type EnumApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ApprovalStatus[]'
+   */
+  export type ListEnumApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'KYCStatus'
    */
   export type EnumKYCStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KYCStatus'>
@@ -15773,76 +15842,88 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
+    cpf?: StringNullableFilter<"User"> | string | null
+    password?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    approvalStatus?: EnumApprovalStatusFilter<"User"> | $Enums.ApprovalStatus
     image?: StringNullableFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableFilter<"User">
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
     balances?: BalanceListRelationFilter
     deposits?: DepositListRelationFilter
-    withdrawals?: WithdrawalListRelationFilter
     orders?: OrderListRelationFilter
     p2pOffers?: P2POfferListRelationFilter
     buyerTrades?: P2PTradeListRelationFilter
     sellerTrades?: P2PTradeListRelationFilter
+    sessions?: SessionListRelationFilter
     transactions?: TransactionListRelationFilter
+    withdrawals?: WithdrawalListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    cpf?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
     emailVerified?: SortOrder
+    approvalStatus?: SortOrder
     image?: SortOrderInput | SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    sessions?: SessionOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
     balances?: BalanceOrderByRelationAggregateInput
     deposits?: DepositOrderByRelationAggregateInput
-    withdrawals?: WithdrawalOrderByRelationAggregateInput
     orders?: OrderOrderByRelationAggregateInput
     p2pOffers?: P2POfferOrderByRelationAggregateInput
     buyerTrades?: P2PTradeOrderByRelationAggregateInput
     sellerTrades?: P2PTradeOrderByRelationAggregateInput
+    sessions?: SessionOrderByRelationAggregateInput
     transactions?: TransactionOrderByRelationAggregateInput
+    withdrawals?: WithdrawalOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
+    cpf?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringFilter<"User"> | string
+    password?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    approvalStatus?: EnumApprovalStatusFilter<"User"> | $Enums.ApprovalStatus
     image?: StringNullableFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableFilter<"User">
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
     balances?: BalanceListRelationFilter
     deposits?: DepositListRelationFilter
-    withdrawals?: WithdrawalListRelationFilter
     orders?: OrderListRelationFilter
     p2pOffers?: P2POfferListRelationFilter
     buyerTrades?: P2PTradeListRelationFilter
     sellerTrades?: P2PTradeListRelationFilter
+    sessions?: SessionListRelationFilter
     transactions?: TransactionListRelationFilter
-  }, "id" | "email">
+    withdrawals?: WithdrawalListRelationFilter
+  }, "id" | "email" | "cpf">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    cpf?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
     emailVerified?: SortOrder
+    approvalStatus?: SortOrder
     image?: SortOrderInput | SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrderInput | SortOrder
@@ -15860,7 +15941,10 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"User"> | string
     name?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
+    cpf?: StringNullableWithAggregatesFilter<"User"> | string | null
+    password?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    approvalStatus?: EnumApprovalStatusWithAggregatesFilter<"User"> | $Enums.ApprovalStatus
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusWithAggregatesFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableWithAggregatesFilter<"User">
@@ -16174,8 +16258,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeFilter<"Deposit"> | Date | string
     transactionId?: StringNullableFilter<"Deposit"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type DepositOrderByWithRelationInput = {
@@ -16191,8 +16275,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
     transaction?: TransactionOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type DepositWhereUniqueInput = Prisma.AtLeast<{
@@ -16211,8 +16295,8 @@ export namespace Prisma {
     confirmedAt?: DateTimeNullableFilter<"Deposit"> | Date | string | null
     createdAt?: DateTimeFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeFilter<"Deposit"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "transactionId">
 
   export type DepositOrderByWithAggregationInput = {
@@ -16269,8 +16353,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
     transactionId?: StringNullableFilter<"Withdrawal"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type WithdrawalOrderByWithRelationInput = {
@@ -16286,8 +16370,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
     transaction?: TransactionOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type WithdrawalWhereUniqueInput = Prisma.AtLeast<{
@@ -16306,8 +16390,8 @@ export namespace Prisma {
     processedAt?: DateTimeNullableFilter<"Withdrawal"> | Date | string | null
     createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "transactionId">
 
   export type WithdrawalOrderByWithAggregationInput = {
@@ -16366,8 +16450,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     transactionId?: StringNullableFilter<"Order"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type OrderOrderByWithRelationInput = {
@@ -16385,8 +16469,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
     transaction?: TransactionOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -16407,8 +16491,8 @@ export namespace Prisma {
     executedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "transactionId">
 
   export type OrderOrderByWithAggregationInput = {
@@ -16583,10 +16667,10 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"P2PTrade"> | Date | string
     buyerTransactionId?: StringNullableFilter<"P2PTrade"> | string | null
     sellerTransactionId?: StringNullableFilter<"P2PTrade"> | string | null
-    offer?: XOR<P2POfferScalarRelationFilter, P2POfferWhereInput>
     buyer?: XOR<UserScalarRelationFilter, UserWhereInput>
-    seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     buyerTransaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    offer?: XOR<P2POfferScalarRelationFilter, P2POfferWhereInput>
+    seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     sellerTransaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
   }
 
@@ -16607,10 +16691,10 @@ export namespace Prisma {
     updatedAt?: SortOrder
     buyerTransactionId?: SortOrderInput | SortOrder
     sellerTransactionId?: SortOrderInput | SortOrder
-    offer?: P2POfferOrderByWithRelationInput
     buyer?: UserOrderByWithRelationInput
-    seller?: UserOrderByWithRelationInput
     buyerTransaction?: TransactionOrderByWithRelationInput
+    offer?: P2POfferOrderByWithRelationInput
+    seller?: UserOrderByWithRelationInput
     sellerTransaction?: TransactionOrderByWithRelationInput
   }
 
@@ -16634,10 +16718,10 @@ export namespace Prisma {
     expiresAt?: DateTimeFilter<"P2PTrade"> | Date | string
     createdAt?: DateTimeFilter<"P2PTrade"> | Date | string
     updatedAt?: DateTimeFilter<"P2PTrade"> | Date | string
-    offer?: XOR<P2POfferScalarRelationFilter, P2POfferWhereInput>
     buyer?: XOR<UserScalarRelationFilter, UserWhereInput>
-    seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     buyerTransaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    offer?: XOR<P2POfferScalarRelationFilter, P2POfferWhereInput>
+    seller?: XOR<UserScalarRelationFilter, UserWhereInput>
     sellerTransaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
   }, "id" | "buyerTransactionId" | "sellerTransactionId">
 
@@ -16700,12 +16784,12 @@ export namespace Prisma {
     description?: StringFilter<"Transaction"> | string
     metadata?: JsonNullableFilter<"Transaction">
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     deposit?: XOR<DepositNullableScalarRelationFilter, DepositWhereInput> | null
-    withdrawal?: XOR<WithdrawalNullableScalarRelationFilter, WithdrawalWhereInput> | null
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
     buyerTrade?: XOR<P2PTradeNullableScalarRelationFilter, P2PTradeWhereInput> | null
     sellerTrade?: XOR<P2PTradeNullableScalarRelationFilter, P2PTradeWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    withdrawal?: XOR<WithdrawalNullableScalarRelationFilter, WithdrawalWhereInput> | null
   }
 
   export type TransactionOrderByWithRelationInput = {
@@ -16718,12 +16802,12 @@ export namespace Prisma {
     description?: SortOrder
     metadata?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    user?: UserOrderByWithRelationInput
     deposit?: DepositOrderByWithRelationInput
-    withdrawal?: WithdrawalOrderByWithRelationInput
     order?: OrderOrderByWithRelationInput
     buyerTrade?: P2PTradeOrderByWithRelationInput
     sellerTrade?: P2PTradeOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    withdrawal?: WithdrawalOrderByWithRelationInput
   }
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
@@ -16739,12 +16823,12 @@ export namespace Prisma {
     description?: StringFilter<"Transaction"> | string
     metadata?: JsonNullableFilter<"Transaction">
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     deposit?: XOR<DepositNullableScalarRelationFilter, DepositWhereInput> | null
-    withdrawal?: XOR<WithdrawalNullableScalarRelationFilter, WithdrawalWhereInput> | null
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
     buyerTrade?: XOR<P2PTradeNullableScalarRelationFilter, P2PTradeWhereInput> | null
     sellerTrade?: XOR<P2PTradeNullableScalarRelationFilter, P2PTradeWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    withdrawal?: XOR<WithdrawalNullableScalarRelationFilter, WithdrawalWhereInput> | null
   }, "id">
 
   export type TransactionOrderByWithAggregationInput = {
@@ -16783,95 +16867,110 @@ export namespace Prisma {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     balances?: BalanceCreateNestedManyWithoutUserInput
     deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
     deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     balances?: BalanceUpdateManyWithoutUserNestedInput
     deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
     deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -16883,7 +16982,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -16895,7 +16997,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -17233,8 +17338,8 @@ export namespace Prisma {
     confirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutDepositsInput
     transaction?: TransactionCreateNestedOneWithoutDepositInput
+    user: UserCreateNestedOneWithoutDepositsInput
   }
 
   export type DepositUncheckedCreateInput = {
@@ -17263,8 +17368,8 @@ export namespace Prisma {
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutDepositsNestedInput
     transaction?: TransactionUpdateOneWithoutDepositNestedInput
+    user?: UserUpdateOneRequiredWithoutDepositsNestedInput
   }
 
   export type DepositUncheckedUpdateInput = {
@@ -17336,8 +17441,8 @@ export namespace Prisma {
     processedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutWithdrawalsInput
     transaction?: TransactionCreateNestedOneWithoutWithdrawalInput
+    user: UserCreateNestedOneWithoutWithdrawalsInput
   }
 
   export type WithdrawalUncheckedCreateInput = {
@@ -17366,8 +17471,8 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
     transaction?: TransactionUpdateOneWithoutWithdrawalNestedInput
+    user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
   }
 
   export type WithdrawalUncheckedUpdateInput = {
@@ -17441,8 +17546,8 @@ export namespace Prisma {
     executedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutOrdersInput
     transaction?: TransactionCreateNestedOneWithoutOrderInput
+    user: UserCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateInput = {
@@ -17475,8 +17580,8 @@ export namespace Prisma {
     executedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutOrdersNestedInput
     transaction?: TransactionUpdateOneWithoutOrderNestedInput
+    user?: UserUpdateOneRequiredWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateInput = {
@@ -17686,10 +17791,10 @@ export namespace Prisma {
     expiresAt: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    offer: P2POfferCreateNestedOneWithoutTradesInput
     buyer: UserCreateNestedOneWithoutBuyerTradesInput
-    seller: UserCreateNestedOneWithoutSellerTradesInput
     buyerTransaction?: TransactionCreateNestedOneWithoutBuyerTradeInput
+    offer: P2POfferCreateNestedOneWithoutTradesInput
+    seller: UserCreateNestedOneWithoutSellerTradesInput
     sellerTransaction?: TransactionCreateNestedOneWithoutSellerTradeInput
   }
 
@@ -17724,10 +17829,10 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     buyer?: UserUpdateOneRequiredWithoutBuyerTradesNestedInput
-    seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
     buyerTransaction?: TransactionUpdateOneWithoutBuyerTradeNestedInput
+    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
+    seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
     sellerTransaction?: TransactionUpdateOneWithoutSellerTradeNestedInput
   }
 
@@ -17811,12 +17916,12 @@ export namespace Prisma {
     description: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
     deposit?: DepositCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
     order?: OrderCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
+    user: UserCreateNestedOneWithoutTransactionsInput
+    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -17830,10 +17935,10 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     deposit?: DepositUncheckedCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
     order?: OrderUncheckedCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeUncheckedCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeUncheckedCreateNestedOneWithoutSellerTransactionInput
+    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUpdateInput = {
@@ -17845,12 +17950,12 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
     deposit?: DepositUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
     order?: OrderUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
+    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -17864,10 +17969,10 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deposit?: DepositUncheckedUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
     order?: OrderUncheckedUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUncheckedUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
+    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionCreateManyInput = {
@@ -17920,11 +18025,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -17938,6 +18038,18 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type EnumApprovalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusFilter<$PrismaModel> | $Enums.ApprovalStatus
   }
 
   export type EnumKYCStatusFilter<$PrismaModel = never> = {
@@ -17981,12 +18093,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type SessionListRelationFilter = {
-    every?: SessionWhereInput
-    some?: SessionWhereInput
-    none?: SessionWhereInput
-  }
-
   export type AccountListRelationFilter = {
     every?: AccountWhereInput
     some?: AccountWhereInput
@@ -18003,12 +18109,6 @@ export namespace Prisma {
     every?: DepositWhereInput
     some?: DepositWhereInput
     none?: DepositWhereInput
-  }
-
-  export type WithdrawalListRelationFilter = {
-    every?: WithdrawalWhereInput
-    some?: WithdrawalWhereInput
-    none?: WithdrawalWhereInput
   }
 
   export type OrderListRelationFilter = {
@@ -18029,19 +18129,27 @@ export namespace Prisma {
     none?: P2PTradeWhereInput
   }
 
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
+  }
+
   export type TransactionListRelationFilter = {
     every?: TransactionWhereInput
     some?: TransactionWhereInput
     none?: TransactionWhereInput
   }
 
+  export type WithdrawalListRelationFilter = {
+    every?: WithdrawalWhereInput
+    some?: WithdrawalWhereInput
+    none?: WithdrawalWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
-  }
-
-  export type SessionOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type AccountOrderByRelationAggregateInput = {
@@ -18053,10 +18161,6 @@ export namespace Prisma {
   }
 
   export type DepositOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type WithdrawalOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18072,7 +18176,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type SessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type TransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WithdrawalOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18080,7 +18192,10 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    cpf?: SortOrder
+    password?: SortOrder
     emailVerified?: SortOrder
+    approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrder
@@ -18092,7 +18207,10 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    cpf?: SortOrder
+    password?: SortOrder
     emailVerified?: SortOrder
+    approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
     createdAt?: SortOrder
@@ -18103,7 +18221,10 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
+    cpf?: SortOrder
+    password?: SortOrder
     emailVerified?: SortOrder
+    approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
     createdAt?: SortOrder
@@ -18128,14 +18249,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -18152,6 +18265,24 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApprovalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumApprovalStatusFilter<$PrismaModel>
+    _max?: NestedEnumApprovalStatusFilter<$PrismaModel>
   }
 
   export type EnumKYCStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -18906,11 +19037,6 @@ export namespace Prisma {
     isNot?: DepositWhereInput | null
   }
 
-  export type WithdrawalNullableScalarRelationFilter = {
-    is?: WithdrawalWhereInput | null
-    isNot?: WithdrawalWhereInput | null
-  }
-
   export type OrderNullableScalarRelationFilter = {
     is?: OrderWhereInput | null
     isNot?: OrderWhereInput | null
@@ -18919,6 +19045,11 @@ export namespace Prisma {
   export type P2PTradeNullableScalarRelationFilter = {
     is?: P2PTradeWhereInput | null
     isNot?: P2PTradeWhereInput | null
+  }
+
+  export type WithdrawalNullableScalarRelationFilter = {
+    is?: WithdrawalWhereInput | null
+    isNot?: WithdrawalWhereInput | null
   }
 
   export type TransactionCountOrderByAggregateInput = {
@@ -18975,13 +19106,6 @@ export namespace Prisma {
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
   }
 
-  export type SessionCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-  }
-
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -19001,13 +19125,6 @@ export namespace Prisma {
     connectOrCreate?: DepositCreateOrConnectWithoutUserInput | DepositCreateOrConnectWithoutUserInput[]
     createMany?: DepositCreateManyUserInputEnvelope
     connect?: DepositWhereUniqueInput | DepositWhereUniqueInput[]
-  }
-
-  export type WithdrawalCreateNestedManyWithoutUserInput = {
-    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
-    createMany?: WithdrawalCreateManyUserInputEnvelope
-    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
   }
 
   export type OrderCreateNestedManyWithoutUserInput = {
@@ -19038,6 +19155,13 @@ export namespace Prisma {
     connect?: P2PTradeWhereUniqueInput | P2PTradeWhereUniqueInput[]
   }
 
+  export type SessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
   export type TransactionCreateNestedManyWithoutUserInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -19045,11 +19169,11 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
-  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  export type WithdrawalCreateNestedManyWithoutUserInput = {
+    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
+    createMany?: WithdrawalCreateManyUserInputEnvelope
+    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
   }
 
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
@@ -19071,13 +19195,6 @@ export namespace Prisma {
     connectOrCreate?: DepositCreateOrConnectWithoutUserInput | DepositCreateOrConnectWithoutUserInput[]
     createMany?: DepositCreateManyUserInputEnvelope
     connect?: DepositWhereUniqueInput | DepositWhereUniqueInput[]
-  }
-
-  export type WithdrawalUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
-    createMany?: WithdrawalCreateManyUserInputEnvelope
-    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
   }
 
   export type OrderUncheckedCreateNestedManyWithoutUserInput = {
@@ -19108,6 +19225,13 @@ export namespace Prisma {
     connect?: P2PTradeWhereUniqueInput | P2PTradeWhereUniqueInput[]
   }
 
+  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
   export type TransactionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -19115,16 +19239,27 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type WithdrawalUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
+    createMany?: WithdrawalCreateManyUserInputEnvelope
+    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type EnumApprovalStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ApprovalStatus
   }
 
   export type EnumKYCStatusFieldUpdateOperationsInput = {
@@ -19133,20 +19268,6 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
-  }
-
-  export type SessionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -19189,20 +19310,6 @@ export namespace Prisma {
     update?: DepositUpdateWithWhereUniqueWithoutUserInput | DepositUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: DepositUpdateManyWithWhereWithoutUserInput | DepositUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: DepositScalarWhereInput | DepositScalarWhereInput[]
-  }
-
-  export type WithdrawalUpdateManyWithoutUserNestedInput = {
-    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
-    upsert?: WithdrawalUpsertWithWhereUniqueWithoutUserInput | WithdrawalUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: WithdrawalCreateManyUserInputEnvelope
-    set?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    disconnect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    delete?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    update?: WithdrawalUpdateWithWhereUniqueWithoutUserInput | WithdrawalUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: WithdrawalUpdateManyWithWhereWithoutUserInput | WithdrawalUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
   }
 
   export type OrderUpdateManyWithoutUserNestedInput = {
@@ -19261,6 +19368,20 @@ export namespace Prisma {
     deleteMany?: P2PTradeScalarWhereInput | P2PTradeScalarWhereInput[]
   }
 
+  export type SessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
   export type TransactionUpdateManyWithoutUserNestedInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -19275,18 +19396,18 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
-  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  export type WithdrawalUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
+    upsert?: WithdrawalUpsertWithWhereUniqueWithoutUserInput | WithdrawalUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WithdrawalCreateManyUserInputEnvelope
+    set?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    disconnect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    delete?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    update?: WithdrawalUpdateWithWhereUniqueWithoutUserInput | WithdrawalUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WithdrawalUpdateManyWithWhereWithoutUserInput | WithdrawalUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
   }
 
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
@@ -19329,20 +19450,6 @@ export namespace Prisma {
     update?: DepositUpdateWithWhereUniqueWithoutUserInput | DepositUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: DepositUpdateManyWithWhereWithoutUserInput | DepositUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: DepositScalarWhereInput | DepositScalarWhereInput[]
-  }
-
-  export type WithdrawalUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
-    upsert?: WithdrawalUpsertWithWhereUniqueWithoutUserInput | WithdrawalUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: WithdrawalCreateManyUserInputEnvelope
-    set?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    disconnect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    delete?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
-    update?: WithdrawalUpdateWithWhereUniqueWithoutUserInput | WithdrawalUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: WithdrawalUpdateManyWithWhereWithoutUserInput | WithdrawalUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
   }
 
   export type OrderUncheckedUpdateManyWithoutUserNestedInput = {
@@ -19401,6 +19508,20 @@ export namespace Prisma {
     deleteMany?: P2PTradeScalarWhereInput | P2PTradeScalarWhereInput[]
   }
 
+  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
   export type TransactionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -19413,6 +19534,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutUserInput | TransactionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutUserInput | TransactionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type WithdrawalUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput> | WithdrawalCreateWithoutUserInput[] | WithdrawalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutUserInput | WithdrawalCreateOrConnectWithoutUserInput[]
+    upsert?: WithdrawalUpsertWithWhereUniqueWithoutUserInput | WithdrawalUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WithdrawalCreateManyUserInputEnvelope
+    set?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    disconnect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    delete?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    connect?: WithdrawalWhereUniqueInput | WithdrawalWhereUniqueInput[]
+    update?: WithdrawalUpdateWithWhereUniqueWithoutUserInput | WithdrawalUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WithdrawalUpdateManyWithWhereWithoutUserInput | WithdrawalUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -19469,28 +19604,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBalancesInput, UserUpdateWithoutBalancesInput>, UserUncheckedUpdateWithoutBalancesInput>
   }
 
-  export type UserCreateNestedOneWithoutDepositsInput = {
-    create?: XOR<UserCreateWithoutDepositsInput, UserUncheckedCreateWithoutDepositsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDepositsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type TransactionCreateNestedOneWithoutDepositInput = {
     create?: XOR<TransactionCreateWithoutDepositInput, TransactionUncheckedCreateWithoutDepositInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutDepositInput
     connect?: TransactionWhereUniqueInput
   }
 
-  export type EnumDepositStatusFieldUpdateOperationsInput = {
-    set?: $Enums.DepositStatus
-  }
-
-  export type UserUpdateOneRequiredWithoutDepositsNestedInput = {
+  export type UserCreateNestedOneWithoutDepositsInput = {
     create?: XOR<UserCreateWithoutDepositsInput, UserUncheckedCreateWithoutDepositsInput>
     connectOrCreate?: UserCreateOrConnectWithoutDepositsInput
-    upsert?: UserUpsertWithoutDepositsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDepositsInput, UserUpdateWithoutDepositsInput>, UserUncheckedUpdateWithoutDepositsInput>
+  }
+
+  export type EnumDepositStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DepositStatus
   }
 
   export type TransactionUpdateOneWithoutDepositNestedInput = {
@@ -19503,10 +19630,12 @@ export namespace Prisma {
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutDepositInput, TransactionUpdateWithoutDepositInput>, TransactionUncheckedUpdateWithoutDepositInput>
   }
 
-  export type UserCreateNestedOneWithoutWithdrawalsInput = {
-    create?: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutWithdrawalsInput
+  export type UserUpdateOneRequiredWithoutDepositsNestedInput = {
+    create?: XOR<UserCreateWithoutDepositsInput, UserUncheckedCreateWithoutDepositsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDepositsInput
+    upsert?: UserUpsertWithoutDepositsInput
     connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDepositsInput, UserUpdateWithoutDepositsInput>, UserUncheckedUpdateWithoutDepositsInput>
   }
 
   export type TransactionCreateNestedOneWithoutWithdrawalInput = {
@@ -19515,16 +19644,14 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput
   }
 
-  export type EnumWithdrawalStatusFieldUpdateOperationsInput = {
-    set?: $Enums.WithdrawalStatus
-  }
-
-  export type UserUpdateOneRequiredWithoutWithdrawalsNestedInput = {
+  export type UserCreateNestedOneWithoutWithdrawalsInput = {
     create?: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
     connectOrCreate?: UserCreateOrConnectWithoutWithdrawalsInput
-    upsert?: UserUpsertWithoutWithdrawalsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWithdrawalsInput, UserUpdateWithoutWithdrawalsInput>, UserUncheckedUpdateWithoutWithdrawalsInput>
+  }
+
+  export type EnumWithdrawalStatusFieldUpdateOperationsInput = {
+    set?: $Enums.WithdrawalStatus
   }
 
   export type TransactionUpdateOneWithoutWithdrawalNestedInput = {
@@ -19537,16 +19664,24 @@ export namespace Prisma {
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutWithdrawalInput, TransactionUpdateWithoutWithdrawalInput>, TransactionUncheckedUpdateWithoutWithdrawalInput>
   }
 
-  export type UserCreateNestedOneWithoutOrdersInput = {
-    create?: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOrdersInput
+  export type UserUpdateOneRequiredWithoutWithdrawalsNestedInput = {
+    create?: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWithdrawalsInput
+    upsert?: UserUpsertWithoutWithdrawalsInput
     connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWithdrawalsInput, UserUpdateWithoutWithdrawalsInput>, UserUncheckedUpdateWithoutWithdrawalsInput>
   }
 
   export type TransactionCreateNestedOneWithoutOrderInput = {
     create?: XOR<TransactionCreateWithoutOrderInput, TransactionUncheckedCreateWithoutOrderInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutOrderInput
     connect?: TransactionWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOrdersInput = {
+    create?: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOrdersInput
+    connect?: UserWhereUniqueInput
   }
 
   export type EnumOrderTypeFieldUpdateOperationsInput = {
@@ -19557,14 +19692,6 @@ export namespace Prisma {
     set?: $Enums.OrderStatus
   }
 
-  export type UserUpdateOneRequiredWithoutOrdersNestedInput = {
-    create?: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOrdersInput
-    upsert?: UserUpsertWithoutOrdersInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrdersInput, UserUpdateWithoutOrdersInput>, UserUncheckedUpdateWithoutOrdersInput>
-  }
-
   export type TransactionUpdateOneWithoutOrderNestedInput = {
     create?: XOR<TransactionCreateWithoutOrderInput, TransactionUncheckedCreateWithoutOrderInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutOrderInput
@@ -19573,6 +19700,14 @@ export namespace Prisma {
     delete?: TransactionWhereInput | boolean
     connect?: TransactionWhereUniqueInput
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutOrderInput, TransactionUpdateWithoutOrderInput>, TransactionUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutOrdersNestedInput = {
+    create?: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOrdersInput
+    upsert?: UserUpsertWithoutOrdersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOrdersInput, UserUpdateWithoutOrdersInput>, UserUncheckedUpdateWithoutOrdersInput>
   }
 
   export type UserCreateNestedOneWithoutP2pOffersInput = {
@@ -19639,21 +19774,9 @@ export namespace Prisma {
     deleteMany?: P2PTradeScalarWhereInput | P2PTradeScalarWhereInput[]
   }
 
-  export type P2POfferCreateNestedOneWithoutTradesInput = {
-    create?: XOR<P2POfferCreateWithoutTradesInput, P2POfferUncheckedCreateWithoutTradesInput>
-    connectOrCreate?: P2POfferCreateOrConnectWithoutTradesInput
-    connect?: P2POfferWhereUniqueInput
-  }
-
   export type UserCreateNestedOneWithoutBuyerTradesInput = {
     create?: XOR<UserCreateWithoutBuyerTradesInput, UserUncheckedCreateWithoutBuyerTradesInput>
     connectOrCreate?: UserCreateOrConnectWithoutBuyerTradesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserCreateNestedOneWithoutSellerTradesInput = {
-    create?: XOR<UserCreateWithoutSellerTradesInput, UserUncheckedCreateWithoutSellerTradesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSellerTradesInput
     connect?: UserWhereUniqueInput
   }
 
@@ -19661,6 +19784,18 @@ export namespace Prisma {
     create?: XOR<TransactionCreateWithoutBuyerTradeInput, TransactionUncheckedCreateWithoutBuyerTradeInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutBuyerTradeInput
     connect?: TransactionWhereUniqueInput
+  }
+
+  export type P2POfferCreateNestedOneWithoutTradesInput = {
+    create?: XOR<P2POfferCreateWithoutTradesInput, P2POfferUncheckedCreateWithoutTradesInput>
+    connectOrCreate?: P2POfferCreateOrConnectWithoutTradesInput
+    connect?: P2POfferWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSellerTradesInput = {
+    create?: XOR<UserCreateWithoutSellerTradesInput, UserUncheckedCreateWithoutSellerTradesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSellerTradesInput
+    connect?: UserWhereUniqueInput
   }
 
   export type TransactionCreateNestedOneWithoutSellerTradeInput = {
@@ -19673,28 +19808,12 @@ export namespace Prisma {
     set?: $Enums.TradeStatus
   }
 
-  export type P2POfferUpdateOneRequiredWithoutTradesNestedInput = {
-    create?: XOR<P2POfferCreateWithoutTradesInput, P2POfferUncheckedCreateWithoutTradesInput>
-    connectOrCreate?: P2POfferCreateOrConnectWithoutTradesInput
-    upsert?: P2POfferUpsertWithoutTradesInput
-    connect?: P2POfferWhereUniqueInput
-    update?: XOR<XOR<P2POfferUpdateToOneWithWhereWithoutTradesInput, P2POfferUpdateWithoutTradesInput>, P2POfferUncheckedUpdateWithoutTradesInput>
-  }
-
   export type UserUpdateOneRequiredWithoutBuyerTradesNestedInput = {
     create?: XOR<UserCreateWithoutBuyerTradesInput, UserUncheckedCreateWithoutBuyerTradesInput>
     connectOrCreate?: UserCreateOrConnectWithoutBuyerTradesInput
     upsert?: UserUpsertWithoutBuyerTradesInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBuyerTradesInput, UserUpdateWithoutBuyerTradesInput>, UserUncheckedUpdateWithoutBuyerTradesInput>
-  }
-
-  export type UserUpdateOneRequiredWithoutSellerTradesNestedInput = {
-    create?: XOR<UserCreateWithoutSellerTradesInput, UserUncheckedCreateWithoutSellerTradesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSellerTradesInput
-    upsert?: UserUpsertWithoutSellerTradesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSellerTradesInput, UserUpdateWithoutSellerTradesInput>, UserUncheckedUpdateWithoutSellerTradesInput>
   }
 
   export type TransactionUpdateOneWithoutBuyerTradeNestedInput = {
@@ -19707,6 +19826,22 @@ export namespace Prisma {
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutBuyerTradeInput, TransactionUpdateWithoutBuyerTradeInput>, TransactionUncheckedUpdateWithoutBuyerTradeInput>
   }
 
+  export type P2POfferUpdateOneRequiredWithoutTradesNestedInput = {
+    create?: XOR<P2POfferCreateWithoutTradesInput, P2POfferUncheckedCreateWithoutTradesInput>
+    connectOrCreate?: P2POfferCreateOrConnectWithoutTradesInput
+    upsert?: P2POfferUpsertWithoutTradesInput
+    connect?: P2POfferWhereUniqueInput
+    update?: XOR<XOR<P2POfferUpdateToOneWithWhereWithoutTradesInput, P2POfferUpdateWithoutTradesInput>, P2POfferUncheckedUpdateWithoutTradesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSellerTradesNestedInput = {
+    create?: XOR<UserCreateWithoutSellerTradesInput, UserUncheckedCreateWithoutSellerTradesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSellerTradesInput
+    upsert?: UserUpsertWithoutSellerTradesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSellerTradesInput, UserUpdateWithoutSellerTradesInput>, UserUncheckedUpdateWithoutSellerTradesInput>
+  }
+
   export type TransactionUpdateOneWithoutSellerTradeNestedInput = {
     create?: XOR<TransactionCreateWithoutSellerTradeInput, TransactionUncheckedCreateWithoutSellerTradeInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutSellerTradeInput
@@ -19717,22 +19852,10 @@ export namespace Prisma {
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutSellerTradeInput, TransactionUpdateWithoutSellerTradeInput>, TransactionUncheckedUpdateWithoutSellerTradeInput>
   }
 
-  export type UserCreateNestedOneWithoutTransactionsInput = {
-    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type DepositCreateNestedOneWithoutTransactionInput = {
     create?: XOR<DepositCreateWithoutTransactionInput, DepositUncheckedCreateWithoutTransactionInput>
     connectOrCreate?: DepositCreateOrConnectWithoutTransactionInput
     connect?: DepositWhereUniqueInput
-  }
-
-  export type WithdrawalCreateNestedOneWithoutTransactionInput = {
-    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
-    connect?: WithdrawalWhereUniqueInput
   }
 
   export type OrderCreateNestedOneWithoutTransactionInput = {
@@ -19753,16 +19876,22 @@ export namespace Prisma {
     connect?: P2PTradeWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type WithdrawalCreateNestedOneWithoutTransactionInput = {
+    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
+    connect?: WithdrawalWhereUniqueInput
+  }
+
   export type DepositUncheckedCreateNestedOneWithoutTransactionInput = {
     create?: XOR<DepositCreateWithoutTransactionInput, DepositUncheckedCreateWithoutTransactionInput>
     connectOrCreate?: DepositCreateOrConnectWithoutTransactionInput
     connect?: DepositWhereUniqueInput
-  }
-
-  export type WithdrawalUncheckedCreateNestedOneWithoutTransactionInput = {
-    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
-    connect?: WithdrawalWhereUniqueInput
   }
 
   export type OrderUncheckedCreateNestedOneWithoutTransactionInput = {
@@ -19783,16 +19912,14 @@ export namespace Prisma {
     connect?: P2PTradeWhereUniqueInput
   }
 
-  export type EnumTransactionTypeFieldUpdateOperationsInput = {
-    set?: $Enums.TransactionType
+  export type WithdrawalUncheckedCreateNestedOneWithoutTransactionInput = {
+    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
+    connect?: WithdrawalWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutTransactionsNestedInput = {
-    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
-    upsert?: UserUpsertWithoutTransactionsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
+  export type EnumTransactionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.TransactionType
   }
 
   export type DepositUpdateOneWithoutTransactionNestedInput = {
@@ -19803,16 +19930,6 @@ export namespace Prisma {
     delete?: DepositWhereInput | boolean
     connect?: DepositWhereUniqueInput
     update?: XOR<XOR<DepositUpdateToOneWithWhereWithoutTransactionInput, DepositUpdateWithoutTransactionInput>, DepositUncheckedUpdateWithoutTransactionInput>
-  }
-
-  export type WithdrawalUpdateOneWithoutTransactionNestedInput = {
-    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
-    upsert?: WithdrawalUpsertWithoutTransactionInput
-    disconnect?: WithdrawalWhereInput | boolean
-    delete?: WithdrawalWhereInput | boolean
-    connect?: WithdrawalWhereUniqueInput
-    update?: XOR<XOR<WithdrawalUpdateToOneWithWhereWithoutTransactionInput, WithdrawalUpdateWithoutTransactionInput>, WithdrawalUncheckedUpdateWithoutTransactionInput>
   }
 
   export type OrderUpdateOneWithoutTransactionNestedInput = {
@@ -19845,6 +19962,24 @@ export namespace Prisma {
     update?: XOR<XOR<P2PTradeUpdateToOneWithWhereWithoutSellerTransactionInput, P2PTradeUpdateWithoutSellerTransactionInput>, P2PTradeUncheckedUpdateWithoutSellerTransactionInput>
   }
 
+  export type UserUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
+    upsert?: UserUpsertWithoutTransactionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type WithdrawalUpdateOneWithoutTransactionNestedInput = {
+    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
+    upsert?: WithdrawalUpsertWithoutTransactionInput
+    disconnect?: WithdrawalWhereInput | boolean
+    delete?: WithdrawalWhereInput | boolean
+    connect?: WithdrawalWhereUniqueInput
+    update?: XOR<XOR<WithdrawalUpdateToOneWithWhereWithoutTransactionInput, WithdrawalUpdateWithoutTransactionInput>, WithdrawalUncheckedUpdateWithoutTransactionInput>
+  }
+
   export type DepositUncheckedUpdateOneWithoutTransactionNestedInput = {
     create?: XOR<DepositCreateWithoutTransactionInput, DepositUncheckedCreateWithoutTransactionInput>
     connectOrCreate?: DepositCreateOrConnectWithoutTransactionInput
@@ -19853,16 +19988,6 @@ export namespace Prisma {
     delete?: DepositWhereInput | boolean
     connect?: DepositWhereUniqueInput
     update?: XOR<XOR<DepositUpdateToOneWithWhereWithoutTransactionInput, DepositUpdateWithoutTransactionInput>, DepositUncheckedUpdateWithoutTransactionInput>
-  }
-
-  export type WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput = {
-    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
-    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
-    upsert?: WithdrawalUpsertWithoutTransactionInput
-    disconnect?: WithdrawalWhereInput | boolean
-    delete?: WithdrawalWhereInput | boolean
-    connect?: WithdrawalWhereUniqueInput
-    update?: XOR<XOR<WithdrawalUpdateToOneWithWhereWithoutTransactionInput, WithdrawalUpdateWithoutTransactionInput>, WithdrawalUncheckedUpdateWithoutTransactionInput>
   }
 
   export type OrderUncheckedUpdateOneWithoutTransactionNestedInput = {
@@ -19895,6 +20020,16 @@ export namespace Prisma {
     update?: XOR<XOR<P2PTradeUpdateToOneWithWhereWithoutSellerTransactionInput, P2PTradeUpdateWithoutSellerTransactionInput>, P2PTradeUncheckedUpdateWithoutSellerTransactionInput>
   }
 
+  export type WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput = {
+    create?: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: WithdrawalCreateOrConnectWithoutTransactionInput
+    upsert?: WithdrawalUpsertWithoutTransactionInput
+    disconnect?: WithdrawalWhereInput | boolean
+    delete?: WithdrawalWhereInput | boolean
+    connect?: WithdrawalWhereUniqueInput
+    update?: XOR<XOR<WithdrawalUpdateToOneWithWhereWithoutTransactionInput, WithdrawalUpdateWithoutTransactionInput>, WithdrawalUncheckedUpdateWithoutTransactionInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -19909,11 +20044,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -19926,6 +20056,18 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumApprovalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusFilter<$PrismaModel> | $Enums.ApprovalStatus
   }
 
   export type NestedEnumKYCStatusFilter<$PrismaModel = never> = {
@@ -19974,14 +20116,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -20008,6 +20142,24 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApprovalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumApprovalStatusFilter<$PrismaModel>
+    _max?: NestedEnumApprovalStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumKYCStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -20268,36 +20420,6 @@ export namespace Prisma {
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
   }
 
-  export type SessionCreateWithoutUserInput = {
-    id: string
-    expiresAt: Date | string
-    token: string
-    createdAt: Date | string
-    updatedAt: Date | string
-    ipAddress?: string | null
-    userAgent?: string | null
-  }
-
-  export type SessionUncheckedCreateWithoutUserInput = {
-    id: string
-    expiresAt: Date | string
-    token: string
-    createdAt: Date | string
-    updatedAt: Date | string
-    ipAddress?: string | null
-    userAgent?: string | null
-  }
-
-  export type SessionCreateOrConnectWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionCreateManyUserInputEnvelope = {
-    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type AccountCreateWithoutUserInput = {
     id: string
     accountId: string
@@ -20404,44 +20526,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type WithdrawalCreateWithoutUserInput = {
-    id?: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    status?: $Enums.WithdrawalStatus
-    paymentMethod: string
-    externalId?: string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transaction?: TransactionCreateNestedOneWithoutWithdrawalInput
-  }
-
-  export type WithdrawalUncheckedCreateWithoutUserInput = {
-    id?: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    status?: $Enums.WithdrawalStatus
-    paymentMethod: string
-    externalId?: string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transactionId?: string | null
-  }
-
-  export type WithdrawalCreateOrConnectWithoutUserInput = {
-    where: WithdrawalWhereUniqueInput
-    create: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput>
-  }
-
-  export type WithdrawalCreateManyUserInputEnvelope = {
-    data: WithdrawalCreateManyUserInput | WithdrawalCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type OrderCreateWithoutUserInput = {
     id?: string
     type: $Enums.OrderType
@@ -20542,9 +20626,9 @@ export namespace Prisma {
     expiresAt: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    buyerTransaction?: TransactionCreateNestedOneWithoutBuyerTradeInput
     offer: P2POfferCreateNestedOneWithoutTradesInput
     seller: UserCreateNestedOneWithoutSellerTradesInput
-    buyerTransaction?: TransactionCreateNestedOneWithoutBuyerTradeInput
     sellerTransaction?: TransactionCreateNestedOneWithoutSellerTradeInput
   }
 
@@ -20588,9 +20672,9 @@ export namespace Prisma {
     expiresAt: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    offer: P2POfferCreateNestedOneWithoutTradesInput
     buyer: UserCreateNestedOneWithoutBuyerTradesInput
     buyerTransaction?: TransactionCreateNestedOneWithoutBuyerTradeInput
+    offer: P2POfferCreateNestedOneWithoutTradesInput
     sellerTransaction?: TransactionCreateNestedOneWithoutSellerTradeInput
   }
 
@@ -20622,6 +20706,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SessionCreateWithoutUserInput = {
+    id: string
+    expiresAt: Date | string
+    token: string
+    createdAt: Date | string
+    updatedAt: Date | string
+    ipAddress?: string | null
+    userAgent?: string | null
+  }
+
+  export type SessionUncheckedCreateWithoutUserInput = {
+    id: string
+    expiresAt: Date | string
+    token: string
+    createdAt: Date | string
+    updatedAt: Date | string
+    ipAddress?: string | null
+    userAgent?: string | null
+  }
+
+  export type SessionCreateOrConnectWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TransactionCreateWithoutUserInput = {
     id?: string
     type: $Enums.TransactionType
@@ -20632,10 +20746,10 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     deposit?: DepositCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
     order?: OrderCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
+    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutUserInput = {
@@ -20648,10 +20762,10 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     deposit?: DepositUncheckedCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
     order?: OrderUncheckedCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeUncheckedCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeUncheckedCreateNestedOneWithoutSellerTransactionInput
+    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutUserInput = {
@@ -20664,34 +20778,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  export type WithdrawalCreateWithoutUserInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.WithdrawalStatus
+    paymentMethod: string
+    externalId?: string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transaction?: TransactionCreateNestedOneWithoutWithdrawalInput
   }
 
-  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  export type WithdrawalUncheckedCreateWithoutUserInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.WithdrawalStatus
+    paymentMethod: string
+    externalId?: string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactionId?: string | null
   }
 
-  export type SessionUpdateManyWithWhereWithoutUserInput = {
-    where: SessionScalarWhereInput
-    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  export type WithdrawalCreateOrConnectWithoutUserInput = {
+    where: WithdrawalWhereUniqueInput
+    create: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput>
   }
 
-  export type SessionScalarWhereInput = {
-    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    OR?: SessionScalarWhereInput[]
-    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    id?: StringFilter<"Session"> | string
-    expiresAt?: DateTimeFilter<"Session"> | Date | string
-    token?: StringFilter<"Session"> | string
-    createdAt?: DateTimeFilter<"Session"> | Date | string
-    updatedAt?: DateTimeFilter<"Session"> | Date | string
-    ipAddress?: StringNullableFilter<"Session"> | string | null
-    userAgent?: StringNullableFilter<"Session"> | string | null
-    userId?: StringFilter<"Session"> | string
+  export type WithdrawalCreateManyUserInputEnvelope = {
+    data: WithdrawalCreateManyUserInput | WithdrawalCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -20790,40 +20912,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeFilter<"Deposit"> | Date | string
     transactionId?: StringNullableFilter<"Deposit"> | string | null
-  }
-
-  export type WithdrawalUpsertWithWhereUniqueWithoutUserInput = {
-    where: WithdrawalWhereUniqueInput
-    update: XOR<WithdrawalUpdateWithoutUserInput, WithdrawalUncheckedUpdateWithoutUserInput>
-    create: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput>
-  }
-
-  export type WithdrawalUpdateWithWhereUniqueWithoutUserInput = {
-    where: WithdrawalWhereUniqueInput
-    data: XOR<WithdrawalUpdateWithoutUserInput, WithdrawalUncheckedUpdateWithoutUserInput>
-  }
-
-  export type WithdrawalUpdateManyWithWhereWithoutUserInput = {
-    where: WithdrawalScalarWhereInput
-    data: XOR<WithdrawalUpdateManyMutationInput, WithdrawalUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type WithdrawalScalarWhereInput = {
-    AND?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
-    OR?: WithdrawalScalarWhereInput[]
-    NOT?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
-    id?: StringFilter<"Withdrawal"> | string
-    userId?: StringFilter<"Withdrawal"> | string
-    amount?: DecimalFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string
-    currency?: StringFilter<"Withdrawal"> | string
-    status?: EnumWithdrawalStatusFilter<"Withdrawal"> | $Enums.WithdrawalStatus
-    paymentMethod?: StringFilter<"Withdrawal"> | string
-    externalId?: StringNullableFilter<"Withdrawal"> | string | null
-    bankAccount?: JsonNullableFilter<"Withdrawal">
-    processedAt?: DateTimeNullableFilter<"Withdrawal"> | Date | string | null
-    createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
-    updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
-    transactionId?: StringNullableFilter<"Withdrawal"> | string | null
   }
 
   export type OrderUpsertWithWhereUniqueWithoutUserInput = {
@@ -20953,6 +21041,36 @@ export namespace Prisma {
     data: XOR<P2PTradeUpdateManyMutationInput, P2PTradeUncheckedUpdateManyWithoutSellerInput>
   }
 
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
+    token?: StringFilter<"Session"> | string
+    createdAt?: DateTimeFilter<"Session"> | Date | string
+    updatedAt?: DateTimeFilter<"Session"> | Date | string
+    ipAddress?: StringNullableFilter<"Session"> | string | null
+    userAgent?: StringNullableFilter<"Session"> | string | null
+    userId?: StringFilter<"Session"> | string
+  }
+
   export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
     where: TransactionWhereUniqueInput
     update: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
@@ -20984,11 +21102,48 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
   }
 
+  export type WithdrawalUpsertWithWhereUniqueWithoutUserInput = {
+    where: WithdrawalWhereUniqueInput
+    update: XOR<WithdrawalUpdateWithoutUserInput, WithdrawalUncheckedUpdateWithoutUserInput>
+    create: XOR<WithdrawalCreateWithoutUserInput, WithdrawalUncheckedCreateWithoutUserInput>
+  }
+
+  export type WithdrawalUpdateWithWhereUniqueWithoutUserInput = {
+    where: WithdrawalWhereUniqueInput
+    data: XOR<WithdrawalUpdateWithoutUserInput, WithdrawalUncheckedUpdateWithoutUserInput>
+  }
+
+  export type WithdrawalUpdateManyWithWhereWithoutUserInput = {
+    where: WithdrawalScalarWhereInput
+    data: XOR<WithdrawalUpdateManyMutationInput, WithdrawalUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type WithdrawalScalarWhereInput = {
+    AND?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
+    OR?: WithdrawalScalarWhereInput[]
+    NOT?: WithdrawalScalarWhereInput | WithdrawalScalarWhereInput[]
+    id?: StringFilter<"Withdrawal"> | string
+    userId?: StringFilter<"Withdrawal"> | string
+    amount?: DecimalFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string
+    currency?: StringFilter<"Withdrawal"> | string
+    status?: EnumWithdrawalStatusFilter<"Withdrawal"> | $Enums.WithdrawalStatus
+    paymentMethod?: StringFilter<"Withdrawal"> | string
+    externalId?: StringNullableFilter<"Withdrawal"> | string | null
+    bankAccount?: JsonNullableFilter<"Withdrawal">
+    processedAt?: DateTimeNullableFilter<"Withdrawal"> | Date | string | null
+    createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
+    updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
+    transactionId?: StringNullableFilter<"Withdrawal"> | string | null
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -20997,19 +21152,22 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     balances?: BalanceCreateNestedManyWithoutUserInput
     deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -21018,12 +21176,12 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
     deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -21046,7 +21204,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -21055,19 +21216,22 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     balances?: BalanceUpdateManyWithoutUserNestedInput
     deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
@@ -21076,54 +21240,60 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
     deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     balances?: BalanceCreateNestedManyWithoutUserInput
     deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
     deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -21146,84 +21316,96 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     balances?: BalanceUpdateManyWithoutUserNestedInput
     deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
     deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutBalancesInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBalancesInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBalancesInput = {
@@ -21246,89 +21428,48 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBalancesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutDepositsInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    balances?: BalanceCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
-    orders?: OrderCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutDepositsInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
-    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutDepositsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutDepositsInput, UserUncheckedCreateWithoutDepositsInput>
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionCreateWithoutDepositInput = {
@@ -21340,11 +21481,11 @@ export namespace Prisma {
     description: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
-    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
     order?: OrderCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
+    user: UserCreateNestedOneWithoutTransactionsInput
+    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutDepositInput = {
@@ -21357,10 +21498,10 @@ export namespace Prisma {
     description: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
     order?: OrderUncheckedCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeUncheckedCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeUncheckedCreateNestedOneWithoutSellerTransactionInput
+    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutDepositInput = {
@@ -21368,57 +21509,57 @@ export namespace Prisma {
     create: XOR<TransactionCreateWithoutDepositInput, TransactionUncheckedCreateWithoutDepositInput>
   }
 
-  export type UserUpsertWithoutDepositsInput = {
-    update: XOR<UserUpdateWithoutDepositsInput, UserUncheckedUpdateWithoutDepositsInput>
+  export type UserCreateWithoutDepositsInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    balances?: BalanceCreateNestedManyWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDepositsInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDepositsInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutDepositsInput, UserUncheckedCreateWithoutDepositsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutDepositsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutDepositsInput, UserUncheckedUpdateWithoutDepositsInput>
-  }
-
-  export type UserUpdateWithoutDepositsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    balances?: BalanceUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
-    orders?: OrderUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutDepositsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionUpsertWithoutDepositInput = {
@@ -21441,11 +21582,11 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
-    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
     order?: OrderUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
+    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutDepositInput = {
@@ -21458,57 +21599,69 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
     order?: OrderUncheckedUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUncheckedUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
+    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
-  export type UserCreateWithoutWithdrawalsInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
+  export type UserUpsertWithoutDepositsInput = {
+    update: XOR<UserUpdateWithoutDepositsInput, UserUncheckedUpdateWithoutDepositsInput>
+    create: XOR<UserCreateWithoutDepositsInput, UserUncheckedCreateWithoutDepositsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDepositsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDepositsInput, UserUncheckedUpdateWithoutDepositsInput>
+  }
+
+  export type UserUpdateWithoutDepositsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    balances?: BalanceCreateNestedManyWithoutUserInput
-    deposits?: DepositCreateNestedManyWithoutUserInput
-    orders?: OrderCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    balances?: BalanceUpdateManyWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUncheckedCreateWithoutWithdrawalsInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
+  export type UserUncheckedUpdateWithoutDepositsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
-    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutWithdrawalsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionCreateWithoutWithdrawalInput = {
@@ -21520,11 +21673,11 @@ export namespace Prisma {
     description: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
     deposit?: DepositCreateNestedOneWithoutTransactionInput
     order?: OrderCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
+    user: UserCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutWithdrawalInput = {
@@ -21548,57 +21701,57 @@ export namespace Prisma {
     create: XOR<TransactionCreateWithoutWithdrawalInput, TransactionUncheckedCreateWithoutWithdrawalInput>
   }
 
-  export type UserUpsertWithoutWithdrawalsInput = {
-    update: XOR<UserUpdateWithoutWithdrawalsInput, UserUncheckedUpdateWithoutWithdrawalsInput>
+  export type UserCreateWithoutWithdrawalsInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    balances?: BalanceCreateNestedManyWithoutUserInput
+    deposits?: DepositCreateNestedManyWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutWithdrawalsInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
+    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutWithdrawalsInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutWithdrawalsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutWithdrawalsInput, UserUncheckedUpdateWithoutWithdrawalsInput>
-  }
-
-  export type UserUpdateWithoutWithdrawalsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    balances?: BalanceUpdateManyWithoutUserNestedInput
-    deposits?: DepositUpdateManyWithoutUserNestedInput
-    orders?: OrderUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutWithdrawalsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
-    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionUpsertWithoutWithdrawalInput = {
@@ -21621,11 +21774,11 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
     deposit?: DepositUpdateOneWithoutTransactionNestedInput
     order?: OrderUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
+    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutWithdrawalInput = {
@@ -21644,51 +21797,63 @@ export namespace Prisma {
     sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
   }
 
-  export type UserCreateWithoutOrdersInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    balances?: BalanceCreateNestedManyWithoutUserInput
-    deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+  export type UserUpsertWithoutWithdrawalsInput = {
+    update: XOR<UserUpdateWithoutWithdrawalsInput, UserUncheckedUpdateWithoutWithdrawalsInput>
+    create: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+    where?: UserWhereInput
   }
 
-  export type UserUncheckedCreateWithoutOrdersInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
-    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+  export type UserUpdateToOneWithWhereWithoutWithdrawalsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutWithdrawalsInput, UserUncheckedUpdateWithoutWithdrawalsInput>
   }
 
-  export type UserCreateOrConnectWithoutOrdersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
+  export type UserUpdateWithoutWithdrawalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    balances?: BalanceUpdateManyWithoutUserNestedInput
+    deposits?: DepositUpdateManyWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutWithdrawalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
+    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionCreateWithoutOrderInput = {
@@ -21700,11 +21865,11 @@ export namespace Prisma {
     description: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
     deposit?: DepositCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
+    user: UserCreateNestedOneWithoutTransactionsInput
+    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutOrderInput = {
@@ -21718,9 +21883,9 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     deposit?: DepositUncheckedCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeUncheckedCreateNestedOneWithoutBuyerTransactionInput
     sellerTrade?: P2PTradeUncheckedCreateNestedOneWithoutSellerTransactionInput
+    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutOrderInput = {
@@ -21728,57 +21893,57 @@ export namespace Prisma {
     create: XOR<TransactionCreateWithoutOrderInput, TransactionUncheckedCreateWithoutOrderInput>
   }
 
-  export type UserUpsertWithoutOrdersInput = {
-    update: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
+  export type UserCreateWithoutOrdersInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    balances?: BalanceCreateNestedManyWithoutUserInput
+    deposits?: DepositCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutOrdersInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
+    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutOrdersInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutOrdersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
-  }
-
-  export type UserUpdateWithoutOrdersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    balances?: BalanceUpdateManyWithoutUserNestedInput
-    deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutOrdersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
-    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionUpsertWithoutOrderInput = {
@@ -21801,11 +21966,11 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
     deposit?: DepositUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
+    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutOrderInput = {
@@ -21819,51 +21984,116 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deposit?: DepositUncheckedUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUncheckedUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
+    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
+  }
+
+  export type UserUpsertWithoutOrdersInput = {
+    update: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
+    create: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOrdersInput, UserUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type UserUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    balances?: BalanceUpdateManyWithoutUserNestedInput
+    deposits?: DepositUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
+    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutP2pOffersInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     balances?: BalanceCreateNestedManyWithoutUserInput
     deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutP2pOffersInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
     deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
     sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutP2pOffersInput = {
@@ -21884,8 +22114,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     buyer: UserCreateNestedOneWithoutBuyerTradesInput
-    seller: UserCreateNestedOneWithoutSellerTradesInput
     buyerTransaction?: TransactionCreateNestedOneWithoutBuyerTradeInput
+    seller: UserCreateNestedOneWithoutSellerTradesInput
     sellerTransaction?: TransactionCreateNestedOneWithoutSellerTradeInput
   }
 
@@ -21932,42 +22162,48 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     balances?: BalanceUpdateManyWithoutUserNestedInput
     deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutP2pOffersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
     deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
     sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type P2PTradeUpsertWithWhereUniqueWithoutOfferInput = {
@@ -21984,6 +22220,96 @@ export namespace Prisma {
   export type P2PTradeUpdateManyWithWhereWithoutOfferInput = {
     where: P2PTradeScalarWhereInput
     data: XOR<P2PTradeUpdateManyMutationInput, P2PTradeUncheckedUpdateManyWithoutOfferInput>
+  }
+
+  export type UserCreateWithoutBuyerTradesInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    balances?: BalanceCreateNestedManyWithoutUserInput
+    deposits?: DepositCreateNestedManyWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
+    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBuyerTradesInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
+    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
+    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBuyerTradesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBuyerTradesInput, UserUncheckedCreateWithoutBuyerTradesInput>
+  }
+
+  export type TransactionCreateWithoutBuyerTradeInput = {
+    id?: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    balance: Decimal | DecimalJsLike | number | string
+    description: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    deposit?: DepositCreateNestedOneWithoutTransactionInput
+    order?: OrderCreateNestedOneWithoutTransactionInput
+    sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
+    user: UserCreateNestedOneWithoutTransactionsInput
+    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
+  }
+
+  export type TransactionUncheckedCreateWithoutBuyerTradeInput = {
+    id?: string
+    userId: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    balance: Decimal | DecimalJsLike | number | string
+    description: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    deposit?: DepositUncheckedCreateNestedOneWithoutTransactionInput
+    order?: OrderUncheckedCreateNestedOneWithoutTransactionInput
+    sellerTrade?: P2PTradeUncheckedCreateNestedOneWithoutSellerTransactionInput
+    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
+  }
+
+  export type TransactionCreateOrConnectWithoutBuyerTradeInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutBuyerTradeInput, TransactionUncheckedCreateWithoutBuyerTradeInput>
   }
 
   export type P2POfferCreateWithoutTradesInput = {
@@ -22027,135 +22353,57 @@ export namespace Prisma {
     create: XOR<P2POfferCreateWithoutTradesInput, P2POfferUncheckedCreateWithoutTradesInput>
   }
 
-  export type UserCreateWithoutBuyerTradesInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    balances?: BalanceCreateNestedManyWithoutUserInput
-    deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
-    orders?: OrderCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
-    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutBuyerTradesInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
-    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
-    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
-    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutBuyerTradesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutBuyerTradesInput, UserUncheckedCreateWithoutBuyerTradesInput>
-  }
-
   export type UserCreateWithoutSellerTradesInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     balances?: BalanceCreateNestedManyWithoutUserInput
     deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSellerTradesInput = {
     id: string
     name: string
     email: string
+    cpf?: string | null
+    password?: string | null
     emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt: Date | string
     updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
     deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
     buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSellerTradesInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutSellerTradesInput, UserUncheckedCreateWithoutSellerTradesInput>
-  }
-
-  export type TransactionCreateWithoutBuyerTradeInput = {
-    id?: string
-    type: $Enums.TransactionType
-    amount: Decimal | DecimalJsLike | number | string
-    currency: string
-    balance: Decimal | DecimalJsLike | number | string
-    description: string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
-    deposit?: DepositCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
-    order?: OrderCreateNestedOneWithoutTransactionInput
-    sellerTrade?: P2PTradeCreateNestedOneWithoutSellerTransactionInput
-  }
-
-  export type TransactionUncheckedCreateWithoutBuyerTradeInput = {
-    id?: string
-    userId: string
-    type: $Enums.TransactionType
-    amount: Decimal | DecimalJsLike | number | string
-    currency: string
-    balance: Decimal | DecimalJsLike | number | string
-    description: string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    deposit?: DepositUncheckedCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
-    order?: OrderUncheckedCreateNestedOneWithoutTransactionInput
-    sellerTrade?: P2PTradeUncheckedCreateNestedOneWithoutSellerTransactionInput
-  }
-
-  export type TransactionCreateOrConnectWithoutBuyerTradeInput = {
-    where: TransactionWhereUniqueInput
-    create: XOR<TransactionCreateWithoutBuyerTradeInput, TransactionUncheckedCreateWithoutBuyerTradeInput>
   }
 
   export type TransactionCreateWithoutSellerTradeInput = {
@@ -22167,11 +22415,11 @@ export namespace Prisma {
     description: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
     deposit?: DepositCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
     order?: OrderCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeCreateNestedOneWithoutBuyerTransactionInput
+    user: UserCreateNestedOneWithoutTransactionsInput
+    withdrawal?: WithdrawalCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutSellerTradeInput = {
@@ -22185,14 +22433,116 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     deposit?: DepositUncheckedCreateNestedOneWithoutTransactionInput
-    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
     order?: OrderUncheckedCreateNestedOneWithoutTransactionInput
     buyerTrade?: P2PTradeUncheckedCreateNestedOneWithoutBuyerTransactionInput
+    withdrawal?: WithdrawalUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutSellerTradeInput = {
     where: TransactionWhereUniqueInput
     create: XOR<TransactionCreateWithoutSellerTradeInput, TransactionUncheckedCreateWithoutSellerTradeInput>
+  }
+
+  export type UserUpsertWithoutBuyerTradesInput = {
+    update: XOR<UserUpdateWithoutBuyerTradesInput, UserUncheckedUpdateWithoutBuyerTradesInput>
+    create: XOR<UserCreateWithoutBuyerTradesInput, UserUncheckedCreateWithoutBuyerTradesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBuyerTradesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBuyerTradesInput, UserUncheckedUpdateWithoutBuyerTradesInput>
+  }
+
+  export type UserUpdateWithoutBuyerTradesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    balances?: BalanceUpdateManyWithoutUserNestedInput
+    deposits?: DepositUpdateManyWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
+    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBuyerTradesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
+    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
+    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TransactionUpsertWithoutBuyerTradeInput = {
+    update: XOR<TransactionUpdateWithoutBuyerTradeInput, TransactionUncheckedUpdateWithoutBuyerTradeInput>
+    create: XOR<TransactionCreateWithoutBuyerTradeInput, TransactionUncheckedCreateWithoutBuyerTradeInput>
+    where?: TransactionWhereInput
+  }
+
+  export type TransactionUpdateToOneWithWhereWithoutBuyerTradeInput = {
+    where?: TransactionWhereInput
+    data: XOR<TransactionUpdateWithoutBuyerTradeInput, TransactionUncheckedUpdateWithoutBuyerTradeInput>
+  }
+
+  export type TransactionUpdateWithoutBuyerTradeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deposit?: DepositUpdateOneWithoutTransactionNestedInput
+    order?: OrderUpdateOneWithoutTransactionNestedInput
+    sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
+    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutBuyerTradeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    description?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deposit?: DepositUncheckedUpdateOneWithoutTransactionNestedInput
+    order?: OrderUncheckedUpdateOneWithoutTransactionNestedInput
+    sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
+    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
   export type P2POfferUpsertWithoutTradesInput = {
@@ -22242,59 +22592,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserUpsertWithoutBuyerTradesInput = {
-    update: XOR<UserUpdateWithoutBuyerTradesInput, UserUncheckedUpdateWithoutBuyerTradesInput>
-    create: XOR<UserCreateWithoutBuyerTradesInput, UserUncheckedCreateWithoutBuyerTradesInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutBuyerTradesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutBuyerTradesInput, UserUncheckedUpdateWithoutBuyerTradesInput>
-  }
-
-  export type UserUpdateWithoutBuyerTradesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    balances?: BalanceUpdateManyWithoutUserNestedInput
-    deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
-    orders?: OrderUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
-    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutBuyerTradesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
-    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
-    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
   export type UserUpsertWithoutSellerTradesInput = {
     update: XOR<UserUpdateWithoutSellerTradesInput, UserUncheckedUpdateWithoutSellerTradesInput>
     create: XOR<UserCreateWithoutSellerTradesInput, UserUncheckedCreateWithoutSellerTradesInput>
@@ -22310,85 +22607,48 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     balances?: BalanceUpdateManyWithoutUserNestedInput
     deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSellerTradesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
     deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
     buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type TransactionUpsertWithoutBuyerTradeInput = {
-    update: XOR<TransactionUpdateWithoutBuyerTradeInput, TransactionUncheckedUpdateWithoutBuyerTradeInput>
-    create: XOR<TransactionCreateWithoutBuyerTradeInput, TransactionUncheckedCreateWithoutBuyerTradeInput>
-    where?: TransactionWhereInput
-  }
-
-  export type TransactionUpdateToOneWithWhereWithoutBuyerTradeInput = {
-    where?: TransactionWhereInput
-    data: XOR<TransactionUpdateWithoutBuyerTradeInput, TransactionUncheckedUpdateWithoutBuyerTradeInput>
-  }
-
-  export type TransactionUpdateWithoutBuyerTradeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    description?: StringFieldUpdateOperationsInput | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
-    deposit?: DepositUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
-    order?: OrderUpdateOneWithoutTransactionNestedInput
-    sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
-  }
-
-  export type TransactionUncheckedUpdateWithoutBuyerTradeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    description?: StringFieldUpdateOperationsInput | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    deposit?: DepositUncheckedUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
-    order?: OrderUncheckedUpdateOneWithoutTransactionNestedInput
-    sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionUpsertWithoutSellerTradeInput = {
@@ -22411,11 +22671,11 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
     deposit?: DepositUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
     order?: OrderUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUpdateOneWithoutBuyerTransactionNestedInput
+    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutSellerTradeInput = {
@@ -22429,56 +22689,9 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deposit?: DepositUncheckedUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
     order?: OrderUncheckedUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUncheckedUpdateOneWithoutBuyerTransactionNestedInput
-  }
-
-  export type UserCreateWithoutTransactionsInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    balances?: BalanceCreateNestedManyWithoutUserInput
-    deposits?: DepositCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
-    orders?: OrderCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
-  }
-
-  export type UserUncheckedCreateWithoutTransactionsInput = {
-    id: string
-    name: string
-    email: string
-    emailVerified: boolean
-    image?: string | null
-    kycStatus?: $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-    updatedAt: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
-    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
-    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
-    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
-    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
-    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
-    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
-  }
-
-  export type UserCreateOrConnectWithoutTransactionsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
   export type DepositCreateWithoutTransactionInput = {
@@ -22512,39 +22725,6 @@ export namespace Prisma {
   export type DepositCreateOrConnectWithoutTransactionInput = {
     where: DepositWhereUniqueInput
     create: XOR<DepositCreateWithoutTransactionInput, DepositUncheckedCreateWithoutTransactionInput>
-  }
-
-  export type WithdrawalCreateWithoutTransactionInput = {
-    id?: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    status?: $Enums.WithdrawalStatus
-    paymentMethod: string
-    externalId?: string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutWithdrawalsInput
-  }
-
-  export type WithdrawalUncheckedCreateWithoutTransactionInput = {
-    id?: string
-    userId: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    status?: $Enums.WithdrawalStatus
-    paymentMethod: string
-    externalId?: string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type WithdrawalCreateOrConnectWithoutTransactionInput = {
-    where: WithdrawalWhereUniqueInput
-    create: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
   }
 
   export type OrderCreateWithoutTransactionInput = {
@@ -22596,8 +22776,8 @@ export namespace Prisma {
     expiresAt: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    offer: P2POfferCreateNestedOneWithoutTradesInput
     buyer: UserCreateNestedOneWithoutBuyerTradesInput
+    offer: P2POfferCreateNestedOneWithoutTradesInput
     seller: UserCreateNestedOneWithoutSellerTradesInput
     sellerTransaction?: TransactionCreateNestedOneWithoutSellerTradeInput
   }
@@ -22637,10 +22817,10 @@ export namespace Prisma {
     expiresAt: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    offer: P2POfferCreateNestedOneWithoutTradesInput
     buyer: UserCreateNestedOneWithoutBuyerTradesInput
-    seller: UserCreateNestedOneWithoutSellerTradesInput
     buyerTransaction?: TransactionCreateNestedOneWithoutBuyerTradeInput
+    offer: P2POfferCreateNestedOneWithoutTradesInput
+    seller: UserCreateNestedOneWithoutSellerTradesInput
   }
 
   export type P2PTradeUncheckedCreateWithoutSellerTransactionInput = {
@@ -22666,57 +22846,90 @@ export namespace Prisma {
     create: XOR<P2PTradeCreateWithoutSellerTransactionInput, P2PTradeUncheckedCreateWithoutSellerTransactionInput>
   }
 
-  export type UserUpsertWithoutTransactionsInput = {
-    update: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+  export type UserCreateWithoutTransactionsInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    balances?: BalanceCreateNestedManyWithoutUserInput
+    deposits?: DepositCreateNestedManyWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeCreateNestedManyWithoutSellerInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTransactionsInput = {
+    id: string
+    name: string
+    email: string
+    cpf?: string | null
+    password?: string | null
+    emailVerified: boolean
+    approvalStatus?: $Enums.ApprovalStatus
+    image?: string | null
+    kycStatus?: $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
+    deposits?: DepositUncheckedCreateNestedManyWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    p2pOffers?: P2POfferUncheckedCreateNestedManyWithoutUserInput
+    buyerTrades?: P2PTradeUncheckedCreateNestedManyWithoutBuyerInput
+    sellerTrades?: P2PTradeUncheckedCreateNestedManyWithoutSellerInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTransactionsInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutTransactionsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+  export type WithdrawalCreateWithoutTransactionInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.WithdrawalStatus
+    paymentMethod: string
+    externalId?: string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutWithdrawalsInput
   }
 
-  export type UserUpdateWithoutTransactionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    balances?: BalanceUpdateManyWithoutUserNestedInput
-    deposits?: DepositUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
-    orders?: OrderUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+  export type WithdrawalUncheckedCreateWithoutTransactionInput = {
+    id?: string
+    userId: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.WithdrawalStatus
+    paymentMethod: string
+    externalId?: string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type UserUncheckedUpdateWithoutTransactionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
-    kycData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
-    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
-    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
-    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
-    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
-    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+  export type WithdrawalCreateOrConnectWithoutTransactionInput = {
+    where: WithdrawalWhereUniqueInput
+    create: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
   }
 
   export type DepositUpsertWithoutTransactionInput = {
@@ -22754,45 +22967,6 @@ export namespace Prisma {
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     proofUrl?: NullableStringFieldUpdateOperationsInput | string | null
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WithdrawalUpsertWithoutTransactionInput = {
-    update: XOR<WithdrawalUpdateWithoutTransactionInput, WithdrawalUncheckedUpdateWithoutTransactionInput>
-    create: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
-    where?: WithdrawalWhereInput
-  }
-
-  export type WithdrawalUpdateToOneWithWhereWithoutTransactionInput = {
-    where?: WithdrawalWhereInput
-    data: XOR<WithdrawalUpdateWithoutTransactionInput, WithdrawalUncheckedUpdateWithoutTransactionInput>
-  }
-
-  export type WithdrawalUpdateWithoutTransactionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
-  }
-
-  export type WithdrawalUncheckedUpdateWithoutTransactionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22863,8 +23037,8 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     buyer?: UserUpdateOneRequiredWithoutBuyerTradesNestedInput
+    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
     sellerTransaction?: TransactionUpdateOneWithoutSellerTradeNestedInput
   }
@@ -22910,10 +23084,10 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     buyer?: UserUpdateOneRequiredWithoutBuyerTradesNestedInput
-    seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
     buyerTransaction?: TransactionUpdateOneWithoutBuyerTradeNestedInput
+    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
+    seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
   }
 
   export type P2PTradeUncheckedUpdateWithoutSellerTransactionInput = {
@@ -22934,14 +23108,102 @@ export namespace Prisma {
     buyerTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type SessionCreateManyUserInput = {
-    id: string
-    expiresAt: Date | string
-    token: string
-    createdAt: Date | string
-    updatedAt: Date | string
-    ipAddress?: string | null
-    userAgent?: string | null
+  export type UserUpsertWithoutTransactionsInput = {
+    update: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type UserUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    balances?: BalanceUpdateManyWithoutUserNestedInput
+    deposits?: DepositUpdateManyWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
+    kycData?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
+    deposits?: DepositUncheckedUpdateManyWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    p2pOffers?: P2POfferUncheckedUpdateManyWithoutUserNestedInput
+    buyerTrades?: P2PTradeUncheckedUpdateManyWithoutBuyerNestedInput
+    sellerTrades?: P2PTradeUncheckedUpdateManyWithoutSellerNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type WithdrawalUpsertWithoutTransactionInput = {
+    update: XOR<WithdrawalUpdateWithoutTransactionInput, WithdrawalUncheckedUpdateWithoutTransactionInput>
+    create: XOR<WithdrawalCreateWithoutTransactionInput, WithdrawalUncheckedCreateWithoutTransactionInput>
+    where?: WithdrawalWhereInput
+  }
+
+  export type WithdrawalUpdateToOneWithWhereWithoutTransactionInput = {
+    where?: WithdrawalWhereInput
+    data: XOR<WithdrawalUpdateWithoutTransactionInput, WithdrawalUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type WithdrawalUpdateWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
+  }
+
+  export type WithdrawalUncheckedUpdateWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountCreateManyUserInput = {
@@ -22977,20 +23239,6 @@ export namespace Prisma {
     externalId?: string | null
     proofUrl?: string | null
     confirmedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transactionId?: string | null
-  }
-
-  export type WithdrawalCreateManyUserInput = {
-    id?: string
-    amount: Decimal | DecimalJsLike | number | string
-    currency?: string
-    status?: $Enums.WithdrawalStatus
-    paymentMethod: string
-    externalId?: string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
@@ -23065,6 +23313,16 @@ export namespace Prisma {
     sellerTransactionId?: string | null
   }
 
+  export type SessionCreateManyUserInput = {
+    id: string
+    expiresAt: Date | string
+    token: string
+    createdAt: Date | string
+    updatedAt: Date | string
+    ipAddress?: string | null
+    userAgent?: string | null
+  }
+
   export type TransactionCreateManyUserInput = {
     id?: string
     type: $Enums.TransactionType
@@ -23076,34 +23334,18 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type SessionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type SessionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+  export type WithdrawalCreateManyUserInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: $Enums.WithdrawalStatus
+    paymentMethod: string
+    externalId?: string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactionId?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -23215,48 +23457,6 @@ export namespace Prisma {
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     proofUrl?: NullableStringFieldUpdateOperationsInput | string | null
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type WithdrawalUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transaction?: TransactionUpdateOneWithoutWithdrawalNestedInput
-  }
-
-  export type WithdrawalUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type WithdrawalUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currency?: StringFieldUpdateOperationsInput | string
-    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    externalId?: NullableStringFieldUpdateOperationsInput | string | null
-    bankAccount?: NullableJsonNullValueInput | InputJsonValue
-    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23375,9 +23575,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    buyerTransaction?: TransactionUpdateOneWithoutBuyerTradeNestedInput
     offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
-    buyerTransaction?: TransactionUpdateOneWithoutBuyerTradeNestedInput
     sellerTransaction?: TransactionUpdateOneWithoutSellerTradeNestedInput
   }
 
@@ -23429,9 +23629,9 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     buyer?: UserUpdateOneRequiredWithoutBuyerTradesNestedInput
     buyerTransaction?: TransactionUpdateOneWithoutBuyerTradeNestedInput
+    offer?: P2POfferUpdateOneRequiredWithoutTradesNestedInput
     sellerTransaction?: TransactionUpdateOneWithoutSellerTradeNestedInput
   }
 
@@ -23471,6 +23671,36 @@ export namespace Prisma {
     sellerTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type SessionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type TransactionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
@@ -23481,10 +23711,10 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deposit?: DepositUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
     order?: OrderUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUpdateOneWithoutSellerTransactionNestedInput
+    withdrawal?: WithdrawalUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutUserInput = {
@@ -23497,10 +23727,10 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deposit?: DepositUncheckedUpdateOneWithoutTransactionNestedInput
-    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
     order?: OrderUncheckedUpdateOneWithoutTransactionNestedInput
     buyerTrade?: P2PTradeUncheckedUpdateOneWithoutBuyerTransactionNestedInput
     sellerTrade?: P2PTradeUncheckedUpdateOneWithoutSellerTransactionNestedInput
+    withdrawal?: WithdrawalUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutUserInput = {
@@ -23512,6 +23742,48 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaction?: TransactionUpdateOneWithoutWithdrawalNestedInput
+  }
+
+  export type WithdrawalUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type WithdrawalUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableJsonNullValueInput | InputJsonValue
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type P2PTradeCreateManyOfferInput = {
@@ -23545,8 +23817,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     buyer?: UserUpdateOneRequiredWithoutBuyerTradesNestedInput
-    seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
     buyerTransaction?: TransactionUpdateOneWithoutBuyerTradeNestedInput
+    seller?: UserUpdateOneRequiredWithoutSellerTradesNestedInput
     sellerTransaction?: TransactionUpdateOneWithoutSellerTradeNestedInput
   }
 
