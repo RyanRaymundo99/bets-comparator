@@ -71,7 +71,7 @@ export const CPFField: React.FC<CPFFieldProps> = ({
         onChange(formatted);
       }
     }
-  }, []);
+  }, [value, onChange]);
 
   const hasError = error || (validationResult && !validationResult.isValid);
   const isValid = validationResult?.isValid;

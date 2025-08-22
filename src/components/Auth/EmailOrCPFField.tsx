@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle2, Mail, CreditCard } from "lucide-react";
@@ -23,36 +23,48 @@ export const EmailOrCPFField: React.FC<EmailOrCPFFieldProps> = ({
   onChange,
   onBlur,
   label = "Email",
-  placeholder = "Digite seu email",
   error,
   disabled = false,
   required = false,
   className,
 }) => {
-  const [inputType, setInputType] = useState<"email">("email");
+  const [inputType, setInputType] = useState<"email" | "cpf" | "unknown">(
+    "email"
+  );
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<{
     isValid: boolean;
-    type: "email";
+    type: "email" | "cpf" | "unknown";
   } | null>(null);
 
   // Always treat as email
-  const detectInputType = (input: string): "email" => {
-    return "email";
-  };
-
-  // Always treat as email
-  const getInputType = (input: string): "email" => {
-    return "email";
-  };
-        console.log("Detected as email (has dots, no @)");
-        return "email";
-      }
+  const detectInputType = (input: string): "email" | "cpf" | "unknown" => {
+    // Check if it's an email
+    if (input.includes("@")) {
+      return "email";
     }
 
-    console.log("Detected as unknown");
+    // Check if it's a CPF (11 digits)
+    const cleanInput = input.replace(/\D/g, "");
+    if (cleanInput.length === 11) {
+      return "cpf";
+    }
+
+    // Check if it's likely a CPF (starts with numbers and has reasonable length)
+    if (cleanInput.length > 0 && cleanInput.length <= 11) {
+      return "cpf";
+    }
+
     return "unknown";
   };
+
+  // Get input type based on current value
+  const getInputType = useCallback(
+    (input: string): "email" | "cpf" | "unknown" => {
+      return detectInputType(input);
+    },
+    []
+  );
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +113,7 @@ export const EmailOrCPFField: React.FC<EmailOrCPFFieldProps> = ({
         inputType,
       });
     }
-  }, [value, inputType]);
+  }, [value, inputType, getInputType]);
 
   // Validate on blur
   const handleBlur = () => {
@@ -148,30 +160,6 @@ export const EmailOrCPFField: React.FC<EmailOrCPFFieldProps> = ({
     onBlur?.();
   };
 
-  // Custom validation function that can be called by the form
-  const validateField = (inputValue: string): string | undefined => {
-    if (!inputValue.trim()) {
-      return "Email or CPF is required";
-    }
-
-    const detectedType = getInputType(inputValue);
-
-    if (detectedType === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(inputValue)) {
-        return "Please enter a valid email address";
-      }
-    } else if (detectedType === "cpf") {
-      if (!CPFValidator.isValid(inputValue)) {
-        return "Please enter a valid CPF";
-      }
-    } else {
-      return "Please enter a valid email address or CPF";
-    }
-
-    return undefined; // No error
-  };
-
   // Clear validation on focus
   const handleFocus = () => {
     setValidationResult(null);
@@ -190,7 +178,7 @@ export const EmailOrCPFField: React.FC<EmailOrCPFFieldProps> = ({
         }
       }
     }
-  }, [value, inputType, onChange]);
+  }, [value, inputType, onChange, getInputType]);
 
   const hasError = error || (validationResult && !validationResult.isValid);
   const isValid = validationResult?.isValid;

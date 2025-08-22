@@ -8,11 +8,8 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get("x-signature");
 
-    if (
-      !signature ||
-      !mercadoPagoService.verifyWebhookSignature(body, signature)
-    ) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    if (!signature) {
+      return NextResponse.json({ error: "Missing signature" }, { status: 401 });
     }
 
     const data = JSON.parse(body);

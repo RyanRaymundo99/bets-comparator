@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get session for admin authentication
@@ -30,7 +30,7 @@ export async function PATCH(
       );
     }
 
-    const userId = params.id;
+    const userId = (await params).id;
     const approvalStatus = action === "approve" ? "APPROVED" : "REJECTED";
 
     // Update user approval status
@@ -69,7 +69,7 @@ export async function PATCH(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get session for admin authentication
@@ -81,7 +81,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = params.id;
+    const userId = (await params).id;
 
     // Get user details
     const user = await prisma.user.findUnique({

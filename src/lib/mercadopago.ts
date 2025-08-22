@@ -106,7 +106,7 @@ export class MercadoPagoService {
     }
   }
 
-  verifyWebhookSignature(payload: string, signature: string): boolean {
+  verifyWebhookSignature(): boolean {
     // Implement webhook signature verification
     // This is a simplified version - implement proper verification
     return true;

@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get("type");
     const status = searchParams.get("status") || "ACTIVE";
 
-    const where: any = { status };
+    const where: Record<string, unknown> = { status };
 
     if (cryptoCurrency) {
       where.cryptoCurrency = cryptoCurrency;

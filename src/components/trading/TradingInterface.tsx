@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,23 +21,23 @@ export function TradingInterface() {
     { symbol: "USDT", name: "Tether" },
   ];
 
-  useEffect(() => {
-    fetchPrice();
-    const interval = setInterval(fetchPrice, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, [selectedCrypto]);
-
-  const fetchPrice = async () => {
+  const fetchPrice = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/crypto/price?symbol=${selectedCrypto}BRL`
       );
       const data = await response.json();
       setPrice(data.price);
-    } catch (error) {
-      console.error("Error fetching price:", error);
+    } catch {
+      console.error("Error fetching price");
     }
-  };
+  }, [selectedCrypto]);
+
+  useEffect(() => {
+    fetchPrice();
+    const interval = setInterval(fetchPrice, 30000); // Update every 30 seconds
+    return () => clearInterval(interval);
+  }, [fetchPrice]);
 
   const handleBuy = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -76,7 +76,7 @@ export function TradingInterface() {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Network error",
@@ -124,7 +124,7 @@ export function TradingInterface() {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Network error",

@@ -63,20 +63,6 @@ export const EmailField: React.FC<EmailFieldProps> = ({
     onBlur?.();
   };
 
-  // Custom validation function that can be called by the form
-  const validateField = (inputValue: string): string | undefined => {
-    if (!inputValue.trim()) {
-      return "Email is required";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(inputValue)) {
-      return "Please enter a valid email address";
-    }
-
-    return undefined; // No error
-  };
-
   // Clear validation on focus
   const handleFocus = () => {
     setValidationResult(null);
@@ -163,6 +149,3 @@ export const EmailField: React.FC<EmailFieldProps> = ({
     </div>
   );
 };
-
-
-

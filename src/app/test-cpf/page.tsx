@@ -7,7 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function TestCPFPage() {
   const [cpf, setCpf] = useState("");
-  const [testResults, setTestResults] = useState<any[]>([]);
+  const [testResults, setTestResults] = useState<
+    Array<{
+      cpf: string;
+      clean: string;
+      formatted: string;
+      isValid: boolean;
+      errors: string[];
+    }>
+  >([]);
 
   const testCPFs = [
     "111.444.777-35", // Valid CPF

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: "desc" },
       });
-      targetUserId = devUser?.id;
+      targetUserId = devUser?.id || null;
     }
 
     if (!targetUserId) {

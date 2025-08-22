@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,11 +28,7 @@ export function PortfolioOverview() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -55,7 +51,11 @@ export function PortfolioOverview() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
@@ -179,7 +179,7 @@ export function PortfolioOverview() {
           <div className="mt-4 text-center">
             <Button
               variant="outline"
-                              onClick={() => (window.location.href = "/portfolio")}
+              onClick={() => (window.location.href = "/portfolio")}
             >
               View All Transactions
             </Button>

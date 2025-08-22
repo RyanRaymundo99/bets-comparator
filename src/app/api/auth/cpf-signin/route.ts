@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
 
       console.log("signInEmail result:", signInResult);
 
-      if (signInResult.success) {
+      if (signInResult.user) {
         return NextResponse.json({
           success: true,
           user: {
@@ -222,13 +222,13 @@ export async function POST(request: NextRequest) {
             approvalStatus: user.approvalStatus,
           },
           message: "CPF login successful via signInEmail",
-          sessionId: signInResult.session?.id || "session-created",
+          sessionId: signInResult.token || "session-created",
           requiresEmailLogin: false,
         });
       }
 
       return NextResponse.json(
-        { error: signInResult.error || "Authentication failed" },
+        { error: "Authentication failed" },
         { status: 401 }
       );
     } catch (e) {

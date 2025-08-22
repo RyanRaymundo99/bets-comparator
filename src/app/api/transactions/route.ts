@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: "desc" },
       });
-      targetUserId = devUser?.id;
+      targetUserId = devUser?.id || null;
     }
 
     if (!targetUserId) {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const where: any = { userId: targetUserId };
+    const where: Record<string, unknown> = { userId: targetUserId };
 
     if (type) {
       where.type = type;

@@ -1,157 +1,721 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import NavbarNew from "@/components/ui/navbar-new";
+
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Bitcoin,
+  BarChart3,
+  ArrowUpRight,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  Activity,
+  Target,
+  Zap,
+  Shield,
+  Globe,
+  Clock,
+  Star,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { isLocalhostDev } from "@/lib/utils";
-import { PortfolioOverview } from "@/components/portfolio/PortfolioOverview";
-import { TradingInterface } from "@/components/trading/TradingInterface";
+import NavbarNew from "@/components/ui/navbar-new";
+
+interface CryptoPrice {
+  symbol: string;
+  price: number;
+  change24h: number;
+  changePercent: number;
+  volume: number;
+  marketCap: number;
+}
+
+interface Balance {
+  currency: string;
+  amount: number;
+  locked: number;
+}
+
+interface Transaction {
+  id: string;
+  type: string;
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+}
 
 export default function Dashboard() {
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDevMode, setIsDevMode] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [balances, setBalances] = useState<Balance[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [cryptoPrices, setCryptoPrices] = useState<CryptoPrice[]>([]);
+  const [currentCryptoIndex, setCurrentCryptoIndex] = useState(0);
+  const [isCarouselPlaying, setIsCarouselPlaying] = useState(true);
+  const [showBalances, setShowBalances] = useState(true);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Simple auth check using localStorage
-  const checkAuth = useCallback(() => {
-    try {
-      console.log("Checking authentication...");
+  // Format currency in Brazilian Real
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
 
-      // Check for simple session in localStorage
-      const hasSession = localStorage.getItem("auth-session");
-      const userStr = localStorage.getItem("auth-user");
+  // Format crypto price
+  const formatCryptoPrice = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 8,
+    }).format(value);
+  };
 
-      console.log("Session check:", { hasSession, hasUser: !!userStr });
+  // Format percentage
+  const formatPercentage = (value: number) => {
+    return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+  };
 
-      if (hasSession === "true" && userStr) {
-        const user = JSON.parse(userStr);
-        console.log("Valid session found for user:", user.email);
-
-        // Check if we're on localhost for dev mode features
-        const isLocalhost = isLocalhostDev();
-        setIsDevMode(isLocalhost);
-        setIsLoading(false);
-
-        // Check if dev toast has been shown for this session (only on localhost)
-        if (isLocalhost) {
-          const hasShown = localStorage.getItem("dev-toast-shown");
-          if (hasShown !== "true") {
-            toast({
-              title: "⚠️ Developer Mode",
-              description: `Logged in as ${user.email}`,
-              variant: "default",
-            });
-            localStorage.setItem("dev-toast-shown", "true");
-          }
-        }
-      } else {
-        // No valid session, redirect to login
-        console.log("No valid session found, redirecting to login");
-        router.push("/login");
-      }
-    } catch (error) {
-      console.error("Error checking session:", error);
-      router.push("/login");
+  // Get crypto logo
+  const getCryptoLogo = (symbol: string) => {
+    switch (symbol) {
+      case "BTC":
+        return <Bitcoin className="w-8 h-8 text-orange-500" />;
+      case "ETH":
+        return <Globe className="w-8 h-8 text-blue-500" />;
+      case "BNB":
+        return (
+          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
+            BNB
+          </div>
+        );
+      case "ADA":
+        return (
+          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+            ADA
+          </div>
+        );
+      case "SOL":
+        return (
+          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
+            SOL
+          </div>
+        );
+      default:
+        return <Bitcoin className="w-8 h-8 text-orange-500" />;
     }
-  }, [router, toast]);
+  };
 
+  // Fetch user data
   useEffect(() => {
-    // Check auth immediately - no delays needed with localStorage
-    checkAuth();
-  }, [checkAuth]);
+    const fetchData = async () => {
+      try {
+        // Fetch balances
+        const balanceResponse = await fetch("/api/balance");
+        if (balanceResponse.ok) {
+          const balanceData = await balanceResponse.json();
+          setBalances(balanceData.balances || []);
 
-  const handleLogout = useCallback(async () => {
+          const total =
+            balanceData.balances?.reduce((sum: number, balance: Balance) => {
+              if (balance.currency === "BRL") {
+                return sum + balance.amount;
+              }
+              return sum;
+            }, 0) || 0;
+          setTotalBalance(total);
+        }
+
+        // Fetch transactions
+        const transactionResponse = await fetch("/api/transactions?limit=5");
+        if (transactionResponse.ok) {
+          const transactionData = await transactionResponse.json();
+          setTransactions(transactionData.transactions || []);
+        }
+
+        // Fetch crypto prices
+        const btcResponse = await fetch("/api/crypto/price?symbol=BTCBRL");
+        const ethResponse = await fetch("/api/crypto/price?symbol=ETHBRL");
+
+        if (btcResponse.ok && ethResponse.ok) {
+          const btcData = await btcResponse.json();
+          const ethData = await ethResponse.json();
+
+          // Mock data for demonstration - replace with real API data
+          const mockCryptoData: CryptoPrice[] = [
+            {
+              symbol: "BTC",
+              price: btcData.price || 350000,
+              change24h: 2500,
+              changePercent: 0.72,
+              volume: 1250000000,
+              marketCap: 6800000000000,
+            },
+            {
+              symbol: "ETH",
+              price: ethData.price || 18500,
+              change24h: -150,
+              changePercent: -0.8,
+              volume: 850000000,
+              marketCap: 2200000000000,
+            },
+            {
+              symbol: "BNB",
+              price: 3200,
+              change24h: 45,
+              changePercent: 1.43,
+              volume: 320000000,
+              marketCap: 480000000000,
+            },
+            {
+              symbol: "ADA",
+              price: 2.85,
+              change24h: -0.12,
+              changePercent: -4.04,
+              volume: 85000000,
+              marketCap: 100000000000,
+            },
+            {
+              symbol: "SOL",
+              price: 450,
+              change24h: 12.5,
+              changePercent: 2.86,
+              volume: 180000000,
+              marketCap: 180000000000,
+            },
+          ];
+
+          setCryptoPrices(mockCryptoData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar os dados do dashboard.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast]);
+
+  // Auto-advance carousel
+  useEffect(() => {
+    if (!isCarouselPlaying) return;
+
+    const interval = setInterval(() => {
+      setCurrentCryptoIndex((prev) => (prev + 1) % cryptoPrices.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isCarouselPlaying, cryptoPrices.length]);
+
+  // Carousel navigation
+  const nextCrypto = () => {
+    setCurrentCryptoIndex((prev) => (prev + 1) % cryptoPrices.length);
+  };
+
+  const prevCrypto = () => {
+    setCurrentCryptoIndex(
+      (prev) => (prev - 1 + cryptoPrices.length) % cryptoPrices.length
+    );
+  };
+
+  const toggleCarousel = () => {
+    setIsCarouselPlaying(!isCarouselPlaying);
+  };
+
+  const handleLogout = () => {
     setIsLoggingOut(true);
-    try {
-      // Clear simple session from localStorage
-      localStorage.removeItem("auth-session");
-      localStorage.removeItem("auth-user");
-      localStorage.removeItem("dev-toast-shown");
+    localStorage.removeItem("auth-session");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
-      console.log("Logged out, redirecting to login");
-      router.push("/login");
-    } catch (error) {
-      console.error("Error during logout:", error);
-      // Force redirect even if logout fails
-      window.location.href = "/login";
-    } finally {
-      setIsLoggingOut(false);
-    }
-  }, [router]);
-
-  // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-300">Verificando autenticação...</p>
+      <div className="min-h-screen bg-background text-foreground">
+        <NavbarNew isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
+        <div className="container mx-auto px-4 py-6 mobile-page-padding">
+          <div className="flex items-center justify-center h-64">
+            <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
         </div>
       </div>
     );
   }
 
+  const currentCrypto = cryptoPrices[currentCryptoIndex];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Universal Navbar */}
       <NavbarNew isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {isDevMode ? "Developer" : "User"}!
+      <div className="container mx-auto px-4 py-6 mobile-page-padding">
+        {/* Welcome Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-2">
+            Bem-vindo ao Dashboard
           </h1>
-          <p className="text-muted-foreground">
-            Here's what's happening with your crypto portfolio today.
+          <p className="text-xl text-muted-foreground">
+            Monitore seus investimentos e acompanhe o mercado crypto
           </p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Button
-            onClick={() => router.push("/trade")}
-            className="h-16 text-lg"
-          >
-            Trade Crypto
-          </Button>
-          <Button
-            onClick={() => router.push("/deposits")}
-            variant="outline"
-            className="h-16 text-lg"
-          >
-            Deposit Funds
-          </Button>
-          <Button
-            onClick={() => router.push("/p2p")}
-            variant="outline"
-            className="h-16 text-lg"
-          >
-            P2P Trading
-          </Button>
-          <Button
-            onClick={() => router.push("/portfolio")}
-            variant="outline"
-            className="h-16 text-lg"
-          >
-            View Portfolio
-          </Button>
+        {/* Crypto Price Carousel */}
+        {cryptoPrices.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-blue-500" />
+                  Preços em Tempo Real
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleCarousel}
+                    className="text-foreground hover:text-blue-500 hover:bg-muted"
+                  >
+                    {isCarouselPlaying ? (
+                      <Pause className="w-4 h-4" />
+                    ) : (
+                      <Play className="w-4 h-4" />
+                    )}
+                  </Button>
+                  <div className="flex gap-1">
+                    {cryptoPrices.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentCryptoIndex
+                            ? "bg-blue-500 w-6"
+                            : "bg-muted-foreground/30"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                {/* Carousel Content */}
+                <div className="flex items-center justify-center min-h-[200px]">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      <div
+                        className={`w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center`}
+                      >
+                        {getCryptoLogo(currentCrypto.symbol)}
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-2xl font-bold text-foreground">
+                          {currentCrypto.symbol}
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          {currentCrypto.symbol === "BTC"
+                            ? "Bitcoin"
+                            : currentCrypto.symbol === "ETH"
+                            ? "Ethereum"
+                            : currentCrypto.symbol === "BNB"
+                            ? "Binance Coin"
+                            : currentCrypto.symbol === "ADA"
+                            ? "Cardano"
+                            : "Solana"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-4xl font-bold text-foreground mb-2">
+                        {formatCryptoPrice(currentCrypto.price)}
+                      </p>
+                      <div className="flex items-center justify-center gap-2">
+                        {currentCrypto.changePercent >= 0 ? (
+                          <TrendingUp className="w-5 h-5 text-green-400" />
+                        ) : (
+                          <TrendingDown className="w-5 h-5 text-red-400" />
+                        )}
+                        <span
+                          className={`text-lg font-semibold ${
+                            currentCrypto.changePercent >= 0
+                              ? "text-green-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {formatPercentage(currentCrypto.changePercent)}
+                        </span>
+                        <span className="text-muted-foreground text-sm">
+                          ({formatCurrency(currentCrypto.change24h)})
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="text-center">
+                        <p className="text-muted-foreground">Volume 24h</p>
+                        <p className="text-foreground font-semibold">
+                          {formatCurrency(currentCrypto.volume)}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-muted-foreground">Market Cap</p>
+                        <p className="text-foreground font-semibold">
+                          {formatCurrency(currentCrypto.marketCap)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Navigation Arrows */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={prevCrypto}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 text-foreground hover:text-blue-500 hover:bg-muted"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={nextCrypto}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-foreground hover:text-blue-500 hover:bg-muted"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Portfolio Overview */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2 text-foreground">
+                  <BarChart3 className="w-5 h-5" />
+                  Visão Geral do Portfólio
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowBalances(!showBalances)}
+                  className="text-foreground hover:text-blue-500 hover:bg-muted"
+                >
+                  {showBalances ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Total Balance */}
+                <div className="text-center p-4 bg-white rounded-lg border">
+                  <p className="text-sm text-muted-foreground font-medium mb-1">
+                    Saldo Total
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">
+                    {showBalances ? formatCurrency(totalBalance) : "••••••"}
+                  </p>
+                </div>
+
+                {/* Crypto Holdings */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {balances.map((balance, index) => (
+                    <div
+                      key={index}
+                      className="p-4 bg-white rounded-lg border hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          {balance.currency === "BRL" ? (
+                            <DollarSign className="w-5 h-5 text-green-600" />
+                          ) : (
+                            <Bitcoin className="w-5 h-5 text-orange-600" />
+                          )}
+                          <span className="font-semibold text-foreground">
+                            {balance.currency}
+                          </span>
+                        </div>
+                        <Badge
+                          variant="secondary"
+                          className="bg-muted text-muted-foreground"
+                        >
+                          {balance.currency === "BRL" ? "Fiat" : "Crypto"}
+                        </Badge>
+                      </div>
+                      <p className="text-2xl font-bold text-foreground mb-1">
+                        {showBalances
+                          ? balance.currency === "BRL"
+                            ? formatCurrency(balance.amount)
+                            : `${balance.amount.toFixed(8)} BTC`
+                          : "••••••"}
+                      </p>
+                      {balance.locked > 0 && (
+                        <p className="text-sm text-orange-600">
+                          Bloqueado:{" "}
+                          {balance.currency === "BRL"
+                            ? formatCurrency(balance.locked)
+                            : `${balance.locked.toFixed(8)} BTC`}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Zap className="w-5 h-5" />
+                Ações Rápidas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                onClick={() => router.push("/trade")}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Comprar/Vender
+              </Button>
+              <Button
+                onClick={() => router.push("/deposits")}
+                variant="outline"
+                className="w-full border-border text-foreground hover:bg-muted"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Depositar
+              </Button>
+              <Button
+                onClick={() => router.push("/withdraw")}
+                variant="outline"
+                className="w-full border-border text-foreground hover:bg-muted"
+              >
+                <ArrowUpRight className="w-4 h-4 mr-2" />
+                Sacar
+              </Button>
+              <Button
+                onClick={() => router.push("/p2p")}
+                variant="outline"
+                className="w-full border-border text-foreground hover:bg-muted"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                P2P Trading
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Portfolio Overview */}
-        <div className="mb-8">
-          <PortfolioOverview />
+        {/* Market Overview & Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Market Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Globe className="w-5 h-5" />
+                Visão Geral do Mercado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {cryptoPrices.slice(0, 3).map((crypto, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 flex items-center justify-center">
+                        {getCryptoLogo(crypto.symbol)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">
+                          {crypto.symbol}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {formatCryptoPrice(crypto.price)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div
+                        className={`flex items-center gap-1 ${
+                          crypto.changePercent >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {crypto.changePercent >= 0 ? (
+                          <TrendingUp className="w-4 h-4" />
+                        ) : (
+                          <TrendingDown className="w-4 h-4" />
+                        )}
+                        <span className="font-semibold">
+                          {formatPercentage(crypto.changePercent)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Vol: {formatCurrency(crypto.volume)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent Transactions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Clock className="w-5 h-5" />
+                Atividade Recente
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {transactions.length > 0 ? (
+                  transactions.map((transaction, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            transaction.type === "DEPOSIT"
+                              ? "bg-green-100"
+                              : "bg-red-100"
+                          }`}
+                        >
+                          {transaction.type === "DEPOSIT" ? (
+                            <Plus className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <ArrowUpRight className="w-4 h-4 text-red-600" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground capitalize">
+                            {transaction.type.toLowerCase()}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(transaction.createdAt).toLocaleDateString(
+                              "pt-BR"
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-foreground">
+                          {transaction.type === "DEPOSIT" ? "+" : "-"}
+                          {transaction.currency === "BRL"
+                            ? formatCurrency(transaction.amount)
+                            : `${transaction.amount.toFixed(8)} BTC`}
+                        </p>
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs ${
+                            transaction.status === "COMPLETED"
+                              ? "bg-green-100 text-green-700"
+                              : transaction.status === "PENDING"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Nenhuma transação recente</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Trading Interface */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Quick Trade</h2>
-          <TradingInterface />
-        </div>
+        {/* Trading Insights */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Target className="w-5 h-5" />
+              Insights para Traders
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-semibold text-foreground mb-2">
+                  Mercado em Alta
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Bitcoin e Ethereum mostram tendência de alta com volume
+                  crescente
+                </p>
+              </div>
+
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-semibold text-foreground mb-2">
+                  Segurança
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Suas transações são protegidas com criptografia de ponta a
+                  ponta
+                </p>
+              </div>
+
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                  <Star className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-semibold text-foreground mb-2">Destaque</h4>
+                <p className="text-sm text-muted-foreground">
+                  Solana (SOL) lidera ganhos com +2.86% nas últimas 24h
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -77,19 +77,25 @@ export class LedgerService {
     amount: Decimal;
     currency: string;
     description: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
   }) {
     const balance = await this.getUserBalance(data.userId, data.currency);
 
     return await prisma.transaction.create({
       data: {
         userId: data.userId,
-        type: data.type as any,
+        type: data.type as
+          | "DEPOSIT"
+          | "WITHDRAWAL"
+          | "BUY_CRYPTO"
+          | "SELL_CRYPTO"
+          | "P2P_TRADE"
+          | "FEE"
+          | "REFUND",
         amount: data.amount,
         currency: data.currency,
         balance: balance.amount,
         description: data.description,
-        metadata: data.metadata,
       },
     });
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,11 +37,7 @@ export function P2POffersList() {
     { symbol: "USDT", name: "Tether" },
   ];
 
-  useEffect(() => {
-    fetchOffers();
-  }, [selectedCrypto, selectedType]);
-
-  const fetchOffers = async () => {
+  const fetchOffers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -49,8 +45,7 @@ export function P2POffersList() {
       );
       const data = await response.json();
       setOffers(data.offers || []);
-    } catch (error) {
-      console.error("Error fetching offers:", error);
+    } catch {
       toast({
         title: "Error",
         description: "Failed to fetch offers",
@@ -59,7 +54,7 @@ export function P2POffersList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCrypto, selectedType, toast]);
 
   const handleTrade = async (offer: P2POffer) => {
     try {
@@ -89,7 +84,7 @@ export function P2POffersList() {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Network error",

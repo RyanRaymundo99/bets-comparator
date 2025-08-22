@@ -3,19 +3,20 @@ import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
 import { getAuth } from "@/lib/auth";
 import { ledgerService } from "@/lib/ledger";
-import { Decimal } from "@prisma/client/runtime/library";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getAuth().api.getSession({ headers: await headers() });
+    const session = await getAuth().api.getSession({
+      headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tradeId = params.id;
+    const tradeId = (await params).id;
 
     // Get the trade
     const trade = await prisma.p2PTrade.findUnique({

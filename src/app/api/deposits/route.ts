@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         },
         orderBy: { createdAt: "desc" },
       });
-      targetUserId = devUser?.id;
+      targetUserId = devUser?.id || null;
     }
 
     if (!targetUserId) {
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: "desc" },
       });
-      targetUserId = devUser?.id;
+      targetUserId = devUser?.id || null;
     }
 
     if (!targetUserId) {

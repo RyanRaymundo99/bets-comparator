@@ -376,8 +376,16 @@
   will-change: transform, backdrop-filter, box-shadow;
 }
 
-/* Mobile Optimizations */
+/* Mobile Top Bar Spacing */
 @media (max-width: 768px) {
+  .mobile-page-padding {
+    padding-top: 80px;
+  }
+
+  .mobile-menu-offset {
+    margin-top: 80px;
+  }
+
   .blur-hover:hover,
   .glass-blur:hover,
   .btn-blur:hover,
