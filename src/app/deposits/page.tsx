@@ -33,7 +33,18 @@ export default function DepositsPage() {
   const [depositStatus, setDepositStatus] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
-  const [confirmedDepositData, setConfirmedDepositData] = useState<any>(null);
+  const [confirmedDepositData, setConfirmedDepositData] = useState<{
+    id: string;
+    amount: number;
+    fee: number;
+    paymentAmount?: number;
+    paymentId?: string;
+    status: string;
+    confirmedAt?: string;
+    updatedAt: string;
+  } | null>(null);
+  const [currentBalance, setCurrentBalance] = useState(0);
+  const [displayBalance, setDisplayBalance] = useState(0);
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -45,6 +56,57 @@ export default function DepositsPage() {
       setIsLoggingOut(false);
     }
   };
+
+  // Fetch current balance
+  const fetchCurrentBalance = useCallback(async () => {
+    try {
+      const response = await fetch("/api/balance");
+      if (response.ok) {
+        const data = await response.json();
+        const brlBalance = data.balances?.find(
+          (b: { currency: string; amount: number }) => b.currency === "BRL"
+        );
+        if (brlBalance) {
+          setCurrentBalance(brlBalance.amount);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+    }
+  }, []);
+
+  // Fetch balance on component mount
+  useEffect(() => {
+    fetchCurrentBalance();
+  }, [fetchCurrentBalance]);
+
+  // Animate balance changes
+  useEffect(() => {
+    const targetBalance = currentBalance;
+    const startBalance = displayBalance;
+    const duration = 1000; // 1 second animation
+    const startTime = Date.now();
+
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+
+      const currentValue =
+        startBalance + (targetBalance - startBalance) * easeOutQuart;
+      setDisplayBalance(currentValue);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    if (startBalance !== targetBalance) {
+      animate();
+    }
+  }, [currentBalance, displayBalance]);
 
   // Check payment status
   const checkPaymentStatus = useCallback(async () => {
@@ -79,6 +141,11 @@ export default function DepositsPage() {
             if (depositResponse.ok) {
               const depositData = await depositResponse.json();
               setConfirmedDepositData(depositData.deposit);
+
+              // Automatically update the balance
+              await fetchCurrentBalance();
+
+              // Show the confirmation popup
               setShowConfirmationPopup(true);
             }
           } catch (error) {
@@ -107,7 +174,7 @@ export default function DepositsPage() {
         variant: "destructive",
       });
     }
-  }, [depositId, toast]);
+  }, [depositId, toast, fetchCurrentBalance]);
 
   // Auto-check payment status every 10 seconds when pending
   useEffect(() => {
@@ -224,6 +291,23 @@ export default function DepositsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <NavbarNew isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
+
+      {/* Mobile Balance Display - Far Top Left */}
+      <div className="fixed top-4 left-2 z-40 lg:hidden">
+        <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-3 border border-gray-700 shadow-2xl">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+              <Banknote className="w-4 h-4 text-white" />
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-400 font-medium">Saldo BRL</p>
+              <p className="text-lg font-bold text-white tracking-tight">
+                {formatCurrency(displayBalance)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-6 mobile-page-padding">
         {/* Header */}
@@ -611,56 +695,53 @@ export default function DepositsPage() {
       {/* Confirmation Popup */}
       {showConfirmationPopup && confirmedDepositData && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-700">
             <div className="p-6">
               {/* Header */}
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                <div className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-400" />
                 </div>
-                <h2 className="text-2xl font-bold text-green-600 mb-2">
+                <h2 className="text-2xl font-bold text-green-400 mb-2">
                   Pagamento Confirmado! 🎉
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   Seu depósito foi processado com sucesso
                 </p>
               </div>
 
               {/* Deposit Details */}
               <div className="space-y-4 mb-6">
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h3 className="font-semibold text-green-800 mb-3 flex items-center">
+                <div className="p-4 bg-green-900/20 rounded-lg border border-green-700">
+                  <h3 className="font-semibold text-green-400 mb-3 flex items-center">
                     <Info className="w-4 h-4 mr-2" />
                     Resumo da Transação
                   </h3>
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-green-700">Valor pago:</span>
-                      <span className="font-semibold text-green-800">
+                      <span className="text-green-300">Valor pago:</span>
+                      <span className="font-semibold text-green-400">
                         {formatCurrency(
-                          Number(
-                            confirmedDepositData.paymentAmount ||
-                              confirmedDepositData.amount +
-                                Number(confirmedDepositData.fee || 0)
-                          )
+                          Number(confirmedDepositData.amount || 0) +
+                            Number(confirmedDepositData.fee || 0)
                         )}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-green-700">
+                      <span className="text-green-300">
                         Taxa de processamento (3%):
                       </span>
-                      <span className="font-semibold text-green-800">
+                      <span className="font-semibold text-green-400">
                         {formatCurrency(Number(confirmedDepositData.fee || 0))}
                       </span>
                     </div>
-                    <div className="h-px bg-green-300 my-2"></div>
+                    <div className="h-px bg-green-600 my-2"></div>
                     <div className="flex justify-between text-lg font-bold">
-                      <span className="text-green-800">
+                      <span className="text-green-400">
                         Valor creditado na conta:
                       </span>
-                      <span className="text-green-800">
+                      <span className="text-green-400">
                         {formatCurrency(Number(confirmedDepositData.amount))}
                       </span>
                     </div>
@@ -668,43 +749,74 @@ export default function DepositsPage() {
                 </div>
 
                 {/* Transaction Info */}
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="font-semibold text-blue-800 mb-3 flex items-center">
+                <div className="p-4 bg-blue-900/20 rounded-lg border border-blue-700">
+                  <h3 className="font-semibold text-blue-400 mb-3 flex items-center">
                     <Info className="w-4 h-4 mr-2" />
                     Informações da Transação
                   </h3>
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-blue-700">ID do Depósito:</span>
-                      <span className="font-medium text-blue-800">
+                      <span className="text-blue-300">ID do Depósito:</span>
+                      <span className="font-medium text-blue-400">
                         {confirmedDepositData.id}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">ID do Pagamento:</span>
-                      <span className="font-medium text-blue-800">
+                      <span className="text-blue-300">ID do Pagamento:</span>
+                      <span className="font-medium text-blue-400">
                         {confirmedDepositData.paymentId || "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">Status:</span>
+                      <span className="text-blue-300">Status:</span>
                       <Badge
                         variant="secondary"
-                        className="bg-green-100 text-green-700 border-green-200"
+                        className="bg-green-900 text-green-300 border-green-700"
                       >
                         {confirmedDepositData.status}
                       </Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">
+                      <span className="text-blue-300">
                         Data de Confirmação:
                       </span>
-                      <span className="font-medium text-blue-800">
+                      <span className="font-medium text-blue-400">
                         {new Date(
                           confirmedDepositData.confirmedAt ||
                             confirmedDepositData.updatedAt
                         ).toLocaleString("pt-BR")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Balance Update */}
+                <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
+                  <h3 className="font-semibold text-white mb-3 flex items-center">
+                    <Banknote className="w-4 h-4 mr-2" />
+                    Atualização do Saldo
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Saldo anterior:</span>
+                      <span className="font-medium text-gray-300">
+                        {formatCurrency(
+                          currentBalance - Number(confirmedDepositData.amount)
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Depósito:</span>
+                      <span className="font-medium text-green-400">
+                        +{formatCurrency(Number(confirmedDepositData.amount))}
+                      </span>
+                    </div>
+                    <div className="h-px bg-gray-600 my-2"></div>
+                    <div className="flex justify-between text-lg font-bold">
+                      <span className="text-white">Novo saldo:</span>
+                      <span className="text-white">
+                        {formatCurrency(currentBalance)}
                       </span>
                     </div>
                   </div>
