@@ -3,29 +3,31 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    // For dev mode, get user ID from query params or use a dev user
-    // In production, you'd get this from the session/JWT
-    const userId = request.nextUrl.searchParams.get("userId");
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
 
-    // For now, let's find any dev user to show data
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const devUser = await prisma.user.findFirst({
-        where: {
-          email: { startsWith: "dev" },
-          approvalStatus: "APPROVED",
-        },
-        orderBy: { createdAt: "desc" },
-      });
-      targetUserId = devUser?.id || null;
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
     }
 
-    if (!targetUserId) {
-      return NextResponse.json({ error: "No user found" }, { status: 404 });
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
     }
 
     const balances = await prisma.balance.findMany({
-      where: { userId: targetUserId },
+      where: { userId: session.user.id },
       orderBy: { currency: "asc" },
     });
 

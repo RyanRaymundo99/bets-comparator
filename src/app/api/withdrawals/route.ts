@@ -3,8 +3,30 @@ import prisma from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { amount, paymentMethod, bankAccount } = body;
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
+    }
+
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
+    }
+
+    const { amount, paymentMethod, bankAccount } = await request.json();
 
     // Validate required fields
     if (!amount || amount <= 0) {
@@ -21,13 +43,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For development, use a mock user ID (in production, get from session)
-    const userId = "dev-user-id";
-
     // Check if user has sufficient balance
     const userBalance = await prisma.balance.findFirst({
       where: {
-        userId,
+        userId: session.user.id,
         currency: "BRL",
       },
     });
@@ -42,7 +61,7 @@ export async function POST(request: NextRequest) {
     // Create withdrawal record
     const withdrawal = await prisma.withdrawal.create({
       data: {
-        userId,
+        userId: session.user.id,
         amount,
         currency: "BRL",
         status: "PENDING",
@@ -56,7 +75,7 @@ export async function POST(request: NextRequest) {
     // Create transaction record
     const transaction = await prisma.transaction.create({
       data: {
-        userId,
+        userId: session.user.id,
         type: "WITHDRAWAL",
         amount: -amount, // Negative for withdrawals
         currency: "BRL",
@@ -68,34 +87,33 @@ export async function POST(request: NextRequest) {
 
     // Update user balance (lock the amount)
     await prisma.balance.update({
-      where: {
-        id: userBalance.id,
-      },
+      where: { id: userBalance.id },
       data: {
+        amount: userBalance.amount - amount,
         locked: userBalance.locked + amount,
-        updatedAt: new Date(),
       },
+    });
+
+    // Link withdrawal to transaction
+    await prisma.withdrawal.update({
+      where: { id: withdrawal.id },
+      data: { transactionId: transaction.id },
     });
 
     return NextResponse.json({
       success: true,
+      message: "Withdrawal request submitted successfully",
       withdrawal: {
         id: withdrawal.id,
-        amount: withdrawal.amount,
+        amount,
         status: withdrawal.status,
-        paymentMethod: withdrawal.paymentMethod,
         createdAt: withdrawal.createdAt,
-      },
-      transaction: {
-        id: transaction.id,
-        amount: transaction.amount,
-        type: transaction.type,
       },
     });
   } catch (error) {
-    console.error("Withdrawal creation error:", error);
+    console.error("Withdrawal error:", error);
     return NextResponse.json(
-      { error: "Failed to create withdrawal" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

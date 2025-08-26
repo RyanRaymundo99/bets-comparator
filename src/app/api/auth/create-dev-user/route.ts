@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
         cpf: finalCPF,
         password: hashedPassword, // Store encrypted password directly
         emailVerified: true,
-        approvalStatus: "APPROVED",
-        kycStatus: "APPROVED",
+        approvalStatus: "APPROVED", // Auto-approve dev users
+        kycStatus: "APPROVED", // Auto-approve KYC
         kycData: {
           devUser: true,
           permissions: ["all"],
@@ -69,56 +69,48 @@ export async function POST(request: NextRequest) {
       approvalStatus: devUser.approvalStatus,
     });
 
-    // Create initial balances for the dev user
-    await prisma.balance.createMany({
-      data: [
-        {
-          userId: devUser.id,
-          currency: "BRL",
-          amount: 10000, // 10,000 BRL
-          locked: 0,
-        },
-        {
-          userId: devUser.id,
-          currency: "BTC",
-          amount: 1, // 1 BTC
-          locked: 0,
-        },
-        {
-          userId: devUser.id,
-          currency: "ETH",
-          amount: 10, // 10 ETH
-          locked: 0,
-        },
-        {
-          userId: devUser.id,
-          currency: "USDT",
-          amount: 10000, // 10,000 USDT
-          locked: 0,
-        },
-      ],
+    // Create initial balance with 0 amount for new users
+    await prisma.balance.create({
+      data: {
+        userId: devUser.id,
+        currency: "BRL",
+        amount: 0,
+        locked: 0,
+      },
+    });
+
+    // Create a session for the dev user
+    const sessionId = `dev-session-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+    await prisma.session.create({
+      data: {
+        id: sessionId,
+        token: sessionId,
+        userId: devUser.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     });
 
     return NextResponse.json({
       success: true,
+      message: "Dev user created successfully",
       user: {
         id: devUser.id,
-        name: devUser.name,
-        email: devUser.email,
-        cpf: devUser.cpf,
-        approvalStatus: devUser.approvalStatus,
-        kycStatus: devUser.kycStatus,
-      },
-      message: "Dev user created successfully with all permissions",
-      credentials: {
         email: finalEmail,
-        password: "12345678",
+        name: devUser.name,
+        password: password, // Return plain password for dev use
+        approvalStatus: devUser.approvalStatus,
+        sessionId: sessionId,
       },
     });
   } catch (error) {
-    console.error("Error creating dev user:", error);
+    console.error("Dev user creation error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to create dev user" },
       { status: 500 }
     );
   }

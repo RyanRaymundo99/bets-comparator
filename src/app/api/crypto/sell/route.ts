@@ -1,16 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { binanceService } from "@/lib/binance";
 import { ledgerService } from "@/lib/ledger";
 import prisma from "@/lib/prisma";
-import { getAuth } from "@/lib/auth";
 import { Decimal } from "@prisma/client/runtime/library";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getAuth().api.getSession({ headers: await headers() });
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
+    }
+
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
     }
 
     const { amount, cryptoCurrency } = await request.json();
@@ -22,7 +38,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check user has sufficient crypto balance
+    // Check user crypto balance
     const cryptoBalance = await ledgerService.getUserBalance(
       session.user.id,
       cryptoCurrency
@@ -54,15 +70,15 @@ export async function POST(request: NextRequest) {
     });
 
     try {
-      // Execute on Binance
+      // Execute real order on Binance
       const binanceOrder = await binanceService.createOrder({
-        symbol,
+        symbol: `${cryptoCurrency}BRL`,
         side: "SELL",
         type: "MARKET",
         quantity: amount,
       });
 
-      // Update order status
+      // Update order status to completed
       await prisma.order.update({
         where: { id: order.id },
         data: {
@@ -94,7 +110,10 @@ export async function POST(request: NextRequest) {
         amount: new Decimal(amount),
         currency: cryptoCurrency,
         description: `Sold ${amount} ${cryptoCurrency}`,
-        metadata: { orderId: order.id, binanceOrderId: binanceOrder.orderId },
+        metadata: {
+          orderId: order.id,
+          binanceOrderId: binanceOrder.orderId,
+        },
       });
 
       await ledgerService.createTransaction({
@@ -102,8 +121,13 @@ export async function POST(request: NextRequest) {
         type: "SELL_CRYPTO",
         amount: new Decimal(total),
         currency: "BRL",
-        description: `Received ${total} BRL for ${amount} ${cryptoCurrency}`,
-        metadata: { orderId: order.id, binanceOrderId: binanceOrder.orderId },
+        description: `Received R$ ${total.toFixed(
+          2
+        )} from selling ${amount} ${cryptoCurrency}`,
+        metadata: {
+          orderId: order.id,
+          binanceOrderId: binanceOrder.orderId,
+        },
       });
 
       return NextResponse.json({
@@ -113,6 +137,7 @@ export async function POST(request: NextRequest) {
         amount,
         price,
         total,
+        message: "Crypto sale executed successfully",
       });
     } catch (error) {
       // Update order status to failed

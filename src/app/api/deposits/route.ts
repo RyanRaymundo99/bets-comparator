@@ -1,78 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
-import { mercadoPagoService } from "@/lib/mercadopago";
 import prisma from "@/lib/prisma";
-import { Decimal } from "@prisma/client/runtime/library";
 
 export async function POST(request: NextRequest) {
   try {
-    // For dev mode, get user ID from query params or use a dev user
-    const { amount, userId } = await request.json();
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
 
-    if (!amount || amount <= 0) {
-      return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
     }
 
-    // For now, let's find any dev user to create deposits
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const devUser = await prisma.user.findFirst({
-        where: {
-          email: { startsWith: "dev" },
-          approvalStatus: "APPROVED",
-        },
-        orderBy: { createdAt: "desc" },
-      });
-      targetUserId = devUser?.id || null;
-    }
-
-    if (!targetUserId) {
-      return NextResponse.json({ error: "No user found" }, { status: 404 });
-    }
-
-    // Get user email for MercadoPago
-    const user = await prisma.user.findUnique({
-      where: { id: targetUserId },
-      select: { email: true },
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
+    }
+
+    const { amount, paymentMethod } = await request.json();
+
+    // Validate required fields
+    if (!amount || amount <= 0) {
+      return NextResponse.json(
+        { error: "Amount is required and must be greater than 0" },
+        { status: 400 }
+      );
+    }
+
+    if (!paymentMethod) {
+      return NextResponse.json(
+        { error: "Payment method is required" },
+        { status: 400 }
+      );
     }
 
     // Create deposit record
     const deposit = await prisma.deposit.create({
       data: {
-        userId: targetUserId,
-        amount: new Decimal(amount),
+        userId: session.user.id,
+        amount,
         currency: "BRL",
-        paymentMethod: "mercadopago",
         status: "PENDING",
+        paymentMethod,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
 
-    // Create Mercado Pago payment
-    const payment = await mercadoPagoService.createPayment({
-      amount,
-      description: `Deposit ${amount} BRL`,
-      externalReference: deposit.id,
-      payerEmail: user.email,
-    });
-
-    // Update deposit with external ID
-    await prisma.deposit.update({
-      where: { id: deposit.id },
-      data: { externalId: payment.id.toString() },
-    });
-
     return NextResponse.json({
-      depositId: deposit.id,
-      paymentId: payment.id,
-      qrCode: payment.point_of_interaction?.transaction_data?.qr_code,
-      qrCodeBase64:
-        payment.point_of_interaction?.transaction_data?.qr_code_base64,
+      success: true,
+      message: "Deposit request submitted successfully",
+      deposit: {
+        id: deposit.id,
+        amount,
+        status: deposit.status,
+        createdAt: deposit.createdAt,
+      },
     });
   } catch (error) {
-    console.error("Deposit creation error:", error);
+    console.error("Deposit error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -82,40 +77,36 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    // For dev mode, get user ID from query params or use a dev user
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
 
-    // For now, let's find any dev user to show deposits
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const devUser = await prisma.user.findFirst({
-        where: {
-          email: { startsWith: "dev" },
-          approvalStatus: "APPROVED",
-        },
-        orderBy: { createdAt: "desc" },
-      });
-      targetUserId = devUser?.id || null;
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
     }
 
-    if (!targetUserId) {
-      return NextResponse.json({ deposits: [] });
-    }
-
-    const deposits = await prisma.deposit.findMany({
-      where: { userId: targetUserId },
-      orderBy: { createdAt: "desc" },
-      take: 20,
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
     });
 
-    // Convert Decimal to number for frontend compatibility
-    const formattedDeposits = deposits.map((deposit) => ({
-      ...deposit,
-      amount: Number(deposit.amount),
-    }));
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
+    }
 
-    return NextResponse.json({ deposits: formattedDeposits });
+    // Get user's deposits
+    const deposits = await prisma.deposit.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ deposits });
   } catch (error) {
     console.error("Deposits fetch error:", error);
     return NextResponse.json(

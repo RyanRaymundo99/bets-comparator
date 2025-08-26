@@ -10,10 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { InputField } from "@/components/Auth/FormFields";
 import { CPFField } from "@/components/Auth/CPFField";
 import { SignUpFormValues, signUpSchema } from "@/lib/schema/signupSchema";
-import { authClient } from "@/lib/auth-client";
-import { mockAuthClient } from "@/lib/mock-auth";
 import { AuthLayout } from "@/components/ui/auth-layout";
-import { SuccessPopup } from "@/components/ui/success-popup";
+import { WelcomeTutorial } from "@/components/ui/welcome-tutorial";
 
 const Signup = () => {
   const form = useForm<SignUpFormValues>({
@@ -27,7 +25,8 @@ const Signup = () => {
     },
   });
   const [pending, setPending] = useState(false);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showWelcomeTutorial, setShowWelcomeTutorial] = useState(false);
+  const [userName, setUserName] = useState("");
   const { toast } = useToast();
 
   const onSubmit = useCallback(
@@ -35,40 +34,34 @@ const Signup = () => {
       try {
         setPending(true);
 
-        // Try real auth first, fallback to mock auth for testing
-        try {
-          await authClient.signUp.email(
-            {
-              email: data.email,
-              password: data.password,
-              name: data.name,
-            },
-            {
-              onSuccess: () => {
-                setShowSuccessPopup(true);
-              },
-              onError: (ctx) => {
-                toast({
-                  variant: "destructive",
-                  title: "Erro ao criar conta",
-                  description:
-                    ctx.error.message ?? "Ocorreu um erro ao criar a conta.",
-                });
-              },
-            }
-          );
-        } catch (authError) {
-          console.log("Real auth failed, using mock auth:", authError);
-
-          // Fallback to mock auth for testing
-          await mockAuthClient.signUp({
-            email: data.email,
-            password: data.password,
+        const response = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             name: data.name,
+            email: data.email,
             cpf: data.cpf,
-          });
+            password: data.password,
+          }),
+        });
 
-          setShowSuccessPopup(true);
+        const result = await response.json();
+
+        if (response.ok) {
+          setUserName(data.name);
+          setShowWelcomeTutorial(true);
+          toast({
+            title: "Account created successfully!",
+            description: "Welcome to BS Market! Let's get you started.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Erro ao criar conta",
+            description: result.error || "Ocorreu um erro ao criar a conta.",
+          });
         }
       } catch (error) {
         console.error("Signup error:", error);
@@ -83,6 +76,14 @@ const Signup = () => {
     },
     [toast]
   );
+
+  const handleTutorialClose = () => {
+    setShowWelcomeTutorial(false);
+    // Redirect to dashboard after tutorial closes
+    setTimeout(() => {
+      window.location.href = "/dashboard";
+    }, 500);
+  };
 
   return (
     <AuthLayout
@@ -198,18 +199,10 @@ const Signup = () => {
         .
       </div>
 
-      <SuccessPopup
-        isOpen={showSuccessPopup}
-        onClose={() => {
-          setShowSuccessPopup(false);
-          // Redirect to dashboard after closing popup
-          setTimeout(() => {
-            window.location.href = "/dashboard";
-          }, 500);
-        }}
-        title="Conta criada com sucesso!"
-        message="Sua conta foi criada e está aguardando aprovação da nossa equipe. Você receberá uma notificação quando sua conta for aprovada."
-        showApprovalStatus={true}
+      <WelcomeTutorial
+        isOpen={showWelcomeTutorial}
+        onClose={handleTutorialClose}
+        userName={userName}
       />
     </AuthLayout>
   );

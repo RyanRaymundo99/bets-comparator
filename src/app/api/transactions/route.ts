@@ -3,35 +3,36 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    // For dev mode, get user ID from query params or use a dev user
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
+    }
+
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const type = searchParams.get("type");
     const currency = searchParams.get("currency");
 
-    // For now, let's find any dev user to show data
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const devUser = await prisma.user.findFirst({
-        where: {
-          email: { startsWith: "dev" },
-          approvalStatus: "APPROVED",
-        },
-        orderBy: { createdAt: "desc" },
-      });
-      targetUserId = devUser?.id || null;
-    }
-
-    if (!targetUserId) {
-      return NextResponse.json({
-        transactions: [],
-        pagination: { page: 1, limit, total: 0, pages: 0 },
-      });
-    }
-
-    const where: Record<string, unknown> = { userId: targetUserId };
+    const where: Record<string, unknown> = { userId: session.user.id };
 
     if (type) {
       where.type = type;
