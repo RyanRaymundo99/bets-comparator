@@ -189,7 +189,10 @@ export async function POST(request: NextRequest) {
       )}, Base amount: R$ ${baseAmount.toFixed(2)}, Fee: R$ ${fee.toFixed(2)}`
     );
 
-    // Create deposit record with fee information
+    // Generate real PIX using Mercado Pago API with the total amount (already includes fee)
+    const pixData = await generateRealPIXData(totalAmount, session.userId);
+
+    // Create deposit record with fee information AND payment details
     const deposit = await prisma.deposit.create({
       data: {
         userId: session.userId,
@@ -198,13 +201,12 @@ export async function POST(request: NextRequest) {
         status: "PENDING",
         paymentMethod,
         fee: fee, // Store the fee amount
+        paymentId: pixData.paymentId, // Store the Mercado Pago payment ID
+        paymentStatus: "pending", // Initial payment status
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     });
-
-    // Generate real PIX using Mercado Pago API with the total amount (already includes fee)
-    const pixData = await generateRealPIXData(totalAmount, session.userId);
 
     return NextResponse.json({
       success: true,

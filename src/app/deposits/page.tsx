@@ -46,31 +46,52 @@ export default function DepositsPage() {
 
   // Check payment status
   const checkPaymentStatus = useCallback(async () => {
-    if (!depositId) return;
+    if (!depositId) {
+      console.log("No deposit ID available for status check");
+      return;
+    }
+
+    console.log(`Checking payment status for deposit: ${depositId}`);
 
     try {
       const response = await fetch(`/api/deposits/${depositId}/status`);
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        setPaymentStatus(data.deposit.paymentStatus || "pending");
-        setDepositStatus(data.deposit.status || "PENDING");
+      console.log("Status check response:", data);
 
-        if (data.deposit.status === "CONFIRMED") {
+      if (response.ok && data.success) {
+        const newPaymentStatus = data.deposit.paymentStatus || "pending";
+        const newDepositStatus = data.deposit.status || "PENDING";
+
+        console.log(
+          `Status update: Payment=${newPaymentStatus}, Deposit=${newDepositStatus}`
+        );
+
+        setPaymentStatus(newPaymentStatus);
+        setDepositStatus(newDepositStatus);
+
+        if (newDepositStatus === "CONFIRMED") {
           toast({
-            title: "Payment Confirmed!",
+            title: "Payment Confirmed! 🎉",
             description: "Your deposit has been confirmed and balance updated!",
           });
-        } else if (data.deposit.status === "REJECTED") {
+        } else if (newDepositStatus === "REJECTED") {
           toast({
-            title: "Payment Failed",
+            title: "Payment Failed ❌",
             description: "Your payment was not successful. Please try again.",
             variant: "destructive",
           });
         }
+      } else {
+        console.log("Status check failed:", data);
       }
     } catch (error) {
       console.error("Error checking payment status:", error);
+      toast({
+        title: "Status Check Error",
+        description: "Failed to check payment status. Please try again.",
+        variant: "destructive",
+      });
     }
   }, [depositId, toast]);
 
@@ -394,56 +415,107 @@ export default function DepositsPage() {
                       </p>
                     </div>
 
-                                         {/* Payment Status */}
-                     <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                       <div className="flex items-center justify-between mb-2">
-                         <p className="text-sm font-medium text-blue-700">
-                           Status do Pagamento:
-                         </p>
-                         <div className="flex space-x-2">
-                           <Button
-                             onClick={checkPaymentStatus}
-                             size="sm"
-                             variant="outline"
-                             className="h-7 px-2 text-xs"
-                           >
-                             <RefreshCw className="w-3 h-3 mr-1" />
-                             Verificar
-                           </Button>
-                           <Button
-                             onClick={() => {
-                               toast({
-                                 title: "Status Check",
-                                 description: `Checking payment status for deposit ${depositId}`,
-                               });
-                               checkPaymentStatus();
-                             }}
-                             size="sm"
-                             variant="secondary"
-                             className="h-7 px-2 text-xs"
-                           >
-                             <Info className="w-3 h-3 mr-1" />
-                             Debug
-                           </Button>
-                         </div>
-                       </div>
-                       <div className="space-y-1">
-                         <p className="text-xs text-blue-600">
-                           <span className="font-medium">Mercado Pago:</span>{" "}
-                           {paymentStatus || "pending"}
-                         </p>
-                         <p className="text-xs text-blue-600">
-                           <span className="font-medium">Depósito:</span>{" "}
-                           {depositStatus || "PENDING"}
-                         </p>
-                       </div>
-                       {depositId && (
-                         <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                           <p><strong>Deposit ID:</strong> {depositId}</p>
-                           <p><strong>Payment ID:</strong> {paymentId || "N/A"}</p>
-                         </div>
-                       )}
-                     </div>
+                    {/* Payment Status */}
+                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-blue-700">
+                          Status do Pagamento:
+                        </p>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={checkPaymentStatus}
+                            size="sm"
+                            variant="outline"
+                            className="h-7 px-2 text-xs"
+                          >
+                            <RefreshCw className="w-3 h-3 mr-1" />
+                            Verificar
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              toast({
+                                title: "Status Check",
+                                description: `Checking payment status for deposit ${depositId}`,
+                              });
+                              checkPaymentStatus();
+                            }}
+                            size="sm"
+                            variant="secondary"
+                            className="h-7 px-2 text-xs"
+                          >
+                            <Info className="w-3 h-3 mr-1" />
+                            Debug
+                          </Button>
+                          <Button
+                            onClick={async () => {
+                              if (paymentId) {
+                                try {
+                                  const response = await fetch(
+                                    `/api/deposits/${depositId}/status?force=true`
+                                  );
+                                  const data = await response.json();
+                                  toast({
+                                    title: "Direct Check",
+                                    description: `Payment status: ${
+                                      data.deposit?.paymentStatus || "unknown"
+                                    }`,
+                                  });
+                                } catch {
+                                  toast({
+                                    title: "Error",
+                                    description:
+                                      "Failed to check payment directly",
+                                    variant: "destructive",
+                                  });
+                                }
+                              } else {
+                                toast({
+                                  title: "No Payment ID",
+                                  description: "Payment ID not available yet",
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                            size="sm"
+                            variant="outline"
+                            className="h-7 px-2 text-xs"
+                          >
+                            <RefreshCw className="w-3 h-3 mr-1" />
+                            Direct
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs text-blue-600">
+                          <span className="font-medium">Mercado Pago:</span>{" "}
+                          {paymentStatus || "pending"}
+                        </p>
+                        <p className="text-xs text-blue-600">
+                          <span className="font-medium">Depósito:</span>{" "}
+                          {depositStatus || "PENDING"}
+                        </p>
+                      </div>
+                      {depositId && (
+                        <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
+                          <p>
+                            <strong>Deposit ID:</strong> {depositId}
+                          </p>
+                          <p>
+                            <strong>Payment ID:</strong> {paymentId || "N/A"}
+                          </p>
+                          <p>
+                            <strong>Last Check:</strong>{" "}
+                            {new Date().toLocaleTimeString()}
+                          </p>
+                          <p>
+                            <strong>Webhook Status:</strong>{" "}
+                            {paymentStatus === null
+                              ? "Waiting for webhook"
+                              : "Received"}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-sm">

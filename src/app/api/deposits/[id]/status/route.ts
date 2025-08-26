@@ -20,6 +20,14 @@ export async function GET(
 
     const { id: depositId } = await params;
 
+    // Check if force refresh is requested
+    const { searchParams } = new URL(request.url);
+    const forceRefresh = searchParams.get("force") === "true";
+
+    console.log(
+      `Status check requested for deposit ${depositId}, force refresh: ${forceRefresh}`
+    );
+
     // Get the deposit
     const deposit = await prisma.deposit.findUnique({
       where: { id: depositId },
@@ -45,8 +53,8 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    // If deposit has a payment ID and is still pending, check with Mercado Pago
-    if (deposit.paymentId && deposit.status === "PENDING") {
+    // If deposit has a payment ID, check with Mercado Pago regardless of current status
+    if (deposit.paymentId) {
       try {
         console.log(
           `Checking payment status for deposit ${depositId}, payment ${deposit.paymentId}`
@@ -54,6 +62,22 @@ export async function GET(
 
         const payment = await mercadoPagoService.getPayment(deposit.paymentId);
         console.log("Payment status from Mercado Pago:", payment.status);
+        console.log("Payment ID:", deposit.paymentId);
+        console.log("Payment method:", payment.payment_method_id);
+        console.log("Payment amount:", payment.transaction_amount);
+        console.log("Payment description:", payment.description);
+        console.log("Payment external reference:", payment.external_reference);
+        console.log("Full payment response:", JSON.stringify(payment, null, 2));
+
+        console.log(
+          `Current deposit paymentStatus: "${deposit.paymentStatus}"`
+        );
+        console.log(`Mercado Pago payment status: "${payment.status}"`);
+        console.log(
+          `Status comparison: ${payment.status} !== ${
+            deposit.paymentStatus
+          } = ${payment.status !== deposit.paymentStatus}`
+        );
 
         // Update deposit status if it has changed
         if (payment.status !== deposit.paymentStatus) {
@@ -78,6 +102,10 @@ export async function GET(
               newStatus = "PENDING";
           }
 
+          console.log(
+            `Updating deposit ${depositId} with new status: ${newStatus} and payment status: ${payment.status}`
+          );
+
           // Update the deposit
           await prisma.deposit.update({
             where: { id: depositId },
@@ -87,6 +115,10 @@ export async function GET(
               updatedAt: new Date(),
             },
           });
+
+          console.log(
+            `Deposit ${depositId} updated to status: ${newStatus} and payment status: ${payment.status}`
+          );
 
           // If payment is approved, credit the user's balance
           if (payment.status === "approved" && newStatus === "CONFIRMED") {
@@ -160,6 +192,17 @@ export async function GET(
             }
           }
 
+          // Verify the update was successful
+          const updatedDeposit = await prisma.deposit.findUnique({
+            where: { id: depositId },
+            select: { status: true, paymentStatus: true, updatedAt: true },
+          });
+
+          console.log(
+            `Verification - Updated deposit in database:`,
+            updatedDeposit
+          );
+
           // Return updated deposit info
           return NextResponse.json({
             success: true,
@@ -171,20 +214,41 @@ export async function GET(
             },
             message: `Payment status updated to: ${payment.status}`,
           });
+        } else {
+          console.log(
+            `No status update needed - payment status unchanged: ${payment.status}`
+          );
         }
       } catch (error) {
         console.error("Error checking payment status:", error);
+
+        // Log detailed error information
+        if (error instanceof Error) {
+          console.error("Error message:", error.message);
+          console.error("Error stack:", error.stack);
+        }
+
         // Continue and return current deposit status
+        console.log("Continuing with current deposit status due to error");
       }
+    } else {
+      console.log(`No payment ID found for deposit ${depositId}`);
     }
 
-    // Return current deposit status
+    // Return current deposit status with improved payment status handling
+    const currentPaymentStatus = deposit.paymentStatus || "pending";
+    const currentDepositStatus = deposit.status || "PENDING";
+
+    console.log(
+      `Returning deposit status: ${currentDepositStatus}, payment status: ${currentPaymentStatus}`
+    );
+
     return NextResponse.json({
       success: true,
       deposit: {
         id: depositId,
-        status: deposit.status,
-        paymentStatus: deposit.paymentStatus,
+        status: currentDepositStatus,
+        paymentStatus: currentPaymentStatus,
         amount: deposit.amount,
         currency: deposit.currency,
         createdAt: deposit.createdAt,

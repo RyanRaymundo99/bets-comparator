@@ -191,10 +191,27 @@ export class MercadoPagoService {
     }
   }
 
-  verifyWebhookSignature(): boolean {
-    // Implement webhook signature verification
-    // This is a simplified version - implement proper verification
-    return true;
+  verifyWebhookSignature(request: Request): boolean {
+    try {
+      // Get the signature from headers
+      const signature =
+        request.headers.get("x-signature") ||
+        request.headers.get("x-webhook-signature") ||
+        request.headers.get("x-mercadopago-signature");
+
+      if (!signature) {
+        console.warn("No webhook signature found in headers");
+        return false;
+      }
+
+      // For now, return true to allow webhooks through
+      // TODO: Implement proper HMAC verification
+      console.log("Webhook signature found:", signature);
+      return true;
+    } catch (error) {
+      console.error("Error verifying webhook signature:", error);
+      return false;
+    }
   }
 }
 
