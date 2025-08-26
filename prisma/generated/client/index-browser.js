@@ -193,7 +193,12 @@ exports.Prisma.DepositScalarFieldEnum = {
   confirmedAt: 'confirmedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  transactionId: 'transactionId'
+  transactionId: 'transactionId',
+  paymentId: 'paymentId',
+  paymentStatus: 'paymentStatus',
+  paymentAmount: 'paymentAmount',
+  pixQrCode: 'pixQrCode',
+  pixQrCodeBase64: 'pixQrCodeBase64'
 };
 
 exports.Prisma.WithdrawalScalarFieldEnum = {

@@ -7880,10 +7880,12 @@ export namespace Prisma {
 
   export type DepositAvgAggregateOutputType = {
     amount: Decimal | null
+    paymentAmount: Decimal | null
   }
 
   export type DepositSumAggregateOutputType = {
     amount: Decimal | null
+    paymentAmount: Decimal | null
   }
 
   export type DepositMinAggregateOutputType = {
@@ -7899,6 +7901,11 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     transactionId: string | null
+    paymentId: string | null
+    paymentStatus: string | null
+    paymentAmount: Decimal | null
+    pixQrCode: string | null
+    pixQrCodeBase64: string | null
   }
 
   export type DepositMaxAggregateOutputType = {
@@ -7914,6 +7921,11 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     transactionId: string | null
+    paymentId: string | null
+    paymentStatus: string | null
+    paymentAmount: Decimal | null
+    pixQrCode: string | null
+    pixQrCodeBase64: string | null
   }
 
   export type DepositCountAggregateOutputType = {
@@ -7929,16 +7941,23 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     transactionId: number
+    paymentId: number
+    paymentStatus: number
+    paymentAmount: number
+    pixQrCode: number
+    pixQrCodeBase64: number
     _all: number
   }
 
 
   export type DepositAvgAggregateInputType = {
     amount?: true
+    paymentAmount?: true
   }
 
   export type DepositSumAggregateInputType = {
     amount?: true
+    paymentAmount?: true
   }
 
   export type DepositMinAggregateInputType = {
@@ -7954,6 +7973,11 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     transactionId?: true
+    paymentId?: true
+    paymentStatus?: true
+    paymentAmount?: true
+    pixQrCode?: true
+    pixQrCodeBase64?: true
   }
 
   export type DepositMaxAggregateInputType = {
@@ -7969,6 +7993,11 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     transactionId?: true
+    paymentId?: true
+    paymentStatus?: true
+    paymentAmount?: true
+    pixQrCode?: true
+    pixQrCodeBase64?: true
   }
 
   export type DepositCountAggregateInputType = {
@@ -7984,6 +8013,11 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     transactionId?: true
+    paymentId?: true
+    paymentStatus?: true
+    paymentAmount?: true
+    pixQrCode?: true
+    pixQrCodeBase64?: true
     _all?: true
   }
 
@@ -8086,6 +8120,11 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     transactionId: string | null
+    paymentId: string | null
+    paymentStatus: string | null
+    paymentAmount: Decimal | null
+    pixQrCode: string | null
+    pixQrCodeBase64: string | null
     _count: DepositCountAggregateOutputType | null
     _avg: DepositAvgAggregateOutputType | null
     _sum: DepositSumAggregateOutputType | null
@@ -8120,6 +8159,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    paymentId?: boolean
+    paymentStatus?: boolean
+    paymentAmount?: boolean
+    pixQrCode?: boolean
+    pixQrCodeBase64?: boolean
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deposit"]>
@@ -8137,6 +8181,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    paymentId?: boolean
+    paymentStatus?: boolean
+    paymentAmount?: boolean
+    pixQrCode?: boolean
+    pixQrCodeBase64?: boolean
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deposit"]>
@@ -8154,6 +8203,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    paymentId?: boolean
+    paymentStatus?: boolean
+    paymentAmount?: boolean
+    pixQrCode?: boolean
+    pixQrCodeBase64?: boolean
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deposit"]>
@@ -8171,9 +8225,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    paymentId?: boolean
+    paymentStatus?: boolean
+    paymentAmount?: boolean
+    pixQrCode?: boolean
+    pixQrCodeBase64?: boolean
   }
 
-  export type DepositOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "status" | "paymentMethod" | "externalId" | "proofUrl" | "confirmedAt" | "createdAt" | "updatedAt" | "transactionId", ExtArgs["result"]["deposit"]>
+  export type DepositOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "status" | "paymentMethod" | "externalId" | "proofUrl" | "confirmedAt" | "createdAt" | "updatedAt" | "transactionId" | "paymentId" | "paymentStatus" | "paymentAmount" | "pixQrCode" | "pixQrCodeBase64", ExtArgs["result"]["deposit"]>
   export type DepositInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | Deposit$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -8206,6 +8265,11 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       transactionId: string | null
+      paymentId: string | null
+      paymentStatus: string | null
+      paymentAmount: Prisma.Decimal | null
+      pixQrCode: string | null
+      pixQrCodeBase64: string | null
     }, ExtArgs["result"]["deposit"]>
     composites: {}
   }
@@ -8643,6 +8707,11 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Deposit", 'DateTime'>
     readonly updatedAt: FieldRef<"Deposit", 'DateTime'>
     readonly transactionId: FieldRef<"Deposit", 'String'>
+    readonly paymentId: FieldRef<"Deposit", 'String'>
+    readonly paymentStatus: FieldRef<"Deposit", 'String'>
+    readonly paymentAmount: FieldRef<"Deposit", 'Decimal'>
+    readonly pixQrCode: FieldRef<"Deposit", 'String'>
+    readonly pixQrCodeBase64: FieldRef<"Deposit", 'String'>
   }
     
 
@@ -15460,7 +15529,12 @@ export namespace Prisma {
     confirmedAt: 'confirmedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    transactionId: 'transactionId'
+    transactionId: 'transactionId',
+    paymentId: 'paymentId',
+    paymentStatus: 'paymentStatus',
+    paymentAmount: 'paymentAmount',
+    pixQrCode: 'pixQrCode',
+    pixQrCodeBase64: 'pixQrCodeBase64'
   };
 
   export type DepositScalarFieldEnum = (typeof DepositScalarFieldEnum)[keyof typeof DepositScalarFieldEnum]
@@ -16258,6 +16332,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeFilter<"Deposit"> | Date | string
     transactionId?: StringNullableFilter<"Deposit"> | string | null
+    paymentId?: StringNullableFilter<"Deposit"> | string | null
+    paymentStatus?: StringNullableFilter<"Deposit"> | string | null
+    paymentAmount?: DecimalNullableFilter<"Deposit"> | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: StringNullableFilter<"Deposit"> | string | null
+    pixQrCodeBase64?: StringNullableFilter<"Deposit"> | string | null
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -16275,6 +16354,11 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
+    paymentId?: SortOrderInput | SortOrder
+    paymentStatus?: SortOrderInput | SortOrder
+    paymentAmount?: SortOrderInput | SortOrder
+    pixQrCode?: SortOrderInput | SortOrder
+    pixQrCodeBase64?: SortOrderInput | SortOrder
     transaction?: TransactionOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -16295,6 +16379,11 @@ export namespace Prisma {
     confirmedAt?: DateTimeNullableFilter<"Deposit"> | Date | string | null
     createdAt?: DateTimeFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeFilter<"Deposit"> | Date | string
+    paymentId?: StringNullableFilter<"Deposit"> | string | null
+    paymentStatus?: StringNullableFilter<"Deposit"> | string | null
+    paymentAmount?: DecimalNullableFilter<"Deposit"> | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: StringNullableFilter<"Deposit"> | string | null
+    pixQrCodeBase64?: StringNullableFilter<"Deposit"> | string | null
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "transactionId">
@@ -16312,6 +16401,11 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
+    paymentId?: SortOrderInput | SortOrder
+    paymentStatus?: SortOrderInput | SortOrder
+    paymentAmount?: SortOrderInput | SortOrder
+    pixQrCode?: SortOrderInput | SortOrder
+    pixQrCodeBase64?: SortOrderInput | SortOrder
     _count?: DepositCountOrderByAggregateInput
     _avg?: DepositAvgOrderByAggregateInput
     _max?: DepositMaxOrderByAggregateInput
@@ -16335,6 +16429,11 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Deposit"> | Date | string
     transactionId?: StringNullableWithAggregatesFilter<"Deposit"> | string | null
+    paymentId?: StringNullableWithAggregatesFilter<"Deposit"> | string | null
+    paymentStatus?: StringNullableWithAggregatesFilter<"Deposit"> | string | null
+    paymentAmount?: DecimalNullableWithAggregatesFilter<"Deposit"> | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: StringNullableWithAggregatesFilter<"Deposit"> | string | null
+    pixQrCodeBase64?: StringNullableWithAggregatesFilter<"Deposit"> | string | null
   }
 
   export type WithdrawalWhereInput = {
@@ -17338,6 +17437,11 @@ export namespace Prisma {
     confirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
     transaction?: TransactionCreateNestedOneWithoutDepositInput
     user: UserCreateNestedOneWithoutDepositsInput
   }
@@ -17355,6 +17459,11 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
   }
 
   export type DepositUpdateInput = {
@@ -17368,6 +17477,11 @@ export namespace Prisma {
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
     transaction?: TransactionUpdateOneWithoutDepositNestedInput
     user?: UserUpdateOneRequiredWithoutDepositsNestedInput
   }
@@ -17385,6 +17499,11 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DepositCreateManyInput = {
@@ -17400,6 +17519,11 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
   }
 
   export type DepositUpdateManyMutationInput = {
@@ -17413,6 +17537,11 @@ export namespace Prisma {
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DepositUncheckedUpdateManyInput = {
@@ -17428,6 +17557,11 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WithdrawalCreateInput = {
@@ -18552,6 +18686,17 @@ export namespace Prisma {
     not?: NestedEnumDepositStatusFilter<$PrismaModel> | $Enums.DepositStatus
   }
 
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
   export type TransactionNullableScalarRelationFilter = {
     is?: TransactionWhereInput | null
     isNot?: TransactionWhereInput | null
@@ -18570,10 +18715,16 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrder
+    paymentId?: SortOrder
+    paymentStatus?: SortOrder
+    paymentAmount?: SortOrder
+    pixQrCode?: SortOrder
+    pixQrCodeBase64?: SortOrder
   }
 
   export type DepositAvgOrderByAggregateInput = {
     amount?: SortOrder
+    paymentAmount?: SortOrder
   }
 
   export type DepositMaxOrderByAggregateInput = {
@@ -18589,6 +18740,11 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrder
+    paymentId?: SortOrder
+    paymentStatus?: SortOrder
+    paymentAmount?: SortOrder
+    pixQrCode?: SortOrder
+    pixQrCodeBase64?: SortOrder
   }
 
   export type DepositMinOrderByAggregateInput = {
@@ -18604,10 +18760,16 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrder
+    paymentId?: SortOrder
+    paymentStatus?: SortOrder
+    paymentAmount?: SortOrder
+    pixQrCode?: SortOrder
+    pixQrCodeBase64?: SortOrder
   }
 
   export type DepositSumOrderByAggregateInput = {
     amount?: SortOrder
+    paymentAmount?: SortOrder
   }
 
   export type EnumDepositStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -18618,6 +18780,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDepositStatusFilter<$PrismaModel>
     _max?: NestedEnumDepositStatusFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
   export type EnumWithdrawalStatusFilter<$PrismaModel = never> = {
@@ -19620,6 +19798,14 @@ export namespace Prisma {
     set?: $Enums.DepositStatus
   }
 
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
   export type TransactionUpdateOneWithoutDepositNestedInput = {
     create?: XOR<TransactionCreateWithoutDepositInput, TransactionUncheckedCreateWithoutDepositInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutDepositInput
@@ -20268,6 +20454,17 @@ export namespace Prisma {
     not?: NestedEnumDepositStatusFilter<$PrismaModel> | $Enums.DepositStatus
   }
 
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
   export type NestedEnumDepositStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.DepositStatus | EnumDepositStatusFieldRefInput<$PrismaModel>
     in?: $Enums.DepositStatus[] | ListEnumDepositStatusFieldRefInput<$PrismaModel>
@@ -20276,6 +20473,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDepositStatusFilter<$PrismaModel>
     _max?: NestedEnumDepositStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumWithdrawalStatusFilter<$PrismaModel = never> = {
@@ -20499,6 +20712,11 @@ export namespace Prisma {
     confirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
     transaction?: TransactionCreateNestedOneWithoutDepositInput
   }
 
@@ -20514,6 +20732,11 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
   }
 
   export type DepositCreateOrConnectWithoutUserInput = {
@@ -20912,6 +21135,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Deposit"> | Date | string
     updatedAt?: DateTimeFilter<"Deposit"> | Date | string
     transactionId?: StringNullableFilter<"Deposit"> | string | null
+    paymentId?: StringNullableFilter<"Deposit"> | string | null
+    paymentStatus?: StringNullableFilter<"Deposit"> | string | null
+    paymentAmount?: DecimalNullableFilter<"Deposit"> | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: StringNullableFilter<"Deposit"> | string | null
+    pixQrCodeBase64?: StringNullableFilter<"Deposit"> | string | null
   }
 
   export type OrderUpsertWithWhereUniqueWithoutUserInput = {
@@ -22705,6 +22933,11 @@ export namespace Prisma {
     confirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
     user: UserCreateNestedOneWithoutDepositsInput
   }
 
@@ -22720,6 +22953,11 @@ export namespace Prisma {
     confirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
   }
 
   export type DepositCreateOrConnectWithoutTransactionInput = {
@@ -22954,6 +23192,11 @@ export namespace Prisma {
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutDepositsNestedInput
   }
 
@@ -22969,6 +23212,11 @@ export namespace Prisma {
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUpsertWithoutTransactionInput = {
@@ -23242,6 +23490,11 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    paymentId?: string | null
+    paymentStatus?: string | null
+    paymentAmount?: Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: string | null
+    pixQrCodeBase64?: string | null
   }
 
   export type OrderCreateManyUserInput = {
@@ -23431,6 +23684,11 @@ export namespace Prisma {
     confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
     transaction?: TransactionUpdateOneWithoutDepositNestedInput
   }
 
@@ -23446,6 +23704,11 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DepositUncheckedUpdateManyWithoutUserInput = {
@@ -23460,6 +23723,11 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixQrCode?: NullableStringFieldUpdateOperationsInput | string | null
+    pixQrCodeBase64?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderUpdateWithoutUserInput = {

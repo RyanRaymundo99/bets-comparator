@@ -13,7 +13,7 @@ model User {
   name           String
   email          String         @unique
   cpf            String?        @unique
-  password       String?        // Add password field directly to User
+  password       String? // Add password field directly to User
   emailVerified  Boolean
   approvalStatus ApprovalStatus @default(PENDING)
   image          String?
@@ -108,13 +108,13 @@ model Deposit {
   transactionId String?       @unique
   transaction   Transaction?  @relation(fields: [transactionId], references: [id])
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   // Mercado Pago integration fields
-  paymentId     String?       // Mercado Pago payment ID
-  paymentStatus String?       // Mercado Pago payment status
-  paymentAmount Decimal?      @db.Decimal(20, 2) // Actual amount paid
-  pixQrCode    String?       // PIX QR code data
-  pixQrCodeBase64 String?    // PIX QR code image in base64
+  paymentId       String? // Mercado Pago payment ID
+  paymentStatus   String? // Mercado Pago payment status
+  paymentAmount   Decimal? @db.Decimal(20, 2) // Actual amount paid
+  pixQrCode       String? // PIX QR code data
+  pixQrCodeBase64 String? // PIX QR code image in base64
 
   @@map("deposit")
 }

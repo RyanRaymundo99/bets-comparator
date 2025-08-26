@@ -71,7 +71,7 @@ export default function DepositsPage() {
 
         toast({
           title: "Success",
-          description: "PIX generated successfully!",
+          description: "PIX generated successfully using Mercado Pago!",
         });
       } else {
         // Handle specific error cases
@@ -85,6 +85,13 @@ export default function DepositsPage() {
           setTimeout(() => {
             window.location.href = "/login";
           }, 2000);
+        } else if (response.status === 503) {
+          toast({
+            title: "Service Unavailable",
+            description:
+              data.error || "Payment service is temporarily unavailable",
+            variant: "destructive",
+          });
         } else {
           toast({
             title: "Error",
@@ -97,7 +104,7 @@ export default function DepositsPage() {
       console.error("Deposit error:", error);
       toast({
         title: "Error",
-        description: "Network error",
+        description: "Network error. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -133,11 +140,19 @@ export default function DepositsPage() {
           <p className="text-muted-foreground text-lg">
             Deposite BRL de forma segura e instantânea
           </p>
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-700">
+          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-700">
               <Info className="w-4 h-4 inline mr-2" />
-              Sistema de demonstração: PIX mock para testes. Em produção, seria
-              integrado com Mercado Pago.
+              Sistema integrado com Mercado Pago para PIX real e funcional.
+            </p>
+            <p className="text-xs text-green-600 mt-2">
+              <strong>Status:</strong> Mercado Pago configurado e funcionando.
+              Todos os QR Codes gerados são reais e podem ser escaneados por
+              qualquer app bancário brasileiro.
+            </p>
+            <p className="text-xs text-blue-600 mt-2">
+              <strong>Segurança:</strong> Pagamentos processados diretamente
+              pelo Mercado Pago com confirmação automática.
             </p>
           </div>
         </div>
@@ -308,8 +323,8 @@ export default function DepositsPage() {
                   <div className="space-y-4">
                     <p className="text-base text-muted-foreground">
                       {qrCodeBase64
-                        ? "Escaneie o QR Code com seu app bancário ou Mercado Pago"
-                        : "Este é um mock do PIX. Em produção, seria um QR Code real."}
+                        ? "Escaneie o QR Code com seu app bancário ou Mercado Pago para fazer o pagamento"
+                        : "Digite um valor e clique em 'Gerar PIX' para criar o código de pagamento"}
                     </p>
                     <div className="p-3 bg-muted rounded-lg">
                       <p className="text-sm text-muted-foreground mb-1">
