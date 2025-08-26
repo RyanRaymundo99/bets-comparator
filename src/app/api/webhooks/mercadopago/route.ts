@@ -13,9 +13,7 @@ export async function POST(request: NextRequest) {
     const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
     if (webhookSecret) {
       try {
-        if (
-          !mercadoPagoService.verifyWebhookSignature(request)
-        ) {
+        if (!mercadoPagoService.verifyWebhookSignature(request)) {
           console.warn("Webhook signature verification failed");
           return NextResponse.json(
             { error: "Invalid signature" },
