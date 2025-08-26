@@ -197,6 +197,7 @@ exports.Prisma.DepositScalarFieldEnum = {
   paymentId: 'paymentId',
   paymentStatus: 'paymentStatus',
   paymentAmount: 'paymentAmount',
+  fee: 'fee',
   pixQrCode: 'pixQrCode',
   pixQrCodeBase64: 'pixQrCodeBase64'
 };

@@ -35,15 +35,28 @@ export class MercadoPagoService {
         throw new Error("Invalid amount: must be a positive number");
       }
 
+      // Ensure amount is at least 0.01 (Mercado Pago minimum)
+      if (amount < 0.01) {
+        throw new Error("Amount must be at least R$ 0.01");
+      }
+
+      // Format amount to 2 decimal places (Mercado Pago requirement)
+      const formattedAmount = Math.round(amount * 100) / 100;
+
       // Generate a unique idempotency key for this request
       const idempotencyKey = `${data.externalReference}-${Date.now()}`;
 
       // Prepare the payment payload according to Mercado Pago API docs
       const paymentPayload = {
-        transaction_amount: amount,
+        transaction_amount: formattedAmount,
         description: data.description,
         external_reference: data.externalReference,
         payment_method_id: "pix",
+        notification_url:
+          process.env.MERCADO_PAGO_WEBHOOK_URL ||
+          "https://yourdomain.com/api/webhooks/mercadopago",
+        statement_descriptor: "BS Market",
+        binary_mode: false,
         payer: {
           email: data.payerEmail,
         },
@@ -111,6 +124,11 @@ export class MercadoPagoService {
           description: data.description,
           external_reference: data.externalReference,
           payment_method_id: "pix",
+          notification_url:
+            process.env.MERCADO_PAGO_WEBHOOK_URL ||
+            "https://yourdomain.com/api/webhooks/mercadopago",
+          statement_descriptor: "BS Market",
+          binary_mode: false,
           payer: {
             email: data.payerEmail,
           },
@@ -119,6 +137,12 @@ export class MercadoPagoService {
         // Log specific validation errors if available
         if (error.response?.data?.error?.causes) {
           console.error("Validation errors:", error.response.data.error.causes);
+        }
+
+        // Log the full error response
+        if (error.response?.data?.error) {
+          console.error("Error message:", error.response.data.error.message);
+          console.error("Error code:", error.response.data.error.error);
         }
       }
 

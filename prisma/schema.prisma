@@ -113,6 +113,7 @@ model Deposit {
   paymentId     String?       // Mercado Pago payment ID
   paymentStatus String?       // Mercado Pago payment status
   paymentAmount Decimal?      @db.Decimal(20, 2) // Actual amount paid
+  fee           Decimal?      @db.Decimal(20, 2) // Processing fee charged
   pixQrCode    String?       // PIX QR code data
   pixQrCodeBase64 String?    // PIX QR code image in base64
 

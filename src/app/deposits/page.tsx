@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ import {
   CheckCircle,
   AlertTriangle,
   Banknote,
+  RefreshCw,
 } from "lucide-react";
 
 export default function DepositsPage() {
@@ -27,6 +28,9 @@ export default function DepositsPage() {
   const [qrCode, setQrCode] = useState("");
   const [qrCodeBase64, setQrCodeBase64] = useState("");
   const [paymentId, setPaymentId] = useState("");
+  const [depositId, setDepositId] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [depositStatus, setDepositStatus] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { toast } = useToast();
 
@@ -39,6 +43,56 @@ export default function DepositsPage() {
       setIsLoggingOut(false);
     }
   };
+
+  // Check payment status
+  const checkPaymentStatus = useCallback(async () => {
+    if (!depositId) return;
+
+    try {
+      const response = await fetch(`/api/deposits/${depositId}/status`);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setPaymentStatus(data.deposit.paymentStatus || "pending");
+        setDepositStatus(data.deposit.status || "PENDING");
+
+        if (data.deposit.status === "CONFIRMED") {
+          toast({
+            title: "Payment Confirmed!",
+            description: "Your deposit has been confirmed and balance updated!",
+          });
+        } else if (data.deposit.status === "REJECTED") {
+          toast({
+            title: "Payment Failed",
+            description: "Your payment was not successful. Please try again.",
+            variant: "destructive",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error checking payment status:", error);
+    }
+  }, [depositId, toast]);
+
+  // Auto-check payment status every 10 seconds when pending
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (depositId && depositStatus === "PENDING") {
+      console.log("Starting automatic payment status check every 10 seconds");
+      interval = setInterval(() => {
+        console.log("Auto-checking payment status...");
+        checkPaymentStatus();
+      }, 10000); // 10 seconds for faster updates
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+        console.log("Stopped automatic payment status check");
+      }
+    };
+  }, [depositId, depositStatus, checkPaymentStatus]);
 
   const handleDeposit = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -56,7 +110,7 @@ export default function DepositsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: parseFloat(amount),
+          amount: total, // Send total amount including fee
           paymentMethod: "mercadopago",
         }),
       });
@@ -68,10 +122,15 @@ export default function DepositsPage() {
         setQrCode(data.qrCode || "");
         setQrCodeBase64(data.qrCodeBase64 || "");
         setPaymentId(data.paymentId || "");
+        setDepositId(data.deposit.id || "");
+        setPaymentStatus("pending");
+        setDepositStatus("PENDING");
 
         toast({
           title: "Success",
-          description: "PIX generated successfully using Mercado Pago!",
+          description: `PIX generated successfully! Total amount: ${formatCurrency(
+            total
+          )} (includes 3% fee)`,
         });
       } else {
         // Handle specific error cases
@@ -334,6 +393,57 @@ export default function DepositsPage() {
                         {paymentId}
                       </p>
                     </div>
+
+                                         {/* Payment Status */}
+                     <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                       <div className="flex items-center justify-between mb-2">
+                         <p className="text-sm font-medium text-blue-700">
+                           Status do Pagamento:
+                         </p>
+                         <div className="flex space-x-2">
+                           <Button
+                             onClick={checkPaymentStatus}
+                             size="sm"
+                             variant="outline"
+                             className="h-7 px-2 text-xs"
+                           >
+                             <RefreshCw className="w-3 h-3 mr-1" />
+                             Verificar
+                           </Button>
+                           <Button
+                             onClick={() => {
+                               toast({
+                                 title: "Status Check",
+                                 description: `Checking payment status for deposit ${depositId}`,
+                               });
+                               checkPaymentStatus();
+                             }}
+                             size="sm"
+                             variant="secondary"
+                             className="h-7 px-2 text-xs"
+                           >
+                             <Info className="w-3 h-3 mr-1" />
+                             Debug
+                           </Button>
+                         </div>
+                       </div>
+                       <div className="space-y-1">
+                         <p className="text-xs text-blue-600">
+                           <span className="font-medium">Mercado Pago:</span>{" "}
+                           {paymentStatus || "pending"}
+                         </p>
+                         <p className="text-xs text-blue-600">
+                           <span className="font-medium">Depósito:</span>{" "}
+                           {depositStatus || "PENDING"}
+                         </p>
+                       </div>
+                       {depositId && (
+                         <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
+                           <p><strong>Deposit ID:</strong> {depositId}</p>
+                           <p><strong>Payment ID:</strong> {paymentId || "N/A"}</p>
+                         </div>
+                       )}
+                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-sm">

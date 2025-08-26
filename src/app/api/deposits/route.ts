@@ -126,7 +126,9 @@ async function generateRealPIXData(amount: number, userId: string) {
 
     // Log more details for debugging
     if (error && typeof error === "object" && "response" in error) {
-      const apiError = error as any;
+      const apiError = error as {
+        response?: { status?: number; data?: unknown; headers?: unknown };
+      };
       console.error("Mercado Pago API response error:", {
         status: apiError.response?.status,
         data: apiError.response?.data,
@@ -175,28 +177,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create deposit record
+    // The frontend already sends the total amount including fee
+    // We need to extract the base amount and fee from the total
+    const totalAmount = parseFloat(amount);
+    const baseAmount = totalAmount / 1.03; // Remove the 3% fee to get base amount
+    const fee = totalAmount - baseAmount;
+
+    console.log(
+      `Deposit calculation: Total received: R$ ${totalAmount.toFixed(
+        2
+      )}, Base amount: R$ ${baseAmount.toFixed(2)}, Fee: R$ ${fee.toFixed(2)}`
+    );
+
+    // Create deposit record with fee information
     const deposit = await prisma.deposit.create({
       data: {
         userId: session.userId,
-        amount,
+        amount: baseAmount, // Store the base amount (what user will receive)
         currency: "BRL",
         status: "PENDING",
         paymentMethod,
+        fee: fee, // Store the fee amount
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     });
 
-    // Generate real PIX using Mercado Pago API
-    const pixData = await generateRealPIXData(amount, session.userId);
+    // Generate real PIX using Mercado Pago API with the total amount (already includes fee)
+    const pixData = await generateRealPIXData(totalAmount, session.userId);
 
     return NextResponse.json({
       success: true,
       message: "PIX generated successfully using Mercado Pago",
       deposit: {
         id: deposit.id,
-        amount,
+        amount: baseAmount, // Amount user will receive (after removing fee)
+        fee: fee, // Fee extracted from total
+        totalAmount: totalAmount, // Total amount user pays (includes fee)
         status: deposit.status,
         createdAt: deposit.createdAt,
       },
