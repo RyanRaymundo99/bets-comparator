@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -82,7 +81,6 @@ export default function RootLayout({
       <body className={`${geistSans.className} antialiased`}>
         {children}
         <Toaster />
-        <Analytics />
       </body>
     </html>
   );

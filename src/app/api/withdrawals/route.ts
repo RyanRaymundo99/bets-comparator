@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         type: "WITHDRAWAL",
         amount: -amount, // Negative for withdrawals
         currency: "BRL",
-        balance: userBalance.amount, // Current balance after withdrawal
+        balance: Number(userBalance.amount), // Current balance after withdrawal
         description: `Withdrawal via ${paymentMethod}`,
         metadata: { withdrawalId: withdrawal.id },
       },
@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
     await prisma.balance.update({
       where: { id: userBalance.id },
       data: {
-        amount: userBalance.amount - amount,
-        locked: userBalance.locked + amount,
+        amount: Number(userBalance.amount) - amount,
+        locked: Number(userBalance.locked) + amount,
       },
     });
 

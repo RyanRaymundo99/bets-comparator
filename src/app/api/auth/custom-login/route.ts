@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { compare } from "bcryptjs";
-import { getAuth } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   console.log("Custom login endpoint called");
@@ -76,7 +75,6 @@ export async function POST(request: NextRequest) {
 
     // Create a proper better-auth session
     try {
-      const auth = getAuth();
 
       // Generate a unique session ID
       const sessionId = `dev-session-${Date.now()}-${Math.random()

@@ -5,7 +5,7 @@ import { authClient } from "@/lib/auth-client";
 interface BinanceTestResult {
   type: string;
   success: boolean;
-  data?: any;
+  data?: Record<string, unknown>;
   error?: string;
 }
 

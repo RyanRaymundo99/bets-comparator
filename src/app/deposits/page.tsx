@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -255,9 +256,11 @@ export default function DepositsPage() {
                 <CardContent className="text-center space-y-6">
                   <div className="p-6 bg-white rounded-xl border">
                     {qrCodeBase64 ? (
-                      <img
+                      <Image
                         src={`data:image/png;base64,${qrCodeBase64}`}
                         alt="QR Code PIX"
+                        width={300}
+                        height={300}
                         className="mx-auto"
                         style={{ maxWidth: "300px", width: "100%" }}
                       />

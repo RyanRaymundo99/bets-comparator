@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { binanceService } from "@/lib/binance";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Test basic connectivity with a simple price fetch
     const btcPrice = await binanceService.getPrice("BTCBRL");

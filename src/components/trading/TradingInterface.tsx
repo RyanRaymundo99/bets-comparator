@@ -16,13 +16,19 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
+interface Balance {
+  currency: string;
+  amount: number;
+  locked: number;
+}
+
 export function TradingInterface() {
   const [amount, setAmount] = useState("");
   const [cryptoAmount, setCryptoAmount] = useState("");
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
   const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [userBalance, setUserBalance] = useState<any>(null);
+  const [userBalance, setUserBalance] = useState<Balance[] | null>(null);
   const { toast } = useToast();
 
   const cryptos = [
@@ -177,7 +183,7 @@ export function TradingInterface() {
             </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {userBalance.map((balance: any) => (
+            {userBalance.map((balance: Balance) => (
               <div key={balance.currency} className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
                   {balance.currency === "BRL"
