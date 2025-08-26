@@ -32,6 +32,8 @@ export default function DepositsPage() {
   const [paymentStatus, setPaymentStatus] = useState("");
   const [depositStatus, setDepositStatus] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  const [confirmedDepositData, setConfirmedDepositData] = useState<any>(null);
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -71,6 +73,18 @@ export default function DepositsPage() {
         setDepositStatus(newDepositStatus);
 
         if (newDepositStatus === "CONFIRMED") {
+          // Get detailed deposit information for the popup
+          try {
+            const depositResponse = await fetch(`/api/deposits/${depositId}`);
+            if (depositResponse.ok) {
+              const depositData = await depositResponse.json();
+              setConfirmedDepositData(depositData.deposit);
+              setShowConfirmationPopup(true);
+            }
+          } catch (error) {
+            console.error("Error fetching deposit details:", error);
+          }
+
           toast({
             title: "Payment Confirmed! 🎉",
             description: "Your deposit has been confirmed and balance updated!",
@@ -131,7 +145,7 @@ export default function DepositsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total, // Send total amount including fee
+          amount: currentAmount, // Send the amount user wants to pay
           paymentMethod: "mercadopago",
         }),
       });
@@ -149,9 +163,9 @@ export default function DepositsPage() {
 
         toast({
           title: "Success",
-          description: `PIX generated successfully! Total amount: ${formatCurrency(
-            total
-          )} (includes 3% fee)`,
+          description: `PIX generated successfully! Você pagará ${formatCurrency(
+            currentAmount
+          )} e receberá ${formatCurrency(balanceAmount)} em sua conta.`,
         });
       } else {
         // Handle specific error cases
@@ -200,11 +214,12 @@ export default function DepositsPage() {
   };
 
   const calculateFee = (amount: number) => amount * 0.03;
-  const calculateTotal = (amount: number) => amount + calculateFee(amount);
+  const calculateBalanceAmount = (amount: number) =>
+    amount - calculateFee(amount);
 
   const currentAmount = parseFloat(amount) || 0;
   const fee = calculateFee(currentAmount);
-  const total = calculateTotal(currentAmount);
+  const balanceAmount = calculateBalanceAmount(currentAmount);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -300,7 +315,7 @@ export default function DepositsPage() {
                   />
                 </div>
 
-                {/* Fee Breakdown */}
+                {/* Payment and Balance Display */}
                 {currentAmount > 0 && (
                   <div className="space-y-3 p-4 rounded-lg bg-muted/50 border">
                     <div className="flex items-center space-x-2 mb-3">
@@ -312,7 +327,7 @@ export default function DepositsPage() {
 
                     <div className="space-y-2 text-base">
                       <div className="flex justify-between text-muted-foreground">
-                        <span>Valor solicitado:</span>
+                        <span>Valor a pagar:</span>
                         <span>{formatCurrency(currentAmount)}</span>
                       </div>
                       <div className="flex justify-between text-muted-foreground">
@@ -321,8 +336,8 @@ export default function DepositsPage() {
                       </div>
                       <div className="h-px bg-border my-3"></div>
                       <div className="flex justify-between font-semibold text-lg">
-                        <span>Total a pagar:</span>
-                        <span>{formatCurrency(total)}</span>
+                        <span>Valor a receber na conta:</span>
+                        <span>{formatCurrency(balanceAmount)}</span>
                       </div>
                     </div>
                   </div>
@@ -350,9 +365,9 @@ export default function DepositsPage() {
             </Card>
 
             {/* Safety Notice */}
-            <div className="flex items-start space-x-4 p-5 rounded-lg bg-amber-50 border border-amber-200">
-              <AlertTriangle className="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" />
-              <div className="text-base text-amber-800">
+            <div className="flex items-start space-x-4 p-5 rounded-lg bg-amber-900/20 border border-amber-700">
+              <AlertTriangle className="w-6 h-6 text-amber-400 mt-1 flex-shrink-0" />
+              <div className="text-base text-amber-200">
                 <p className="font-medium mb-2">Importante:</p>
                 <p>
                   Seus fundos serão creditados automaticamente após a
@@ -367,15 +382,15 @@ export default function DepositsPage() {
           <div className="space-y-6">
             {/* QR Code Result */}
             {qrCode ? (
-              <Card className="h-fit">
+              <Card className="h-fit bg-gray-800 border-gray-700">
                 <CardHeader className="text-center pb-4">
-                  <CardTitle className="flex items-center justify-center space-x-2 text-xl">
-                    <QrCode className="w-6 h-6 text-green-600" />
+                  <CardTitle className="flex items-center justify-center space-x-2 text-xl text-white">
+                    <QrCode className="w-6 h-6 text-green-400" />
                     <span>PIX Gerado com Sucesso</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center space-y-6">
-                  <div className="p-6 bg-white rounded-xl border">
+                  <div className="p-6 bg-gray-900 rounded-xl border border-gray-600">
                     {qrCodeBase64 ? (
                       <Image
                         src={`data:image/png;base64,${qrCodeBase64}`}
@@ -386,12 +401,12 @@ export default function DepositsPage() {
                         style={{ maxWidth: "300px", width: "100%" }}
                       />
                     ) : (
-                      <div className="w-64 h-64 mx-auto bg-muted rounded-lg flex items-center justify-center">
+                      <div className="w-64 h-64 mx-auto bg-gray-800 rounded-lg flex items-center justify-center border border-gray-600">
                         <div className="text-center space-y-4">
-                          <QrCode className="w-20 h-20 text-muted-foreground mx-auto" />
-                          <div className="text-sm text-muted-foreground">
+                          <QrCode className="w-20 h-20 text-gray-400 mx-auto" />
+                          <div className="text-sm text-gray-400">
                             <p className="font-medium mb-2">PIX Data (Mock)</p>
-                            <p className="text-xs break-all bg-gray-100 p-2 rounded">
+                            <p className="text-xs break-all bg-gray-700 p-2 rounded text-gray-300">
                               {qrCode}
                             </p>
                           </div>
@@ -401,24 +416,24 @@ export default function DepositsPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <p className="text-base text-muted-foreground">
+                    <p className="text-base text-gray-300">
                       {qrCodeBase64
                         ? "Escaneie o QR Code com seu app bancário ou Mercado Pago para fazer o pagamento"
                         : "Digite um valor e clique em 'Gerar PIX' para criar o código de pagamento"}
                     </p>
-                    <div className="p-3 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground mb-1">
+                    <div className="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                      <p className="text-sm text-gray-300 mb-1">
                         ID do Pagamento:
                       </p>
-                      <p className="text-base font-mono break-all">
+                      <p className="text-base font-mono break-all text-white">
                         {paymentId}
                       </p>
                     </div>
 
                     {/* Payment Status */}
-                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="p-3 bg-gray-800 rounded-lg border border-gray-700">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-medium text-blue-700">
+                        <p className="text-sm font-medium text-blue-400">
                           Status do Pagamento:
                         </p>
                         <div className="flex space-x-2">
@@ -486,29 +501,33 @@ export default function DepositsPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-xs text-blue-600">
+                        <p className="text-xs text-blue-400">
                           <span className="font-medium">Mercado Pago:</span>{" "}
                           {paymentStatus || "pending"}
                         </p>
-                        <p className="text-xs text-blue-600">
+                        <p className="text-xs text-blue-400">
                           <span className="font-medium">Depósito:</span>{" "}
                           {depositStatus || "PENDING"}
                         </p>
                       </div>
                       {depositId && (
-                        <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                          <p>
-                            <strong>Deposit ID:</strong> {depositId}
+                        <div className="mt-2 p-2 bg-gray-800 rounded text-xs border border-gray-600">
+                          <p className="text-gray-300">
+                            <strong className="text-white">Deposit ID:</strong>{" "}
+                            {depositId}
                           </p>
-                          <p>
-                            <strong>Payment ID:</strong> {paymentId || "N/A"}
+                          <p className="text-gray-300">
+                            <strong className="text-white">Payment ID:</strong>{" "}
+                            {paymentId || "N/A"}
                           </p>
-                          <p>
-                            <strong>Last Check:</strong>{" "}
+                          <p className="text-gray-300">
+                            <strong className="text-white">Last Check:</strong>{" "}
                             {new Date().toLocaleTimeString()}
                           </p>
-                          <p>
-                            <strong>Webhook Status:</strong>{" "}
+                          <p className="text-gray-300">
+                            <strong className="text-white">
+                              Webhook Status:
+                            </strong>{" "}
                             {paymentStatus === null
                               ? "Waiting for webhook"
                               : "Received"}
@@ -519,21 +538,23 @@ export default function DepositsPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center space-x-2 text-green-700 mb-2">
+                    <div className="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                      <div className="flex items-center space-x-2 text-green-400 mb-2">
                         <CheckCircle className="w-4 h-4" />
                         <span>Valor</span>
                       </div>
-                      <p className="font-semibold text-lg">
-                        {formatCurrency(total)}
+                      <p className="font-semibold text-lg text-white">
+                        {formatCurrency(currentAmount)}
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex items-center space-x-2 text-blue-700 mb-2">
+                    <div className="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                      <div className="flex items-center space-x-2 text-blue-400 mb-2">
                         <Clock className="w-4 h-4" />
                         <span>Válido por</span>
                       </div>
-                      <p className="font-semibold text-lg">30 minutos</p>
+                      <p className="font-semibold text-lg text-white">
+                        30 minutos
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -557,35 +578,158 @@ export default function DepositsPage() {
             )}
 
             {/* Additional Payment Info */}
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Info className="w-5 h-5 text-blue-600" />
+                <CardTitle className="flex items-center space-x-2 text-white">
+                  <Info className="w-5 h-5 text-blue-400" />
                   <span>Informações do Pagamento</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Método:</span>
-                  <span className="font-medium">PIX</span>
+                  <span className="text-gray-300">Método:</span>
+                  <span className="font-medium text-white">PIX</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Instituição:</span>
-                  <span className="font-medium">Mercado Pago</span>
+                  <span className="text-gray-300">Instituição:</span>
+                  <span className="font-medium text-white">Mercado Pago</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Taxa:</span>
-                  <span className="font-medium">3%</span>
+                  <span className="text-gray-300">Taxa:</span>
+                  <span className="font-medium text-white">3%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Validade:</span>
-                  <span className="font-medium">30 minutos</span>
+                  <span className="text-gray-300">Validade:</span>
+                  <span className="font-medium text-white">30 minutos</span>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+
+      {/* Confirmation Popup */}
+      {showConfirmationPopup && confirmedDepositData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-green-600 mb-2">
+                  Pagamento Confirmado! 🎉
+                </h2>
+                <p className="text-muted-foreground">
+                  Seu depósito foi processado com sucesso
+                </p>
+              </div>
+
+              {/* Deposit Details */}
+              <div className="space-y-4 mb-6">
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <h3 className="font-semibold text-green-800 mb-3 flex items-center">
+                    <Info className="w-4 h-4 mr-2" />
+                    Resumo da Transação
+                  </h3>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-green-700">Valor pago:</span>
+                      <span className="font-semibold text-green-800">
+                        {formatCurrency(
+                          Number(
+                            confirmedDepositData.paymentAmount ||
+                              confirmedDepositData.amount +
+                                Number(confirmedDepositData.fee || 0)
+                          )
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-green-700">
+                        Taxa de processamento (3%):
+                      </span>
+                      <span className="font-semibold text-green-800">
+                        {formatCurrency(Number(confirmedDepositData.fee || 0))}
+                      </span>
+                    </div>
+                    <div className="h-px bg-green-300 my-2"></div>
+                    <div className="flex justify-between text-lg font-bold">
+                      <span className="text-green-800">
+                        Valor creditado na conta:
+                      </span>
+                      <span className="text-green-800">
+                        {formatCurrency(Number(confirmedDepositData.amount))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Transaction Info */}
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h3 className="font-semibold text-blue-800 mb-3 flex items-center">
+                    <Info className="w-4 h-4 mr-2" />
+                    Informações da Transação
+                  </h3>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">ID do Depósito:</span>
+                      <span className="font-medium text-blue-800">
+                        {confirmedDepositData.id}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">ID do Pagamento:</span>
+                      <span className="font-medium text-blue-800">
+                        {confirmedDepositData.paymentId || "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Status:</span>
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-100 text-green-700 border-green-200"
+                      >
+                        {confirmedDepositData.status}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">
+                        Data de Confirmação:
+                      </span>
+                      <span className="font-medium text-blue-800">
+                        {new Date(
+                          confirmedDepositData.confirmedAt ||
+                            confirmedDepositData.updatedAt
+                        ).toLocaleString("pt-BR")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3">
+                <Button
+                  onClick={() => {
+                    setShowConfirmationPopup(false);
+                    setConfirmedDepositData(null);
+                    // Reload the page to refresh the state
+                    window.location.reload();
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Entendi
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
