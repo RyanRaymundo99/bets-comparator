@@ -1,88 +1,86 @@
-// Session management utilities
-import {
-  safeLocalStorageGet,
-  safeLocalStorageSet,
-  safeLocalStorageRemove,
-} from "./utils";
+import { NextRequest } from "next/server";
+import prisma from "./prisma";
 
-export interface UserSession {
-  email: string;
-  name: string;
-  role: string;
-  timestamp: number;
+export interface ValidatedSession {
+  userId: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    approvalStatus: string;
+    kycStatus: string;
+  };
+  sessionId: string;
 }
-const SESSION_KEY = "dev-session";
-const USER_KEY = "dev-user";
 
-export class SessionManager {
-  /**
-   * Create a new user session
-   */
-  static createSession(userData: Omit<UserSession, "timestamp">): void {
-    const sessionData: UserSession = {
-      ...userData,
-      timestamp: Date.now(),
-    };
+export async function validateSession(
+  request: NextRequest
+): Promise<ValidatedSession | null> {
+  try {
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
 
-    // Store in localStorage
-    safeLocalStorageSet(SESSION_KEY, "true");
-    safeLocalStorageSet(USER_KEY, JSON.stringify(sessionData));
-
-    // Set secure cookie (no expiration)
-    document.cookie = `${SESSION_KEY}=true; path=/; SameSite=Strict`;
-  }
-
-  /**
-   * Get current session data
-   */
-  static getSession(): UserSession | null {
-    try {
-      const sessionExists = safeLocalStorageGet(SESSION_KEY);
-      const userDataStr = safeLocalStorageGet(USER_KEY);
-
-      if (sessionExists !== "true" || !userDataStr) {
-        return null;
-      }
-
-      const userData: UserSession = JSON.parse(userDataStr);
-      return userData;
-    } catch (error) {
-      console.error("Error parsing session data:", error);
-      this.clearSession();
+    if (!sessionCookie?.value) {
       return null;
     }
-  }
 
-  /**
-   * Check if session is valid
-   */
-  static isSessionValid(): boolean {
-    return this.getSession() !== null;
-  }
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            approvalStatus: true,
+            kycStatus: true,
+          },
+        },
+      },
+    });
 
-  /**
-   * Clear session data
-   */
-  static clearSession(): void {
-    safeLocalStorageRemove(SESSION_KEY);
-    safeLocalStorageRemove(USER_KEY);
+    if (!session) {
+      return null;
+    }
 
-    // Clear cookie
-    document.cookie = `${SESSION_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-  }
+    if (session.expiresAt <= new Date()) {
+      // Delete expired session
+      await prisma.session.delete({
+        where: { id: session.id },
+      });
+      return null;
+    }
 
-  /**
-   * Get session info for display
-   */
-  static getSessionInfo(): {
-    isValid: boolean;
-    user?: UserSession;
-  } {
-    const session = this.getSession();
+    // Check if user exists and is approved
+    if (!session.user) {
+      return null;
+    }
 
     return {
-      isValid: session !== null,
-      user: session || undefined,
+      userId: session.user.id,
+      user: session.user,
+      sessionId: session.id,
     };
+  } catch (error) {
+    console.error("Session validation error:", error);
+    return null;
+  }
+}
+
+export async function refreshSession(sessionId: string): Promise<boolean> {
+  try {
+    // Extend session by 7 days
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(),
+      },
+    });
+    return true;
+  } catch (error) {
+    console.error("Session refresh error:", error);
+    return false;
   }
 }

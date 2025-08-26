@@ -55,27 +55,46 @@ export default function DepositsPage() {
       const response = await fetch("/api/deposits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: parseFloat(amount) }),
+        body: JSON.stringify({
+          amount: parseFloat(amount),
+          paymentMethod: "mercadopago",
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        // Set the PIX data for display
         setQrCode(data.qrCode || "");
         setQrCodeBase64(data.qrCodeBase64 || "");
         setPaymentId(data.paymentId || "");
+
         toast({
           title: "Success",
-          description: "Deposit request created successfully",
+          description: "PIX generated successfully!",
         });
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to create deposit",
-          variant: "destructive",
-        });
+        // Handle specific error cases
+        if (response.status === 401) {
+          toast({
+            title: "Session Expired",
+            description: "Please log in again to continue",
+            variant: "destructive",
+          });
+          // Redirect to login
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 2000);
+        } else {
+          toast({
+            title: "Error",
+            description: data.error || "Failed to create deposit",
+            variant: "destructive",
+          });
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error("Deposit error:", error);
       toast({
         title: "Error",
         description: "Network error",
@@ -114,6 +133,13 @@ export default function DepositsPage() {
           <p className="text-muted-foreground text-lg">
             Deposite BRL de forma segura e instantânea
           </p>
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-700">
+              <Info className="w-4 h-4 inline mr-2" />
+              Sistema de demonstração: PIX mock para testes. Em produção, seria
+              integrado com Mercado Pago.
+            </p>
+          </div>
         </div>
 
         {/* Main Content Grid */}
@@ -266,14 +292,24 @@ export default function DepositsPage() {
                       />
                     ) : (
                       <div className="w-64 h-64 mx-auto bg-muted rounded-lg flex items-center justify-center">
-                        <QrCode className="w-20 h-20 text-muted-foreground" />
+                        <div className="text-center space-y-4">
+                          <QrCode className="w-20 h-20 text-muted-foreground mx-auto" />
+                          <div className="text-sm text-muted-foreground">
+                            <p className="font-medium mb-2">PIX Data (Mock)</p>
+                            <p className="text-xs break-all bg-gray-100 p-2 rounded">
+                              {qrCode}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-4">
                     <p className="text-base text-muted-foreground">
-                      Escaneie o QR Code com seu app bancário ou Mercado Pago
+                      {qrCodeBase64
+                        ? "Escaneie o QR Code com seu app bancário ou Mercado Pago"
+                        : "Este é um mock do PIX. Em produção, seria um QR Code real."}
                     </p>
                     <div className="p-3 bg-muted rounded-lg">
                       <p className="text-sm text-muted-foreground mb-1">
