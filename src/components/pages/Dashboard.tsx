@@ -437,11 +437,11 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {/* Total Balance */}
-                <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-sm text-muted-foreground font-medium mb-1">
+                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 font-medium mb-1">
                     Saldo Total
                   </p>
-                  <p className="text-3xl font-bold text-foreground">
+                  <p className="text-3xl font-bold text-blue-900">
                     {showBalances ? formatCurrency(totalBalance) : "••••••"}
                   </p>
                 </div>
@@ -451,27 +451,35 @@ export default function Dashboard() {
                   {balances.map((balance, index) => (
                     <div
                       key={index}
-                      className="p-4 bg-white rounded-lg border hover:shadow-md transition-shadow"
+                      className={`p-4 rounded-lg border hover:shadow-md transition-shadow ${
+                        balance.currency === "BRL"
+                          ? "bg-gradient-to-br from-green-50 to-emerald-100 border-green-200"
+                          : "bg-gradient-to-br from-orange-50 to-amber-100 border-orange-200"
+                      }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           {balance.currency === "BRL" ? (
-                            <DollarSign className="w-5 h-5 text-green-600" />
+                            <DollarSign className="w-5 h-5 text-green-700" />
                           ) : (
-                            <Bitcoin className="w-5 h-5 text-orange-600" />
+                            <Bitcoin className="w-5 h-5 text-orange-700" />
                           )}
-                          <span className="font-semibold text-foreground">
+                          <span className="font-semibold text-gray-800">
                             {balance.currency}
                           </span>
                         </div>
                         <Badge
                           variant="secondary"
-                          className="bg-muted text-muted-foreground"
+                          className={`${
+                            balance.currency === "BRL"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-orange-100 text-orange-700"
+                          }`}
                         >
                           {balance.currency === "BRL" ? "Fiat" : "Crypto"}
                         </Badge>
                       </div>
-                      <p className="text-2xl font-bold text-foreground mb-1">
+                      <p className="text-2xl font-bold text-gray-900 mb-1">
                         {showBalances
                           ? balance.currency === "BRL"
                             ? formatCurrency(balance.amount)
@@ -479,7 +487,7 @@ export default function Dashboard() {
                           : "••••••"}
                       </p>
                       {balance.locked > 0 && (
-                        <p className="text-sm text-orange-600">
+                        <p className="text-sm text-red-600 font-medium">
                           Bloqueado:{" "}
                           {balance.currency === "BRL"
                             ? formatCurrency(balance.locked)
@@ -552,17 +560,17 @@ export default function Dashboard() {
                 {cryptoPrices.slice(0, 3).map((crypto, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-md transition-shadow"
+                    className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 flex items-center justify-center">
                         {getCryptoLogo(crypto.symbol)}
                       </div>
                       <div>
-                        <p className="font-semibold text-foreground">
+                        <p className="font-semibold text-gray-900">
                           {crypto.symbol}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-gray-600">
                           {formatCryptoPrice(crypto.price)}
                         </p>
                       </div>
@@ -584,7 +592,7 @@ export default function Dashboard() {
                           {formatPercentage(crypto.changePercent)}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-gray-500">
                         Vol: {formatCurrency(crypto.volume)}
                       </p>
                     </div>
@@ -608,7 +616,7 @@ export default function Dashboard() {
                   transactions.map((transaction, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-md transition-shadow"
+                      className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -625,10 +633,10 @@ export default function Dashboard() {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-foreground capitalize">
+                          <p className="font-medium text-gray-900 capitalize">
                             {transaction.type.toLowerCase()}
                           </p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-gray-600">
                             {new Date(transaction.createdAt).toLocaleDateString(
                               "pt-BR"
                             )}
@@ -636,7 +644,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-foreground">
+                        <p className="font-semibold text-gray-900">
                           {transaction.type === "DEPOSIT" ? "+" : "-"}
                           {transaction.currency === "BRL"
                             ? formatCurrency(transaction.amount)

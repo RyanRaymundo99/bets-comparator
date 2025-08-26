@@ -13,6 +13,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import CalculatorModal from "./calculator-modal";
+import { BalanceDisplay } from "./balance-display";
 
 const NAV_LINKS = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
@@ -116,6 +117,9 @@ export default function NavbarNew({ isLoggingOut, handleLogout }: NavbarProps) {
         </div>
         {/* Header Actions */}
         <div className="flex items-center gap-4">
+          {/* Balance Display */}
+          <BalanceDisplay />
+
           <Button
             variant="ghost"
             size="sm"
@@ -238,6 +242,11 @@ export default function NavbarNew({ isLoggingOut, handleLogout }: NavbarProps) {
 
           {/* Mobile Menu Footer */}
           <div className="p-6 border-t border-white/10">
+            {/* Balance Display for Mobile */}
+            <div className="mb-4">
+              <BalanceDisplay className="w-full justify-center" />
+            </div>
+
             <div className="flex gap-3">
               <button
                 onClick={handleCalculatorOpen}
