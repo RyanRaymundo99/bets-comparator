@@ -25,7 +25,7 @@ async function generateQRCodeImage(pixData: string): Promise<string | null> {
 }
 
 // Mock PIX QR code generation (replace with real Mercado Pago integration later)
-async function generateMockPIXData(amount: number, depositId: string) {
+async function generateMockPIXData(amount: number) {
   // Generate a mock payment ID
   const paymentId = `pix_${Date.now()}_${Math.random()
     .toString(36)
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Generate mock PIX data with real QR code
-    const pixData = await generateMockPIXData(amount, deposit.id);
+    const pixData = await generateMockPIXData(amount);
 
     return NextResponse.json({
       success: true,

@@ -10,7 +10,13 @@ export function SessionCheck() {
     isValid: boolean;
     loading: boolean;
     error?: string;
-    sessionData?: any;
+    sessionData?: {
+      user?: {
+        name?: string;
+        email?: string;
+        approvalStatus?: string;
+      };
+    };
   }>({
     isValid: false,
     loading: true,
@@ -36,7 +42,7 @@ export function SessionCheck() {
           error: data.error || "Session validation failed",
         });
       }
-    } catch (error) {
+    } catch {
       setSessionStatus({
         isValid: false,
         loading: false,
