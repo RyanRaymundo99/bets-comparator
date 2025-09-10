@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import NavbarNew from "@/components/ui/navbar-new";
 import { useToast } from "@/hooks/use-toast";
+import Breadcrumb from "@/components/ui/breadcrumb";
 import {
   CreditCard,
   Building2,
@@ -310,6 +311,12 @@ export default function DepositsPage() {
       </div>
 
       <div className="container mx-auto px-4 py-6 mobile-page-padding">
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", href: "/dashboard" },
+            { label: "Deposits" },
+          ]}
+        />
         {/* Header */}
         <div className="text-center mb-8 max-w-2xl mx-auto">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-4">

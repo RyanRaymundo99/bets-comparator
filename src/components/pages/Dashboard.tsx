@@ -24,12 +24,14 @@ import {
   ChevronRight,
   Play,
   Pause,
+  Coins,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import NavbarNew from "@/components/ui/navbar-new";
+import Breadcrumb from "@/components/ui/breadcrumb";
 
 interface CryptoPrice {
   symbol: string;
@@ -201,6 +203,12 @@ export default function Dashboard() {
           ];
 
           setCryptoPrices(mockCryptoData);
+          // Reset carousel index to 0 when new data is loaded
+          setCurrentCryptoIndex(0);
+        } else {
+          // If API calls fail, clear crypto prices and reset index
+          setCryptoPrices([]);
+          setCurrentCryptoIndex(0);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -219,7 +227,7 @@ export default function Dashboard() {
 
   // Auto-advance carousel
   useEffect(() => {
-    if (!isCarouselPlaying) return;
+    if (!isCarouselPlaying || cryptoPrices.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentCryptoIndex((prev) => (prev + 1) % cryptoPrices.length);
@@ -230,10 +238,12 @@ export default function Dashboard() {
 
   // Carousel navigation
   const nextCrypto = () => {
+    if (cryptoPrices.length === 0) return;
     setCurrentCryptoIndex((prev) => (prev + 1) % cryptoPrices.length);
   };
 
   const prevCrypto = () => {
+    if (cryptoPrices.length === 0) return;
     setCurrentCryptoIndex(
       (prev) => (prev - 1 + cryptoPrices.length) % cryptoPrices.length
     );
@@ -263,13 +273,15 @@ export default function Dashboard() {
     );
   }
 
-  const currentCrypto = cryptoPrices[currentCryptoIndex];
+  const currentCrypto =
+    cryptoPrices.length > 0 ? cryptoPrices[currentCryptoIndex] : null;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <NavbarNew isLoggingOut={isLoggingOut} handleLogout={handleLogout} />
 
       <div className="container mx-auto px-4 py-6 mobile-page-padding">
+        <Breadcrumb items={[{ label: "Dashboard" }]} />
         {/* Welcome Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-2">
@@ -281,7 +293,7 @@ export default function Dashboard() {
         </div>
 
         {/* Crypto Price Carousel */}
-        {cryptoPrices.length > 0 && (
+        {cryptoPrices.length > 0 && currentCrypto && (
           <Card className="mb-8">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
@@ -410,6 +422,31 @@ export default function Dashboard() {
           </Card>
         )}
 
+        {/* Fallback message when crypto prices fail to load */}
+        {!isLoading && cryptoPrices.length === 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Activity className="w-5 h-5 text-blue-500" />
+                Preços de Criptomoedas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center min-h-[200px]">
+                <div className="text-center">
+                  <RefreshCw className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+                  <p className="text-muted-foreground">
+                    Não foi possível carregar os preços das criptomoedas.
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Tente atualizar a página.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Portfolio Overview */}
@@ -511,11 +548,27 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
-                onClick={() => router.push("/trade")}
+                onClick={() => router.push("/wallet")}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Comprar/Vender
+              </Button>
+              <Button
+                onClick={() => router.push("/wallet")}
+                variant="outline"
+                className="w-full border-border text-foreground hover:bg-muted"
+              >
+                <Coins className="w-4 h-4 mr-2" />
+                Crypto Wallet
+              </Button>
+              <Button
+                onClick={() => router.push("/advanced-trading")}
+                variant="outline"
+                className="w-full border-border text-foreground hover:bg-muted"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Advanced Trading
               </Button>
               <Button
                 onClick={() => router.push("/deposits")}

@@ -1,334 +1,326 @@
 "use client";
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
 
-interface BinanceTestResult {
-  type: string;
-  success: boolean;
-  data?: Record<string, unknown>;
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import NavbarNew from "@/components/ui/navbar-new";
+import Breadcrumb from "@/components/ui/breadcrumb";
+
+interface DebugInfo {
+  session: any;
+  balances: any[];
   error?: string;
 }
 
 export default function DebugPage() {
-  const [session, setSession] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [binanceResults, setBinanceResults] = useState<BinanceTestResult[]>([]);
-  const [testing, setTesting] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [testAmount, setTestAmount] = useState("100");
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const getSession = async () => {
-      try {
-        setLoading(true);
-        const sessionData = await authClient.getSession();
-        console.log("Debug Session:", sessionData);
-        setSession(sessionData);
-      } catch (err) {
-        console.error("Debug Error:", err);
-        setError(err instanceof Error ? err.message : "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getSession();
-  }, []);
-
-  const testBinanceAPI = async () => {
-    setTesting(true);
-    setBinanceResults([]);
-
+  // Check session and balances
+  const checkSystem = async () => {
+    setLoading(true);
     try {
-      // Test 0: Basic connectivity test (no auth required)
-      try {
-        const testResponse = await fetch("/api/crypto/test");
-        const testData = await testResponse.json();
+      // Check session
+      const sessionResponse = await fetch("/api/auth/validate-session");
+      const sessionData = await sessionResponse.json();
 
-        if (testResponse.ok) {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: "Basic Connectivity Test",
-              success: true,
-              data: testData,
-            },
-          ]);
-        } else {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: "Basic Connectivity Test",
-              success: false,
-              error: testData.error || "Failed to test connectivity",
-            },
-          ]);
-        }
-      } catch (err) {
-        setBinanceResults((prev) => [
-          ...prev,
-          {
-            type: "Basic Connectivity Test",
-            success: false,
-            error: err instanceof Error ? err.message : "Unknown error",
-          },
-        ]);
-      }
+      // Check balances
+      const balanceResponse = await fetch("/api/balance");
+      const balanceData = await balanceResponse.json();
 
-      // Test 1: Price fetching (public API)
-      try {
-        const priceResponse = await fetch("/api/crypto/price?symbol=BTCBRL");
-        const priceData = await priceResponse.json();
-
-        if (priceResponse.ok) {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: "Price Fetch (BTCBRL)",
-              success: true,
-              data: priceData,
-            },
-          ]);
-        } else {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: "Price Fetch (BTCBRL)",
-              success: false,
-              error: priceData.error || "Failed to fetch price",
-            },
-          ]);
-        }
-      } catch (err) {
-        setBinanceResults((prev) => [
-          ...prev,
-          {
-            type: "Price Fetch (BTCBRL)",
-            success: false,
-            error: err instanceof Error ? err.message : "Unknown error",
-          },
-        ]);
-      }
-
-      // Test 2: Account info (private API)
-      try {
-        const accountResponse = await fetch("/api/crypto/account-info");
-        const accountData = await accountResponse.json();
-
-        if (accountResponse.ok) {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: "Account Info",
-              success: true,
-              data: accountData,
-            },
-          ]);
-        } else {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: "Account Info",
-              success: false,
-              error: accountData.error || "Failed to fetch account info",
-            },
-          ]);
-        }
-      } catch (err) {
-        setBinanceResults((prev) => [
-          ...prev,
-          {
-            type: "Account Info",
-            success: false,
-            error: err instanceof Error ? err.message : "Unknown error",
-          },
-        ]);
-      }
-
-      // Test 3: Test with other symbols
-      const testSymbols = ["ETHBRL", "BNBBRL", "ADABRL"];
-      for (const symbol of testSymbols) {
-        try {
-          const response = await fetch(`/api/crypto/price?symbol=${symbol}`);
-          const data = await response.json();
-
-          if (response.ok) {
-            setBinanceResults((prev) => [
-              ...prev,
-              {
-                type: `Price Fetch (${symbol})`,
-                success: true,
-                data: data,
-              },
-            ]);
-          } else {
-            setBinanceResults((prev) => [
-              ...prev,
-              {
-                type: `Price Fetch (${symbol})`,
-                success: false,
-                error: data.error || "Failed to fetch price",
-              },
-            ]);
-          }
-        } catch (err) {
-          setBinanceResults((prev) => [
-            ...prev,
-            {
-              type: `Price Fetch (${symbol})`,
-              success: false,
-              error: err instanceof Error ? err.message : "Unknown error",
-            },
-          ]);
-        }
-      }
-    } catch (err) {
-      console.error("Binance testing error:", err);
+      setDebugInfo({
+        session: sessionData,
+        balances: balanceData.balances || [],
+      });
+    } catch (error) {
+      setDebugInfo({
+        session: null,
+        balances: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     } finally {
-      setTesting(false);
+      setLoading(false);
     }
   };
 
+  // Add BRL balance for testing
+  const addTestBalance = async () => {
+    if (!testAmount || parseFloat(testAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch("/api/balance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currency: "BRL",
+          amount: parseFloat(testAmount),
+          type: "ADD",
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: `Added ${testAmount} BRL to your balance`,
+        });
+        checkSystem(); // Refresh debug info
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to add balance");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to add balance",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Test USDT purchase
+  const testBuyUSDT = async () => {
+    if (!testAmount || parseFloat(testAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch("/api/crypto/buy-usdt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brlAmount: parseFloat(testAmount) }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "Success",
+          description: `Successfully bought ${data.usdtAmount} USDT`,
+        });
+        checkSystem(); // Refresh debug info
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to buy USDT");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to buy USDT",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkSystem();
+  }, []);
+
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Debug & Testing Dashboard</h1>
-
-      {/* Session Debug Section */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Session Debug</h2>
-
-        {loading && <p>Loading session...</p>}
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <strong>Error:</strong> {error}
-          </div>
-        )}
-
-        {session && typeof session === "object" && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            <strong>Session found:</strong>
-            <pre className="mt-2 text-sm overflow-auto">
-              {JSON.stringify(session, null, 2)}
-            </pre>
-          </div>
-        )}
-
-        {!loading && !session && !error && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-            <strong>No session found</strong>
-          </div>
-        )}
-      </div>
-
-      {/* Binance API Testing Section */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Binance API Testing</h2>
-
-        <div className="mb-4">
-          <button
-            onClick={testBinanceAPI}
-            disabled={testing}
-            className="bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded"
-          >
-            {testing ? "Testing..." : "Test Binance API"}
-          </button>
+    <div className="min-h-screen bg-background">
+      <NavbarNew />
+      <div className="container mx-auto px-4 py-8">
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", href: "/dashboard" },
+            { label: "Debug" },
+          ]}
+        />
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Debug & Testing</h1>
+          <p className="text-muted-foreground">
+            Debug tools for testing the crypto wallet system
+          </p>
         </div>
 
-        {binanceResults.length > 0 && (
-          <div className="space-y-4">
-            {binanceResults.map((result, index) => (
-              <div
-                key={index}
-                className={`border rounded p-4 ${
-                  result.success
-                    ? "bg-green-50 border-green-200"
-                    : "bg-red-50 border-red-200"
-                }`}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* System Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle>System Status</CardTitle>
+              <CardDescription>
+                Current session and balance information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button
+                onClick={checkSystem}
+                disabled={loading}
+                className="w-full"
               >
-                <h3
-                  className={`font-semibold ${
-                    result.success ? "text-green-800" : "text-red-800"
-                  }`}
-                >
-                  {result.type} - {result.success ? "SUCCESS" : "FAILED"}
-                </h3>
+                {loading ? "Checking..." : "Check System Status"}
+              </Button>
 
-                {result.success && result.data && (
-                  <pre className="mt-2 text-sm overflow-auto bg-white p-2 rounded border">
-                    {JSON.stringify(result.data, null, 2)}
-                  </pre>
-                )}
+              {debugInfo && (
+                <div className="space-y-4">
+                  {/* Session Info */}
+                  <div className="p-4 bg-muted rounded-lg">
+                    <h3 className="font-semibold mb-2">Session Status</h3>
+                    {debugInfo.session?.success ? (
+                      <div className="text-green-600">
+                        ✅ Authenticated as:{" "}
+                        {debugInfo.session.user?.email || "Unknown"}
+                      </div>
+                    ) : (
+                      <div className="text-red-600">
+                        ❌ Not authenticated:{" "}
+                        {debugInfo.session?.error || "No session"}
+                      </div>
+                    )}
+                  </div>
 
-                {!result.success && result.error && (
-                  <p className="mt-2 text-red-700">{result.error}</p>
-                )}
+                  {/* Balance Info */}
+                  <div className="p-4 bg-muted rounded-lg">
+                    <h3 className="font-semibold mb-2">Current Balances</h3>
+                    {debugInfo.balances.length > 0 ? (
+                      <div className="space-y-2">
+                        {debugInfo.balances.map((balance) => (
+                          <div
+                            key={balance.currency}
+                            className="flex justify-between"
+                          >
+                            <span>{balance.currency}:</span>
+                            <span className="font-semibold">
+                              {balance.amount.toFixed(2)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-muted-foreground">
+                        No balances found
+                      </div>
+                    )}
+                  </div>
+
+                  {debugInfo.error && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <h3 className="font-semibold text-red-800 mb-2">Error</h3>
+                      <p className="text-red-700">{debugInfo.error}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Testing Tools */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Testing Tools</CardTitle>
+              <CardDescription>
+                Add test balances and test USDT purchase
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Amount (BRL)</label>
+                <Input
+                  type="number"
+                  placeholder="100"
+                  value={testAmount}
+                  onChange={(e) => setTestAmount(e.target.value)}
+                  min="0"
+                  step="0.01"
+                />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
 
-      {/* Manual Testing Section */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Manual API Testing</h2>
+              <div className="grid grid-cols-1 gap-3">
+                <Button
+                  onClick={addTestBalance}
+                  disabled={loading}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {loading ? "Processing..." : "Add BRL Balance"}
+                </Button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="border rounded p-4">
-            <h3 className="font-semibold mb-2">Test Basic Connectivity</h3>
-            <p className="text-sm text-gray-600 mb-2">
-              Test: <code>/api/crypto/test</code>
-            </p>
-            <a
-              href="/api/crypto/test"
-              target="_blank"
-              className="text-blue-500 hover:text-blue-700 underline"
-            >
-              Test Binance Connection
-            </a>
-          </div>
+                <Button
+                  onClick={testBuyUSDT}
+                  disabled={loading}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {loading ? "Processing..." : "Test Buy USDT"}
+                </Button>
+              </div>
 
-          <div className="border rounded p-4">
-            <h3 className="font-semibold mb-2">Test Price Endpoint</h3>
-            <p className="text-sm text-gray-600 mb-2">
-              Test: <code>/api/crypto/price?symbol=BTCBRL</code>
-            </p>
-            <a
-              href="/api/crypto/price?symbol=BTCBRL"
-              target="_blank"
-              className="text-blue-500 hover:text-blue-700 underline"
-            >
-              Test BTC/BRL Price
-            </a>
-          </div>
-
-          <div className="border rounded p-4">
-            <h3 className="font-semibold mb-2">Test Account Info</h3>
-            <p className="text-sm text-gray-600 mb-2">
-              Test: <code>/api/crypto/account-info</code>
-            </p>
-            <a
-              href="/api/crypto/account-info"
-              target="_blank"
-              className="text-blue-500 hover:text-blue-700 underline"
-            >
-              Test Account Info
-            </a>
-          </div>
-
-          <div className="border rounded p-4">
-            <h3 className="font-semibold mb-2">Validate Session</h3>
-            <p className="text-sm text-gray-600 mb-2">
-              Test: <code>/api/auth/validate-session</code>
-            </p>
-            <a
-              href="/api/auth/validate-session"
-              target="_blank"
-              className="text-blue-500 hover:text-blue-700 underline"
-            >
-              Validate Session
-            </a>
-          </div>
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="font-semibold text-blue-800 mb-2">
+                  Instructions
+                </h3>
+                <ol className="text-blue-700 text-sm space-y-1 list-decimal list-inside">
+                  <li>First, check your system status</li>
+                  <li>
+                    If you have no BRL balance, add some using the button above
+                  </li>
+                  <li>Test buying USDT with your BRL balance</li>
+                  <li>Check the system status again to see the changes</li>
+                </ol>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Quick Actions */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common debugging tasks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button
+                onClick={() => window.open("/wallet", "_blank")}
+                variant="outline"
+                className="w-full"
+              >
+                Open Crypto Wallet
+              </Button>
+              <Button
+                onClick={() => window.open("/withdraw", "_blank")}
+                variant="outline"
+                className="w-full"
+              >
+                Open Withdraw Page
+              </Button>
+              <Button
+                onClick={() => window.open("/api/balance", "_blank")}
+                variant="outline"
+                className="w-full"
+              >
+                View Balance API
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

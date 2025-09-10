@@ -1,11 +1,12 @@
 "use client";
+
 import React, { useState, useCallback } from "react";
-import { PortfolioOverview } from "@/components/portfolio/PortfolioOverview";
-import NavbarNew from "@/components/ui/navbar-new";
 import { useRouter } from "next/navigation";
+import CryptoWallet from "@/components/trading/CryptoWallet";
+import NavbarNew from "@/components/ui/navbar-new";
 import Breadcrumb from "@/components/ui/breadcrumb";
 
-export default function PortfolioPage() {
+export default function WalletPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
@@ -26,16 +27,10 @@ export default function PortfolioPage() {
         <Breadcrumb
           items={[
             { label: "Dashboard", href: "/dashboard" },
-            { label: "Portfolio" },
+            { label: "Crypto Wallet" },
           ]}
         />
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Portfolio</h1>
-          <p className="text-muted-foreground">
-            View your balances and transaction history
-          </p>
-        </div>
-        <PortfolioOverview />
+        <CryptoWallet />
       </div>
     </div>
   );

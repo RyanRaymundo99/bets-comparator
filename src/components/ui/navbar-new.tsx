@@ -9,18 +9,25 @@ import {
   X,
   Home,
   TrendingUp,
+  TrendingDown,
   Wallet,
   BarChart3,
+  Coins,
+  Zap,
 } from "lucide-react";
 import CalculatorModal from "./calculator-modal";
 import { BalanceDisplay } from "./balance-display";
 
 const NAV_LINKS = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
-  { label: "Trade", href: "/trade", icon: TrendingUp },
+
+  { label: "Crypto Wallet", href: "/wallet", icon: Coins },
+  { label: "Advanced Trading", href: "/advanced-trading", icon: Zap },
   { label: "P2P", href: "/p2p", icon: BarChart3 },
   { label: "Deposits", href: "/deposits", icon: Wallet },
+  { label: "Withdraw", href: "/withdraw", icon: TrendingDown },
   { label: "Portfolio", href: "/portfolio", icon: BarChart3 },
+  { label: "Debug", href: "/debug", icon: Timer },
 ];
 
 interface NavbarProps {
@@ -212,6 +219,22 @@ export default function NavbarNew({ isLoggingOut, handleLogout }: NavbarProps) {
               >
                 <TrendingUp className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
                 <span className="font-medium">Trade</span>
+              </button>
+
+              <button
+                onClick={() => handleMobileNavigation("/wallet")}
+                className="w-full flex items-center gap-3 p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 group"
+              >
+                <Coins className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
+                <span className="font-medium">Crypto Wallet</span>
+              </button>
+
+              <button
+                onClick={() => handleMobileNavigation("/advanced-trading")}
+                className="w-full flex items-center gap-3 p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 group"
+              >
+                <Zap className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
+                <span className="font-medium">Advanced Trading</span>
               </button>
 
               <button

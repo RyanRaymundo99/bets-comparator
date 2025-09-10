@@ -76,7 +76,7 @@ npm run dev
 
 ### **Step 6: Test Trading Interface**
 
-1. **Navigate to:** `http://localhost:3000/trade`
+1. **Navigate to:** `http://localhost:3000/wallet`
 2. **Test Crypto Trading:**
    - Select cryptocurrency (BTC, ETH, etc.)
    - Enter amount
