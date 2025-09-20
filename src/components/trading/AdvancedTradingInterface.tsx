@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,16 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import {
-  ArrowUpDown,
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  Clock,
-  DollarSign,
-} from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart3, Clock } from "lucide-react";
 
 interface CryptoPrice {
   symbol: string;
@@ -44,11 +30,11 @@ interface OrderBookEntry {
   quantity: number;
 }
 
-interface TradingPair {
-  symbol: string;
-  baseAsset: string;
-  quoteAsset: string;
-}
+// interface TradingPair {
+//   symbol: string;
+//   baseAsset: string;
+//   quoteAsset: string;
+// }
 
 export default function AdvancedTradingInterface() {
   const [prices, setPrices] = useState<CryptoPrice[]>([]);
@@ -64,7 +50,14 @@ export default function AdvancedTradingInterface() {
     bids: OrderBookEntry[];
     asks: OrderBookEntry[];
   }>({ bids: [], asks: [] });
-  const [recentTrades, setRecentTrades] = useState<any[]>([]);
+  const [recentTrades, setRecentTrades] = useState<
+    Array<{
+      isBuyerMaker?: boolean;
+      qty?: string;
+      price?: string;
+      [key: string]: unknown;
+    }>
+  >([]);
   const [userBalances, setUserBalances] = useState<{ [key: string]: number }>(
     {}
   );
@@ -124,9 +117,14 @@ export default function AdvancedTradingInterface() {
       if (response.ok) {
         const data = await response.json();
         const balances: { [key: string]: number } = {};
-        data.balances?.forEach((balance: any) => {
-          balances[balance.currency] = parseFloat(balance.amount);
-        });
+        data.balances?.forEach(
+          (balance: { currency: string; amount: string | number }) => {
+            balances[balance.currency] =
+              typeof balance.amount === "string"
+                ? parseFloat(balance.amount)
+                : balance.amount;
+          }
+        );
         setUserBalances(balances);
       }
     } catch (error) {
@@ -158,7 +156,7 @@ export default function AdvancedTradingInterface() {
       fetchRecentTrades();
       fetchUserBalances(); // Fetch balances when pair changes
     }
-  }, [selectedPair]);
+  }, [selectedPair, fetchOrderBook, fetchRecentTrades]);
 
   // Load initial data
   useEffect(() => {
@@ -531,10 +529,10 @@ export default function AdvancedTradingInterface() {
                         >
                           {trade.isBuyerMaker ? "SELL" : "BUY"}
                         </Badge>
-                        <span>{parseFloat(trade.qty).toFixed(4)}</span>
+                        <span>{parseFloat(trade.qty || "0").toFixed(4)}</span>
                       </div>
                       <span className="font-medium">
-                        ${parseFloat(trade.price).toFixed(4)}
+                        ${parseFloat(trade.price || "0").toFixed(4)}
                       </span>
                     </div>
                   ))}

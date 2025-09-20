@@ -55,11 +55,11 @@ export async function POST(request: NextRequest) {
     let usdtPrice;
     try {
       // Try to get USDT price in USD first
-      const usdtUsdPrice = await binanceService.getPrice("USDTUSDC");
+      await binanceService.getPrice("USDTUSDC");
       // For now, we'll use a fixed rate or get from another source
       // In a real implementation, you'd integrate with a Brazilian exchange or use a different method
       usdtPrice = 5.0; // Approximate BRL/USD rate - in production, get this from a real source
-    } catch (error) {
+    } catch {
       // Fallback to a reasonable rate
       usdtPrice = 5.0;
     }

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { binanceService } from "@/lib/binance";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Get popular trading pairs
     const popularPairs = await binanceService.getPopularPairs();
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     // Get real-time prices for all popular pairs
     const pricesPromises = popularPairs.map(async (symbol) => {
       try {
-        const price = await binanceService.getPrice(symbol);
+        await binanceService.getPrice(symbol);
         const ticker = await binanceService.get24hrTicker(symbol);
 
         return {

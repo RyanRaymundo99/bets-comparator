@@ -15,8 +15,17 @@ import NavbarNew from "@/components/ui/navbar-new";
 import Breadcrumb from "@/components/ui/breadcrumb";
 
 interface DebugInfo {
-  session: any;
-  balances: any[];
+  session: {
+    success?: boolean;
+    user?: { email?: string };
+    error?: string;
+    [key: string]: unknown;
+  } | null;
+  balances: Array<{
+    currency?: string;
+    amount?: number;
+    [key: string]: unknown;
+  }>;
   error?: string;
 }
 
@@ -146,7 +155,7 @@ export default function DebugPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <NavbarNew />
+      <NavbarNew isLoggingOut={false} handleLogout={() => {}} />
       <div className="container mx-auto px-4 py-8">
         <Breadcrumb
           items={[
@@ -192,7 +201,7 @@ export default function DebugPage() {
                     ) : (
                       <div className="text-red-600">
                         ❌ Not authenticated:{" "}
-                        {debugInfo.session?.error || "No session"}
+                        {String(debugInfo.session?.error) || "No session"}
                       </div>
                     )}
                   </div>
@@ -202,14 +211,11 @@ export default function DebugPage() {
                     <h3 className="font-semibold mb-2">Current Balances</h3>
                     {debugInfo.balances.length > 0 ? (
                       <div className="space-y-2">
-                        {debugInfo.balances.map((balance) => (
-                          <div
-                            key={balance.currency}
-                            className="flex justify-between"
-                          >
-                            <span>{balance.currency}:</span>
+                        {debugInfo.balances.map((balance, index) => (
+                          <div key={index} className="flex justify-between">
+                            <span>{balance.currency || "Unknown"}:</span>
                             <span className="font-semibold">
-                              {balance.amount.toFixed(2)}
+                              {(balance.amount || 0).toFixed(2)}
                             </span>
                           </div>
                         ))}

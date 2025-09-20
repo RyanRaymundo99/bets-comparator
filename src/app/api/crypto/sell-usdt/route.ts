@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { binanceService } from "@/lib/binance";
 import { ledgerService } from "@/lib/ledger";
 import prisma from "@/lib/prisma";
 import { Decimal } from "@prisma/client/runtime/library";
@@ -56,7 +55,7 @@ export async function POST(request: NextRequest) {
       // In a real implementation, you'd get the current market rate
       // For now, we'll use a reasonable rate
       usdtPrice = 5.0; // Approximate BRL/USD rate
-    } catch (error) {
+    } catch {
       usdtPrice = 5.0;
     }
 

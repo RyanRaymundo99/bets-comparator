@@ -36,7 +36,19 @@ export default function WithdrawPage() {
   const [loading, setLoading] = useState(true);
   const [usdtAmount, setUsdtAmount] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [withdrawalHistory, setWithdrawalHistory] = useState<any[]>([]);
+  const [withdrawalHistory, setWithdrawalHistory] = useState<
+    Array<{
+      id?: string;
+      amount?: number;
+      currency?: string;
+      status?: string;
+      createdAt?: string;
+      description?: string;
+      usdtAmount?: number;
+      brlAmount?: number;
+      [key: string]: unknown;
+    }>
+  >([]);
 
   const { toast } = useToast();
 
@@ -88,7 +100,7 @@ export default function WithdrawPage() {
     if (!usdtBalance || parseFloat(usdtAmount) > usdtBalance.amount) {
       toast({
         title: "Insufficient Balance",
-        description: "You don't have enough USDT to sell",
+        description: "You don&apos;t have enough USDT to sell",
         variant: "destructive",
       });
       return;
@@ -141,12 +153,12 @@ export default function WithdrawPage() {
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, [fetchWalletData]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <NavbarNew />
+        <NavbarNew isLoggingOut={false} handleLogout={() => {}} />
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -164,7 +176,7 @@ export default function WithdrawPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <NavbarNew />
+      <NavbarNew isLoggingOut={false} handleLogout={() => {}} />
       <div className="container mx-auto px-4 py-8">
         <Breadcrumb
           items={[
@@ -260,7 +272,7 @@ export default function WithdrawPage() {
                   <div className="p-4 bg-muted rounded-lg">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">
-                        You'll Receive:
+                        You&apos;ll Receive:
                       </span>
                       <span className="text-lg font-semibold text-green-600">
                         R$ {calculateBRLAmount().toFixed(2)}
@@ -355,9 +367,9 @@ export default function WithdrawPage() {
           <CardContent>
             {withdrawalHistory.length > 0 ? (
               <div className="space-y-3">
-                {withdrawalHistory.map((withdrawal) => (
+                {withdrawalHistory.map((withdrawal, index) => (
                   <div
-                    key={withdrawal.id}
+                    key={withdrawal.id || index}
                     className="flex items-center justify-between p-3 border rounded-lg"
                   >
                     <div>
@@ -365,7 +377,9 @@ export default function WithdrawPage() {
                         {withdrawal.description || "USDT to BRL Conversion"}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(withdrawal.createdAt).toLocaleString()}
+                        {withdrawal.createdAt
+                          ? new Date(withdrawal.createdAt).toLocaleString()
+                          : "Unknown date"}
                       </p>
                     </div>
                     <div className="text-right">

@@ -137,12 +137,16 @@ export class BinanceService {
       const exchangeInfo = await this.getExchangeInfo();
       const usdtPairs = exchangeInfo.symbols
         .filter(
-          (symbol: any) =>
+          (symbol: {
+            status: string;
+            quoteAsset: string;
+            isSpotTradingAllowed: boolean;
+          }) =>
             symbol.status === "TRADING" &&
             symbol.quoteAsset === "USDT" &&
             symbol.isSpotTradingAllowed
         )
-        .map((symbol: any) => symbol.symbol)
+        .map((symbol: { symbol: string }) => symbol.symbol)
         .slice(0, 20); // Top 20 popular pairs
 
       return usdtPairs;
@@ -208,14 +212,22 @@ export class BinanceService {
 
       console.log(`Order created successfully:`, response.data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Binance order creation error:", error);
 
       // Provide more detailed error information
       let errorMessage = "Order creation failed";
 
-      if (error.response?.data) {
-        const binanceError = error.response.data;
+      if (
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        (error as { response?: { data?: { msg?: string; code?: number } } })
+          .response?.data
+      ) {
+        const binanceError = (
+          error as { response: { data: { msg?: string; code?: number } } }
+        ).response.data;
         errorMessage = `${binanceError.msg || errorMessage}`;
 
         // Add specific error codes for common issues
@@ -229,7 +241,7 @@ export class BinanceService {
         } else if (binanceError.code === -2011) {
           errorMessage = "Order would trigger immediate liquidation";
         }
-      } else if (error.message) {
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
 
@@ -252,9 +264,10 @@ export class BinanceService {
       });
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Binance account info error:", error);
-      const errorMessage = error.response?.data?.msg || error.message;
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to get account info: ${errorMessage}`);
     }
   }
@@ -278,9 +291,10 @@ export class BinanceService {
       });
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Binance order status error:", error);
-      const errorMessage = error.response?.data?.msg || error.message;
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to get order status: ${errorMessage}`);
     }
   }
@@ -304,9 +318,10 @@ export class BinanceService {
       });
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Binance cancel order error:", error);
-      const errorMessage = error.response?.data?.msg || error.message;
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to cancel order: ${errorMessage}`);
     }
   }
@@ -315,7 +330,7 @@ export class BinanceService {
   async getOpenOrders(symbol?: string) {
     try {
       const timestamp = Date.now();
-      const params: any = { timestamp };
+      const params: Record<string, unknown> = { timestamp };
       if (symbol) params.symbol = symbol;
 
       const queryString = Object.entries(params)
@@ -332,9 +347,10 @@ export class BinanceService {
       });
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Binance open orders error:", error);
-      const errorMessage = error.response?.data?.msg || error.message;
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to get open orders: ${errorMessage}`);
     }
   }
@@ -358,9 +374,10 @@ export class BinanceService {
       });
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Binance trade history error:", error);
-      const errorMessage = error.response?.data?.msg || error.message;
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to get trade history: ${errorMessage}`);
     }
   }

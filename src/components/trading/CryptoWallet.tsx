@@ -22,7 +22,6 @@ import {
   History,
   Bitcoin,
   Globe,
-  Zap,
   Circle,
   Sparkles,
 } from "lucide-react";
@@ -49,7 +48,7 @@ interface CryptoPrice {
 interface Transaction {
   id: string;
   type: string;
-  amount: any; // Can be number or Prisma Decimal
+  amount: number | string; // Can be number or Prisma Decimal
   currency: string;
   description: string;
   createdAt: string;
@@ -59,7 +58,7 @@ interface WalletData {
   balances: CryptoBalance[];
   totalPortfolioValue: number;
   recentTransactions: Transaction[];
-  openOrders: any[];
+  openOrders: unknown[];
   lastUpdated: string;
 }
 
@@ -75,7 +74,7 @@ export default function CryptoWallet() {
   const { toast } = useToast();
 
   // Helper function to safely convert amount to number
-  const safeAmount = (amount: any): number => {
+  const safeAmount = (amount: number | string | unknown): number => {
     if (typeof amount === "number") return amount;
     if (typeof amount === "string") return parseFloat(amount);
     if (amount && typeof amount.toString === "function")
@@ -162,7 +161,9 @@ export default function CryptoWallet() {
         setPrices(data.data);
 
         // Check if we have USDT data
-        const usdtData = data.data.find((p: any) => p.symbol === "USDTUSDT");
+        const usdtData = data.data.find(
+          (p: { symbol: string }) => p.symbol === "USDTUSDT"
+        );
         console.log("USDT data found:", usdtData);
 
         if (!usdtData) {
@@ -304,7 +305,7 @@ export default function CryptoWallet() {
       });
 
       if (cryptoResponse.ok) {
-        const cryptoData = await cryptoResponse.json();
+        await cryptoResponse.json();
         toast({
           title: "Success",
           description: `Successfully bought ${selectedCrypto} with BRL!`,
@@ -384,7 +385,7 @@ export default function CryptoWallet() {
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, [fetchPrices, fetchWalletData]);
 
   if (loading) {
     return (
@@ -555,7 +556,9 @@ export default function CryptoWallet() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">You'll Receive</label>
+                  <label className="text-sm font-medium">
+                    You&apos;ll Receive
+                  </label>
                   <div className="p-3 bg-muted rounded-md text-center">
                     <div className="flex items-center justify-center gap-2 mb-1">
                       {getCryptoIcon(selectedCrypto)}
