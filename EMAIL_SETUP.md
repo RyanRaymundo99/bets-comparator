@@ -1,101 +1,154 @@
-# Email Verification Setup Guide
+# Email Setup Guide
 
-## 🚀 Quick Start (5 minutes)
+This guide will help you set up email functionality for the BS Market application.
 
-### Step 1: Get Free Resend API Key
+## Option 1: Resend (Recommended for Production)
 
-1. Go to [Resend.com](https://resend.com) and sign up
-2. Go to API Keys → Create API Key
-3. Copy the key (starts with `re_`)
+### Quick Testing Setup
 
-### Step 2: Add to .env.local
+For immediate testing, you can use Resend's sandbox domain:
 
 ```env
-RESEND_API_KEY="re_your-api-key-here"
+RESEND_API_KEY=re_your_actual_api_key
+# Leave FROM_EMAIL empty to use sandbox domain automatically
 ```
 
-### Step 3: Test
+The system will automatically use `onboarding@resend.dev` for testing.
 
-Restart your dev server and try signing up - emails will work immediately!
+### Production Setup
 
----
+For production, you need to verify your domain:
 
-## Free Email Service Setup (Resend)
+1. **Get Resend API Key:**
 
-This project uses **Resend** for email verification, which offers a generous free tier (3,000 emails/month).
+   - Go to [resend.com](https://resend.com)
+   - Sign up and create an API key
 
-### Step 1: Create Resend Account
+2. **Verify Your Domain:**
 
-1. Go to [Resend.com](https://resend.com)
-2. Sign up for a free account
-3. Verify your email address
+   - Go to [resend.com/domains](https://resend.com/domains)
+   - Add your domain (e.g., `bsmarket.com.br`)
+   - Add the required DNS records
+   - Wait for verification
 
-### Step 2: Get API Key
+3. **Configure Environment:**
+   ```env
+   RESEND_API_KEY=re_your_actual_api_key
+   FROM_EMAIL=noreply@yourdomain.com
+   ```
 
-1. After logging in, go to the API Keys section
-2. Create a new API key
-3. Copy the API key (starts with `re_`)
+## Option 2: Gmail SMTP (Good for Development)
 
-### Step 3: Configure Environment Variables
+### Setup Gmail App Password
 
-Add these to your `.env.local` file:
+1. **Enable 2-Factor Authentication** on your Google account
+2. **Go to Google Account Settings** → Security → 2-Step Verification
+3. **Generate App Password:**
+   - Select "Mail" as the app
+   - Copy the 16-character password
+4. **Configure Environment:**
+   ```env
+   EMAIL_SERVER_USER=your-email@gmail.com
+   EMAIL_SERVER_PASSWORD=abcd efgh ijkl mnop
+   ```
+
+## Option 3: Local Development (MailDev)
+
+For local development without external email services:
+
+1. **Install MailDev:**
+
+   ```bash
+   npm install -g maildev
+   ```
+
+2. **Run MailDev:**
+
+   ```bash
+   maildev
+   ```
+
+3. **View Emails:**
+
+   - Open `http://localhost:1080` in your browser
+   - All emails will be captured locally
+
+4. **No Environment Variables Needed** - the system will automatically use local SMTP
+
+## Testing Your Setup
+
+1. **Start the application:**
+
+   ```bash
+   npm run dev
+   ```
+
+2. **Test email functionality:**
+
+   - Go to `http://localhost:3000/test-forgot-password`
+   - Test basic email sending first
+   - Then test forgot password flow
+
+3. **Use the actual forgot password:**
+   - Go to `http://localhost:3000/forgot-password`
+   - Enter a valid email address
+   - Check your email (or MailDev interface)
+
+## Common Issues
+
+### Resend Domain Not Verified Error
+
+**Error:** `The yourdomain.com domain is not verified`
+
+**Solution:**
+
+- Use `onboarding@resend.dev` for testing (set FROM_EMAIL or leave empty)
+- For production, verify your domain at https://resend.com/domains
+
+### Gmail Authentication Error
+
+**Error:** `Invalid login`
+
+**Solution:**
+
+- Make sure 2FA is enabled
+- Use App Password (not your regular password)
+- Check that EMAIL_SERVER_USER and EMAIL_SERVER_PASSWORD are correct
+
+### Local Development Not Working
+
+**Error:** `Connection refused`
+
+**Solution:**
+
+- Install and run MailDev: `npm install -g maildev && maildev`
+- Check that MailDev is running on port 1025
+
+## Environment Variables Summary
 
 ```env
+# Required for Better Auth
+BETTER_AUTH_SECRET=your-secret-key
+BETTER_AUTH_URL=http://localhost:3000
+
 # Database
-DATABASE_URL="your-database-url"
+DATABASE_URL=your-database-url
 
-# Better Auth Configuration
-BETTER_AUTH_URL="http://localhost:3000"
-EMAIL_VERIFICATION_CALLBACK_URL="http://localhost:3000/email-verified"
+# Email Option 1: Resend (Production)
+RESEND_API_KEY=re_your_api_key
+FROM_EMAIL=onboarding@resend.dev  # or your verified domain
 
-# Email Service (Resend - Free Tier)
-RESEND_API_KEY="re_your-api-key-here"
-FROM_EMAIL="noreply@yourdomain.com"  # Optional: defaults to noreply@yourdomain.com
+# Email Option 2: Gmail (Development)
+EMAIL_SERVER_USER=your-email@gmail.com
+EMAIL_SERVER_PASSWORD=your-app-password
+
+# Email Option 3: Local (no variables needed)
+# Just run: maildev
 ```
 
-### Step 4: Verify Domain (Optional but Recommended)
+## Security Notes
 
-For production, you should verify your domain with Resend:
-
-1. Go to Domains section in Resend dashboard
-2. Add your domain (e.g., `yourdomain.com`)
-3. Follow the DNS setup instructions
-4. Update `FROM_EMAIL` to use your verified domain
-
-### Development Mode
-
-If you don't set up Resend, the app will fall back to local development mode using MailDev/MailHog:
-
-1. Install MailDev: `npm install -g maildev`
-2. Run: `maildev`
-3. Access email preview at: `http://localhost:1080`
-
-### Testing Email Verification
-
-1. Start your development server
-2. Create a new account
-3. Check your email (or MailDev interface)
-4. Click the verification link
-5. You should be redirected to the email verified page
-
-### Production Deployment
-
-For production, make sure to:
-
-1. Set up a verified domain in Resend
-2. Update `BETTER_AUTH_URL` to your production domain
-3. Update `EMAIL_VERIFICATION_CALLBACK_URL` to your production domain
-4. Set `FROM_EMAIL` to use your verified domain
-
-### Troubleshooting
-
-- **Emails not sending**: Check your Resend API key and domain verification
-- **Verification links not working**: Ensure `BETTER_AUTH_URL` and `EMAIL_VERIFICATION_CALLBACK_URL` are correct
-- **Development emails**: Make sure MailDev is running if not using Resend
-
-### Free Tier Limits
-
-- **Resend**: 3,000 emails/month free
-- **MailDev**: Unlimited (local development only)
-
-This setup provides a production-ready email verification system with a generous free tier!
+- **Never commit real API keys** to version control
+- **Use environment variables** for all sensitive data
+- **For production:** Always use verified domains with Resend
+- **For Gmail:** Always use App Passwords, never your main password

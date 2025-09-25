@@ -17,15 +17,27 @@ export const getAuth = (): ReturnType<typeof betterAuth> => {
       database: prismaAdapter(prisma, {
         provider: "postgresql",
       }),
+      secret: process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+      baseURL:
+        process.env.BETTER_AUTH_URL ||
+        process.env.NEXTAUTH_URL ||
+        "http://localhost:3000",
       emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
         sendResetPassword: async ({ user, url }) => {
-          await sendEmail({
-            to: user.email,
-            subject: "Reset your password",
-            text: `Click the link to reset your password: ${url}`,
-          });
+          try {
+            console.log("🔄 Sending password reset email to:", user.email);
+            const result = await sendEmail({
+              to: user.email,
+              subject: "BS Market - Reset your password",
+              text: `Hi there!\n\nYou requested to reset your password for your BS Market account.\n\nClick the link below to reset your password:\n${url}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request this, please ignore this email.\n\nThanks,\nBS Market Team`,
+            });
+            console.log("✅ Password reset email sent successfully:", result);
+          } catch (error) {
+            console.error("❌ Failed to send password reset email:", error);
+            throw error; // Re-throw to let Better Auth handle it
+          }
         },
       },
       socialProviders: {

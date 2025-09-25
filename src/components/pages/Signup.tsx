@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { InputField } from "@/components/Auth/FormFields";
 import { CPFField } from "@/components/Auth/CPFField";
+import { PhoneField } from "@/components/Auth/PhoneField";
+import { PhoneVerification } from "@/components/Auth/PhoneVerification";
 import { SignUpFormValues, signUpSchema } from "@/lib/schema/signupSchema";
 import { AuthLayout } from "@/components/ui/auth-layout";
 import { WelcomeTutorial } from "@/components/ui/welcome-tutorial";
@@ -19,6 +21,7 @@ const Signup = () => {
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
       cpf: "",
       password: "",
       confirmPassword: "",
@@ -27,6 +30,8 @@ const Signup = () => {
   const [pending, setPending] = useState(false);
   const [showWelcomeTutorial, setShowWelcomeTutorial] = useState(false);
   const [userName, setUserName] = useState("");
+  const [showPhoneVerification, setShowPhoneVerification] = useState(false);
+  const [userPhone, setUserPhone] = useState("");
   const { toast } = useToast();
 
   const onSubmit = useCallback(
@@ -34,40 +39,43 @@ const Signup = () => {
       try {
         setPending(true);
 
-        const response = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: data.name,
-            email: data.email,
-            cpf: data.cpf,
-            password: data.password,
-          }),
-        });
+        // First, send phone verification code
+        const verificationResponse = await fetch(
+          "/api/auth/send-phone-verification",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              phone: data.phone,
+            }),
+          }
+        );
 
-        const result = await response.json();
+        const verificationResult = await verificationResponse.json();
 
-        if (response.ok) {
-          setUserName(data.name);
-          setShowWelcomeTutorial(true);
+        if (verificationResponse.ok) {
+          setUserPhone(data.phone);
+          setShowPhoneVerification(true);
           toast({
-            title: "Account created successfully!",
-            description: "Welcome to BS Market! Let's get you started.",
+            title: "Código enviado",
+            description: "Enviamos um código de verificação para seu telefone",
           });
         } else {
           toast({
             variant: "destructive",
-            title: "Erro ao criar conta",
-            description: result.error || "Ocorreu um erro ao criar a conta.",
+            title: "Erro ao enviar código",
+            description:
+              verificationResult.error ||
+              "Falha ao enviar código de verificação",
           });
         }
       } catch (error) {
-        console.error("Signup error:", error);
+        console.error("Phone verification error:", error);
         toast({
           variant: "destructive",
-          title: "Erro ao criar conta",
+          title: "Erro ao enviar código",
           description: "Ocorreu um erro inesperado",
         });
       } finally {
@@ -77,6 +85,53 @@ const Signup = () => {
     [toast]
   );
 
+  const handlePhoneVerificationSuccess = useCallback(async () => {
+    try {
+      setPending(true);
+      const formData = form.getValues();
+
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          cpf: formData.cpf,
+          password: formData.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setUserName(formData.name);
+        setShowWelcomeTutorial(true);
+        toast({
+          title: "Conta criada com sucesso!",
+          description: "Bem-vindo ao BS Market! Vamos começar.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Erro ao criar conta",
+          description: result.error || "Ocorreu um erro ao criar a conta.",
+        });
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao criar conta",
+        description: "Ocorreu um erro inesperado",
+      });
+    } finally {
+      setPending(false);
+    }
+  }, [form, toast]);
+
   const handleTutorialClose = () => {
     setShowWelcomeTutorial(false);
     // Redirect to dashboard after tutorial closes
@@ -84,6 +139,28 @@ const Signup = () => {
       window.location.href = "/dashboard";
     }, 500);
   };
+
+  const handleBackToForm = () => {
+    setShowPhoneVerification(false);
+    setUserPhone("");
+  };
+
+  // Show phone verification if in verification step
+  if (showPhoneVerification) {
+    return (
+      <PhoneVerification
+        phone={userPhone}
+        onSuccess={handlePhoneVerificationSuccess}
+        onBack={handleBackToForm}
+        onError={(error) => {
+          console.error("Phone verification error:", error);
+        }}
+        onResend={() => {
+          // Resend is handled by the PhoneVerification component
+        }}
+      />
+    );
+  }
 
   return (
     <AuthLayout
@@ -122,6 +199,16 @@ const Signup = () => {
             type="email"
             icon={<Mail className="h-5 w-5 text-gray-300" />}
             labelPosition="top"
+          />
+
+          <PhoneField
+            value={form.watch("phone")}
+            onChange={(value) => form.setValue("phone", value)}
+            onBlur={() => form.trigger("phone")}
+            error={form.formState.errors.phone?.message}
+            required
+            label="Telefone"
+            placeholder="(11) 99999-9999"
           />
 
           <CPFField

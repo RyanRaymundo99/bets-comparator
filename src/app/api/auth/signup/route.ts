@@ -4,10 +4,10 @@ import { hash } from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, cpf, password } = await request.json();
+    const { name, email, phone, cpf, password } = await request.json();
 
     // Validate required fields
-    if (!name || !email || !cpf || !password) {
+    if (!name || !email || !phone || !cpf || !password) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -17,13 +17,13 @@ export async function POST(request: NextRequest) {
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [{ email }, { cpf }],
+        OR: [{ email }, { cpf }, { phone }],
       },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "User with this email or CPF already exists" },
+        { error: "User with this email, CPF, or phone number already exists" },
         { status: 409 }
       );
     }
@@ -38,9 +38,11 @@ export async function POST(request: NextRequest) {
           id: `user_${Date.now()}`,
           name,
           email,
+          phone,
           cpf,
           password: hashedPassword,
           emailVerified: true,
+          phoneVerified: true, // Phone is verified through the verification process
           approvalStatus: "APPROVED", // Auto-approve users
           kycStatus: "APPROVED", // Auto-approve KYC
           createdAt: new Date(),

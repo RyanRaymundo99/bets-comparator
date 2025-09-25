@@ -9,28 +9,34 @@ datasource db {
 }
 
 model User {
-  id             String         @id @map("_id")
-  name           String
-  email          String         @unique
-  cpf            String?        @unique
-  password       String? // Add password field directly to User
-  emailVerified  Boolean
-  approvalStatus ApprovalStatus @default(PENDING)
-  image          String?
-  kycStatus      KYCStatus      @default(PENDING)
-  kycData        Json?
-  createdAt      DateTime
-  updatedAt      DateTime
-  accounts       Account[]
-  balances       Balance[]
-  deposits       Deposit[]
-  orders         Order[]
-  p2pOffers      P2POffer[]
-  buyerTrades    P2PTrade[]     @relation("BuyerTrades")
-  sellerTrades   P2PTrade[]     @relation("SellerTrades")
-  sessions       Session[]
-  transactions   Transaction[]
-  withdrawals    Withdrawal[]
+  id                   String         @id @map("_id")
+  name                 String
+  email                String         @unique
+  cpf                  String?        @unique
+  phone                String?        @unique
+  password             String? // Add password field directly to User
+  emailVerified        Boolean        @default(false)
+  phoneVerified        Boolean        @default(false)
+  approvalStatus       ApprovalStatus @default(PENDING)
+  image                String?
+  kycStatus            KYCStatus      @default(PENDING)
+  kycData              Json?
+  // 2FA fields
+  twoFactorEnabled     Boolean        @default(false)
+  twoFactorSecret      String?
+  twoFactorBackupCodes String[]       @default([])
+  createdAt            DateTime
+  updatedAt            DateTime
+  accounts             Account[]
+  balances             Balance[]
+  deposits             Deposit[]
+  orders               Order[]
+  p2pOffers            P2POffer[]
+  buyerTrades          P2PTrade[]     @relation("BuyerTrades")
+  sellerTrades         P2PTrade[]     @relation("SellerTrades")
+  sessions             Session[]
+  transactions         Transaction[]
+  withdrawals          Withdrawal[]
 
   @@map("user")
 }
@@ -69,14 +75,24 @@ model Account {
 }
 
 model Verification {
-  id         String    @id @map("_id")
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  id          String           @id @map("_id")
+  identifier  String // email or phone number
+  value       String // verification code (4 digits)
+  type        VerificationType // EMAIL, PHONE, PASSWORD_RESET
+  purpose     String? // Additional context like "signup", "password_reset"
+  attempts    Int              @default(0)
+  maxAttempts Int              @default(3)
+  expiresAt   DateTime
+  createdAt   DateTime?        @default(now())
+  updatedAt   DateTime?        @updatedAt
 
   @@map("verification")
+}
+
+enum VerificationType {
+  EMAIL
+  PHONE
+  PASSWORD_RESET
 }
 
 model Balance {

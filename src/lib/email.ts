@@ -66,7 +66,8 @@ export async function sendEmail({
   // Determine from address
   let fromAddress;
   if (useResend) {
-    fromAddress = process.env.FROM_EMAIL || "noreply@bsmarket.com.br";
+    // Use Resend's sandbox domain for testing if no verified domain is configured
+    fromAddress = process.env.FROM_EMAIL || "onboarding@resend.dev";
   } else if (useGmail) {
     fromAddress = process.env.EMAIL_SERVER_USER;
   } else {
@@ -101,10 +102,18 @@ export async function sendEmail({
     console.error("❌ Error sending email:", error);
 
     if (useResend) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      if (errorMessage.includes("domain is not verified")) {
+        return {
+          success: false,
+          message:
+            "Domain not verified. Using Resend's sandbox domain 'onboarding@resend.dev' for testing, or verify your domain at https://resend.com/domains",
+        };
+      }
       return {
         success: false,
-        message:
-          "Failed to send email via Resend. Check your API key and domain verification.",
+        message: `Failed to send email via Resend: ${errorMessage}`,
       };
     } else if (useGmail) {
       return {

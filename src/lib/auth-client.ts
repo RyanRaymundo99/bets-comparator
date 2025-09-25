@@ -19,4 +19,13 @@ const getBaseURL = () => {
 export const authClient = createAuthClient({
   /** The base URL of the server */
   baseURL: getBaseURL(),
+  /** Optional: Custom configuration */
+  fetchOptions: {
+    onError: (context) => {
+      console.error("Auth client error:", context);
+    },
+    onRequest: (context) => {
+      console.log("Auth client request:", context.url);
+    },
+  },
 });

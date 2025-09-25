@@ -73,7 +73,16 @@ export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
  * Enums
  */
 export namespace $Enums {
-  export const ApprovalStatus: {
+  export const VerificationType: {
+  EMAIL: 'EMAIL',
+  PHONE: 'PHONE',
+  PASSWORD_RESET: 'PASSWORD_RESET'
+};
+
+export type VerificationType = (typeof VerificationType)[keyof typeof VerificationType]
+
+
+export const ApprovalStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
@@ -175,6 +184,10 @@ export const TransactionType: {
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
 
 }
+
+export type VerificationType = $Enums.VerificationType
+
+export const VerificationType: typeof $Enums.VerificationType
 
 export type ApprovalStatus = $Enums.ApprovalStatus
 
@@ -2083,11 +2096,15 @@ export namespace Prisma {
     name: string | null
     email: string | null
     cpf: string | null
+    phone: string | null
     password: string | null
     emailVerified: boolean | null
+    phoneVerified: boolean | null
     approvalStatus: $Enums.ApprovalStatus | null
     image: string | null
     kycStatus: $Enums.KYCStatus | null
+    twoFactorEnabled: boolean | null
+    twoFactorSecret: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2097,11 +2114,15 @@ export namespace Prisma {
     name: string | null
     email: string | null
     cpf: string | null
+    phone: string | null
     password: string | null
     emailVerified: boolean | null
+    phoneVerified: boolean | null
     approvalStatus: $Enums.ApprovalStatus | null
     image: string | null
     kycStatus: $Enums.KYCStatus | null
+    twoFactorEnabled: boolean | null
+    twoFactorSecret: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2111,12 +2132,17 @@ export namespace Prisma {
     name: number
     email: number
     cpf: number
+    phone: number
     password: number
     emailVerified: number
+    phoneVerified: number
     approvalStatus: number
     image: number
     kycStatus: number
     kycData: number
+    twoFactorEnabled: number
+    twoFactorSecret: number
+    twoFactorBackupCodes: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2128,11 +2154,15 @@ export namespace Prisma {
     name?: true
     email?: true
     cpf?: true
+    phone?: true
     password?: true
     emailVerified?: true
+    phoneVerified?: true
     approvalStatus?: true
     image?: true
     kycStatus?: true
+    twoFactorEnabled?: true
+    twoFactorSecret?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2142,11 +2172,15 @@ export namespace Prisma {
     name?: true
     email?: true
     cpf?: true
+    phone?: true
     password?: true
     emailVerified?: true
+    phoneVerified?: true
     approvalStatus?: true
     image?: true
     kycStatus?: true
+    twoFactorEnabled?: true
+    twoFactorSecret?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2156,12 +2190,17 @@ export namespace Prisma {
     name?: true
     email?: true
     cpf?: true
+    phone?: true
     password?: true
     emailVerified?: true
+    phoneVerified?: true
     approvalStatus?: true
     image?: true
     kycStatus?: true
     kycData?: true
+    twoFactorEnabled?: true
+    twoFactorSecret?: true
+    twoFactorBackupCodes?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2244,12 +2283,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf: string | null
+    phone: string | null
     password: string | null
     emailVerified: boolean
+    phoneVerified: boolean
     approvalStatus: $Enums.ApprovalStatus
     image: string | null
     kycStatus: $Enums.KYCStatus
     kycData: JsonValue | null
+    twoFactorEnabled: boolean
+    twoFactorSecret: string | null
+    twoFactorBackupCodes: string[]
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2276,12 +2320,17 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     cpf?: boolean
+    phone?: boolean
     password?: boolean
     emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: boolean
+    twoFactorBackupCodes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
@@ -2302,12 +2351,17 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     cpf?: boolean
+    phone?: boolean
     password?: boolean
     emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: boolean
+    twoFactorBackupCodes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2317,12 +2371,17 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     cpf?: boolean
+    phone?: boolean
     password?: boolean
     emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: boolean
+    twoFactorBackupCodes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2332,17 +2391,22 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     cpf?: boolean
+    phone?: boolean
     password?: boolean
     emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: boolean
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: boolean
+    twoFactorBackupCodes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "password" | "emailVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "phone" | "password" | "emailVerified" | "phoneVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     balances?: boolean | User$balancesArgs<ExtArgs>
@@ -2378,12 +2442,17 @@ export namespace Prisma {
       name: string
       email: string
       cpf: string | null
+      phone: string | null
       password: string | null
       emailVerified: boolean
+      phoneVerified: boolean
       approvalStatus: $Enums.ApprovalStatus
       image: string | null
       kycStatus: $Enums.KYCStatus
       kycData: Prisma.JsonValue | null
+      twoFactorEnabled: boolean
+      twoFactorSecret: string | null
+      twoFactorBackupCodes: string[]
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2823,12 +2892,17 @@ export namespace Prisma {
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly cpf: FieldRef<"User", 'String'>
+    readonly phone: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'Boolean'>
+    readonly phoneVerified: FieldRef<"User", 'Boolean'>
     readonly approvalStatus: FieldRef<"User", 'ApprovalStatus'>
     readonly image: FieldRef<"User", 'String'>
     readonly kycStatus: FieldRef<"User", 'KYCStatus'>
     readonly kycData: FieldRef<"User", 'Json'>
+    readonly twoFactorEnabled: FieldRef<"User", 'Boolean'>
+    readonly twoFactorSecret: FieldRef<"User", 'String'>
+    readonly twoFactorBackupCodes: FieldRef<"User", 'String[]'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -5742,14 +5816,30 @@ export namespace Prisma {
 
   export type AggregateVerification = {
     _count: VerificationCountAggregateOutputType | null
+    _avg: VerificationAvgAggregateOutputType | null
+    _sum: VerificationSumAggregateOutputType | null
     _min: VerificationMinAggregateOutputType | null
     _max: VerificationMaxAggregateOutputType | null
+  }
+
+  export type VerificationAvgAggregateOutputType = {
+    attempts: number | null
+    maxAttempts: number | null
+  }
+
+  export type VerificationSumAggregateOutputType = {
+    attempts: number | null
+    maxAttempts: number | null
   }
 
   export type VerificationMinAggregateOutputType = {
     id: string | null
     identifier: string | null
     value: string | null
+    type: $Enums.VerificationType | null
+    purpose: string | null
+    attempts: number | null
+    maxAttempts: number | null
     expiresAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5759,6 +5849,10 @@ export namespace Prisma {
     id: string | null
     identifier: string | null
     value: string | null
+    type: $Enums.VerificationType | null
+    purpose: string | null
+    attempts: number | null
+    maxAttempts: number | null
     expiresAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5768,6 +5862,10 @@ export namespace Prisma {
     id: number
     identifier: number
     value: number
+    type: number
+    purpose: number
+    attempts: number
+    maxAttempts: number
     expiresAt: number
     createdAt: number
     updatedAt: number
@@ -5775,10 +5873,24 @@ export namespace Prisma {
   }
 
 
+  export type VerificationAvgAggregateInputType = {
+    attempts?: true
+    maxAttempts?: true
+  }
+
+  export type VerificationSumAggregateInputType = {
+    attempts?: true
+    maxAttempts?: true
+  }
+
   export type VerificationMinAggregateInputType = {
     id?: true
     identifier?: true
     value?: true
+    type?: true
+    purpose?: true
+    attempts?: true
+    maxAttempts?: true
     expiresAt?: true
     createdAt?: true
     updatedAt?: true
@@ -5788,6 +5900,10 @@ export namespace Prisma {
     id?: true
     identifier?: true
     value?: true
+    type?: true
+    purpose?: true
+    attempts?: true
+    maxAttempts?: true
     expiresAt?: true
     createdAt?: true
     updatedAt?: true
@@ -5797,6 +5913,10 @@ export namespace Prisma {
     id?: true
     identifier?: true
     value?: true
+    type?: true
+    purpose?: true
+    attempts?: true
+    maxAttempts?: true
     expiresAt?: true
     createdAt?: true
     updatedAt?: true
@@ -5841,6 +5961,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: VerificationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VerificationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: VerificationMinAggregateInputType
@@ -5871,6 +6003,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: VerificationCountAggregateInputType | true
+    _avg?: VerificationAvgAggregateInputType
+    _sum?: VerificationSumAggregateInputType
     _min?: VerificationMinAggregateInputType
     _max?: VerificationMaxAggregateInputType
   }
@@ -5879,10 +6013,16 @@ export namespace Prisma {
     id: string
     identifier: string
     value: string
+    type: $Enums.VerificationType
+    purpose: string | null
+    attempts: number
+    maxAttempts: number
     expiresAt: Date
     createdAt: Date | null
     updatedAt: Date | null
     _count: VerificationCountAggregateOutputType | null
+    _avg: VerificationAvgAggregateOutputType | null
+    _sum: VerificationSumAggregateOutputType | null
     _min: VerificationMinAggregateOutputType | null
     _max: VerificationMaxAggregateOutputType | null
   }
@@ -5905,6 +6045,10 @@ export namespace Prisma {
     id?: boolean
     identifier?: boolean
     value?: boolean
+    type?: boolean
+    purpose?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5914,6 +6058,10 @@ export namespace Prisma {
     id?: boolean
     identifier?: boolean
     value?: boolean
+    type?: boolean
+    purpose?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5923,6 +6071,10 @@ export namespace Prisma {
     id?: boolean
     identifier?: boolean
     value?: boolean
+    type?: boolean
+    purpose?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5932,12 +6084,16 @@ export namespace Prisma {
     id?: boolean
     identifier?: boolean
     value?: boolean
+    type?: boolean
+    purpose?: boolean
+    attempts?: boolean
+    maxAttempts?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type VerificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "identifier" | "value" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["verification"]>
+  export type VerificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "identifier" | "value" | "type" | "purpose" | "attempts" | "maxAttempts" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["verification"]>
 
   export type $VerificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Verification"
@@ -5946,6 +6102,10 @@ export namespace Prisma {
       id: string
       identifier: string
       value: string
+      type: $Enums.VerificationType
+      purpose: string | null
+      attempts: number
+      maxAttempts: number
       expiresAt: Date
       createdAt: Date | null
       updatedAt: Date | null
@@ -6375,6 +6535,10 @@ export namespace Prisma {
     readonly id: FieldRef<"Verification", 'String'>
     readonly identifier: FieldRef<"Verification", 'String'>
     readonly value: FieldRef<"Verification", 'String'>
+    readonly type: FieldRef<"Verification", 'VerificationType'>
+    readonly purpose: FieldRef<"Verification", 'String'>
+    readonly attempts: FieldRef<"Verification", 'Int'>
+    readonly maxAttempts: FieldRef<"Verification", 'Int'>
     readonly expiresAt: FieldRef<"Verification", 'DateTime'>
     readonly createdAt: FieldRef<"Verification", 'DateTime'>
     readonly updatedAt: FieldRef<"Verification", 'DateTime'>
@@ -15463,12 +15627,17 @@ export namespace Prisma {
     name: 'name',
     email: 'email',
     cpf: 'cpf',
+    phone: 'phone',
     password: 'password',
     emailVerified: 'emailVerified',
+    phoneVerified: 'phoneVerified',
     approvalStatus: 'approvalStatus',
     image: 'image',
     kycStatus: 'kycStatus',
     kycData: 'kycData',
+    twoFactorEnabled: 'twoFactorEnabled',
+    twoFactorSecret: 'twoFactorSecret',
+    twoFactorBackupCodes: 'twoFactorBackupCodes',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -15513,6 +15682,10 @@ export namespace Prisma {
     id: 'id',
     identifier: 'identifier',
     value: 'value',
+    type: 'type',
+    purpose: 'purpose',
+    attempts: 'attempts',
+    maxAttempts: 'maxAttempts',
     expiresAt: 'expiresAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -15785,6 +15958,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'VerificationType'
+   */
+  export type EnumVerificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'VerificationType[]'
+   */
+  export type ListEnumVerificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Decimal'
    */
   export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -15911,16 +16112,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'Float'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
   /**
-   * Reference to a field of type 'Int[]'
+   * Reference to a field of type 'Float[]'
    */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -15935,12 +16136,17 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     cpf?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    phoneVerified?: BoolFilter<"User"> | boolean
     approvalStatus?: EnumApprovalStatusFilter<"User"> | $Enums.ApprovalStatus
     image?: StringNullableFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableFilter<"User">
+    twoFactorEnabled?: BoolFilter<"User"> | boolean
+    twoFactorSecret?: StringNullableFilter<"User"> | string | null
+    twoFactorBackupCodes?: StringNullableListFilter<"User">
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -15960,12 +16166,17 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     cpf?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
     emailVerified?: SortOrder
+    phoneVerified?: SortOrder
     approvalStatus?: SortOrder
     image?: SortOrderInput | SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrderInput | SortOrder
+    twoFactorEnabled?: SortOrder
+    twoFactorSecret?: SortOrderInput | SortOrder
+    twoFactorBackupCodes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
@@ -15984,16 +16195,21 @@ export namespace Prisma {
     id?: string
     email?: string
     cpf?: string
+    phone?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringFilter<"User"> | string
     password?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    phoneVerified?: BoolFilter<"User"> | boolean
     approvalStatus?: EnumApprovalStatusFilter<"User"> | $Enums.ApprovalStatus
     image?: StringNullableFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableFilter<"User">
+    twoFactorEnabled?: BoolFilter<"User"> | boolean
+    twoFactorSecret?: StringNullableFilter<"User"> | string | null
+    twoFactorBackupCodes?: StringNullableListFilter<"User">
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -16006,19 +16222,24 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     transactions?: TransactionListRelationFilter
     withdrawals?: WithdrawalListRelationFilter
-  }, "id" | "email" | "cpf">
+  }, "id" | "email" | "cpf" | "phone">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
     cpf?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
     emailVerified?: SortOrder
+    phoneVerified?: SortOrder
     approvalStatus?: SortOrder
     image?: SortOrderInput | SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrderInput | SortOrder
+    twoFactorEnabled?: SortOrder
+    twoFactorSecret?: SortOrderInput | SortOrder
+    twoFactorBackupCodes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -16034,12 +16255,17 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     cpf?: StringNullableWithAggregatesFilter<"User"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    phoneVerified?: BoolWithAggregatesFilter<"User"> | boolean
     approvalStatus?: EnumApprovalStatusWithAggregatesFilter<"User"> | $Enums.ApprovalStatus
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusWithAggregatesFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableWithAggregatesFilter<"User">
+    twoFactorEnabled?: BoolWithAggregatesFilter<"User"> | boolean
+    twoFactorSecret?: StringNullableWithAggregatesFilter<"User"> | string | null
+    twoFactorBackupCodes?: StringNullableListFilter<"User">
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -16216,6 +16442,10 @@ export namespace Prisma {
     id?: StringFilter<"Verification"> | string
     identifier?: StringFilter<"Verification"> | string
     value?: StringFilter<"Verification"> | string
+    type?: EnumVerificationTypeFilter<"Verification"> | $Enums.VerificationType
+    purpose?: StringNullableFilter<"Verification"> | string | null
+    attempts?: IntFilter<"Verification"> | number
+    maxAttempts?: IntFilter<"Verification"> | number
     expiresAt?: DateTimeFilter<"Verification"> | Date | string
     createdAt?: DateTimeNullableFilter<"Verification"> | Date | string | null
     updatedAt?: DateTimeNullableFilter<"Verification"> | Date | string | null
@@ -16225,6 +16455,10 @@ export namespace Prisma {
     id?: SortOrder
     identifier?: SortOrder
     value?: SortOrder
+    type?: SortOrder
+    purpose?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrderInput | SortOrder
     updatedAt?: SortOrderInput | SortOrder
@@ -16237,6 +16471,10 @@ export namespace Prisma {
     NOT?: VerificationWhereInput | VerificationWhereInput[]
     identifier?: StringFilter<"Verification"> | string
     value?: StringFilter<"Verification"> | string
+    type?: EnumVerificationTypeFilter<"Verification"> | $Enums.VerificationType
+    purpose?: StringNullableFilter<"Verification"> | string | null
+    attempts?: IntFilter<"Verification"> | number
+    maxAttempts?: IntFilter<"Verification"> | number
     expiresAt?: DateTimeFilter<"Verification"> | Date | string
     createdAt?: DateTimeNullableFilter<"Verification"> | Date | string | null
     updatedAt?: DateTimeNullableFilter<"Verification"> | Date | string | null
@@ -16246,12 +16484,18 @@ export namespace Prisma {
     id?: SortOrder
     identifier?: SortOrder
     value?: SortOrder
+    type?: SortOrder
+    purpose?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrderInput | SortOrder
     updatedAt?: SortOrderInput | SortOrder
     _count?: VerificationCountOrderByAggregateInput
+    _avg?: VerificationAvgOrderByAggregateInput
     _max?: VerificationMaxOrderByAggregateInput
     _min?: VerificationMinOrderByAggregateInput
+    _sum?: VerificationSumOrderByAggregateInput
   }
 
   export type VerificationScalarWhereWithAggregatesInput = {
@@ -16261,6 +16505,10 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Verification"> | string
     identifier?: StringWithAggregatesFilter<"Verification"> | string
     value?: StringWithAggregatesFilter<"Verification"> | string
+    type?: EnumVerificationTypeWithAggregatesFilter<"Verification"> | $Enums.VerificationType
+    purpose?: StringNullableWithAggregatesFilter<"Verification"> | string | null
+    attempts?: IntWithAggregatesFilter<"Verification"> | number
+    maxAttempts?: IntWithAggregatesFilter<"Verification"> | number
     expiresAt?: DateTimeWithAggregatesFilter<"Verification"> | Date | string
     createdAt?: DateTimeNullableWithAggregatesFilter<"Verification"> | Date | string | null
     updatedAt?: DateTimeNullableWithAggregatesFilter<"Verification"> | Date | string | null
@@ -16990,12 +17238,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -17015,12 +17268,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -17040,12 +17298,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -17065,12 +17328,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -17090,12 +17358,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
   }
@@ -17105,12 +17378,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17120,12 +17398,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17321,6 +17604,10 @@ export namespace Prisma {
     id: string
     identifier: string
     value: string
+    type: $Enums.VerificationType
+    purpose?: string | null
+    attempts?: number
+    maxAttempts?: number
     expiresAt: Date | string
     createdAt?: Date | string | null
     updatedAt?: Date | string | null
@@ -17330,6 +17617,10 @@ export namespace Prisma {
     id: string
     identifier: string
     value: string
+    type: $Enums.VerificationType
+    purpose?: string | null
+    attempts?: number
+    maxAttempts?: number
     expiresAt: Date | string
     createdAt?: Date | string | null
     updatedAt?: Date | string | null
@@ -17339,6 +17630,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     identifier?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    type?: EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17348,6 +17643,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     identifier?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    type?: EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17357,6 +17656,10 @@ export namespace Prisma {
     id: string
     identifier: string
     value: string
+    type: $Enums.VerificationType
+    purpose?: string | null
+    attempts?: number
+    maxAttempts?: number
     expiresAt: Date | string
     createdAt?: Date | string | null
     updatedAt?: Date | string | null
@@ -17366,6 +17669,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     identifier?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    type?: EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17375,6 +17682,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     identifier?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
+    type?: EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    maxAttempts?: IntFieldUpdateOperationsInput | number
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18246,6 +18557,14 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -18357,12 +18676,17 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     cpf?: SortOrder
+    phone?: SortOrder
     password?: SortOrder
     emailVerified?: SortOrder
+    phoneVerified?: SortOrder
     approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrder
+    twoFactorEnabled?: SortOrder
+    twoFactorSecret?: SortOrder
+    twoFactorBackupCodes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18372,11 +18696,15 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     cpf?: SortOrder
+    phone?: SortOrder
     password?: SortOrder
     emailVerified?: SortOrder
+    phoneVerified?: SortOrder
     approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
+    twoFactorEnabled?: SortOrder
+    twoFactorSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18386,11 +18714,15 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     cpf?: SortOrder
+    phone?: SortOrder
     password?: SortOrder
     emailVerified?: SortOrder
+    phoneVerified?: SortOrder
     approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
+    twoFactorEnabled?: SortOrder
+    twoFactorSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18610,19 +18942,50 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type EnumVerificationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationType | EnumVerificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationTypeFilter<$PrismaModel> | $Enums.VerificationType
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type VerificationCountOrderByAggregateInput = {
     id?: SortOrder
     identifier?: SortOrder
     value?: SortOrder
+    type?: SortOrder
+    purpose?: SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type VerificationAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
   }
 
   export type VerificationMaxOrderByAggregateInput = {
     id?: SortOrder
     identifier?: SortOrder
     value?: SortOrder
+    type?: SortOrder
+    purpose?: SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18632,9 +18995,44 @@ export namespace Prisma {
     id?: SortOrder
     identifier?: SortOrder
     value?: SortOrder
+    type?: SortOrder
+    purpose?: SortOrder
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type VerificationSumOrderByAggregateInput = {
+    attempts?: SortOrder
+    maxAttempts?: SortOrder
+  }
+
+  export type EnumVerificationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationType | EnumVerificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.VerificationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVerificationTypeFilter<$PrismaModel>
+    _max?: NestedEnumVerificationTypeFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -19319,6 +19717,10 @@ export namespace Prisma {
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
   }
 
+  export type UserCreatetwoFactorBackupCodesInput = {
+    set: string[]
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -19477,6 +19879,11 @@ export namespace Prisma {
 
   export type EnumKYCStatusFieldUpdateOperationsInput = {
     set?: $Enums.KYCStatus
+  }
+
+  export type UserUpdatetwoFactorBackupCodesInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -19793,6 +20200,18 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutAccountsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccountsInput, UserUpdateWithoutAccountsInput>, UserUncheckedUpdateWithoutAccountsInput>
+  }
+
+  export type EnumVerificationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.VerificationType
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type UserCreateNestedOneWithoutBalancesInput = {
@@ -20453,6 +20872,50 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumVerificationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationType | EnumVerificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationTypeFilter<$PrismaModel> | $Enums.VerificationType
+  }
+
+  export type NestedEnumVerificationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationType | EnumVerificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationType[] | ListEnumVerificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.VerificationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVerificationTypeFilter<$PrismaModel>
+    _max?: NestedEnumVerificationTypeFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedDecimalFilter<$PrismaModel = never> = {
@@ -21407,12 +21870,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21431,12 +21899,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21471,12 +21944,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21495,12 +21973,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21519,12 +22002,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     balances?: BalanceCreateNestedManyWithoutUserInput
@@ -21543,12 +22031,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     balances?: BalanceUncheckedCreateNestedManyWithoutUserInput
@@ -21583,12 +22076,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     balances?: BalanceUpdateManyWithoutUserNestedInput
@@ -21607,12 +22105,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     balances?: BalanceUncheckedUpdateManyWithoutUserNestedInput
@@ -21631,12 +22134,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21655,12 +22163,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21695,12 +22208,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21719,12 +22237,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21780,12 +22303,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21804,12 +22332,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21887,12 +22420,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21911,12 +22449,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21972,12 +22515,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21996,12 +22544,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22079,12 +22632,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -22103,12 +22661,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22164,12 +22727,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22188,12 +22756,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22271,12 +22844,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -22295,12 +22873,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22319,12 +22902,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22343,12 +22931,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22429,12 +23022,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -22453,12 +23051,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22493,12 +23096,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22517,12 +23125,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22624,12 +23237,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22648,12 +23266,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22725,12 +23348,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -22749,12 +23377,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22874,12 +23507,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -22898,12 +23536,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -23129,12 +23772,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -23153,12 +23801,17 @@ export namespace Prisma {
     name: string
     email: string
     cpf?: string | null
+    phone?: string | null
     password?: string | null
-    emailVerified: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
     approvalStatus?: $Enums.ApprovalStatus
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
     createdAt: Date | string
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -23414,12 +24067,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -23438,12 +24096,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     cpf?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
