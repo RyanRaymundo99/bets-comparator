@@ -1,12 +1,15 @@
+import ProductionSMSService from "./sms-production";
+
 interface SMSResult {
   success: boolean;
   messageId?: string;
   message?: string;
+  provider?: string;
 }
 
 export class SMSService {
   /**
-   * Send SMS using TextBelt (100% Free) or mock for development
+   * Send SMS with environment-aware provider selection
    */
   static async sendSMS(to: string, message: string): Promise<SMSResult> {
     console.log(`📱 Attempting to send SMS to ${to}: ${message}`);
@@ -21,50 +24,12 @@ export class SMSService {
         success: true,
         messageId: `mock_${Date.now()}`,
         message: "SMS sent successfully (development mode)",
+        provider: "Development",
       };
     }
 
-    try {
-      // TextBelt API - 100% Free, no registration required
-      const response = await fetch("https://textbelt.com/text", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone: to,
-          message: message,
-          key: process.env.TEXTBELT_API_KEY || "textbelt", // Optional API key for higher limits
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        console.log(`✅ SMS sent successfully via TextBelt: ${result.textId}`);
-        return {
-          success: true,
-          messageId: result.textId,
-          message: "SMS sent successfully via TextBelt",
-        };
-      } else {
-        console.error("❌ TextBelt API error:", result.error);
-        return {
-          success: false,
-          message: result.error || "Failed to send SMS via TextBelt",
-        };
-      }
-    } catch (error) {
-      console.error("❌ Error sending SMS via TextBelt:", error);
-
-      return {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to send SMS via TextBelt",
-      };
-    }
+    // Use production SMS service for production
+    return ProductionSMSService.sendSMS(to, message);
   }
 
   /**
