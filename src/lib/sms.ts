@@ -5,37 +5,16 @@ interface SMSResult {
 }
 
 export class SMSService {
-  private static client: unknown | null = null;
-
-  private static getClient() {
-    if (!this.client) {
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
-
-      if (!accountSid || !authToken) {
-        throw new Error("Twilio credentials not configured");
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const twilio = require("twilio");
-      this.client = twilio(accountSid, authToken);
-    }
-
-    return this.client;
-  }
-
   /**
-   * Send SMS using Twilio or mock for development
+   * Send SMS using TextBelt (100% Free) or mock for development
    */
   static async sendSMS(to: string, message: string): Promise<SMSResult> {
     console.log(`📱 Attempting to send SMS to ${to}: ${message}`);
 
-    // Check if we're in development mode or if Twilio is not configured
+    // Check if we're in development mode
     const isDevelopment = process.env.NODE_ENV === "development";
-    const hasRealTwilio =
-      process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN;
 
-    if (isDevelopment && !hasRealTwilio) {
+    if (isDevelopment) {
       // Mock SMS for development
       console.log(`📱 [DEVELOPMENT] SMS sent to ${to}: ${message}`);
       return {
@@ -46,33 +25,44 @@ export class SMSService {
     }
 
     try {
-      const client = this.getClient();
-      const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-
-      if (!fromNumber) {
-        throw new Error("Twilio phone number not configured");
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = await (client as any).messages.create({
-        body: message,
-        from: fromNumber,
-        to: to,
+      // TextBelt API - 100% Free, no registration required
+      const response = await fetch("https://textbelt.com/text", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: to,
+          message: message,
+          key: process.env.TEXTBELT_API_KEY || "textbelt", // Optional API key for higher limits
+        }),
       });
 
-      console.log(`✅ SMS sent successfully: ${result.sid}`);
+      const result = await response.json();
 
-      return {
-        success: true,
-        messageId: result.sid,
-        message: "SMS sent successfully",
-      };
+      if (result.success) {
+        console.log(`✅ SMS sent successfully via TextBelt: ${result.textId}`);
+        return {
+          success: true,
+          messageId: result.textId,
+          message: "SMS sent successfully via TextBelt",
+        };
+      } else {
+        console.error("❌ TextBelt API error:", result.error);
+        return {
+          success: false,
+          message: result.error || "Failed to send SMS via TextBelt",
+        };
+      }
     } catch (error) {
-      console.error("❌ Error sending SMS:", error);
+      console.error("❌ Error sending SMS via TextBelt:", error);
 
       return {
         success: false,
-        message: error instanceof Error ? error.message : "Failed to send SMS",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to send SMS via TextBelt",
       };
     }
   }

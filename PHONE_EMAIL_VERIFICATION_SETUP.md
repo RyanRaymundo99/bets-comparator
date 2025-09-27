@@ -41,17 +41,23 @@ Four-step process:
 
 ## 📱 **SMS Configuration**
 
-### Twilio Setup (Recommended)
+### TextBelt Setup (Recommended - 100% FREE)
 
 ```env
-TWILIO_ACCOUNT_SID="your-account-sid"
-TWILIO_AUTH_TOKEN="your-auth-token"
-TWILIO_PHONE_NUMBER="+1234567890"
+TEXTBELT_API_KEY="textbelt"  # Optional: Get free API key from textbelt.com
 ```
+
+**Benefits of TextBelt:**
+
+- 🆓 **100% FREE** - No registration, no credit card required
+- ⚡ **Works Immediately** - No setup process needed
+- 🌍 **Global coverage** - Works worldwide
+- 🔒 **Privacy-focused** - No data collection
+- 💰 **Zero cost** - Completely free forever
 
 ### Development Mode
 
-If Twilio credentials are not provided:
+If TextBelt is not configured or in development mode:
 
 - SMS is mocked and logged to console
 - Codes are shown in development for testing
@@ -74,10 +80,8 @@ FROM_EMAIL="onboarding@resend.dev"
 EMAIL_SERVER_USER="your-email@gmail.com"
 EMAIL_SERVER_PASSWORD="your-app-password"
 
-# SMS (optional for development)
-TWILIO_ACCOUNT_SID="your-twilio-sid"
-TWILIO_AUTH_TOKEN="your-twilio-token"
-TWILIO_PHONE_NUMBER="+your-twilio-number"
+# SMS (TextBelt - 100% FREE, no registration required)
+TEXTBELT_API_KEY="textbelt"  # Optional: Get free API key from textbelt.com
 ```
 
 ## 🚀 **API Endpoints**
@@ -221,4 +225,3 @@ The verification system is production-ready with:
 - ✅ Full documentation
 
 For any questions or customization needs, refer to the source code documentation in each component and service file.
-
