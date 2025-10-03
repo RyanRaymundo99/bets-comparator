@@ -133,6 +133,14 @@ exports.Prisma.UserScalarFieldEnum = {
   image: 'image',
   kycStatus: 'kycStatus',
   kycData: 'kycData',
+  documentType: 'documentType',
+  documentNumber: 'documentNumber',
+  documentFront: 'documentFront',
+  documentBack: 'documentBack',
+  documentSelfie: 'documentSelfie',
+  kycSubmittedAt: 'kycSubmittedAt',
+  kycReviewedAt: 'kycReviewedAt',
+  kycRejectionReason: 'kycRejectionReason',
   twoFactorEnabled: 'twoFactorEnabled',
   twoFactorSecret: 'twoFactorSecret',
   twoFactorBackupCodes: 'twoFactorBackupCodes',
@@ -331,6 +339,13 @@ exports.KYCStatus = exports.$Enums.KYCStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
+};
+
+exports.DocumentType = exports.$Enums.DocumentType = {
+  RG: 'RG',
+  HABILITACAO: 'HABILITACAO',
+  CNH: 'CNH',
+  PASSPORT: 'PASSPORT'
 };
 
 exports.VerificationType = exports.$Enums.VerificationType = {

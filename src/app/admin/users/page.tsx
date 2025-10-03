@@ -10,8 +10,13 @@ import {
   User,
   Mail,
   CreditCard,
+  FileText,
+  RefreshCw,
+  LogOut,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface User {
   id: string;
@@ -28,6 +33,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [processingUser, setProcessingUser] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -53,6 +59,17 @@ export default function AdminUsersPage() {
       setLoading(false);
     }
   }, [toast]);
+
+  const handleLogout = async () => {
+    try {
+      // Clear session cookie
+      document.cookie =
+        "better-auth.session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      router.push("/admin/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -159,14 +176,27 @@ export default function AdminUsersPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Gerenciar Usuários</h1>
+            <h1 className="text-3xl font-bold">Admin Panel</h1>
             <p className="text-muted-foreground mt-1">
-              Aprove ou rejeite solicitações de conta
+              Gerenciar usuários e verificar documentos
             </p>
           </div>
-          <Button onClick={fetchUsers} variant="outline">
-            Atualizar
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Link href="/admin/kyc">
+              <Button variant="outline">
+                <FileText className="w-4 h-4 mr-2" />
+                KYC Verification
+              </Button>
+            </Link>
+            <Button onClick={fetchUsers} variant="outline">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Atualizar
+            </Button>
+            <Button onClick={handleLogout} variant="destructive">
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-4">

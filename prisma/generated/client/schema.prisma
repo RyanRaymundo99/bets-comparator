@@ -21,6 +21,15 @@ model User {
   image                String?
   kycStatus            KYCStatus      @default(PENDING)
   kycData              Json?
+  // KYC Document fields
+  documentType         DocumentType?
+  documentNumber       String?
+  documentFront        String? // URL to front document image
+  documentBack         String? // URL to back document image
+  documentSelfie       String? // URL to selfie with document
+  kycSubmittedAt       DateTime?
+  kycReviewedAt        DateTime?
+  kycRejectionReason   String?
   // 2FA fields
   twoFactorEnabled     Boolean        @default(false)
   twoFactorSecret      String?
@@ -254,6 +263,13 @@ enum KYCStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum DocumentType {
+  RG
+  HABILITACAO
+  CNH
+  PASSPORT
 }
 
 enum DepositStatus {

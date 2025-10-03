@@ -100,6 +100,16 @@ export const KYCStatus: {
 export type KYCStatus = (typeof KYCStatus)[keyof typeof KYCStatus]
 
 
+export const DocumentType: {
+  RG: 'RG',
+  HABILITACAO: 'HABILITACAO',
+  CNH: 'CNH',
+  PASSPORT: 'PASSPORT'
+};
+
+export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
+
+
 export const DepositStatus: {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
@@ -196,6 +206,10 @@ export const ApprovalStatus: typeof $Enums.ApprovalStatus
 export type KYCStatus = $Enums.KYCStatus
 
 export const KYCStatus: typeof $Enums.KYCStatus
+
+export type DocumentType = $Enums.DocumentType
+
+export const DocumentType: typeof $Enums.DocumentType
 
 export type DepositStatus = $Enums.DepositStatus
 
@@ -2103,6 +2117,14 @@ export namespace Prisma {
     approvalStatus: $Enums.ApprovalStatus | null
     image: string | null
     kycStatus: $Enums.KYCStatus | null
+    documentType: $Enums.DocumentType | null
+    documentNumber: string | null
+    documentFront: string | null
+    documentBack: string | null
+    documentSelfie: string | null
+    kycSubmittedAt: Date | null
+    kycReviewedAt: Date | null
+    kycRejectionReason: string | null
     twoFactorEnabled: boolean | null
     twoFactorSecret: string | null
     createdAt: Date | null
@@ -2121,6 +2143,14 @@ export namespace Prisma {
     approvalStatus: $Enums.ApprovalStatus | null
     image: string | null
     kycStatus: $Enums.KYCStatus | null
+    documentType: $Enums.DocumentType | null
+    documentNumber: string | null
+    documentFront: string | null
+    documentBack: string | null
+    documentSelfie: string | null
+    kycSubmittedAt: Date | null
+    kycReviewedAt: Date | null
+    kycRejectionReason: string | null
     twoFactorEnabled: boolean | null
     twoFactorSecret: string | null
     createdAt: Date | null
@@ -2140,6 +2170,14 @@ export namespace Prisma {
     image: number
     kycStatus: number
     kycData: number
+    documentType: number
+    documentNumber: number
+    documentFront: number
+    documentBack: number
+    documentSelfie: number
+    kycSubmittedAt: number
+    kycReviewedAt: number
+    kycRejectionReason: number
     twoFactorEnabled: number
     twoFactorSecret: number
     twoFactorBackupCodes: number
@@ -2161,6 +2199,14 @@ export namespace Prisma {
     approvalStatus?: true
     image?: true
     kycStatus?: true
+    documentType?: true
+    documentNumber?: true
+    documentFront?: true
+    documentBack?: true
+    documentSelfie?: true
+    kycSubmittedAt?: true
+    kycReviewedAt?: true
+    kycRejectionReason?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     createdAt?: true
@@ -2179,6 +2225,14 @@ export namespace Prisma {
     approvalStatus?: true
     image?: true
     kycStatus?: true
+    documentType?: true
+    documentNumber?: true
+    documentFront?: true
+    documentBack?: true
+    documentSelfie?: true
+    kycSubmittedAt?: true
+    kycReviewedAt?: true
+    kycRejectionReason?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     createdAt?: true
@@ -2198,6 +2252,14 @@ export namespace Prisma {
     image?: true
     kycStatus?: true
     kycData?: true
+    documentType?: true
+    documentNumber?: true
+    documentFront?: true
+    documentBack?: true
+    documentSelfie?: true
+    kycSubmittedAt?: true
+    kycReviewedAt?: true
+    kycRejectionReason?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     twoFactorBackupCodes?: true
@@ -2291,6 +2353,14 @@ export namespace Prisma {
     image: string | null
     kycStatus: $Enums.KYCStatus
     kycData: JsonValue | null
+    documentType: $Enums.DocumentType | null
+    documentNumber: string | null
+    documentFront: string | null
+    documentBack: string | null
+    documentSelfie: string | null
+    kycSubmittedAt: Date | null
+    kycReviewedAt: Date | null
+    kycRejectionReason: string | null
     twoFactorEnabled: boolean
     twoFactorSecret: string | null
     twoFactorBackupCodes: string[]
@@ -2328,6 +2398,14 @@ export namespace Prisma {
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    documentType?: boolean
+    documentNumber?: boolean
+    documentFront?: boolean
+    documentBack?: boolean
+    documentSelfie?: boolean
+    kycSubmittedAt?: boolean
+    kycReviewedAt?: boolean
+    kycRejectionReason?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2359,6 +2437,14 @@ export namespace Prisma {
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    documentType?: boolean
+    documentNumber?: boolean
+    documentFront?: boolean
+    documentBack?: boolean
+    documentSelfie?: boolean
+    kycSubmittedAt?: boolean
+    kycReviewedAt?: boolean
+    kycRejectionReason?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2379,6 +2465,14 @@ export namespace Prisma {
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    documentType?: boolean
+    documentNumber?: boolean
+    documentFront?: boolean
+    documentBack?: boolean
+    documentSelfie?: boolean
+    kycSubmittedAt?: boolean
+    kycReviewedAt?: boolean
+    kycRejectionReason?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2399,6 +2493,14 @@ export namespace Prisma {
     image?: boolean
     kycStatus?: boolean
     kycData?: boolean
+    documentType?: boolean
+    documentNumber?: boolean
+    documentFront?: boolean
+    documentBack?: boolean
+    documentSelfie?: boolean
+    kycSubmittedAt?: boolean
+    kycReviewedAt?: boolean
+    kycRejectionReason?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2406,7 +2508,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "phone" | "password" | "emailVerified" | "phoneVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "phone" | "password" | "emailVerified" | "phoneVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "documentType" | "documentNumber" | "documentFront" | "documentBack" | "documentSelfie" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     balances?: boolean | User$balancesArgs<ExtArgs>
@@ -2450,6 +2552,14 @@ export namespace Prisma {
       image: string | null
       kycStatus: $Enums.KYCStatus
       kycData: Prisma.JsonValue | null
+      documentType: $Enums.DocumentType | null
+      documentNumber: string | null
+      documentFront: string | null
+      documentBack: string | null
+      documentSelfie: string | null
+      kycSubmittedAt: Date | null
+      kycReviewedAt: Date | null
+      kycRejectionReason: string | null
       twoFactorEnabled: boolean
       twoFactorSecret: string | null
       twoFactorBackupCodes: string[]
@@ -2900,6 +3010,14 @@ export namespace Prisma {
     readonly image: FieldRef<"User", 'String'>
     readonly kycStatus: FieldRef<"User", 'KYCStatus'>
     readonly kycData: FieldRef<"User", 'Json'>
+    readonly documentType: FieldRef<"User", 'DocumentType'>
+    readonly documentNumber: FieldRef<"User", 'String'>
+    readonly documentFront: FieldRef<"User", 'String'>
+    readonly documentBack: FieldRef<"User", 'String'>
+    readonly documentSelfie: FieldRef<"User", 'String'>
+    readonly kycSubmittedAt: FieldRef<"User", 'DateTime'>
+    readonly kycReviewedAt: FieldRef<"User", 'DateTime'>
+    readonly kycRejectionReason: FieldRef<"User", 'String'>
     readonly twoFactorEnabled: FieldRef<"User", 'Boolean'>
     readonly twoFactorSecret: FieldRef<"User", 'String'>
     readonly twoFactorBackupCodes: FieldRef<"User", 'String[]'>
@@ -15635,6 +15753,14 @@ export namespace Prisma {
     image: 'image',
     kycStatus: 'kycStatus',
     kycData: 'kycData',
+    documentType: 'documentType',
+    documentNumber: 'documentNumber',
+    documentFront: 'documentFront',
+    documentBack: 'documentBack',
+    documentSelfie: 'documentSelfie',
+    kycSubmittedAt: 'kycSubmittedAt',
+    kycReviewedAt: 'kycReviewedAt',
+    kycRejectionReason: 'kycRejectionReason',
     twoFactorEnabled: 'twoFactorEnabled',
     twoFactorSecret: 'twoFactorSecret',
     twoFactorBackupCodes: 'twoFactorBackupCodes',
@@ -15944,6 +16070,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'DocumentType'
+   */
+  export type EnumDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentType'>
+    
+
+
+  /**
+   * Reference to a field of type 'DocumentType[]'
+   */
+  export type ListEnumDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -16144,6 +16284,14 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableFilter<"User">
+    documentType?: EnumDocumentTypeNullableFilter<"User"> | $Enums.DocumentType | null
+    documentNumber?: StringNullableFilter<"User"> | string | null
+    documentFront?: StringNullableFilter<"User"> | string | null
+    documentBack?: StringNullableFilter<"User"> | string | null
+    documentSelfie?: StringNullableFilter<"User"> | string | null
+    kycSubmittedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    kycReviewedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    kycRejectionReason?: StringNullableFilter<"User"> | string | null
     twoFactorEnabled?: BoolFilter<"User"> | boolean
     twoFactorSecret?: StringNullableFilter<"User"> | string | null
     twoFactorBackupCodes?: StringNullableListFilter<"User">
@@ -16174,6 +16322,14 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrderInput | SortOrder
+    documentType?: SortOrderInput | SortOrder
+    documentNumber?: SortOrderInput | SortOrder
+    documentFront?: SortOrderInput | SortOrder
+    documentBack?: SortOrderInput | SortOrder
+    documentSelfie?: SortOrderInput | SortOrder
+    kycSubmittedAt?: SortOrderInput | SortOrder
+    kycReviewedAt?: SortOrderInput | SortOrder
+    kycRejectionReason?: SortOrderInput | SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrderInput | SortOrder
     twoFactorBackupCodes?: SortOrder
@@ -16207,6 +16363,14 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableFilter<"User">
+    documentType?: EnumDocumentTypeNullableFilter<"User"> | $Enums.DocumentType | null
+    documentNumber?: StringNullableFilter<"User"> | string | null
+    documentFront?: StringNullableFilter<"User"> | string | null
+    documentBack?: StringNullableFilter<"User"> | string | null
+    documentSelfie?: StringNullableFilter<"User"> | string | null
+    kycSubmittedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    kycReviewedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    kycRejectionReason?: StringNullableFilter<"User"> | string | null
     twoFactorEnabled?: BoolFilter<"User"> | boolean
     twoFactorSecret?: StringNullableFilter<"User"> | string | null
     twoFactorBackupCodes?: StringNullableListFilter<"User">
@@ -16237,6 +16401,14 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrderInput | SortOrder
+    documentType?: SortOrderInput | SortOrder
+    documentNumber?: SortOrderInput | SortOrder
+    documentFront?: SortOrderInput | SortOrder
+    documentBack?: SortOrderInput | SortOrder
+    documentSelfie?: SortOrderInput | SortOrder
+    kycSubmittedAt?: SortOrderInput | SortOrder
+    kycReviewedAt?: SortOrderInput | SortOrder
+    kycRejectionReason?: SortOrderInput | SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrderInput | SortOrder
     twoFactorBackupCodes?: SortOrder
@@ -16263,6 +16435,14 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     kycStatus?: EnumKYCStatusWithAggregatesFilter<"User"> | $Enums.KYCStatus
     kycData?: JsonNullableWithAggregatesFilter<"User">
+    documentType?: EnumDocumentTypeNullableWithAggregatesFilter<"User"> | $Enums.DocumentType | null
+    documentNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
+    documentFront?: StringNullableWithAggregatesFilter<"User"> | string | null
+    documentBack?: StringNullableWithAggregatesFilter<"User"> | string | null
+    documentSelfie?: StringNullableWithAggregatesFilter<"User"> | string | null
+    kycSubmittedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    kycReviewedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    kycRejectionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
     twoFactorEnabled?: BoolWithAggregatesFilter<"User"> | boolean
     twoFactorSecret?: StringNullableWithAggregatesFilter<"User"> | string | null
     twoFactorBackupCodes?: StringNullableListFilter<"User">
@@ -17246,6 +17426,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -17276,6 +17464,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -17306,6 +17502,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -17336,6 +17540,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -17366,6 +17578,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -17386,6 +17606,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -17406,6 +17634,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -18557,6 +18793,24 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type EnumDocumentTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDocumentTypeNullableFilter<$PrismaModel> | $Enums.DocumentType | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -18684,6 +18938,14 @@ export namespace Prisma {
     image?: SortOrder
     kycStatus?: SortOrder
     kycData?: SortOrder
+    documentType?: SortOrder
+    documentNumber?: SortOrder
+    documentFront?: SortOrder
+    documentBack?: SortOrder
+    documentSelfie?: SortOrder
+    kycSubmittedAt?: SortOrder
+    kycReviewedAt?: SortOrder
+    kycRejectionReason?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     twoFactorBackupCodes?: SortOrder
@@ -18703,6 +18965,14 @@ export namespace Prisma {
     approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
+    documentType?: SortOrder
+    documentNumber?: SortOrder
+    documentFront?: SortOrder
+    documentBack?: SortOrder
+    documentSelfie?: SortOrder
+    kycSubmittedAt?: SortOrder
+    kycReviewedAt?: SortOrder
+    kycRejectionReason?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     createdAt?: SortOrder
@@ -18721,6 +18991,14 @@ export namespace Prisma {
     approvalStatus?: SortOrder
     image?: SortOrder
     kycStatus?: SortOrder
+    documentType?: SortOrder
+    documentNumber?: SortOrder
+    documentFront?: SortOrder
+    documentBack?: SortOrder
+    documentSelfie?: SortOrder
+    kycSubmittedAt?: SortOrder
+    kycReviewedAt?: SortOrder
+    kycRejectionReason?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     createdAt?: SortOrder
@@ -18817,6 +19095,30 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type EnumDocumentTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDocumentTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.DocumentType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumDocumentTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumDocumentTypeNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -18869,17 +19171,6 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type AccountCountOrderByAggregateInput = {
     id?: SortOrder
     accountId?: SortOrder
@@ -18926,20 +19217,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumVerificationTypeFilter<$PrismaModel = never> = {
@@ -19881,6 +20158,14 @@ export namespace Prisma {
     set?: $Enums.KYCStatus
   }
 
+  export type NullableEnumDocumentTypeFieldUpdateOperationsInput = {
+    set?: $Enums.DocumentType | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdatetwoFactorBackupCodesInput = {
     set?: string[]
     push?: string | string[]
@@ -20188,10 +20473,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
@@ -20717,6 +20998,24 @@ export namespace Prisma {
     not?: NestedEnumKYCStatusFilter<$PrismaModel> | $Enums.KYCStatus
   }
 
+  export type NestedEnumDocumentTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDocumentTypeNullableFilter<$PrismaModel> | $Enums.DocumentType | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -20835,29 +21134,14 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type NestedEnumDocumentTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDocumentTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.DocumentType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumDocumentTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumDocumentTypeNullableFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -20872,6 +21156,20 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedEnumVerificationTypeFilter<$PrismaModel = never> = {
@@ -21878,6 +22176,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -21907,6 +22213,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -21952,6 +22266,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -21981,6 +22303,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22010,6 +22340,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22039,6 +22377,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22084,6 +22430,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22113,6 +22467,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22142,6 +22504,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22171,6 +22541,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22216,6 +22594,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22245,6 +22631,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22311,6 +22705,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22340,6 +22742,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22428,6 +22838,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22457,6 +22875,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22523,6 +22949,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22552,6 +22986,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22640,6 +23082,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22669,6 +23119,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22735,6 +23193,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22764,6 +23230,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22852,6 +23326,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22881,6 +23363,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22910,6 +23400,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22939,6 +23437,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23030,6 +23536,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23059,6 +23573,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23104,6 +23626,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23133,6 +23663,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23245,6 +23783,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23274,6 +23820,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23356,6 +23910,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23385,6 +23947,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23515,6 +24085,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23544,6 +24122,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23780,6 +24366,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23809,6 +24403,14 @@ export namespace Prisma {
     image?: string | null
     kycStatus?: $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: $Enums.DocumentType | null
+    documentNumber?: string | null
+    documentFront?: string | null
+    documentBack?: string | null
+    documentSelfie?: string | null
+    kycSubmittedAt?: Date | string | null
+    kycReviewedAt?: Date | string | null
+    kycRejectionReason?: string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -24075,6 +24677,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -24104,6 +24714,14 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     kycStatus?: EnumKYCStatusFieldUpdateOperationsInput | $Enums.KYCStatus
     kycData?: NullableJsonNullValueInput | InputJsonValue
+    documentType?: NullableEnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType | null
+    documentNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    documentFront?: NullableStringFieldUpdateOperationsInput | string | null
+    documentBack?: NullableStringFieldUpdateOperationsInput | string | null
+    documentSelfie?: NullableStringFieldUpdateOperationsInput | string | null
+    kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]

@@ -1,10 +1,10 @@
 import React from "react";
-import Signup from "@/components/pages/Signup";
+import SignupWithKYC from "@/components/Auth/SignupWithKYC";
 
 const signupPage = () => {
   return (
     <>
-      <Signup />
+      <SignupWithKYC />
     </>
   );
 };

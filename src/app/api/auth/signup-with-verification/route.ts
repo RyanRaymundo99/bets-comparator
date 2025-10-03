@@ -54,13 +54,20 @@ export async function POST(request: NextRequest) {
 
     // Create user with verification requirements
     try {
+      // Clean CPF for storage
+      const cleanCpf = cpf.replace(/\D/g, "");
+      console.log("Creating user with CPF:", {
+        original: cpf,
+        cleaned: cleanCpf,
+      });
+
       const user = await prisma.user.create({
         data: {
           id: `user_${Date.now()}`,
           name,
           email: email.toLowerCase(),
           phone: formattedPhone,
-          cpf,
+          cpf: cleanCpf, // Store cleaned CPF
           password: hashedPassword,
           emailVerified: false, // Will be verified in next step
           phoneVerified: true, // Phone verification removed - set to true
@@ -71,6 +78,8 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date(),
         },
       });
+
+      console.log("User created successfully:", { id: user.id, cpf: user.cpf });
 
       // Create initial balance (0 balance for new users)
       await prisma.balance.create({
