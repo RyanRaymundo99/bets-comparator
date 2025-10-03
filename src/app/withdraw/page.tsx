@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -53,7 +53,7 @@ export default function WithdrawPage() {
   const { toast } = useToast();
 
   // Fetch wallet data
-  const fetchWalletData = async () => {
+  const fetchWalletData = useCallback(async () => {
     try {
       const response = await fetch("/api/crypto/wallet");
       if (response.ok) {
@@ -70,7 +70,7 @@ export default function WithdrawPage() {
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
 
   // Fetch withdrawal history
   const fetchWithdrawalHistory = async () => {

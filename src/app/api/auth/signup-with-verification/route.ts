@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           cpf,
           password: hashedPassword,
           emailVerified: false, // Will be verified in next step
-          phoneVerified: false, // Will be verified in next step
+          phoneVerified: true, // Phone verification removed - set to true
           approvalStatus: "PENDING", // Keep pending until all verifications are complete
           kycStatus: "PENDING",
           twoFactorEnabled: false, // Will be enabled during setup
@@ -142,5 +142,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-

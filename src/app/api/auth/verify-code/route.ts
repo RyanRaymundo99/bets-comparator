@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["EMAIL", "PHONE"].includes(type.toUpperCase())) {
+    if (type.toUpperCase() !== "EMAIL") {
       return NextResponse.json(
-        { error: "Type must be 'EMAIL' or 'PHONE'" },
+        { error: "Type must be 'EMAIL'" },
         { status: 400 }
       );
     }
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const result = await VerificationService.verifyCode(
       identifier,
       code,
-      type.toUpperCase() as "EMAIL" | "PHONE",
+      "EMAIL",
       purpose
     );
 
@@ -48,5 +48,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-

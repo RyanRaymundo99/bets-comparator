@@ -1,0 +1,101 @@
+import { NextRequest, NextResponse } from "next/server";
+import { hash } from "bcryptjs";
+import prisma from "@/lib/prisma";
+
+export async function POST(request: NextRequest) {
+  try {
+    const { name, email, cpf, password } = await request.json();
+
+    // Validate required fields
+    if (!name || !email || !cpf || !password) {
+      return NextResponse.json(
+        { error: "All fields are required" },
+        { status: 400 }
+      );
+    }
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ email: email.toLowerCase() }, { cpf: cpf.replace(/\D/g, "") }],
+      },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "User with this email or CPF already exists" },
+        { status: 400 }
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await hash(password, 12);
+
+    // Create user with email verification only
+    const user = await prisma.user.create({
+      data: {
+        id: `user_${Date.now()}`,
+        name,
+        email: email.toLowerCase(),
+        cpf: cpf.replace(/\D/g, ""),
+        password: hashedPassword,
+        emailVerified: false, // Will be verified via email
+        phoneVerified: true, // Skip phone verification
+        phone: null, // No phone required
+        approvalStatus: "PENDING",
+        kycStatus: "PENDING",
+        twoFactorEnabled: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
+    // Create initial balance
+    await prisma.balance.create({
+      data: {
+        userId: user.id,
+        currency: "BRL",
+        amount: 0,
+        locked: 0,
+      },
+    });
+
+    // Create temporary session for email verification
+    const sessionId = `temp-session-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+    await prisma.session.create({
+      data: {
+        id: sessionId,
+        token: sessionId,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
+    // Set session cookie
+    const response = NextResponse.json({
+      success: true,
+      message: "Account created successfully. Please verify your email.",
+      userId: user.id,
+    });
+
+    response.cookies.set("better-auth.session_token", sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60, // 1 hour
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Email-only signup error:", error);
+    return NextResponse.json(
+      { error: "Failed to create account" },
+      { status: 500 }
+    );
+  }
+}

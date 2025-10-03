@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { VerificationService } from "@/lib/verification";
 import prisma from "@/lib/prisma";
-import { SMSService } from "@/lib/sms";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,39 +13,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["email", "phone"].includes(type)) {
+    if (type !== "email") {
       return NextResponse.json(
-        { error: "Type must be 'email' or 'phone'" },
+        { error: "Type must be 'email'" },
         { status: 400 }
       );
     }
 
-    // Format identifier based on type
-    const formattedIdentifier =
-      type === "phone"
-        ? SMSService.formatPhoneNumber(identifier)
-        : identifier.toLowerCase();
+    // Format identifier
+    const formattedIdentifier = identifier.toLowerCase();
 
-    // Check if user exists with this identifier
+    // Check if user exists with this email
     const user = await prisma.user.findFirst({
-      where:
-        type === "email"
-          ? { email: formattedIdentifier }
-          : { phone: formattedIdentifier },
+      where: { email: formattedIdentifier },
     });
 
     if (!user) {
       // For security, don't reveal whether the identifier exists
       return NextResponse.json({
         success: true,
-        message: `If an account with this ${type} exists, a reset code has been sent.`,
+        message: `If an account with this email exists, a reset code has been sent.`,
       });
     }
 
     // Send password reset code
     const result = await VerificationService.sendPasswordResetCode(
-      formattedIdentifier,
-      type as "email" | "phone"
+      formattedIdentifier
     );
 
     if (result.success) {
@@ -66,5 +58,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-

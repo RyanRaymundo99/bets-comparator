@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,7 +81,7 @@ export default function AdvancedTradingInterface() {
   };
 
   // Fetch order book for selected pair
-  const fetchOrderBook = async () => {
+  const fetchOrderBook = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/crypto/orderbook?symbol=${selectedPair}`
@@ -93,10 +93,10 @@ export default function AdvancedTradingInterface() {
     } catch (error) {
       console.error("Error fetching order book:", error);
     }
-  };
+  }, [selectedPair]);
 
   // Fetch recent trades for selected pair
-  const fetchRecentTrades = async () => {
+  const fetchRecentTrades = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/crypto/recent-trades?symbol=${selectedPair}`
@@ -108,7 +108,7 @@ export default function AdvancedTradingInterface() {
     } catch (error) {
       console.error("Error fetching recent trades:", error);
     }
-  };
+  }, [selectedPair]);
 
   // Fetch user balances
   const fetchUserBalances = async () => {

@@ -1,9 +1,7 @@
 /**
- * Production SMS Service with Multiple Providers
- * Fallback system for reliable SMS delivery
+ * Production SMS Service with Free Providers Only
+ * No AWS - TextBelt and other free alternatives
  */
-
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
 interface SMSResult {
   success: boolean;
@@ -13,19 +11,17 @@ interface SMSResult {
 }
 
 export class ProductionSMSService {
-  private static snsClient: SNSClient | null = null;
-
   /**
-   * Send SMS with production-grade reliability
+   * Send SMS with free providers only
    */
   static async sendSMS(to: string, message: string): Promise<SMSResult> {
     console.log(`📱 [PRODUCTION] Attempting to send SMS to ${to}`);
 
-    // Try providers in order of reliability
+    // Try free providers in order of preference
     const providers = [
-      { name: "AWS SNS", method: this.sendViaAWSSNS },
       { name: "TextBelt-API", method: this.sendViaTextBeltAPI },
       { name: "TextBelt-Basic", method: this.sendViaTextBelt },
+      { name: "TextBelt-Quota", method: this.sendViaTextBeltQuota },
     ];
 
     for (const provider of providers) {
@@ -59,46 +55,7 @@ export class ProductionSMSService {
   }
 
   /**
-   * Send via AWS SNS (most reliable)
-   */
-  private static async sendViaAWSSNS(
-    to: string,
-    message: string
-  ): Promise<SMSResult> {
-    const hasAWSCredentials =
-      process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
-
-    if (!hasAWSCredentials) {
-      throw new Error("AWS credentials not configured");
-    }
-
-    if (!this.snsClient) {
-      const region = process.env.AWS_REGION || "us-east-1";
-      this.snsClient = new SNSClient({
-        region,
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-        },
-      });
-    }
-
-    const command = new PublishCommand({
-      Message: message,
-      PhoneNumber: to,
-    });
-
-    const result = await this.snsClient.send(command);
-
-    return {
-      success: true,
-      messageId: result.MessageId,
-      message: "SMS sent successfully via AWS SNS",
-    };
-  }
-
-  /**
-   * Send via TextBelt with API key
+   * Send via TextBelt with API key (highest limits)
    */
   private static async sendViaTextBeltAPI(
     to: string,
@@ -168,6 +125,40 @@ export class ProductionSMSService {
       return {
         success: false,
         message: result.error || "TextBelt error",
+      };
+    }
+  }
+
+  /**
+   * Send via TextBelt with quota endpoint (alternative)
+   */
+  private static async sendViaTextBeltQuota(
+    to: string,
+    message: string
+  ): Promise<SMSResult> {
+    const response = await fetch("https://textbelt.com/quota", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone: to,
+        message: message,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      return {
+        success: true,
+        messageId: result.textId,
+        message: "SMS sent successfully via TextBelt Quota",
+      };
+    } else {
+      return {
+        success: false,
+        message: result.error || "TextBelt Quota error",
       };
     }
   }

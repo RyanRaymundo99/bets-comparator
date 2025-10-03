@@ -9,7 +9,6 @@ import {
   Loader2,
   Shield,
   CheckCircle,
-  Phone,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,24 +37,16 @@ interface VerificationState {
     verified: boolean;
     loading: boolean;
   };
-  phone: {
-    sent: boolean;
-    verified: boolean;
-    loading: boolean;
-  };
 }
 
 const SignupWithVerification = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [, setUserCreated] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [userPhone, setUserPhone] = useState("");
   const [userName, setUserName] = useState("");
   const [emailCode, setEmailCode] = useState("");
-  const [phoneCode, setPhoneCode] = useState("");
   const [verification, setVerification] = useState<VerificationState>({
     email: { sent: false, verified: false, loading: false },
-    phone: { sent: false, verified: false, loading: false },
   });
 
   const form = useForm<SignUpFormValues>({
@@ -82,8 +73,8 @@ const SignupWithVerification = () => {
     },
     {
       id: 2,
-      title: "Verify Email & Phone",
-      description: "Confirm your email and phone number",
+      title: "Verify Email",
+      description: "Confirm your email address",
       completed: currentStep > 2,
     },
     {
@@ -99,6 +90,63 @@ const SignupWithVerification = () => {
       completed: currentStep > 4,
     },
   ];
+
+  const sendEmailVerification = useCallback(
+    async (email: string) => {
+      setVerification((prev) => ({
+        ...prev,
+        email: { ...prev.email, loading: true },
+      }));
+
+      try {
+        const response = await fetch("/api/auth/send-verification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            identifier: email,
+            type: "email",
+            purpose: "signup",
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          setVerification((prev) => ({
+            ...prev,
+            email: { sent: true, verified: false, loading: false },
+          }));
+
+          toast({
+            title: "Email sent",
+            description: "Check your email for the verification code",
+          });
+
+          // Show dev code in development
+          if (result.code) {
+            toast({
+              title: "Development Mode",
+              description: `Email verification code: ${result.code}`,
+            });
+          }
+        } else {
+          throw new Error(result.error);
+        }
+      } catch {
+        setVerification((prev) => ({
+          ...prev,
+          email: { ...prev.email, loading: false },
+        }));
+
+        toast({
+          variant: "destructive",
+          title: "Failed to send email",
+          description: "Please try again",
+        });
+      }
+    },
+    [toast]
+  );
 
   const createAccount = useCallback(
     async (data: SignUpFormValues) => {
@@ -124,18 +172,15 @@ const SignupWithVerification = () => {
         if (response.ok) {
           setUserCreated(true);
           setUserEmail(data.email);
-          setUserPhone(data.phone);
           setUserName(data.name);
           setCurrentStep(2);
 
-          // Auto-send verification codes
+          // Auto-send verification code
           sendEmailVerification(data.email);
-          sendPhoneVerification(data.phone);
 
           toast({
             title: "Account created!",
-            description:
-              "Please verify your email and phone number to continue",
+            description: "Please verify your email address to continue",
           });
         } else {
           toast({
@@ -156,116 +201,8 @@ const SignupWithVerification = () => {
         setPending(false);
       }
     },
-    [toast]
+    [toast, sendEmailVerification]
   );
-
-  const sendEmailVerification = async (email: string) => {
-    setVerification((prev) => ({
-      ...prev,
-      email: { ...prev.email, loading: true },
-    }));
-
-    try {
-      const response = await fetch("/api/auth/send-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: email,
-          type: "email",
-          purpose: "signup",
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setVerification((prev) => ({
-          ...prev,
-          email: { sent: true, verified: false, loading: false },
-        }));
-
-        toast({
-          title: "Email sent",
-          description: "Check your email for the verification code",
-        });
-
-        // Show dev code in development
-        if (result.code) {
-          toast({
-            title: "Development Mode",
-            description: `Email verification code: ${result.code}`,
-          });
-        }
-      } else {
-        throw new Error(result.error);
-      }
-    } catch {
-      setVerification((prev) => ({
-        ...prev,
-        email: { ...prev.email, loading: false },
-      }));
-
-      toast({
-        variant: "destructive",
-        title: "Failed to send email",
-        description: "Please try again",
-      });
-    }
-  };
-
-  const sendPhoneVerification = async (phone: string) => {
-    setVerification((prev) => ({
-      ...prev,
-      phone: { ...prev.phone, loading: true },
-    }));
-
-    try {
-      const response = await fetch("/api/auth/send-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: phone,
-          type: "phone",
-          purpose: "signup",
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setVerification((prev) => ({
-          ...prev,
-          phone: { sent: true, verified: false, loading: false },
-        }));
-
-        toast({
-          title: "SMS sent",
-          description: "Check your phone for the verification code",
-        });
-
-        // Show dev code in development
-        if (result.code) {
-          toast({
-            title: "Development Mode",
-            description: `Phone verification code: ${result.code}`,
-          });
-        }
-      } else {
-        throw new Error(result.error);
-      }
-    } catch {
-      setVerification((prev) => ({
-        ...prev,
-        phone: { ...prev.phone, loading: false },
-      }));
-
-      toast({
-        variant: "destructive",
-        title: "Failed to send SMS",
-        description: "Please try again",
-      });
-    }
-  };
 
   const verifyEmail = async () => {
     if (!emailCode || emailCode.length !== 4) {
@@ -318,64 +255,12 @@ const SignupWithVerification = () => {
     }
   };
 
-  const verifyPhone = async () => {
-    if (!phoneCode || phoneCode.length !== 4) {
-      toast({
-        variant: "destructive",
-        title: "Invalid code",
-        description: "Please enter a 4-digit code",
-      });
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/auth/verify-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: userPhone,
-          code: phoneCode,
-          type: "PHONE",
-          purpose: "signup",
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setVerification((prev) => ({
-          ...prev,
-          phone: { ...prev.phone, verified: true },
-        }));
-        setPhoneCode("");
-
-        toast({
-          title: "Phone verified",
-          description: "Your phone number has been successfully verified",
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Verification failed",
-          description: result.error,
-        });
-      }
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Verification failed",
-        description: "Please try again",
-      });
-    }
-  };
-
   const proceedTo2FA = () => {
-    if (!verification.email.verified || !verification.phone.verified) {
+    if (!verification.email.verified) {
       toast({
         variant: "destructive",
         title: "Verification required",
-        description:
-          "Please verify both your email and phone number to continue",
+        description: "Please verify your email address to continue",
       });
       return;
     }
@@ -444,14 +329,14 @@ const SignupWithVerification = () => {
 
           <div className="mb-6 text-center text-white">
             <h1 className="text-3xl font-bold mb-2">
-              Verify Your Contact Information
+              Verify Your Email Address
             </h1>
             <p className="text-blue-200">
-              We&apos;ve sent 4-digit verification codes to your email and phone
+              We&apos;ve sent a 4-digit verification code to your email
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="max-w-md mx-auto">
             {/* Email Verification */}
             <Card className="bg-white/10 border-white/20 backdrop-blur-[10px]">
               <CardHeader>
@@ -515,78 +400,12 @@ const SignupWithVerification = () => {
                 )}
               </CardContent>
             </Card>
-
-            {/* Phone Verification */}
-            <Card className="bg-white/10 border-white/20 backdrop-blur-[10px]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <Phone className="w-5 h-5" />
-                  Phone Verification
-                  {verification.phone.verified && (
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-white/80 text-sm">
-                  Code sent to: {userPhone}
-                </p>
-
-                {!verification.phone.verified && (
-                  <>
-                    <input
-                      type="text"
-                      value={phoneCode}
-                      onChange={(e) =>
-                        setPhoneCode(
-                          e.target.value.replace(/\D/g, "").slice(0, 4)
-                        )
-                      }
-                      placeholder="Enter 4-digit code"
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-center text-lg font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      maxLength={4}
-                    />
-
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={verifyPhone}
-                        disabled={phoneCode.length !== 4}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
-                      >
-                        Verify Phone
-                      </Button>
-                      <Button
-                        onClick={() => sendPhoneVerification(userPhone)}
-                        disabled={verification.phone.loading}
-                        variant="outline"
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        {verification.phone.loading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          "Resend"
-                        )}
-                      </Button>
-                    </div>
-                  </>
-                )}
-
-                {verification.phone.verified && (
-                  <div className="flex items-center gap-2 text-green-400">
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Phone verified successfully</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
 
           <div className="mt-6 text-center">
             <Button
               onClick={proceedTo2FA}
-              disabled={
-                !verification.email.verified || !verification.phone.verified
-              }
+              disabled={!verification.email.verified}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
             >
               Continue to 2FA Setup
@@ -631,14 +450,10 @@ const SignupWithVerification = () => {
               <p className="text-white/80">
                 Your account has been successfully created and fully verified.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center justify-center gap-2 text-green-400">
                   <CheckCircle className="w-4 h-4" />
                   <span>Email Verified</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-green-400">
-                  <CheckCircle className="w-4 h-4" />
-                  <span>Phone Verified</span>
                 </div>
                 <div className="flex items-center justify-center gap-2 text-green-400">
                   <Shield className="w-4 h-4" />
@@ -684,8 +499,8 @@ const SignupWithVerification = () => {
                 Enhanced Security & Verification
               </p>
               <p className="text-sm text-blue-700">
-                For your security, we&apos;ll verify your email and phone
-                number, then set up 2FA.
+                For your security, we&apos;ll verify your email address, then
+                set up 2FA.
               </p>
             </div>
           </div>

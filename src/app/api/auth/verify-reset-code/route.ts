@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { VerificationService } from "@/lib/verification";
-import { SMSService } from "@/lib/sms";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,23 +12,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["email", "phone"].includes(type)) {
+    if (type !== "email") {
       return NextResponse.json(
-        { error: "Type must be 'email' or 'phone'" },
+        { error: "Type must be 'email'" },
         { status: 400 }
       );
     }
 
-    // Format identifier based on type
-    const formattedIdentifier =
-      type === "phone"
-        ? SMSService.formatPhoneNumber(identifier)
-        : identifier.toLowerCase();
+    // Format identifier
+    const formattedIdentifier = identifier.toLowerCase();
 
     const result = await VerificationService.verifyCode(
       formattedIdentifier,
       code,
-      type === "email" ? "EMAIL" : "PHONE",
+      "EMAIL",
       "password_reset"
     );
 
@@ -55,5 +51,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-

@@ -12,25 +12,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["email", "phone"].includes(type)) {
+    if (type !== "email") {
       return NextResponse.json(
-        { error: "Type must be 'email' or 'phone'" },
+        { error: "Type must be 'email'" },
         { status: 400 }
       );
     }
 
-    let result;
-    if (type === "email") {
-      result = await VerificationService.sendEmailVerification(
-        identifier,
-        purpose
-      );
-    } else {
-      result = await VerificationService.sendPhoneVerification(
-        identifier,
-        purpose
-      );
-    }
+    const result = await VerificationService.sendEmailVerification(
+      identifier,
+      purpose
+    );
 
     if (result.success) {
       return NextResponse.json({
@@ -49,5 +41,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-

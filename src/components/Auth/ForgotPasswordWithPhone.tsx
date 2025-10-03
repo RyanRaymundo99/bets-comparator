@@ -1,18 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, Phone, ArrowRight, Loader2, ArrowLeft } from "lucide-react";
+import { Mail, ArrowRight, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { AuthLayout } from "@/components/ui/auth-layout";
 
 const ForgotPasswordWithPhone = () => {
-  const [method, setMethod] = useState<"email" | "phone">("email");
   const [identifier, setIdentifier] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -21,34 +19,8 @@ const ForgotPasswordWithPhone = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const formatPhoneNumber = (input: string) => {
-    const cleaned = input.replace(/\D/g, "");
-    const limited = cleaned.slice(0, 11);
-
-    if (limited.length <= 2) {
-      return limited;
-    } else if (limited.length <= 7) {
-      return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
-    } else {
-      const hasNinthDigit = limited.length === 11;
-      if (hasNinthDigit) {
-        return `(${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(
-          7
-        )}`;
-      } else {
-        return `(${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(
-          6
-        )}`;
-      }
-    }
-  };
-
   const handleIdentifierChange = (value: string) => {
-    if (method === "phone") {
-      setIdentifier(formatPhoneNumber(value));
-    } else {
-      setIdentifier(value);
-    }
+    setIdentifier(value);
   };
 
   const requestReset = async () => {
@@ -56,7 +28,7 @@ const ForgotPasswordWithPhone = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: `Please enter your ${method}`,
+        description: "Please enter your email address",
       });
       return;
     }
@@ -68,7 +40,7 @@ const ForgotPasswordWithPhone = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           identifier: identifier,
-          type: method,
+          type: "email",
         }),
       });
 
@@ -78,7 +50,7 @@ const ForgotPasswordWithPhone = () => {
         setStep("verify");
         toast({
           title: "Code sent",
-          description: `Verification code sent to your ${method}`,
+          description: "Verification code sent to your email",
         });
 
         // Show dev code in development
@@ -124,7 +96,7 @@ const ForgotPasswordWithPhone = () => {
         body: JSON.stringify({
           identifier: identifier,
           code: code,
-          type: method,
+          type: "email",
         }),
       });
 
@@ -182,7 +154,7 @@ const ForgotPasswordWithPhone = () => {
           identifier: identifier,
           code: code,
           newPassword: newPassword,
-          type: method,
+          type: "email",
         }),
       });
 
@@ -223,67 +195,28 @@ const ForgotPasswordWithPhone = () => {
           Reset Your Password
         </CardTitle>
         <p className="text-center text-white/70">
-          Choose how you&apos;d like to receive your reset code
+          Enter your email address to receive a reset code
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Tabs
-          value={method}
-          onValueChange={(value) => setMethod(value as "email" | "phone")}
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="email" className="flex items-center gap-2">
-              <Mail className="w-4 h-4" />
-              Email
-            </TabsTrigger>
-            <TabsTrigger value="phone" className="flex items-center gap-2">
-              <Phone className="w-4 h-4" />
-              Phone
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="email" className="space-y-4">
-            <div>
-              <Label htmlFor="email" className="text-white">
-                Email Address
-              </Label>
-              <div className="relative mt-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-300" />
-                </div>
-                <Input
-                  id="email"
-                  type="email"
-                  value={identifier}
-                  onChange={(e) => handleIdentifierChange(e.target.value)}
-                  placeholder="your.email@example.com"
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder-gray-300"
-                />
-              </div>
+        <div>
+          <Label htmlFor="email" className="text-white">
+            Email Address
+          </Label>
+          <div className="relative mt-1">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Mail className="h-5 w-5 text-gray-300" />
             </div>
-          </TabsContent>
-
-          <TabsContent value="phone" className="space-y-4">
-            <div>
-              <Label htmlFor="phone" className="text-white">
-                Phone Number
-              </Label>
-              <div className="relative mt-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="h-5 w-5 text-gray-300" />
-                </div>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={identifier}
-                  onChange={(e) => handleIdentifierChange(e.target.value)}
-                  placeholder="(11) 99999-9999"
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder-gray-300"
-                />
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            <Input
+              id="email"
+              type="email"
+              value={identifier}
+              onChange={(e) => handleIdentifierChange(e.target.value)}
+              placeholder="your.email@example.com"
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder-gray-300"
+            />
+          </div>
+        </div>
 
         <Button
           onClick={requestReset}
@@ -322,7 +255,7 @@ const ForgotPasswordWithPhone = () => {
           Enter Verification Code
         </CardTitle>
         <p className="text-center text-white/70">
-          We sent a 4-digit code to your {method}
+          We sent a 4-digit code to your email
         </p>
         <p className="text-center text-white/50 text-sm">{identifier}</p>
       </CardHeader>

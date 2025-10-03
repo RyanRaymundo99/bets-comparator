@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -123,7 +123,7 @@ export default function CryptoWallet() {
   };
 
   // Fetch wallet data
-  const fetchWalletData = async () => {
+  const fetchWalletData = useCallback(async () => {
     try {
       console.log("Fetching wallet data...");
       const response = await fetch("/api/crypto/wallet");
@@ -146,10 +146,10 @@ export default function CryptoWallet() {
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
 
   // Fetch popular crypto prices
-  const fetchPrices = async () => {
+  const fetchPrices = useCallback(async () => {
     try {
       console.log("Fetching prices...");
       const response = await fetch("/api/crypto/popular-pairs");
@@ -195,7 +195,7 @@ export default function CryptoWallet() {
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
 
   // Buy USDT with BRL
   const handleBuyUSDT = async () => {

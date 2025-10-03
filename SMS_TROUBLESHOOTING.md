@@ -52,37 +52,30 @@ const providers = [
 TEXTBELT_API_KEY="your-free-api-key-from-textbelt"
 ```
 
-### **Step 2: Set Up AWS SNS (Recommended)**
+### **Step 2: Alternative Free SMS Services**
 
-For maximum reliability, set up AWS SNS:
+For additional reliability, consider these free alternatives:
 
-1. **Create AWS Account** (free at aws.amazon.com)
-2. **Create IAM User** with SNS permissions
-3. **Generate Access Keys**
-4. **Add to Environment**:
-
-```env
-AWS_ACCESS_KEY_ID="your-aws-access-key"
-AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
-AWS_REGION="us-east-1"
-```
+1. **Vonage (Nexmo)** - 25 SMS/month FREE
+2. **Plivo** - 5,000 SMS/month FREE
+3. **MessageBird** - Free trial with credits
 
 ### **Step 3: Deploy Updated Code**
 
 The updated SMS service will automatically:
 
-- Try AWS SNS first (most reliable)
-- Fall back to TextBelt with API key
-- Use basic TextBelt as last resort
+- Try TextBelt with API key first (highest limits)
+- Fall back to basic TextBelt
+- Use TextBelt quota endpoint as last resort
 - Log all attempts for debugging
 
 ## 📊 **Provider Comparison**
 
-| Provider           | Reliability | Cost               | Setup  | Limits        |
-| ------------------ | ----------- | ------------------ | ------ | ------------- |
-| **AWS SNS**        | ⭐⭐⭐⭐⭐  | 100 SMS/month FREE | Medium | 20 SMS/sec    |
-| **TextBelt API**   | ⭐⭐⭐      | FREE               | Easy   | 100 SMS/month |
-| **TextBelt Basic** | ⭐⭐        | FREE               | None   | 1 SMS/day     |
+| Provider           | Reliability | Cost | Setup | Limits        |
+| ------------------ | ----------- | ---- | ----- | ------------- |
+| **TextBelt API**   | ⭐⭐⭐      | FREE | Easy  | 100 SMS/month |
+| **TextBelt Basic** | ⭐⭐        | FREE | None  | 1 SMS/day     |
+| **TextBelt Quota** | ⭐⭐        | FREE | None  | Limited       |
 
 ## 🔍 **Debugging SMS Issues**
 
@@ -92,12 +85,12 @@ Look for these log messages:
 
 ```bash
 # Successful SMS
-✅ SMS sent successfully via AWS SNS: msg-123
 ✅ SMS sent successfully via TextBelt API: text-456
+✅ SMS sent successfully via TextBelt: text-789
 
 # Failed SMS
-⚠️ AWS SNS failed: Invalid phone number
 ⚠️ TextBelt API failed: Daily limit exceeded
+⚠️ TextBelt failed: Invalid phone number
 ❌ All SMS providers failed for +5511999999999
 ```
 
@@ -105,8 +98,8 @@ Look for these log messages:
 
 1. **"Daily limit exceeded"**:
 
-   - Get TextBelt API key for higher limits
-   - Set up AWS SNS for unlimited SMS
+   - Get TextBelt API key for higher limits (100 SMS/month)
+   - Consider alternative free SMS services
 
 2. **"Invalid phone number"**:
 
@@ -165,25 +158,26 @@ npm run dev
    ```
 4. Redeploy
 
-### **Option 2: Set Up AWS SNS (15 minutes)**
+### **Option 2: Try Alternative Free Services (10 minutes)**
 
-1. Create AWS account
-2. Set up IAM user with SNS permissions
-3. Add credentials to environment:
-   ```env
-   AWS_ACCESS_KEY_ID="your-key"
-   AWS_SECRET_ACCESS_KEY="your-secret"
-   AWS_REGION="us-east-1"
-   ```
-4. Redeploy
+1. **Vonage (Nexmo)**: 25 SMS/month FREE
+
+   - Sign up at vonage.com
+   - Get API key and secret
+   - Add to environment variables
+
+2. **Plivo**: 5,000 SMS/month FREE
+   - Sign up at plivo.com
+   - Get auth ID and token
+   - Add to environment variables
 
 ## 📈 **Monitoring SMS Success**
 
 ### **Success Metrics**
 
-- **AWS SNS**: 99.9% delivery rate
 - **TextBelt API**: 95% delivery rate
 - **TextBelt Basic**: 80% delivery rate
+- **TextBelt Quota**: 70% delivery rate
 
 ### **Monitoring Commands**
 
@@ -209,7 +203,7 @@ If all SMS providers fail:
 ## ✅ **Verification Checklist**
 
 - [ ] TextBelt API key obtained and configured
-- [ ] AWS SNS credentials set up (optional but recommended)
+- [ ] Alternative free SMS service set up (optional but recommended)
 - [ ] Updated SMS service deployed
 - [ ] SMS functionality tested in production
 - [ ] Error logging implemented
@@ -227,4 +221,4 @@ If SMS issues persist:
 
 ---
 
-**Next Steps**: Deploy the updated SMS service and configure at least one reliable SMS provider (TextBelt API key or AWS SNS) for production use.
+**Next Steps**: Deploy the updated SMS service and configure at least one reliable SMS provider (TextBelt API key or alternative free service) for production use.

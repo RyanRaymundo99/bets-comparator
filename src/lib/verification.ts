@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
-import { SMSService } from "@/lib/sms";
 
 export interface VerificationResult {
   success: boolean;
@@ -97,102 +96,22 @@ The BS Market Team`;
   }
 
   /**
-   * Send phone verification code
-   */
-  static async sendPhoneVerification(
-    phone: string,
-    purpose: string = "signup"
-  ): Promise<VerificationResult> {
-    try {
-      // Validate and format phone number
-      if (!SMSService.validatePhoneNumber(phone)) {
-        return {
-          success: false,
-          message: "Invalid phone number format",
-        };
-      }
-
-      const formattedPhone = SMSService.formatPhoneNumber(phone);
-      const code = this.generateCode();
-      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-      // Delete any existing verification for this phone and purpose
-      await prisma.verification.deleteMany({
-        where: {
-          identifier: formattedPhone,
-          type: "PHONE",
-          purpose,
-        },
-      });
-
-      // Create new verification
-      await prisma.verification.create({
-        data: {
-          id: `phone_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          identifier: formattedPhone,
-          value: code,
-          type: "PHONE",
-          purpose,
-          expiresAt,
-        },
-      });
-
-      // Send SMS
-      const smsResult = await SMSService.sendVerificationCode(
-        formattedPhone,
-        code
-      );
-
-      if (smsResult.success) {
-        return {
-          success: true,
-          message: "Verification code sent to your phone",
-          code: process.env.NODE_ENV === "development" ? code : undefined,
-        };
-      } else {
-        return {
-          success: false,
-          message: "Failed to send verification SMS",
-        };
-      }
-    } catch (error) {
-      console.error("Phone verification error:", error);
-      return {
-        success: false,
-        message: "Failed to send verification SMS",
-      };
-    }
-  }
-
-  /**
-   * Send password reset code (email or phone)
+   * Send password reset code (email only)
    */
   static async sendPasswordResetCode(
-    identifier: string,
-    type: "email" | "phone"
+    identifier: string
   ): Promise<VerificationResult> {
     try {
       const code = this.generateCode();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-      const formattedIdentifier =
-        type === "phone"
-          ? SMSService.formatPhoneNumber(identifier)
-          : identifier.toLowerCase();
-
-      // Validate identifier
-      if (type === "phone" && !SMSService.validatePhoneNumber(identifier)) {
-        return {
-          success: false,
-          message: "Invalid phone number format",
-        };
-      }
+      const formattedIdentifier = identifier.toLowerCase();
 
       // Delete any existing password reset verification
       await prisma.verification.deleteMany({
         where: {
           identifier: formattedIdentifier,
-          type: type === "email" ? "EMAIL" : "PHONE",
+          type: "EMAIL",
           purpose: "password_reset",
         },
       });
@@ -203,19 +122,17 @@ The BS Market Team`;
           id: `reset_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           identifier: formattedIdentifier,
           value: code,
-          type: type === "email" ? "EMAIL" : "PHONE",
+          type: "EMAIL",
           purpose: "password_reset",
           expiresAt,
         },
       });
 
-      // Send notification
-      let result;
-      if (type === "email") {
-        const emailResult = await sendEmail({
-          to: formattedIdentifier,
-          subject: "BS Market Password Reset Code",
-          text: `Your password reset code is: ${code}
+      // Send email
+      const emailResult = await sendEmail({
+        to: formattedIdentifier,
+        subject: "BS Market Password Reset Code",
+        text: `Your password reset code is: ${code}
 
 This code will expire in 10 minutes.
 
@@ -223,25 +140,18 @@ If you didn't request a password reset, please ignore this email.
 
 Best regards,
 The BS Market Team`,
-        });
-        result = emailResult;
-      } else {
-        result = await SMSService.sendPasswordResetCode(
-          formattedIdentifier,
-          code
-        );
-      }
+      });
 
-      if (result.success) {
+      if (emailResult.success) {
         return {
           success: true,
-          message: `Password reset code sent to your ${type}`,
+          message: `Password reset code sent to your email`,
           code: process.env.NODE_ENV === "development" ? code : undefined,
         };
       } else {
         return {
           success: false,
-          message: `Failed to send password reset code via ${type}`,
+          message: `Failed to send password reset code via email`,
         };
       }
     } catch (error) {
@@ -254,19 +164,16 @@ The BS Market Team`,
   }
 
   /**
-   * Verify a code
+   * Verify a code (email only)
    */
   static async verifyCode(
     identifier: string,
     code: string,
-    type: "EMAIL" | "PHONE",
+    type: "EMAIL",
     purpose: string = "signup"
   ): Promise<VerificationCheck> {
     try {
-      const formattedIdentifier =
-        type === "PHONE"
-          ? SMSService.formatPhoneNumber(identifier)
-          : identifier.toLowerCase();
+      const formattedIdentifier = identifier.toLowerCase();
 
       // Find verification record
       const verification = await prisma.verification.findFirst({
