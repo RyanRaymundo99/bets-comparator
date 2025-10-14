@@ -390,7 +390,7 @@ export default function AdminUsersPage() {
                 KYC Verification
               </Button>
             </Link>
-            <Button onClick={fetchUsers} variant="outline">
+            <Button onClick={() => fetchUsers()} variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>

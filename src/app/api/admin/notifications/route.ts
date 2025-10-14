@@ -34,16 +34,16 @@ export async function GET(request: NextRequest) {
 
     // Build where clauses based on showAll parameter
     const userWhereClause = showAll
-      ? { approvalStatus: "PENDING" }
+      ? { approvalStatus: "PENDING" as const }
       : {
-          approvalStatus: "PENDING",
+          approvalStatus: "PENDING" as const,
           createdAt: { gt: adminLastSeen },
         };
 
     const kycWhereClause = showAll
-      ? { kycStatus: "PENDING" }
+      ? { kycStatus: "PENDING" as const }
       : {
-          kycStatus: "PENDING",
+          kycStatus: "PENDING" as const,
           kycSubmittedAt: { gt: adminLastSeen },
         };
 
