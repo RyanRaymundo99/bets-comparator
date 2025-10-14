@@ -589,7 +589,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
-                onClick={() => router.push("/p2p")}
+                onClick={() => router.push("/trade")}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
                 <TrendingUp className="w-4 h-4 mr-2" />
@@ -610,14 +610,6 @@ export default function Dashboard() {
               >
                 <ArrowUpRight className="w-4 h-4 mr-2" />
                 Sacar
-              </Button>
-              <Button
-                onClick={() => router.push("/p2p")}
-                variant="outline"
-                className="w-full border-border text-foreground hover:bg-muted"
-              >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Trade
               </Button>
               <Button
                 onClick={() => router.push("/profile")}

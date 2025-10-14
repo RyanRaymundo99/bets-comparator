@@ -17,7 +17,7 @@ import CalculatorModal from "./calculator-modal";
 
 const NAV_LINKS = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
-  { label: "Trade", href: "/p2p", icon: BarChart3 },
+  { label: "Trade", href: "/trade", icon: BarChart3 },
   { label: "Deposits", href: "/deposits", icon: Wallet },
   { label: "Withdraw", href: "/withdraw", icon: TrendingDown },
 ];
@@ -206,14 +206,6 @@ export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
                 onClick={() => handleMobileNavigation("/trade")}
                 className="w-full flex items-center gap-3 p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 group"
               >
-                <TrendingUp className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
-                <span className="font-medium">Trade</span>
-              </button>
-
-              <button
-                onClick={() => handleMobileNavigation("/p2p")}
-                className="w-full flex items-center gap-3 p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 group"
-              >
                 <BarChart3 className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
                 <span className="font-medium">Trade</span>
               </button>
@@ -224,6 +216,14 @@ export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
               >
                 <Wallet className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
                 <span className="font-medium">Deposits</span>
+              </button>
+
+              <button
+                onClick={() => handleMobileNavigation("/withdraw")}
+                className="w-full flex items-center gap-3 p-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 group"
+              >
+                <TrendingDown className="w-5 h-5 group-hover:text-blue-300 transition-colors" />
+                <span className="font-medium">Withdraw</span>
               </button>
             </div>
           </nav>

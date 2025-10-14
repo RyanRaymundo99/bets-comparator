@@ -9,43 +9,45 @@ datasource db {
 }
 
 model User {
-  id                   String         @id @map("_id")
-  name                 String
-  email                String         @unique
-  cpf                  String?        @unique
-  phone                String?        @unique
-  password             String? // Add password field directly to User
-  emailVerified        Boolean        @default(false)
-  phoneVerified        Boolean        @default(false)
-  approvalStatus       ApprovalStatus @default(PENDING)
-  image                String?
-  kycStatus            KYCStatus      @default(PENDING)
-  kycData              Json?
+  id                          String         @id @map("_id")
+  name                        String
+  email                       String         @unique
+  cpf                         String?        @unique
+  phone                       String?        @unique
+  password                    String? // Add password field directly to User
+  emailVerified               Boolean        @default(false)
+  phoneVerified               Boolean        @default(false)
+  approvalStatus              ApprovalStatus @default(PENDING)
+  image                       String?
+  kycStatus                   KYCStatus      @default(PENDING)
+  kycData                     Json?
   // KYC Document fields
-  documentType         DocumentType?
-  documentNumber       String?
-  documentFront        String? // URL to front document image
-  documentBack         String? // URL to back document image
-  documentSelfie       String? // URL to selfie with document
-  kycSubmittedAt       DateTime?
-  kycReviewedAt        DateTime?
-  kycRejectionReason   String?
+  documentType                DocumentType?
+  documentNumber              String?
+  documentFront               String? // URL to front document image
+  documentBack                String? // URL to back document image
+  documentSelfie              String? // URL to selfie with document
+  kycSubmittedAt              DateTime?
+  kycReviewedAt               DateTime?
+  kycRejectionReason          String?
+  // Admin notification tracking
+  adminNotificationLastSeenAt DateTime?
   // 2FA fields
-  twoFactorEnabled     Boolean        @default(false)
-  twoFactorSecret      String?
-  twoFactorBackupCodes String[]       @default([])
-  createdAt            DateTime
-  updatedAt            DateTime
-  accounts             Account[]
-  balances             Balance[]
-  deposits             Deposit[]
-  orders               Order[]
-  p2pOffers            P2POffer[]
-  buyerTrades          P2PTrade[]     @relation("BuyerTrades")
-  sellerTrades         P2PTrade[]     @relation("SellerTrades")
-  sessions             Session[]
-  transactions         Transaction[]
-  withdrawals          Withdrawal[]
+  twoFactorEnabled            Boolean        @default(false)
+  twoFactorSecret             String?
+  twoFactorBackupCodes        String[]       @default([])
+  createdAt                   DateTime
+  updatedAt                   DateTime
+  accounts                    Account[]
+  balances                    Balance[]
+  deposits                    Deposit[]
+  orders                      Order[]
+  p2pOffers                   P2POffer[]
+  buyerTrades                 P2PTrade[]     @relation("BuyerTrades")
+  sellerTrades                P2PTrade[]     @relation("SellerTrades")
+  sessions                    Session[]
+  transactions                Transaction[]
+  withdrawals                 Withdrawal[]
 
   @@map("user")
 }
