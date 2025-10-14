@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import NavbarNew from "@/components/ui/navbar-new";
 import Breadcrumb from "@/components/ui/breadcrumb";
@@ -65,7 +63,6 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { toast } = useToast();
-  const router = useRouter();
 
   useEffect(() => {
     fetchUserProfile();
@@ -138,7 +135,7 @@ export default function ProfilePage() {
       } else {
         throw new Error("Failed to update profile");
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Error",
@@ -178,7 +175,7 @@ export default function ProfilePage() {
       } else {
         throw new Error("Failed to upload document");
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Upload Failed",
@@ -385,12 +382,16 @@ export default function ProfilePage() {
                   <div className="text-sm text-muted-foreground">
                     <p>
                       <strong>Submitted:</strong>{" "}
-                      {new Date(userProfile.kycSubmittedAt).toLocaleDateString()}
+                      {new Date(
+                        userProfile.kycSubmittedAt
+                      ).toLocaleDateString()}
                     </p>
                     {userProfile.kycReviewedAt && (
                       <p>
                         <strong>Reviewed:</strong>{" "}
-                        {new Date(userProfile.kycReviewedAt).toLocaleDateString()}
+                        {new Date(
+                          userProfile.kycReviewedAt
+                        ).toLocaleDateString()}
                       </p>
                     )}
                   </div>
@@ -426,7 +427,9 @@ export default function ProfilePage() {
                   ) : (
                     <div className="space-y-2">
                       <Upload className="w-8 h-8 mx-auto text-gray-400" />
-                      <p className="text-sm text-gray-500">No document uploaded</p>
+                      <p className="text-sm text-gray-500">
+                        No document uploaded
+                      </p>
                     </div>
                   )}
                 </div>
@@ -443,7 +446,9 @@ export default function ProfilePage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => document.getElementById("front-upload")?.click()}
+                  onClick={() =>
+                    document.getElementById("front-upload")?.click()
+                  }
                   className="w-full"
                 >
                   <Upload className="w-4 h-4 mr-2" />
@@ -467,7 +472,9 @@ export default function ProfilePage() {
                   ) : (
                     <div className="space-y-2">
                       <Upload className="w-8 h-8 mx-auto text-gray-400" />
-                      <p className="text-sm text-gray-500">No document uploaded</p>
+                      <p className="text-sm text-gray-500">
+                        No document uploaded
+                      </p>
                     </div>
                   )}
                 </div>
@@ -484,7 +491,9 @@ export default function ProfilePage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => document.getElementById("back-upload")?.click()}
+                  onClick={() =>
+                    document.getElementById("back-upload")?.click()
+                  }
                   className="w-full"
                 >
                   <Upload className="w-4 h-4 mr-2" />
@@ -508,7 +517,9 @@ export default function ProfilePage() {
                   ) : (
                     <div className="space-y-2">
                       <Upload className="w-8 h-8 mx-auto text-gray-400" />
-                      <p className="text-sm text-gray-500">No selfie uploaded</p>
+                      <p className="text-sm text-gray-500">
+                        No selfie uploaded
+                      </p>
                     </div>
                   )}
                 </div>
@@ -525,7 +536,9 @@ export default function ProfilePage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => document.getElementById("selfie-upload")?.click()}
+                  onClick={() =>
+                    document.getElementById("selfie-upload")?.click()
+                  }
                   className="w-full"
                 >
                   <Upload className="w-4 h-4 mr-2" />
@@ -584,4 +597,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-

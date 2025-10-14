@@ -31,7 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { X, ZoomIn } from "lucide-react";
+import { ZoomIn } from "lucide-react";
 import ImageAnalysisPanel from "@/components/admin/ImageAnalysisPanel";
 import NotificationBell from "@/components/admin/NotificationBell";
 

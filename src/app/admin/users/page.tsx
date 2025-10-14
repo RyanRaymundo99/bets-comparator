@@ -12,7 +12,6 @@ import {
   CreditCard,
   FileText,
   RefreshCw,
-  LogOut,
   MoreVertical,
   Trash2,
   Edit,
@@ -132,17 +131,6 @@ export default function AdminUsersPage() {
     },
     [users]
   );
-
-  const handleLogout = async () => {
-    try {
-      // Clear session cookie
-      document.cookie =
-        "better-auth.session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      router.push("/admin/login");
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
 
   useEffect(() => {
     // Check for URL parameters to set initial filter
@@ -280,7 +268,7 @@ export default function AdminUsersPage() {
     setEditFormData({
       name: user.name,
       email: user.email,
-      phone: user.phone || "",
+      phone: (user as { phone?: string }).phone || "",
       cpf: user.cpf || "",
       approvalStatus: user.approvalStatus,
       kycStatus: user.kycStatus,

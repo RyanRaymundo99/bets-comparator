@@ -101,4 +101,46 @@ Thumbs.db
 *.sqlite3
 
 # Prisma
-prisma/migrations/ 
+prisma/migrations/
+
+# Production builds
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Uploads (keep structure but ignore content)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env*
+!.env.example
+
+# Temporary files
+tmp/
+temp/ 

@@ -15,10 +15,6 @@ import {
   Upload,
   Camera,
   FileText,
-  User,
-  Mail,
-  Phone,
-  CreditCard,
   ArrowRight,
   ArrowLeft,
 } from "lucide-react";
@@ -534,4 +530,3 @@ const SignupWithMandatoryKYC = () => {
 };
 
 export default SignupWithMandatoryKYC;
-

@@ -12,11 +12,9 @@ import {
   FileText,
   Clock,
   CheckCircle,
-  XCircle,
   ArrowLeft,
   RefreshCw,
   Eye,
-  EyeOff,
 } from "lucide-react";
 
 interface Notification {
@@ -143,19 +141,6 @@ export default function AdminNotificationsPage() {
     }
   };
 
-  const getNotificationColor = (type: string) => {
-    switch (type) {
-      case "new_user":
-        return "border-l-blue-500";
-      case "kyc_pending":
-        return "border-l-orange-500";
-      case "approval_needed":
-        return "border-l-yellow-500";
-      default:
-        return "border-l-gray-500";
-    }
-  };
-
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
     const notificationTime = new Date(timestamp);
@@ -247,7 +232,7 @@ export default function AdminNotificationsPage() {
                 <Bell className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No Notifications</h3>
                 <p className="text-gray-400">
-                  You're all caught up! No new notifications at the moment.
+                  You&apos;re all caught up! No new notifications at the moment.
                 </p>
               </CardContent>
             </Card>
