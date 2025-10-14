@@ -534,3 +534,4 @@ const SignupWithMandatoryKYC = () => {
 };
 
 export default SignupWithMandatoryKYC;
+

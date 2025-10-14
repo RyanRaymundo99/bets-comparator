@@ -76,8 +76,8 @@ const AdminLoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gray-800 border-gray-700">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-gray-900 border-gray-800">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
@@ -99,7 +99,7 @@ const AdminLoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@bsmarket.com.br"
-                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
                 required
               />
             </div>
@@ -113,7 +113,7 @@ const AdminLoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter admin password"
-                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
                 required
               />
             </div>
@@ -133,7 +133,7 @@ const AdminLoginPage = () => {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-700 rounded-lg">
+          <div className="mt-6 p-4 bg-gray-800 rounded-lg">
             <h4 className="text-white font-medium mb-2">
               Default Admin Credentials:
             </h4>

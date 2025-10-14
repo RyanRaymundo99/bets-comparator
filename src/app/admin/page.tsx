@@ -107,14 +107,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
             <Button
               onClick={fetchStats}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-gray-700 text-white hover:bg-gray-800"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               Refresh
@@ -143,7 +143,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Users */}
           <Link href="/admin/users">
-            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-blue-500 transition-all duration-200 cursor-pointer group">
+            <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 hover:border-blue-500 transition-all duration-200 cursor-pointer group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
                   Total Users
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
 
           {/* Pending Approvals */}
           <Link href="/admin/users">
-            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-yellow-500 transition-all duration-200 cursor-pointer group">
+            <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 hover:border-yellow-500 transition-all duration-200 cursor-pointer group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
                   Pending Approvals
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
 
           {/* Approved Users */}
           <Link href="/admin/users">
-            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-green-500 transition-all duration-200 cursor-pointer group">
+            <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 hover:border-green-500 transition-all duration-200 cursor-pointer group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
                   Approved Users
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
 
           {/* Pending KYC */}
           <Link href="/admin/kyc">
-            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-orange-500 transition-all duration-200 cursor-pointer group">
+            <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 hover:border-orange-500 transition-all duration-200 cursor-pointer group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
                   Pending KYC
@@ -224,7 +224,7 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
               <CardTitle className="text-white">User Management</CardTitle>
             </CardHeader>
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
               <CardTitle className="text-white">KYC Verification</CardTitle>
             </CardHeader>
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Activity Summary */}
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
             <CardTitle className="text-white">System Status</CardTitle>
           </CardHeader>

@@ -33,18 +33,18 @@ export async function GET(request: NextRequest) {
     const adminLastSeen = adminUser.adminNotificationLastSeenAt || new Date(0);
 
     // Build where clauses based on showAll parameter
-    const userWhereClause = showAll 
+    const userWhereClause = showAll
       ? { approvalStatus: "PENDING" }
-      : { 
+      : {
           approvalStatus: "PENDING",
-          createdAt: { gt: adminLastSeen }
+          createdAt: { gt: adminLastSeen },
         };
 
     const kycWhereClause = showAll
       ? { kycStatus: "PENDING" }
-      : { 
+      : {
           kycStatus: "PENDING",
-          kycSubmittedAt: { gt: adminLastSeen }
+          kycSubmittedAt: { gt: adminLastSeen },
         };
 
     // Fetch pending users and KYC requests
@@ -88,29 +88,33 @@ export async function GET(request: NextRequest) {
 
     // Add new user notifications
     pendingUsers.forEach((user) => {
+      const userCreatedAt = user.createdAt || new Date();
+      const isRead = userCreatedAt <= adminLastSeen;
+
       notifications.push({
         id: `user_${user.id}`,
         type: "new_user",
         title: "New User Registration",
         message: `${user.name} (${user.email}) has registered and is pending approval`,
-        timestamp: user.createdAt?.toISOString() || new Date().toISOString(),
-        read: false,
+        timestamp: userCreatedAt.toISOString(),
+        read: isRead,
         userId: user.id,
       });
     });
 
     // Add KYC pending notifications
     pendingKYC.forEach((user) => {
+      const kycSubmittedAt =
+        user.kycSubmittedAt || user.createdAt || new Date();
+      const isRead = kycSubmittedAt <= adminLastSeen;
+
       notifications.push({
         id: `kyc_${user.id}`,
         type: "kyc_pending",
         title: "KYC Document Review Needed",
         message: `${user.name} has submitted KYC documents for review`,
-        timestamp:
-          user.kycSubmittedAt?.toISOString() ||
-          user.createdAt?.toISOString() ||
-          new Date().toISOString(),
-        read: false,
+        timestamp: kycSubmittedAt.toISOString(),
+        read: isRead,
         userId: user.id,
       });
     });

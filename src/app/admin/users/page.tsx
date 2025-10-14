@@ -371,11 +371,11 @@ export default function AdminUsersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background text-foreground p-8">
+      <div className="min-h-screen bg-black text-white p-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-muted-foreground">Carregando usuários...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+            <p className="mt-2 text-gray-400">Carregando usuários...</p>
           </div>
         </div>
       </div>
@@ -383,12 +383,12 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-8">
+    <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-gray-400 mt-1">
               Gerenciar usuários e verificar documentos
             </p>
           </div>
@@ -448,15 +448,15 @@ export default function AdminUsersPage() {
         {/* Users List */}
         <div className="grid gap-4">
           {filteredUsers.length === 0 ? (
-            <Card>
+            <Card className="bg-gray-900 border-gray-800">
               <CardContent className="p-8 text-center">
-                <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
+                <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-white">
                   {statusFilter === "ALL"
                     ? "Nenhum usuário encontrado"
                     : `Nenhum usuário ${statusFilter.toLowerCase()} encontrado`}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-gray-400">
                   {statusFilter === "ALL"
                     ? "Não há usuários para exibir no momento."
                     : `Não há usuários com status ${statusFilter.toLowerCase()} no momento.`}
@@ -465,7 +465,10 @@ export default function AdminUsersPage() {
             </Card>
           ) : (
             filteredUsers.map((user) => (
-              <Card key={user.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={user.id}
+                className="hover:shadow-md transition-shadow bg-gray-900 border-gray-800"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -497,121 +500,136 @@ export default function AdminUsersPage() {
                       </div>
                     </div>
 
-                    {user.approvalStatus === "PENDING" && (
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleApproval(user.id, "approve")}
-                          disabled={processingUser === user.id}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          {processingUser === user.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="w-4 h-4 mr-1" />
-                              Aprovar
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleApproval(user.id, "reject")}
-                          disabled={processingUser === user.id}
-                        >
-                          {processingUser === user.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          ) : (
-                            <>
-                              <XCircle className="w-4 h-4 mr-1" />
-                              Rejeitar
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    )}
+                    {/* Action Buttons */}
+                    <div className="flex items-center space-x-2">
+                      {user.approvalStatus === "PENDING" && (
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs text-gray-400 mr-2">
+                            Ações:
+                          </span>
+                          <Button
+                            size="sm"
+                            onClick={() => handleApproval(user.id, "approve")}
+                            disabled={processingUser === user.id}
+                            className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                          >
+                            {processingUser === user.id ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="w-4 h-4 mr-1" />
+                                Aprovar
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleApproval(user.id, "reject")}
+                            disabled={processingUser === user.id}
+                            className="bg-red-600 hover:bg-red-700 border-0 shadow-sm"
+                          >
+                            {processingUser === user.id ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <>
+                                <XCircle className="w-4 h-4 mr-1" />
+                                Rejeitar
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      )}
 
-                    {/* Reset button for approved/rejected users */}
-                    {(user.approvalStatus === "APPROVED" ||
-                      user.approvalStatus === "REJECTED") && (
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleResetToPending(user.id)}
-                          disabled={processingUser === user.id}
-                          className="bg-orange-600 hover:bg-orange-700"
-                        >
-                          {processingUser === user.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          ) : (
-                            <>
-                              <Clock className="w-4 h-4 mr-1" />
-                              Resetar para Pendente
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => handleApproval(user.id, "approve")}
-                          disabled={processingUser === user.id}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          {processingUser === user.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="w-4 h-4 mr-1" />
-                              Re-aprovar
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleApproval(user.id, "reject")}
-                          disabled={processingUser === user.id}
-                        >
-                          {processingUser === user.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          ) : (
-                            <>
-                              <XCircle className="w-4 h-4 mr-1" />
-                              Rejeitar
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    )}
+                      {(user.approvalStatus === "APPROVED" ||
+                        user.approvalStatus === "REJECTED") && (
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs text-gray-400 mr-2">
+                            Ações:
+                          </span>
+                          <Button
+                            size="sm"
+                            onClick={() => handleResetToPending(user.id)}
+                            disabled={processingUser === user.id}
+                            className="bg-orange-600 hover:bg-orange-700 text-white border-0 shadow-sm"
+                          >
+                            {processingUser === user.id ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <>
+                                <Clock className="w-4 h-4 mr-1" />
+                                Resetar
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleApproval(user.id, "approve")}
+                            disabled={processingUser === user.id}
+                            className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                          >
+                            {processingUser === user.id ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="w-4 h-4 mr-1" />
+                                Re-aprovar
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleApproval(user.id, "reject")}
+                            disabled={processingUser === user.id}
+                            className="bg-red-600 hover:bg-red-700 border-0 shadow-sm"
+                          >
+                            {processingUser === user.id ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <>
+                                <XCircle className="w-4 h-4 mr-1" />
+                                Rejeitar
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
 
                     {/* User Menu Dropdown */}
-                    <div className="ml-2">
+                    <div className="ml-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 p-0 hover:bg-gray-800"
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical className="h-4 w-4 text-gray-400" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-gray-900 border-gray-800"
+                        >
                           <DropdownMenuItem
                             onClick={() => handleEditUser(user)}
+                            className="text-white hover:bg-gray-800 focus:bg-gray-800"
                           >
-                            <Edit className="mr-2 h-4 w-4" />
+                            <Edit className="mr-2 h-4 w-4 text-blue-400" />
                             Editar Usuário
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleViewProfile(user.id)}
+                            className="text-white hover:bg-gray-800 focus:bg-gray-800"
                           >
-                            <UserX className="mr-2 h-4 w-4" />
+                            <UserX className="mr-2 h-4 w-4 text-green-400" />
                             Ver Perfil
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator className="bg-gray-700" />
                           <DropdownMenuItem
-                            className="text-red-600 focus:text-red-600"
+                            className="text-red-400 hover:bg-red-900/20 focus:bg-red-900/20"
                             onClick={() => openDeleteDialog(user)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />

@@ -277,17 +277,17 @@ const AdminKYCPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading users...</p>
+          <p className="text-white">Loading users...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen bg-black p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -306,7 +306,7 @@ const AdminKYCPage = () => {
         </div>
 
         {/* Filters */}
-        <Card className="mb-6 bg-gray-800 border-gray-700">
+        <Card className="mb-6 bg-gray-900 border-gray-800">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
@@ -377,7 +377,7 @@ const AdminKYCPage = () => {
         {/* Users List */}
         <div className="grid gap-4">
           {filteredUsers.length === 0 ? (
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-gray-900 border-gray-800">
               <CardContent className="p-8 text-center">
                 <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white mb-2">
@@ -394,7 +394,7 @@ const AdminKYCPage = () => {
             filteredUsers.map((user) => (
               <Card
                 key={user.id}
-                className="hover:shadow-md transition-shadow bg-gray-800 border-gray-700"
+                className="hover:shadow-md transition-shadow bg-gray-900 border-gray-800"
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">

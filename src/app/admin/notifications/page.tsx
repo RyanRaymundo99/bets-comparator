@@ -173,7 +173,7 @@ export default function AdminNotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 p-6 text-white">
+      <div className="min-h-screen bg-black p-6 text-white">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
@@ -242,7 +242,7 @@ export default function AdminNotificationsPage() {
         {/* Notifications List */}
         <div className="space-y-4">
           {notifications.length === 0 ? (
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-gray-900 border-gray-800">
               <CardContent className="p-8 text-center">
                 <Bell className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No Notifications</h3>
@@ -255,7 +255,7 @@ export default function AdminNotificationsPage() {
             notifications.map((notification) => (
               <Card
                 key={notification.id}
-                className={`bg-gray-800 border-gray-700 hover:bg-gray-750 transition-colors cursor-pointer ${
+                className={`bg-gray-900 border-gray-800 hover:bg-gray-800 transition-colors cursor-pointer ${
                   !notification.read ? "bg-blue-900/20 border-blue-500/30" : ""
                 }`}
                 onClick={() => handleNotificationClick(notification)}

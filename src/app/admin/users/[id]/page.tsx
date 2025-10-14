@@ -127,7 +127,7 @@ export default function AdminUserDetailsPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 p-6 text-white">
+      <div className="min-h-screen bg-black p-6 text-white">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
@@ -140,7 +140,7 @@ export default function AdminUserDetailsPage({
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-900 p-6 text-white">
+      <div className="min-h-screen bg-black p-6 text-white">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">User Not Found</h1>
           <Button onClick={() => router.push("/admin/users")}>
@@ -175,7 +175,7 @@ export default function AdminUserDetailsPage({
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Personal Information */}
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <User className="w-5 h-5" />
@@ -185,12 +185,16 @@ export default function AdminUserDetailsPage({
             <CardContent className="space-y-4">
               <div className="grid gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-300">Full Name</label>
+                  <label className="text-sm font-medium text-gray-300">
+                    Full Name
+                  </label>
                   <p className="text-white">{user.name}</p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-300">Email</label>
+                  <label className="text-sm font-medium text-gray-300">
+                    Email
+                  </label>
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-gray-400" />
                     <span className="text-white">{user.email}</span>
@@ -203,10 +207,14 @@ export default function AdminUserDetailsPage({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-300">Phone</label>
+                  <label className="text-sm font-medium text-gray-300">
+                    Phone
+                  </label>
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-gray-400" />
-                    <span className="text-white">{user.phone || "Not provided"}</span>
+                    <span className="text-white">
+                      {user.phone || "Not provided"}
+                    </span>
                     {user.phoneVerified ? (
                       <CheckCircle className="w-4 h-4 text-green-500" />
                     ) : (
@@ -216,10 +224,14 @@ export default function AdminUserDetailsPage({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-300">CPF</label>
+                  <label className="text-sm font-medium text-gray-300">
+                    CPF
+                  </label>
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-gray-400" />
-                    <span className="text-white">{user.cpf || "Not provided"}</span>
+                    <span className="text-white">
+                      {user.cpf || "Not provided"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -227,7 +239,7 @@ export default function AdminUserDetailsPage({
           </Card>
 
           {/* Account Status */}
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <FileText className="w-5 h-5" />
@@ -237,12 +249,16 @@ export default function AdminUserDetailsPage({
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-300">Account Approval</span>
+                  <span className="text-sm font-medium text-gray-300">
+                    Account Approval
+                  </span>
                   {getStatusBadge(user.approvalStatus)}
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-300">KYC Status</span>
+                  <span className="text-sm font-medium text-gray-300">
+                    KYC Status
+                  </span>
                   {getStatusBadge(user.kycStatus)}
                 </div>
 
@@ -260,18 +276,26 @@ export default function AdminUserDetailsPage({
                 <div className="text-sm text-gray-400 space-y-1">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    <span>Created: {new Date(user.createdAt).toLocaleDateString()}</span>
+                    <span>
+                      Created: {new Date(user.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                   {user.kycSubmittedAt && (
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <span>KYC Submitted: {new Date(user.kycSubmittedAt).toLocaleDateString()}</span>
+                      <span>
+                        KYC Submitted:{" "}
+                        {new Date(user.kycSubmittedAt).toLocaleDateString()}
+                      </span>
                     </div>
                   )}
                   {user.kycReviewedAt && (
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <span>KYC Reviewed: {new Date(user.kycReviewedAt).toLocaleDateString()}</span>
+                      <span>
+                        KYC Reviewed:{" "}
+                        {new Date(user.kycReviewedAt).toLocaleDateString()}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -294,10 +318,18 @@ export default function AdminUserDetailsPage({
                 {/* Document Front */}
                 {user.documentFront && (
                   <div className="space-y-3">
-                    <label className="text-sm font-medium text-gray-300">Document Front</label>
+                    <label className="text-sm font-medium text-gray-300">
+                      Document Front
+                    </label>
                     <div
                       className="relative cursor-pointer group"
-                      onClick={() => handleImageClick(user.documentFront!, "Document Front", "Document Front")}
+                      onClick={() =>
+                        handleImageClick(
+                          user.documentFront!,
+                          "Document Front",
+                          "Document Front"
+                        )
+                      }
                     >
                       <img
                         src={user.documentFront}
@@ -314,10 +346,18 @@ export default function AdminUserDetailsPage({
                 {/* Document Back */}
                 {user.documentBack && (
                   <div className="space-y-3">
-                    <label className="text-sm font-medium text-gray-300">Document Back</label>
+                    <label className="text-sm font-medium text-gray-300">
+                      Document Back
+                    </label>
                     <div
                       className="relative cursor-pointer group"
-                      onClick={() => handleImageClick(user.documentBack!, "Document Back", "Document Back")}
+                      onClick={() =>
+                        handleImageClick(
+                          user.documentBack!,
+                          "Document Back",
+                          "Document Back"
+                        )
+                      }
                     >
                       <img
                         src={user.documentBack}
@@ -334,10 +374,18 @@ export default function AdminUserDetailsPage({
                 {/* Selfie */}
                 {user.documentSelfie && (
                   <div className="space-y-3">
-                    <label className="text-sm font-medium text-gray-300">Selfie with Document</label>
+                    <label className="text-sm font-medium text-gray-300">
+                      Selfie with Document
+                    </label>
                     <div
                       className="relative cursor-pointer group"
-                      onClick={() => handleImageClick(user.documentSelfie!, "Document Selfie", "Document Selfie")}
+                      onClick={() =>
+                        handleImageClick(
+                          user.documentSelfie!,
+                          "Document Selfie",
+                          "Document Selfie"
+                        )
+                      }
                     >
                       <img
                         src={user.documentSelfie}
@@ -364,7 +412,10 @@ export default function AdminUserDetailsPage({
 
         {/* Full-size Image Modal */}
         {selectedImage && (
-          <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+          <Dialog
+            open={!!selectedImage}
+            onOpenChange={() => setSelectedImage(null)}
+          >
             <DialogContent className="max-w-7xl max-h-[95vh] p-0 bg-gray-900 border-gray-700">
               <DialogHeader className="p-6 pb-0">
                 <DialogTitle className="text-white text-xl">

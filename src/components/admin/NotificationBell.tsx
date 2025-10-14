@@ -67,13 +67,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
       });
 
       if (response.ok) {
-        // Immediately update UI state
-        setNotifications((prev) =>
-          prev.map((notif) => ({ ...notif, read: true }))
-        );
-        setUnreadCount(0);
-
-        // Also re-fetch notifications to ensure server state is synced
+        // Re-fetch notifications to get updated read status from server
         await fetchNotifications();
       }
     } catch (error) {
@@ -88,18 +82,12 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
       });
 
       if (response.ok) {
-        // Immediately update UI state
-        setNotifications((prev) =>
-          prev.map((notif) => ({ ...notif, read: true }))
-        );
-        setUnreadCount(0);
-
         toast({
           title: "Notifications marked as read",
           description: "All notifications have been marked as read",
         });
 
-        // Also re-fetch notifications to ensure server state is synced
+        // Re-fetch notifications to get updated read status from server
         await fetchNotifications();
       }
     } catch (error) {
@@ -134,14 +122,6 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    // Immediately update UI state for this specific notification
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === notification.id ? { ...notif, read: true } : notif
-      )
-    );
-    setUnreadCount((prev) => Math.max(0, prev - 1));
-
     // Mark as read on server
     markAsRead();
 
