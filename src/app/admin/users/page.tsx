@@ -59,7 +59,9 @@ interface User {
   name: string;
   email: string;
   cpf: string | null;
+  phone?: string | null;
   approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
+  kycStatus: "PENDING" | "APPROVED" | "REJECTED";
   emailVerified: boolean;
   createdAt: string;
 }
@@ -268,7 +270,7 @@ export default function AdminUsersPage() {
     setEditFormData({
       name: user.name,
       email: user.email,
-      phone: (user as { phone?: string }).phone || "",
+      phone: user.phone || "",
       cpf: user.cpf || "",
       approvalStatus: user.approvalStatus,
       kycStatus: user.kycStatus,
