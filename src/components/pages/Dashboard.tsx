@@ -23,6 +23,7 @@ import {
   ChevronRight,
   Play,
   Pause,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -617,6 +618,14 @@ export default function Dashboard() {
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Trade
+              </Button>
+              <Button
+                onClick={() => router.push("/profile")}
+                variant="outline"
+                className="w-full border-border text-foreground hover:bg-muted"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Profile
               </Button>
             </CardContent>
           </Card>

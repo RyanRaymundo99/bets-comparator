@@ -3,14 +3,12 @@ import prisma from "@/lib/prisma";
 
 export async function PATCH(request: NextRequest) {
   try {
-    // Get the session cookie
     const sessionCookie = request.cookies.get("better-auth.session");
 
     if (!sessionCookie?.value) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Find the session in the database
     const session = await prisma.session.findUnique({
       where: { token: sessionCookie.value },
       include: { user: true },
@@ -23,8 +21,15 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // For now, we'll just return success since we're not persisting read status
-    // In a real implementation, you'd store read status in a database table
+    // Update the admin's last seen timestamp to now
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        adminNotificationLastSeenAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
     return NextResponse.json({
       success: true,
       message: "All notifications marked as read",

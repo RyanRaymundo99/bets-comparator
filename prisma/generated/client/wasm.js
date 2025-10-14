@@ -141,6 +141,7 @@ exports.Prisma.UserScalarFieldEnum = {
   kycSubmittedAt: 'kycSubmittedAt',
   kycReviewedAt: 'kycReviewedAt',
   kycRejectionReason: 'kycRejectionReason',
+  adminNotificationLastSeenAt: 'adminNotificationLastSeenAt',
   twoFactorEnabled: 'twoFactorEnabled',
   twoFactorSecret: 'twoFactorSecret',
   twoFactorBackupCodes: 'twoFactorBackupCodes',

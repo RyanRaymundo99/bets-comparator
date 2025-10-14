@@ -41,11 +41,17 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/notifications");
+      const response = await fetch("/api/admin/notifications?showAll=true");
       if (response.ok) {
         const data = await response.json();
+        console.log("NotificationBell: Fetched notifications:", data);
         setNotifications(data.notifications || []);
         setUnreadCount(data.unreadCount || 0);
+      } else {
+        console.error(
+          "NotificationBell: Failed to fetch notifications:",
+          response.status
+        );
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -54,22 +60,21 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
     }
   };
 
-  const markAsRead = async (notificationId: string) => {
+  const markAsRead = async () => {
     try {
-      const response = await fetch(
-        `/api/admin/notifications/${notificationId}/read`,
-        {
-          method: "PATCH",
-        }
-      );
+      const response = await fetch("/api/admin/notifications/read-all", {
+        method: "PATCH",
+      });
 
       if (response.ok) {
+        // Immediately update UI state
         setNotifications((prev) =>
-          prev.map((notif) =>
-            notif.id === notificationId ? { ...notif, read: true } : notif
-          )
+          prev.map((notif) => ({ ...notif, read: true }))
         );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+        setUnreadCount(0);
+
+        // Also re-fetch notifications to ensure server state is synced
+        await fetchNotifications();
       }
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -83,14 +88,19 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
       });
 
       if (response.ok) {
+        // Immediately update UI state
         setNotifications((prev) =>
           prev.map((notif) => ({ ...notif, read: true }))
         );
         setUnreadCount(0);
+
         toast({
           title: "Notifications marked as read",
           description: "All notifications have been marked as read",
         });
+
+        // Also re-fetch notifications to ensure server state is synced
+        await fetchNotifications();
       }
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -124,7 +134,16 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    markAsRead(notification.id);
+    // Immediately update UI state for this specific notification
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === notification.id ? { ...notif, read: true } : notif
+      )
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+
+    // Mark as read on server
+    markAsRead();
 
     // Navigate based on notification type
     switch (notification.type) {
@@ -179,7 +198,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
       <DropdownMenuContent
         align="end"
-        className="w-80 max-h-96 overflow-y-auto"
+        className="w-96 max-h-[600px] overflow-y-auto"
         sideOffset={5}
       >
         <div className="p-4 border-b">
@@ -198,7 +217,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
           </div>
         </div>
 
-        <div className="max-h-80 overflow-y-auto">
+        <div className="max-h-[500px] overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center text-sm text-muted-foreground">
               Loading notifications...
@@ -208,55 +227,92 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
               No notifications
             </div>
           ) : (
-            notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-3 border-l-4 cursor-pointer hover:bg-muted/50 transition-colors ${
-                  !notification.read ? "bg-blue-50/50" : ""
-                } ${getNotificationColor(notification.type)}`}
-                onClick={() => handleNotificationClick(notification)}
-              >
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 mt-0.5">
-                    {getNotificationIcon(notification.type)}
+            <>
+              {/* New notifications section */}
+              {notifications.filter((n) => !n.read).length > 0 && (
+                <>
+                  <div className="px-3 py-2 bg-blue-50 border-b">
+                    <h4 className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
+                      New ({notifications.filter((n) => !n.read).length})
+                    </h4>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-foreground">
-                        {notification.title}
-                      </p>
-                      {!notification.read && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
-                      )}
+                  {notifications
+                    .filter((n) => !n.read)
+                    .map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-3 border-l-4 cursor-pointer ${getNotificationColor(
+                          notification.type
+                        )}`}
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 mt-0.5">
+                            {getNotificationIcon(notification.type)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm font-medium text-foreground">
+                                {notification.title}
+                              </p>
+                              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {formatTimeAgo(notification.timestamp)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </>
+              )}
+
+              {/* Older notifications section */}
+              {notifications.filter((n) => n.read).length > 0 && (
+                <>
+                  {notifications.filter((n) => !n.read).length > 0 && (
+                    <div className="px-3 py-2 bg-gray-50 border-b">
+                      <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                        Earlier ({notifications.filter((n) => n.read).length})
+                      </h4>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {notification.message}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {formatTimeAgo(notification.timestamp)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))
+                  )}
+                  {notifications
+                    .filter((n) => n.read)
+                    .map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-3 cursor-pointer`}
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 mt-0.5">
+                            {getNotificationIcon(notification.type)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm font-medium text-foreground">
+                                {notification.title}
+                              </p>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {formatTimeAgo(notification.timestamp)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </>
+              )}
+            </>
           )}
         </div>
-
-        {notifications.length > 0 && (
-          <>
-            <DropdownMenuSeparator />
-            <div className="p-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push("/admin")}
-                className="w-full text-xs"
-              >
-                View all notifications
-              </Button>
-            </div>
-          </>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -2125,6 +2125,7 @@ export namespace Prisma {
     kycSubmittedAt: Date | null
     kycReviewedAt: Date | null
     kycRejectionReason: string | null
+    adminNotificationLastSeenAt: Date | null
     twoFactorEnabled: boolean | null
     twoFactorSecret: string | null
     createdAt: Date | null
@@ -2151,6 +2152,7 @@ export namespace Prisma {
     kycSubmittedAt: Date | null
     kycReviewedAt: Date | null
     kycRejectionReason: string | null
+    adminNotificationLastSeenAt: Date | null
     twoFactorEnabled: boolean | null
     twoFactorSecret: string | null
     createdAt: Date | null
@@ -2178,6 +2180,7 @@ export namespace Prisma {
     kycSubmittedAt: number
     kycReviewedAt: number
     kycRejectionReason: number
+    adminNotificationLastSeenAt: number
     twoFactorEnabled: number
     twoFactorSecret: number
     twoFactorBackupCodes: number
@@ -2207,6 +2210,7 @@ export namespace Prisma {
     kycSubmittedAt?: true
     kycReviewedAt?: true
     kycRejectionReason?: true
+    adminNotificationLastSeenAt?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     createdAt?: true
@@ -2233,6 +2237,7 @@ export namespace Prisma {
     kycSubmittedAt?: true
     kycReviewedAt?: true
     kycRejectionReason?: true
+    adminNotificationLastSeenAt?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     createdAt?: true
@@ -2260,6 +2265,7 @@ export namespace Prisma {
     kycSubmittedAt?: true
     kycReviewedAt?: true
     kycRejectionReason?: true
+    adminNotificationLastSeenAt?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     twoFactorBackupCodes?: true
@@ -2361,6 +2367,7 @@ export namespace Prisma {
     kycSubmittedAt: Date | null
     kycReviewedAt: Date | null
     kycRejectionReason: string | null
+    adminNotificationLastSeenAt: Date | null
     twoFactorEnabled: boolean
     twoFactorSecret: string | null
     twoFactorBackupCodes: string[]
@@ -2406,6 +2413,7 @@ export namespace Prisma {
     kycSubmittedAt?: boolean
     kycReviewedAt?: boolean
     kycRejectionReason?: boolean
+    adminNotificationLastSeenAt?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2445,6 +2453,7 @@ export namespace Prisma {
     kycSubmittedAt?: boolean
     kycReviewedAt?: boolean
     kycRejectionReason?: boolean
+    adminNotificationLastSeenAt?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2473,6 +2482,7 @@ export namespace Prisma {
     kycSubmittedAt?: boolean
     kycReviewedAt?: boolean
     kycRejectionReason?: boolean
+    adminNotificationLastSeenAt?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2501,6 +2511,7 @@ export namespace Prisma {
     kycSubmittedAt?: boolean
     kycReviewedAt?: boolean
     kycRejectionReason?: boolean
+    adminNotificationLastSeenAt?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     twoFactorBackupCodes?: boolean
@@ -2508,7 +2519,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "phone" | "password" | "emailVerified" | "phoneVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "documentType" | "documentNumber" | "documentFront" | "documentBack" | "documentSelfie" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "cpf" | "phone" | "password" | "emailVerified" | "phoneVerified" | "approvalStatus" | "image" | "kycStatus" | "kycData" | "documentType" | "documentNumber" | "documentFront" | "documentBack" | "documentSelfie" | "kycSubmittedAt" | "kycReviewedAt" | "kycRejectionReason" | "adminNotificationLastSeenAt" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     balances?: boolean | User$balancesArgs<ExtArgs>
@@ -2560,6 +2571,7 @@ export namespace Prisma {
       kycSubmittedAt: Date | null
       kycReviewedAt: Date | null
       kycRejectionReason: string | null
+      adminNotificationLastSeenAt: Date | null
       twoFactorEnabled: boolean
       twoFactorSecret: string | null
       twoFactorBackupCodes: string[]
@@ -3018,6 +3030,7 @@ export namespace Prisma {
     readonly kycSubmittedAt: FieldRef<"User", 'DateTime'>
     readonly kycReviewedAt: FieldRef<"User", 'DateTime'>
     readonly kycRejectionReason: FieldRef<"User", 'String'>
+    readonly adminNotificationLastSeenAt: FieldRef<"User", 'DateTime'>
     readonly twoFactorEnabled: FieldRef<"User", 'Boolean'>
     readonly twoFactorSecret: FieldRef<"User", 'String'>
     readonly twoFactorBackupCodes: FieldRef<"User", 'String[]'>
@@ -15761,6 +15774,7 @@ export namespace Prisma {
     kycSubmittedAt: 'kycSubmittedAt',
     kycReviewedAt: 'kycReviewedAt',
     kycRejectionReason: 'kycRejectionReason',
+    adminNotificationLastSeenAt: 'adminNotificationLastSeenAt',
     twoFactorEnabled: 'twoFactorEnabled',
     twoFactorSecret: 'twoFactorSecret',
     twoFactorBackupCodes: 'twoFactorBackupCodes',
@@ -16292,6 +16306,7 @@ export namespace Prisma {
     kycSubmittedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     kycReviewedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     kycRejectionReason?: StringNullableFilter<"User"> | string | null
+    adminNotificationLastSeenAt?: DateTimeNullableFilter<"User"> | Date | string | null
     twoFactorEnabled?: BoolFilter<"User"> | boolean
     twoFactorSecret?: StringNullableFilter<"User"> | string | null
     twoFactorBackupCodes?: StringNullableListFilter<"User">
@@ -16330,6 +16345,7 @@ export namespace Prisma {
     kycSubmittedAt?: SortOrderInput | SortOrder
     kycReviewedAt?: SortOrderInput | SortOrder
     kycRejectionReason?: SortOrderInput | SortOrder
+    adminNotificationLastSeenAt?: SortOrderInput | SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrderInput | SortOrder
     twoFactorBackupCodes?: SortOrder
@@ -16371,6 +16387,7 @@ export namespace Prisma {
     kycSubmittedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     kycReviewedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     kycRejectionReason?: StringNullableFilter<"User"> | string | null
+    adminNotificationLastSeenAt?: DateTimeNullableFilter<"User"> | Date | string | null
     twoFactorEnabled?: BoolFilter<"User"> | boolean
     twoFactorSecret?: StringNullableFilter<"User"> | string | null
     twoFactorBackupCodes?: StringNullableListFilter<"User">
@@ -16409,6 +16426,7 @@ export namespace Prisma {
     kycSubmittedAt?: SortOrderInput | SortOrder
     kycReviewedAt?: SortOrderInput | SortOrder
     kycRejectionReason?: SortOrderInput | SortOrder
+    adminNotificationLastSeenAt?: SortOrderInput | SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrderInput | SortOrder
     twoFactorBackupCodes?: SortOrder
@@ -16443,6 +16461,7 @@ export namespace Prisma {
     kycSubmittedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     kycReviewedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     kycRejectionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
+    adminNotificationLastSeenAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     twoFactorEnabled?: BoolWithAggregatesFilter<"User"> | boolean
     twoFactorSecret?: StringNullableWithAggregatesFilter<"User"> | string | null
     twoFactorBackupCodes?: StringNullableListFilter<"User">
@@ -17434,6 +17453,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -17472,6 +17492,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -17510,6 +17531,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -17548,6 +17570,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -17586,6 +17609,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -17614,6 +17638,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -17642,6 +17667,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -18946,6 +18972,7 @@ export namespace Prisma {
     kycSubmittedAt?: SortOrder
     kycReviewedAt?: SortOrder
     kycRejectionReason?: SortOrder
+    adminNotificationLastSeenAt?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     twoFactorBackupCodes?: SortOrder
@@ -18973,6 +19000,7 @@ export namespace Prisma {
     kycSubmittedAt?: SortOrder
     kycReviewedAt?: SortOrder
     kycRejectionReason?: SortOrder
+    adminNotificationLastSeenAt?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     createdAt?: SortOrder
@@ -18999,6 +19027,7 @@ export namespace Prisma {
     kycSubmittedAt?: SortOrder
     kycReviewedAt?: SortOrder
     kycRejectionReason?: SortOrder
+    adminNotificationLastSeenAt?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     createdAt?: SortOrder
@@ -22184,6 +22213,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22221,6 +22251,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22274,6 +22305,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22311,6 +22343,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22348,6 +22381,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22385,6 +22419,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22438,6 +22473,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22475,6 +22511,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22512,6 +22549,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22549,6 +22587,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22602,6 +22641,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22639,6 +22679,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22713,6 +22754,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22750,6 +22792,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22846,6 +22889,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22883,6 +22927,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -22957,6 +23002,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -22994,6 +23040,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23090,6 +23137,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23127,6 +23175,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23201,6 +23250,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23238,6 +23288,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23334,6 +23385,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23371,6 +23423,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23408,6 +23461,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23445,6 +23499,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23544,6 +23599,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23581,6 +23637,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23634,6 +23691,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23671,6 +23729,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23791,6 +23850,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23828,6 +23888,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -23918,6 +23979,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -23955,6 +24017,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -24093,6 +24156,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -24130,6 +24194,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -24374,6 +24439,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -24411,6 +24477,7 @@ export namespace Prisma {
     kycSubmittedAt?: Date | string | null
     kycReviewedAt?: Date | string | null
     kycRejectionReason?: string | null
+    adminNotificationLastSeenAt?: Date | string | null
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     twoFactorBackupCodes?: UserCreatetwoFactorBackupCodesInput | string[]
@@ -24685,6 +24752,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]
@@ -24722,6 +24790,7 @@ export namespace Prisma {
     kycSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     kycRejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminNotificationLastSeenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorBackupCodes?: UserUpdatetwoFactorBackupCodesInput | string[]

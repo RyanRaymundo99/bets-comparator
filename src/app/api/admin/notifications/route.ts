@@ -26,11 +26,31 @@ export async function GET(request: NextRequest) {
     // Get query parameters
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit") || "20");
+    const showAll = searchParams.get("showAll") === "true";
+
+    // Get current admin user to check their last seen timestamp
+    const adminUser = session.user;
+    const adminLastSeen = adminUser.adminNotificationLastSeenAt || new Date(0);
+
+    // Build where clauses based on showAll parameter
+    const userWhereClause = showAll 
+      ? { approvalStatus: "PENDING" }
+      : { 
+          approvalStatus: "PENDING",
+          createdAt: { gt: adminLastSeen }
+        };
+
+    const kycWhereClause = showAll
+      ? { kycStatus: "PENDING" }
+      : { 
+          kycStatus: "PENDING",
+          kycSubmittedAt: { gt: adminLastSeen }
+        };
 
     // Fetch pending users and KYC requests
     const [pendingUsers, pendingKYC] = await Promise.all([
       prisma.user.findMany({
-        where: { approvalStatus: "PENDING" },
+        where: userWhereClause,
         select: {
           id: true,
           name: true,
@@ -38,20 +58,30 @@ export async function GET(request: NextRequest) {
           createdAt: true,
         },
         orderBy: { createdAt: "desc" },
-        take: 10,
+        take: showAll ? 50 : 10,
       }),
       prisma.user.findMany({
-        where: { kycStatus: "PENDING" },
+        where: kycWhereClause,
         select: {
           id: true,
           name: true,
           email: true,
           kycSubmittedAt: true,
+          createdAt: true,
         },
         orderBy: { kycSubmittedAt: "desc" },
-        take: 10,
+        take: showAll ? 50 : 10,
       }),
     ]);
+
+    // Debug logging
+    console.log("Notifications API Debug:", {
+      adminLastSeen: adminLastSeen.toISOString(),
+      pendingUsers: pendingUsers.length,
+      pendingKYC: pendingKYC.length,
+      pendingUserEmails: pendingUsers.map((u) => u.email),
+      pendingKYCEmails: pendingKYC.map((u) => u.email),
+    });
 
     // Create notifications from the data
     const notifications = [];
@@ -63,7 +93,7 @@ export async function GET(request: NextRequest) {
         type: "new_user",
         title: "New User Registration",
         message: `${user.name} (${user.email}) has registered and is pending approval`,
-        timestamp: user.createdAt.toISOString(),
+        timestamp: user.createdAt?.toISOString() || new Date().toISOString(),
         read: false,
         userId: user.id,
       });
@@ -77,7 +107,9 @@ export async function GET(request: NextRequest) {
         title: "KYC Document Review Needed",
         message: `${user.name} has submitted KYC documents for review`,
         timestamp:
-          user.kycSubmittedAt?.toISOString() || user.createdAt.toISOString(),
+          user.kycSubmittedAt?.toISOString() ||
+          user.createdAt?.toISOString() ||
+          new Date().toISOString(),
         read: false,
         userId: user.id,
       });

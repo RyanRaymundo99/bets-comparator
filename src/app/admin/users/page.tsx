@@ -13,11 +13,47 @@ import {
   FileText,
   RefreshCw,
   LogOut,
+  MoreVertical,
+  Trash2,
+  Edit,
+  UserX,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NotificationBell from "@/components/admin/NotificationBell";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+// } from "@/components/ui/dialog";
 
 interface User {
   id: string;
@@ -35,6 +71,17 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [processingUser, setProcessingUser] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    cpf: "",
+    approvalStatus: "PENDING" as "PENDING" | "APPROVED" | "REJECTED",
+    kycStatus: "PENDING" as "PENDING" | "APPROVED" | "REJECTED",
+  });
+  const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -185,6 +232,102 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      setProcessingUser(userId);
+      const response = await fetch(`/api/admin/users/${userId}/delete`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Sucesso",
+          description: "Usuário deletado permanentemente",
+        });
+        fetchUsers();
+      } else {
+        throw new Error(data.error || "Falha ao deletar usuário");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Falha ao deletar usuário",
+      });
+    } finally {
+      setProcessingUser(null);
+    }
+  };
+
+  const openDeleteDialog = (user: User) => {
+    const confirmed = window.confirm(
+      `Tem certeza que deseja deletar permanentemente o usuário ${user.name} (${user.email})?\n\nEsta ação não pode ser desfeita e irá deletar todos os dados do usuário.`
+    );
+    if (confirmed) {
+      handleDeleteUser(user.id);
+    }
+  };
+
+  const handleViewProfile = (userId: string) => {
+    router.push(`/admin/users/${userId}`);
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setEditFormData({
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "",
+      cpf: user.cpf || "",
+      approvalStatus: user.approvalStatus,
+      kycStatus: user.kycStatus,
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveUser = async () => {
+    if (!editingUser) return;
+
+    try {
+      setSaving(true);
+      const response = await fetch(
+        `/api/admin/users/${editingUser.id}/update-profile`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editFormData),
+        }
+      );
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "User profile updated successfully",
+        });
+        setEditDialogOpen(false);
+        fetchUsers(); // Refresh the users list
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to update user");
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to update user",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
@@ -261,10 +404,6 @@ export default function AdminUsersPage() {
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
-            <Button onClick={handleLogout} variant="destructive">
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
           </div>
         </div>
 
@@ -306,6 +445,7 @@ export default function AdminUsersPage() {
           </Button>
         </div>
 
+        {/* Users List */}
         <div className="grid gap-4">
           {filteredUsers.length === 0 ? (
             <Card>
@@ -443,6 +583,43 @@ export default function AdminUsersPage() {
                         </Button>
                       </div>
                     )}
+
+                    {/* User Menu Dropdown */}
+                    <div className="ml-2">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => handleEditUser(user)}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar Usuário
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleViewProfile(user.id)}
+                          >
+                            <UserX className="mr-2 h-4 w-4" />
+                            Ver Perfil
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-red-600 focus:text-red-600"
+                            onClick={() => openDeleteDialog(user)}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Deletar Usuário
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -450,6 +627,127 @@ export default function AdminUsersPage() {
           )}
         </div>
       </div>
+
+      {/* Edit User Modal */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit User: {editingUser?.name}</DialogTitle>
+            <DialogDescription>
+              Update user information and status. Changes will be applied
+              immediately.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Full Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editFormData.name}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, name: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, email: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-phone">Phone</Label>
+                <Input
+                  id="edit-phone"
+                  value={editFormData.phone}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, phone: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-cpf">CPF</Label>
+                <Input
+                  id="edit-cpf"
+                  value={editFormData.cpf}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, cpf: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-approval-status">Approval Status</Label>
+                <Select
+                  value={editFormData.approvalStatus}
+                  onValueChange={(value: "PENDING" | "APPROVED" | "REJECTED") =>
+                    setEditFormData({ ...editFormData, approvalStatus: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENDING">Pending</SelectItem>
+                    <SelectItem value="APPROVED">Approved</SelectItem>
+                    <SelectItem value="REJECTED">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-kyc-status">KYC Status</Label>
+                <Select
+                  value={editFormData.kycStatus}
+                  onValueChange={(value: "PENDING" | "APPROVED" | "REJECTED") =>
+                    setEditFormData({ ...editFormData, kycStatus: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENDING">Pending</SelectItem>
+                    <SelectItem value="APPROVED">Approved</SelectItem>
+                    <SelectItem value="REJECTED">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setEditDialogOpen(false)}
+              disabled={saving}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSaveUser} disabled={saving}>
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -30,6 +30,8 @@ model User {
   kycSubmittedAt DateTime?
   kycReviewedAt  DateTime?
   kycRejectionReason String?
+  // Admin notification tracking
+  adminNotificationLastSeenAt DateTime?
   // 2FA fields
   twoFactorEnabled    Boolean @default(false)
   twoFactorSecret     String?

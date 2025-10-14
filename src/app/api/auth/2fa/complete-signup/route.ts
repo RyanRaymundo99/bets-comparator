@@ -57,10 +57,7 @@ export async function POST(request: NextRequest) {
     const isValid = TwoFactorService.verifyToken(user.twoFactorSecret, token);
 
     if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid 2FA token" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid 2FA token" }, { status: 400 });
     }
 
     // Enable 2FA and activate the account
@@ -68,8 +65,8 @@ export async function POST(request: NextRequest) {
       where: { id: user.id },
       data: {
         twoFactorEnabled: true,
-        approvalStatus: "APPROVED", // Activate account after 2FA setup
-        kycStatus: "APPROVED", // Auto-approve KYC for new users
+        approvalStatus: "PENDING", // Require admin approval after 2FA setup
+        kycStatus: "PENDING", // Require KYC submission
       },
     });
 
@@ -129,4 +126,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

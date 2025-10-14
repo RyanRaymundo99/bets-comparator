@@ -12,6 +12,7 @@ import {
   TrendingDown,
   Wallet,
   BarChart3,
+  User,
 } from "lucide-react";
 import CalculatorModal from "./calculator-modal";
 import { BalanceDisplay } from "./balance-display";
@@ -21,6 +22,7 @@ const NAV_LINKS = [
   { label: "Trade", href: "/p2p", icon: BarChart3 },
   { label: "Deposits", href: "/deposits", icon: Wallet },
   { label: "Withdraw", href: "/withdraw", icon: TrendingDown },
+  { label: "Profile", href: "/profile", icon: User },
 ];
 
 interface NavbarProps {
@@ -83,7 +85,7 @@ export default function NavbarNew({ isLoggingOut, handleLogout }: NavbarProps) {
   return (
     <>
       {/* Desktop Header */}
-      <header className="w-full bg-black/60 border-b border-white/10 backdrop-blur-[20px] flex items-center justify-between px-4 md:px-6 sticky top-0 z-50 hidden md:flex">
+      <header className="w-full bg-black/60 border-b border-white/10 backdrop-blur-[20px] items-center justify-between px-4 md:px-6 sticky top-0 z-50 hidden md:flex">
         <div className="flex items-center gap-6">
           {/* Logo */}
           <div
