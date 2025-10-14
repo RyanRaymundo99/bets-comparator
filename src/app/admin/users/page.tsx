@@ -31,35 +31,60 @@ interface User {
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingUser, setProcessingUser] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const { toast } = useToast();
   const router = useRouter();
 
-  const fetchUsers = useCallback(async () => {
-    try {
-      const response = await fetch("/api/admin/users");
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.users);
-      } else {
+  const fetchUsers = useCallback(
+    async (status?: string) => {
+      try {
+        const url =
+          status && status !== "ALL"
+            ? `/api/admin/users?status=${status}`
+            : "/api/admin/users";
+
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          setUsers(data.users);
+          setFilteredUsers(data.users);
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Erro",
+            description: "Falha ao carregar usuários",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
         toast({
           variant: "destructive",
           title: "Erro",
-          description: "Falha ao carregar usuários",
+          description: "Erro ao carregar usuários",
         });
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Erro ao carregar usuários",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+    },
+    [toast]
+  );
+
+  const filterUsers = useCallback(
+    (status: string) => {
+      setStatusFilter(status);
+      if (status === "ALL") {
+        setFilteredUsers(users);
+      } else {
+        setFilteredUsers(
+          users.filter((user) => user.approvalStatus === status)
+        );
+      }
+    },
+    [users]
+  );
 
   const handleLogout = async () => {
     try {
@@ -73,8 +98,20 @@ export default function AdminUsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
+    // Check for URL parameters to set initial filter
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get("status");
+    if (status) {
+      setStatusFilter(status);
+      fetchUsers(status);
+    } else {
+      fetchUsers();
+    }
   }, [fetchUsers]);
+
+  useEffect(() => {
+    filterUsers(statusFilter);
+  }, [filterUsers, statusFilter]);
 
   const handleApproval = async (
     userId: string,
@@ -112,6 +149,36 @@ export default function AdminUsersPage() {
         variant: "destructive",
         title: "Erro",
         description: "Erro ao processar solicitação",
+      });
+    } finally {
+      setProcessingUser(null);
+    }
+  };
+
+  const handleResetToPending = async (userId: string) => {
+    try {
+      setProcessingUser(userId);
+      const response = await fetch(`/api/admin/users/${userId}/reset`, {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Sucesso",
+          description: "Status do usuário resetado para pendente",
+        });
+        fetchUsers();
+      } else {
+        throw new Error(data.error || "Falha ao resetar status do usuário");
+      }
+    } catch (error) {
+      console.error("Error resetting user:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Falha ao resetar status do usuário",
       });
     } finally {
       setProcessingUser(null);
@@ -201,21 +268,63 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
+        {/* Filter Buttons */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Button
+            variant={statusFilter === "ALL" ? "default" : "outline"}
+            onClick={() => filterUsers("ALL")}
+            size="sm"
+          >
+            All Users ({users.length})
+          </Button>
+          <Button
+            variant={statusFilter === "PENDING" ? "default" : "outline"}
+            onClick={() => filterUsers("PENDING")}
+            size="sm"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white"
+          >
+            Pending (
+            {users.filter((u) => u.approvalStatus === "PENDING").length})
+          </Button>
+          <Button
+            variant={statusFilter === "APPROVED" ? "default" : "outline"}
+            onClick={() => filterUsers("APPROVED")}
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            Approved (
+            {users.filter((u) => u.approvalStatus === "APPROVED").length})
+          </Button>
+          <Button
+            variant={statusFilter === "REJECTED" ? "default" : "outline"}
+            onClick={() => filterUsers("REJECTED")}
+            size="sm"
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            Rejected (
+            {users.filter((u) => u.approvalStatus === "REJECTED").length})
+          </Button>
+        </div>
+
         <div className="grid gap-4">
-          {users.length === 0 ? (
+          {filteredUsers.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">
-                  Nenhum usuário encontrado
+                  {statusFilter === "ALL"
+                    ? "Nenhum usuário encontrado"
+                    : `Nenhum usuário ${statusFilter.toLowerCase()} encontrado`}
                 </h3>
                 <p className="text-muted-foreground">
-                  Não há usuários para exibir no momento.
+                  {statusFilter === "ALL"
+                    ? "Não há usuários para exibir no momento."
+                    : `Não há usuários com status ${statusFilter.toLowerCase()} no momento.`}
                 </p>
               </CardContent>
             </Card>
           ) : (
-            users.map((user) => (
+            filteredUsers.map((user) => (
               <Card key={user.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
@@ -262,6 +371,58 @@ export default function AdminUsersPage() {
                             <>
                               <CheckCircle2 className="w-4 h-4 mr-1" />
                               Aprovar
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleApproval(user.id, "reject")}
+                          disabled={processingUser === user.id}
+                        >
+                          {processingUser === user.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          ) : (
+                            <>
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Rejeitar
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Reset button for approved/rejected users */}
+                    {(user.approvalStatus === "APPROVED" ||
+                      user.approvalStatus === "REJECTED") && (
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleResetToPending(user.id)}
+                          disabled={processingUser === user.id}
+                          className="bg-orange-600 hover:bg-orange-700"
+                        >
+                          {processingUser === user.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          ) : (
+                            <>
+                              <Clock className="w-4 h-4 mr-1" />
+                              Resetar para Pendente
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleApproval(user.id, "approve")}
+                          disabled={processingUser === user.id}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          {processingUser === user.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-4 h-4 mr-1" />
+                              Re-aprovar
                             </>
                           )}
                         </Button>

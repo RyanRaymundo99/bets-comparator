@@ -28,41 +28,31 @@ export async function POST(
       );
     }
 
-    const { reason } = await request.json();
-
-    if (!reason || !reason.trim()) {
-      return NextResponse.json(
-        { error: "Rejection reason is required" },
-        { status: 400 }
-      );
-    }
-
-    // Update user KYC status to rejected
+    // Reset user KYC status to pending
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        kycStatus: "REJECTED",
-        kycReviewedAt: new Date(),
-        kycRejectionReason: reason.trim(),
+        kycStatus: "PENDING",
+        kycReviewedAt: null,
+        kycRejectionReason: null,
         updatedAt: new Date(),
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: "KYC rejected successfully",
+      message: "KYC status reset to pending successfully",
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
         kycStatus: user.kycStatus,
-        rejectionReason: user.kycRejectionReason,
       },
     });
   } catch (error) {
-    console.error("Error rejecting KYC:", error);
+    console.error("Error resetting KYC status:", error);
     return NextResponse.json(
-      { error: "Failed to reject KYC" },
+      { error: "Failed to reset KYC status" },
       { status: 500 }
     );
   }

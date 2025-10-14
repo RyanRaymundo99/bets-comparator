@@ -22,6 +22,7 @@ import {
   User,
   AlertCircle,
   Shield,
+  Clock,
 } from "lucide-react";
 import {
   Dialog,
@@ -112,6 +113,10 @@ const AdminKYCPage = () => {
     setFilteredUsers(filtered);
   }, [users, searchTerm, statusFilter]);
 
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+  };
+
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
@@ -190,6 +195,37 @@ const AdminKYCPage = () => {
         variant: "destructive",
         title: "Error",
         description: "Failed to reject KYC",
+      });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleResetToPending = async (userId: string) => {
+    try {
+      setActionLoading(userId);
+      const response = await fetch(`/api/admin/kyc/${userId}/reset`, {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "KYC status reset to pending for re-review",
+        });
+        fetchUsers();
+        setSelectedUser(null);
+      } else {
+        throw new Error(data.error || "Failed to reset KYC status");
+      }
+    } catch (error) {
+      console.error("Error resetting KYC:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to reset KYC status",
       });
     } finally {
       setActionLoading(null);
@@ -301,6 +337,42 @@ const AdminKYCPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Filter Buttons */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Button
+            variant={statusFilter === "ALL" ? "default" : "outline"}
+            onClick={() => handleStatusFilter("ALL")}
+            size="sm"
+            className="bg-gray-600 hover:bg-gray-700 text-white"
+          >
+            All Status ({users.length})
+          </Button>
+          <Button
+            variant={statusFilter === "PENDING" ? "default" : "outline"}
+            onClick={() => handleStatusFilter("PENDING")}
+            size="sm"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white"
+          >
+            Pending ({users.filter((u) => u.kycStatus === "PENDING").length})
+          </Button>
+          <Button
+            variant={statusFilter === "APPROVED" ? "default" : "outline"}
+            onClick={() => handleStatusFilter("APPROVED")}
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            Approved ({users.filter((u) => u.kycStatus === "APPROVED").length})
+          </Button>
+          <Button
+            variant={statusFilter === "REJECTED" ? "default" : "outline"}
+            onClick={() => handleStatusFilter("REJECTED")}
+            size="sm"
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            Rejected ({users.filter((u) => u.kycStatus === "REJECTED").length})
+          </Button>
+        </div>
 
         {/* Users List */}
         <div className="grid gap-4">
@@ -521,72 +593,157 @@ const AdminKYCPage = () => {
                               </div>
 
                               {/* Actions */}
-                              {user.kycStatus === "PENDING" && (
-                                <div className="flex space-x-4 pt-4 border-t border-gray-600">
-                                  <Button
-                                    onClick={() => handleApprove(user.id)}
-                                    disabled={actionLoading === user.id}
-                                    className="bg-green-600 hover:bg-green-700"
-                                  >
-                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                    Approve
-                                  </Button>
-                                  <Dialog>
-                                    <DialogTrigger asChild>
-                                      <Button variant="destructive">
-                                        <XCircle className="w-4 h-4 mr-2" />
-                                        Reject
-                                      </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="bg-gray-800 border-gray-700">
-                                      <DialogHeader>
-                                        <DialogTitle className="text-white">
-                                          Reject KYC Verification
-                                        </DialogTitle>
-                                      </DialogHeader>
-                                      <div className="space-y-4">
-                                        <div>
-                                          <label className="text-sm font-medium text-gray-300">
-                                            Rejection Reason
-                                          </label>
-                                          <textarea
-                                            value={rejectionReason}
-                                            onChange={(e) =>
-                                              setRejectionReason(e.target.value)
-                                            }
-                                            placeholder="Please provide a reason for rejection..."
-                                            className="w-full mt-1 p-3 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder:text-gray-400"
-                                            rows={4}
-                                          />
+                              <div className="flex space-x-4 pt-4 border-t border-gray-600">
+                                {user.kycStatus === "PENDING" && (
+                                  <>
+                                    <Button
+                                      onClick={() => handleApprove(user.id)}
+                                      disabled={actionLoading === user.id}
+                                      className="bg-green-600 hover:bg-green-700"
+                                    >
+                                      <CheckCircle className="w-4 h-4 mr-2" />
+                                      Approve
+                                    </Button>
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="destructive">
+                                          <XCircle className="w-4 h-4 mr-2" />
+                                          Reject
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="bg-gray-800 border-gray-700">
+                                        <DialogHeader>
+                                          <DialogTitle className="text-white">
+                                            Reject KYC Verification
+                                          </DialogTitle>
+                                        </DialogHeader>
+                                        <div className="space-y-4">
+                                          <div>
+                                            <label className="text-sm font-medium text-gray-300">
+                                              Rejection Reason
+                                            </label>
+                                            <textarea
+                                              value={rejectionReason}
+                                              onChange={(e) =>
+                                                setRejectionReason(
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder="Please provide a reason for rejection..."
+                                              className="w-full mt-1 p-3 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder:text-gray-400"
+                                              rows={4}
+                                            />
+                                          </div>
+                                          <div className="flex justify-end space-x-2">
+                                            <Button
+                                              variant="outline"
+                                              onClick={() =>
+                                                setRejectionReason("")
+                                              }
+                                              className="border-gray-600 text-white hover:bg-gray-700"
+                                            >
+                                              Cancel
+                                            </Button>
+                                            <Button
+                                              variant="destructive"
+                                              onClick={() =>
+                                                handleReject(user.id)
+                                              }
+                                              disabled={
+                                                actionLoading === user.id ||
+                                                !rejectionReason.trim()
+                                              }
+                                            >
+                                              Reject KYC
+                                            </Button>
+                                          </div>
                                         </div>
-                                        <div className="flex justify-end space-x-2">
-                                          <Button
-                                            variant="outline"
-                                            onClick={() =>
-                                              setRejectionReason("")
-                                            }
-                                            className="border-gray-600 text-white hover:bg-gray-700"
-                                          >
-                                            Cancel
-                                          </Button>
-                                          <Button
-                                            variant="destructive"
-                                            onClick={() =>
-                                              handleReject(user.id)
-                                            }
-                                            disabled={
-                                              actionLoading === user.id ||
-                                              !rejectionReason.trim()
-                                            }
-                                          >
-                                            Reject KYC
-                                          </Button>
+                                      </DialogContent>
+                                    </Dialog>
+                                  </>
+                                )}
+
+                                {/* Recheck button for approved/rejected users */}
+                                {(user.kycStatus === "APPROVED" ||
+                                  user.kycStatus === "REJECTED") && (
+                                  <div className="flex space-x-2">
+                                    <Button
+                                      onClick={() =>
+                                        handleResetToPending(user.id)
+                                      }
+                                      disabled={actionLoading === user.id}
+                                      className="bg-orange-600 hover:bg-orange-700"
+                                    >
+                                      <Clock className="w-4 h-4 mr-2" />
+                                      Reset to Pending
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleApprove(user.id)}
+                                      disabled={actionLoading === user.id}
+                                      className="bg-blue-600 hover:bg-blue-700"
+                                    >
+                                      <CheckCircle className="w-4 h-4 mr-2" />
+                                      Re-approve
+                                    </Button>
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="destructive">
+                                          <XCircle className="w-4 h-4 mr-2" />
+                                          Reject
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="bg-gray-800 border-gray-700">
+                                        <DialogHeader>
+                                          <DialogTitle className="text-white">
+                                            Reject KYC Verification
+                                          </DialogTitle>
+                                        </DialogHeader>
+                                        <div className="space-y-4">
+                                          <div>
+                                            <label className="text-sm font-medium text-gray-300">
+                                              Rejection Reason
+                                            </label>
+                                            <textarea
+                                              value={rejectionReason}
+                                              onChange={(e) =>
+                                                setRejectionReason(
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder="Please provide a reason for rejection..."
+                                              className="w-full mt-1 p-3 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder:text-gray-400"
+                                              rows={4}
+                                            />
+                                          </div>
+                                          <div className="flex justify-end space-x-2">
+                                            <Button
+                                              variant="outline"
+                                              onClick={() =>
+                                                setRejectionReason("")
+                                              }
+                                              className="border-gray-600 text-white hover:bg-gray-700"
+                                            >
+                                              Cancel
+                                            </Button>
+                                            <Button
+                                              variant="destructive"
+                                              onClick={() =>
+                                                handleReject(user.id)
+                                              }
+                                              disabled={
+                                                actionLoading === user.id ||
+                                                !rejectionReason.trim()
+                                              }
+                                            >
+                                              Reject KYC
+                                            </Button>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </DialogContent>
-                                  </Dialog>
-                                </div>
-                              )}
+                                      </DialogContent>
+                                    </Dialog>
+                                  </div>
+                                )}
+                              </div>
 
                               {user.kycStatus === "REJECTED" &&
                                 user.kycRejectionReason && (

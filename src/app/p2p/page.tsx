@@ -26,11 +26,11 @@ export default function P2PPage() {
         <Breadcrumb
           items={[
             { label: "Dashboard", href: "/dashboard" },
-            { label: "P2P Trading" },
+            { label: "Trade" },
           ]}
         />
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">P2P Trading</h1>
+          <h1 className="text-3xl font-bold mb-2">Trade</h1>
           <p className="text-muted-foreground">
             Trade cryptocurrencies directly with other users
           </p>

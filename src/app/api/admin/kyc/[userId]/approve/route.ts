@@ -5,8 +5,29 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const { userId } = await params;
   try {
+    const { userId } = await params;
+
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
+    }
+
     // Update user KYC status to approved
     const user = await prisma.user.update({
       where: { id: userId },

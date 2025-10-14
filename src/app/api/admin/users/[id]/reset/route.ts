@@ -3,10 +3,10 @@ import prisma from "@/lib/prisma";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await params;
+    const { id } = await params;
 
     // Get the session cookie
     const sessionCookie = request.cookies.get("better-auth.session");
@@ -28,41 +28,30 @@ export async function POST(
       );
     }
 
-    const { reason } = await request.json();
-
-    if (!reason || !reason.trim()) {
-      return NextResponse.json(
-        { error: "Rejection reason is required" },
-        { status: 400 }
-      );
-    }
-
-    // Update user KYC status to rejected
+    // Reset user approval status to pending
     const user = await prisma.user.update({
-      where: { id: userId },
+      where: { id },
       data: {
-        kycStatus: "REJECTED",
-        kycReviewedAt: new Date(),
-        kycRejectionReason: reason.trim(),
+        approvalStatus: "PENDING",
+        emailVerified: false,
         updatedAt: new Date(),
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: "KYC rejected successfully",
+      message: "User status reset to pending successfully",
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-        kycStatus: user.kycStatus,
-        rejectionReason: user.kycRejectionReason,
+        approvalStatus: user.approvalStatus,
       },
     });
   } catch (error) {
-    console.error("Error rejecting KYC:", error);
+    console.error("Error resetting user status:", error);
     return NextResponse.json(
-      { error: "Failed to reject KYC" },
+      { error: "Failed to reset user status" },
       { status: 500 }
     );
   }

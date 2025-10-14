@@ -14,7 +14,6 @@ import {
   RefreshCw,
   Activity,
   Target,
-  Zap,
   Shield,
   Globe,
   Clock,
@@ -24,7 +23,6 @@ import {
   ChevronRight,
   Play,
   Pause,
-  Coins,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -584,33 +582,17 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-foreground">
-                <Zap className="w-5 h-5" />
+                <Activity className="w-5 h-5" />
                 Ações Rápidas
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
-                onClick={() => router.push("/wallet")}
+                onClick={() => router.push("/p2p")}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Comprar/Vender
-              </Button>
-              <Button
-                onClick={() => router.push("/wallet")}
-                variant="outline"
-                className="w-full border-border text-foreground hover:bg-muted"
-              >
-                <Coins className="w-4 h-4 mr-2" />
-                Crypto Wallet
-              </Button>
-              <Button
-                onClick={() => router.push("/advanced-trading")}
-                variant="outline"
-                className="w-full border-border text-foreground hover:bg-muted"
-              >
-                <Zap className="w-4 h-4 mr-2" />
-                Advanced Trading
               </Button>
               <Button
                 onClick={() => router.push("/deposits")}
@@ -634,7 +616,7 @@ export default function Dashboard() {
                 className="w-full border-border text-foreground hover:bg-muted"
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
-                P2P Trading
+                Trade
               </Button>
             </CardContent>
           </Card>
