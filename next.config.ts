@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Production optimizations
-  output: "standalone",
+  // output: "standalone", // Disabled due to Windows symlink issues
 
   // Image optimization
   images: {
