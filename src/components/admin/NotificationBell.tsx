@@ -1,0 +1,265 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Bell, X, CheckCircle, Clock, FileText, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+
+interface Notification {
+  id: string;
+  type: "new_user" | "kyc_pending" | "approval_needed";
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  userId?: string;
+}
+
+interface NotificationBellProps {
+  className?: string;
+}
+
+export const NotificationBell: React.FC<NotificationBellProps> = ({
+  className = "",
+}) => {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/admin/notifications");
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.unreadCount || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markAsRead = async (notificationId: string) => {
+    try {
+      const response = await fetch(
+        `/api/admin/notifications/${notificationId}/read`,
+        {
+          method: "PATCH",
+        }
+      );
+
+      if (response.ok) {
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === notificationId ? { ...notif, read: true } : notif
+          )
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      const response = await fetch("/api/admin/notifications/read-all", {
+        method: "PATCH",
+      });
+
+      if (response.ok) {
+        setNotifications((prev) =>
+          prev.map((notif) => ({ ...notif, read: true }))
+        );
+        setUnreadCount(0);
+        toast({
+          title: "Notifications marked as read",
+          description: "All notifications have been marked as read",
+        });
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "new_user":
+        return <Users className="w-4 h-4 text-blue-500" />;
+      case "kyc_pending":
+        return <FileText className="w-4 h-4 text-orange-500" />;
+      case "approval_needed":
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      default:
+        return <Bell className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const getNotificationColor = (type: string) => {
+    switch (type) {
+      case "new_user":
+        return "border-l-blue-500";
+      case "kyc_pending":
+        return "border-l-orange-500";
+      case "approval_needed":
+        return "border-l-yellow-500";
+      default:
+        return "border-l-gray-500";
+    }
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    markAsRead(notification.id);
+
+    // Navigate based on notification type
+    switch (notification.type) {
+      case "new_user":
+      case "approval_needed":
+        router.push("/admin/users");
+        break;
+      case "kyc_pending":
+        router.push("/admin/kyc");
+        break;
+    }
+    setIsOpen(false);
+  };
+
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const notificationTime = new Date(timestamp);
+    const diffInMinutes = Math.floor(
+      (now.getTime() - notificationTime.getTime()) / (1000 * 60)
+    );
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+
+    // Poll for new notifications every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className={`relative ${className}`}>
+          <Bell className="w-5 h-5" />
+          {unreadCount > 0 && (
+            <Badge
+              variant="destructive"
+              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </Badge>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        align="end"
+        className="w-80 max-h-96 overflow-y-auto"
+        sideOffset={5}
+      >
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm">Notifications</h3>
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={markAllAsRead}
+                className="text-xs h-6 px-2"
+              >
+                Mark all read
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <div className="max-h-80 overflow-y-auto">
+          {loading ? (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              Loading notifications...
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              No notifications
+            </div>
+          ) : (
+            notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`p-3 border-l-4 cursor-pointer hover:bg-muted/50 transition-colors ${
+                  !notification.read ? "bg-blue-50/50" : ""
+                } ${getNotificationColor(notification.type)}`}
+                onClick={() => handleNotificationClick(notification)}
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    {getNotificationIcon(notification.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-foreground">
+                        {notification.title}
+                      </p>
+                      {!notification.read && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {notification.message}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatTimeAgo(notification.timestamp)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {notifications.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <div className="p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push("/admin")}
+                className="w-full text-xs"
+              >
+                View all notifications
+              </Button>
+            </div>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+export default NotificationBell;

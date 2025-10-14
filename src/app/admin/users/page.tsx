@@ -17,6 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import NotificationBell from "@/components/admin/NotificationBell";
 
 interface User {
   id: string;
@@ -182,6 +183,7 @@ export default function AdminUsersPage() {
             </p>
           </div>
           <div className="flex items-center space-x-2">
+            <NotificationBell />
             <Link href="/admin/kyc">
               <Button variant="outline">
                 <FileText className="w-4 h-4 mr-2" />

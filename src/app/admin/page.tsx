@@ -14,6 +14,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import NotificationBell from "@/components/admin/NotificationBell";
 
 interface DashboardStats {
   totalUsers: number;
@@ -122,6 +123,7 @@ export default function AdminDashboard() {
             <p className="text-gray-300 mt-1">BS Market Administration Panel</p>
           </div>
           <div className="flex items-center space-x-2">
+            <NotificationBell className="text-white hover:text-blue-400" />
             <Button
               onClick={fetchStats}
               variant="outline"
@@ -140,64 +142,84 @@ export default function AdminDashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Users */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">
-                Total Users
-              </CardTitle>
-              <Users className="h-4 w-4 text-blue-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {stats.totalUsers}
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/admin/users">
+            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-blue-500 transition-all duration-200 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
+                  Total Users
+                </CardTitle>
+                <Users className="h-4 w-4 text-blue-400 group-hover:text-blue-300" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white group-hover:text-blue-100">
+                  {stats.totalUsers}
+                </div>
+                <p className="text-xs text-gray-400 mt-1 group-hover:text-gray-300">
+                  Click to manage users
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Pending Approvals */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">
-                Pending Approvals
-              </CardTitle>
-              <Clock className="h-4 w-4 text-yellow-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {stats.pendingApprovals}
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/admin/users">
+            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-yellow-500 transition-all duration-200 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
+                  Pending Approvals
+                </CardTitle>
+                <Clock className="h-4 w-4 text-yellow-400 group-hover:text-yellow-300" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white group-hover:text-yellow-100">
+                  {stats.pendingApprovals}
+                </div>
+                <p className="text-xs text-gray-400 mt-1 group-hover:text-gray-300">
+                  Click to review approvals
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Approved Users */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">
-                Approved Users
-              </CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {stats.approvedUsers}
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/admin/users">
+            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-green-500 transition-all duration-200 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
+                  Approved Users
+                </CardTitle>
+                <CheckCircle className="h-4 w-4 text-green-400 group-hover:text-green-300" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white group-hover:text-green-100">
+                  {stats.approvedUsers}
+                </div>
+                <p className="text-xs text-gray-400 mt-1 group-hover:text-gray-300">
+                  Click to view approved users
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Pending KYC */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">
-                Pending KYC
-              </CardTitle>
-              <FileText className="h-4 w-4 text-orange-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {stats.pendingKYC}
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/admin/kyc">
+            <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 hover:border-orange-500 transition-all duration-200 cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300 group-hover:text-white">
+                  Pending KYC
+                </CardTitle>
+                <FileText className="h-4 w-4 text-orange-400 group-hover:text-orange-300" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white group-hover:text-orange-100">
+                  {stats.pendingKYC}
+                </div>
+                <p className="text-xs text-gray-400 mt-1 group-hover:text-gray-300">
+                  Click to review KYC documents
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Quick Actions */}
@@ -251,20 +273,29 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">
-                  {stats.approvedUsers}
+                <div className="flex items-center justify-center mb-2">
+                  <CheckCircle className="h-6 w-6 text-green-400 mr-2" />
+                  <div className="text-2xl font-bold text-green-400">
+                    {stats.approvedUsers}
+                  </div>
                 </div>
                 <div className="text-sm text-gray-300">Approved Users</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-400">
-                  {stats.pendingApprovals}
+                <div className="flex items-center justify-center mb-2">
+                  <Clock className="h-6 w-6 text-yellow-400 mr-2" />
+                  <div className="text-2xl font-bold text-yellow-400">
+                    {stats.pendingApprovals}
+                  </div>
                 </div>
                 <div className="text-sm text-gray-300">Pending Approvals</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-400">
-                  {stats.pendingKYC}
+                <div className="flex items-center justify-center mb-2">
+                  <FileText className="h-6 w-6 text-orange-400 mr-2" />
+                  <div className="text-2xl font-bold text-orange-400">
+                    {stats.pendingKYC}
+                  </div>
                 </div>
                 <div className="text-sm text-gray-300">Pending KYC</div>
               </div>

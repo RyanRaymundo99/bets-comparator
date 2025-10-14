@@ -30,7 +30,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { X, ZoomIn } from "lucide-react";
 import ImageAnalysisPanel from "@/components/admin/ImageAnalysisPanel";
+import NotificationBell from "@/components/admin/NotificationBell";
 
 interface KYCUser {
   id: string;
@@ -58,6 +60,11 @@ const AdminKYCPage = () => {
   const [, setSelectedUser] = useState<KYCUser | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{
+    src: string;
+    alt: string;
+    title: string;
+  } | null>(null);
 
   const { toast } = useToast();
 
@@ -228,6 +235,10 @@ const AdminKYCPage = () => {
     });
   };
 
+  const handleImageClick = (src: string, alt: string, title: string) => {
+    setSelectedImage({ src, alt, title });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -243,12 +254,19 @@ const AdminKYCPage = () => {
     <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            KYC Verification
-          </h1>
-          <p className="text-gray-300">
-            Review and verify user identity documents
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                KYC Verification
+              </h1>
+              <p className="text-gray-300">
+                Review and verify user identity documents
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <NotificationBell className="text-white hover:text-blue-400" />
+            </div>
+          </div>
         </div>
 
         {/* Filters */}
@@ -410,34 +428,79 @@ const AdminKYCPage = () => {
                               {/* Documents */}
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                  <h4 className="font-medium text-white mb-2">
+                                  <h4 className="font-medium text-white mb-2 flex items-center gap-2">
                                     Document Front
+                                    <ZoomIn className="w-4 h-4 text-gray-400" />
                                   </h4>
-                                  <img
-                                    src={user.documentFront}
-                                    alt="Document Front"
-                                    className="w-full h-48 object-cover rounded-lg border border-gray-600"
-                                  />
+                                  <div
+                                    className="relative cursor-pointer group"
+                                    onClick={() =>
+                                      handleImageClick(
+                                        user.documentFront,
+                                        "Document Front",
+                                        "Document Front"
+                                      )
+                                    }
+                                  >
+                                    <img
+                                      src={user.documentFront}
+                                      alt="Document Front"
+                                      className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
+                                    />
+                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
+                                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                  </div>
                                 </div>
                                 <div>
-                                  <h4 className="font-medium text-white mb-2">
+                                  <h4 className="font-medium text-white mb-2 flex items-center gap-2">
                                     Document Back
+                                    <ZoomIn className="w-4 h-4 text-gray-400" />
                                   </h4>
-                                  <img
-                                    src={user.documentBack}
-                                    alt="Document Back"
-                                    className="w-full h-48 object-cover rounded-lg border border-gray-600"
-                                  />
+                                  <div
+                                    className="relative cursor-pointer group"
+                                    onClick={() =>
+                                      handleImageClick(
+                                        user.documentBack,
+                                        "Document Back",
+                                        "Document Back"
+                                      )
+                                    }
+                                  >
+                                    <img
+                                      src={user.documentBack}
+                                      alt="Document Back"
+                                      className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
+                                    />
+                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
+                                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                  </div>
                                 </div>
                                 <div>
-                                  <h4 className="font-medium text-white mb-2">
+                                  <h4 className="font-medium text-white mb-2 flex items-center gap-2">
                                     Selfie with Document
+                                    <ZoomIn className="w-4 h-4 text-gray-400" />
                                   </h4>
-                                  <img
-                                    src={user.documentSelfie}
-                                    alt="Selfie with Document"
-                                    className="w-full h-48 object-cover rounded-lg border border-gray-600"
-                                  />
+                                  <div
+                                    className="relative cursor-pointer group"
+                                    onClick={() =>
+                                      handleImageClick(
+                                        user.documentSelfie,
+                                        "Selfie with Document",
+                                        "Selfie with Document"
+                                      )
+                                    }
+                                  >
+                                    <img
+                                      src={user.documentSelfie}
+                                      alt="Selfie with Document"
+                                      className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
+                                    />
+                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
+                                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
 
@@ -548,6 +611,31 @@ const AdminKYCPage = () => {
           )}
         </div>
       </div>
+
+      {/* Full-size Image Modal */}
+      {selectedImage && (
+        <Dialog
+          open={!!selectedImage}
+          onOpenChange={() => setSelectedImage(null)}
+        >
+          <DialogContent className="max-w-7xl max-h-[95vh] p-0 bg-gray-900 border-gray-700">
+            <DialogHeader className="p-6 pb-0">
+              <DialogTitle className="text-white text-xl">
+                {selectedImage.title}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="p-6 pt-4">
+              <div className="relative">
+                <img
+                  src={selectedImage.src}
+                  alt={selectedImage.alt}
+                  className="w-full h-auto max-h-[80vh] object-contain rounded-lg border border-gray-600"
+                />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

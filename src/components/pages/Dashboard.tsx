@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   TrendingUp,
   TrendingDown,
@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import NavbarNew from "@/components/ui/navbar-new";
 import Breadcrumb from "@/components/ui/breadcrumb";
+import KYCBanner from "@/components/ui/kyc-banner";
 
 interface CryptoPrice {
   symbol: string;
@@ -57,8 +58,22 @@ interface Transaction {
   createdAt: string;
 }
 
+interface UserStatus {
+  id: string;
+  name: string;
+  email: string;
+  approvalStatus: string;
+  kycStatus: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  kycSubmittedAt: string | null;
+  kycReviewedAt: string | null;
+  kycRejectionReason: string | null;
+}
+
 export default function Dashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [balances, setBalances] = useState<Balance[]>([]);
@@ -69,6 +84,16 @@ export default function Dashboard() {
   const [showBalances, setShowBalances] = useState(true);
   const [totalBalance, setTotalBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
+  const [showKYCBanner, setShowKYCBanner] = useState(true);
+
+  // Check if redirected from KYC submission
+  useEffect(() => {
+    const kycParam = searchParams.get("kyc");
+    if (kycParam === "pending") {
+      setShowKYCBanner(true);
+    }
+  }, [searchParams]);
 
   // Format currency in Brazilian Real
   const formatCurrency = (value: number) => {
@@ -127,6 +152,13 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch user status
+        const userStatusResponse = await fetch("/api/user/status");
+        if (userStatusResponse.ok) {
+          const userStatusData = await userStatusResponse.json();
+          setUserStatus(userStatusData.user);
+        }
+
         // Fetch balances
         const balanceResponse = await fetch("/api/balance");
         if (balanceResponse.ok) {
@@ -282,6 +314,16 @@ export default function Dashboard() {
 
       <div className="container mx-auto px-4 py-6 mobile-page-padding">
         <Breadcrumb items={[{ label: "Dashboard" }]} />
+
+        {/* KYC Status Banner */}
+        {showKYCBanner && userStatus && (
+          <KYCBanner
+            status={userStatus.kycStatus as "PENDING" | "APPROVED" | "REJECTED"}
+            onDismiss={() => setShowKYCBanner(false)}
+            showDismiss={userStatus.kycStatus !== "PENDING"}
+          />
+        )}
+
         {/* Welcome Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-2">

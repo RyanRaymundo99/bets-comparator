@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import {
   FileText,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface KYCDocumentData {
   documentType: string;
@@ -42,6 +43,7 @@ const SignupWithKYC = () => {
   const [, setKycData] = useState<KYCDocumentData | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -344,6 +346,15 @@ const SignupWithKYC = () => {
 
   // Step 3: Success
   if (currentStep === "success") {
+    // Redirect to dashboard after showing success message
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        router.push("/dashboard?kyc=pending");
+      }, 3000); // Redirect after 3 seconds
+
+      return () => clearTimeout(timer);
+    }, [router]);
+
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
         <div className="w-full max-w-2xl">
