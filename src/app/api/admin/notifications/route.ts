@@ -84,7 +84,15 @@ export async function GET(request: NextRequest) {
     });
 
     // Create notifications from the data
-    const notifications = [];
+    const notifications: Array<{
+      id: string;
+      type: string;
+      title: string;
+      message: string;
+      timestamp: string;
+      read: boolean;
+      userId: string;
+    }> = [];
 
     // Add new user notifications
     pendingUsers.forEach((user) => {
