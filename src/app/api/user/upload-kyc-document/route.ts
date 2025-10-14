@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     const relativePath = `/uploads/kyc/user_${user.id}/${filename}`;
 
     // Update user with the new document path
-    const updateData: Record<string, string> = {
+    const updateData: Record<string, string | Date> = {
       updatedAt: new Date(),
     };
 
