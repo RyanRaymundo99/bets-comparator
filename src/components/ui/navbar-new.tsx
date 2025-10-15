@@ -8,7 +8,6 @@ import {
   Menu,
   X,
   Home,
-  TrendingUp,
   TrendingDown,
   Wallet,
   BarChart3,

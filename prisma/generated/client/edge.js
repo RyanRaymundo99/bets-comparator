@@ -411,7 +411,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\layrt\\OneDrive\\Documentos\\GitHub\\bs-market\\prisma\\generated\\client",
+      "value": "C:\\Users\\Rian9\\OneDrive\\Documents\\GitHub\\bs-market\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -425,7 +425,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\layrt\\OneDrive\\Documentos\\GitHub\\bs-market\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Rian9\\OneDrive\\Documents\\GitHub\\bs-market\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
