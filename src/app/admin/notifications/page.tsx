@@ -6,13 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import BackToDashboardButton from "@/components/admin/BackToDashboardButton";
 import {
   Bell,
   Users,
   FileText,
   Clock,
   CheckCircle,
-  ArrowLeft,
   RefreshCw,
   Eye,
 } from "lucide-react";
@@ -175,14 +175,7 @@ export default function AdminNotificationsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => router.push("/admin")}
-              className="border-gray-600 text-white hover:bg-gray-800"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
+            <BackToDashboardButton />
             <div>
               <h1 className="text-3xl font-bold flex items-center gap-2">
                 <Bell className="w-8 h-8" />

@@ -34,6 +34,7 @@ import {
 import { ZoomIn } from "lucide-react";
 import ImageAnalysisPanel from "@/components/admin/ImageAnalysisPanel";
 import NotificationBell from "@/components/admin/NotificationBell";
+import BackToDashboardButton from "@/components/admin/BackToDashboardButton";
 
 interface KYCUser {
   id: string;
@@ -289,6 +290,9 @@ const AdminKYCPage = () => {
   return (
     <div className="min-h-screen bg-black p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Back to Dashboard Button */}
+        <BackToDashboardButton className="mb-6" />
+        
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>

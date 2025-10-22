@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NotificationBell from "@/components/admin/NotificationBell";
+import BackToDashboardButton from "@/components/admin/BackToDashboardButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -375,9 +376,12 @@ export default function AdminUsersPage() {
   return (
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-6xl mx-auto space-y-6">
+        {/* Back to Dashboard Button */}
+        <BackToDashboardButton />
+        
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
+            <h1 className="text-3xl font-bold">User Management</h1>
             <p className="text-gray-400 mt-1">
               Gerenciar usuários e verificar documentos
             </p>
