@@ -9462,10 +9462,14 @@ export namespace Prisma {
 
   export type WithdrawalAvgAggregateOutputType = {
     amount: Decimal | null
+    fee: Decimal | null
+    netAmount: Decimal | null
   }
 
   export type WithdrawalSumAggregateOutputType = {
     amount: Decimal | null
+    fee: Decimal | null
+    netAmount: Decimal | null
   }
 
   export type WithdrawalMinAggregateOutputType = {
@@ -9480,6 +9484,14 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     transactionId: string | null
+    type: string | null
+    fee: Decimal | null
+    netAmount: Decimal | null
+    pixKey: string | null
+    protocol: string | null
+    walletAddress: string | null
+    network: string | null
+    hash: string | null
   }
 
   export type WithdrawalMaxAggregateOutputType = {
@@ -9494,6 +9506,14 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     transactionId: string | null
+    type: string | null
+    fee: Decimal | null
+    netAmount: Decimal | null
+    pixKey: string | null
+    protocol: string | null
+    walletAddress: string | null
+    network: string | null
+    hash: string | null
   }
 
   export type WithdrawalCountAggregateOutputType = {
@@ -9509,16 +9529,28 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     transactionId: number
+    type: number
+    fee: number
+    netAmount: number
+    pixKey: number
+    protocol: number
+    walletAddress: number
+    network: number
+    hash: number
     _all: number
   }
 
 
   export type WithdrawalAvgAggregateInputType = {
     amount?: true
+    fee?: true
+    netAmount?: true
   }
 
   export type WithdrawalSumAggregateInputType = {
     amount?: true
+    fee?: true
+    netAmount?: true
   }
 
   export type WithdrawalMinAggregateInputType = {
@@ -9533,6 +9565,14 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     transactionId?: true
+    type?: true
+    fee?: true
+    netAmount?: true
+    pixKey?: true
+    protocol?: true
+    walletAddress?: true
+    network?: true
+    hash?: true
   }
 
   export type WithdrawalMaxAggregateInputType = {
@@ -9547,6 +9587,14 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     transactionId?: true
+    type?: true
+    fee?: true
+    netAmount?: true
+    pixKey?: true
+    protocol?: true
+    walletAddress?: true
+    network?: true
+    hash?: true
   }
 
   export type WithdrawalCountAggregateInputType = {
@@ -9562,6 +9610,14 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     transactionId?: true
+    type?: true
+    fee?: true
+    netAmount?: true
+    pixKey?: true
+    protocol?: true
+    walletAddress?: true
+    network?: true
+    hash?: true
     _all?: true
   }
 
@@ -9664,6 +9720,14 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     transactionId: string | null
+    type: string | null
+    fee: Decimal | null
+    netAmount: Decimal | null
+    pixKey: string | null
+    protocol: string | null
+    walletAddress: string | null
+    network: string | null
+    hash: string | null
     _count: WithdrawalCountAggregateOutputType | null
     _avg: WithdrawalAvgAggregateOutputType | null
     _sum: WithdrawalSumAggregateOutputType | null
@@ -9698,6 +9762,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    type?: boolean
+    fee?: boolean
+    netAmount?: boolean
+    pixKey?: boolean
+    protocol?: boolean
+    walletAddress?: boolean
+    network?: boolean
+    hash?: boolean
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["withdrawal"]>
@@ -9715,6 +9787,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    type?: boolean
+    fee?: boolean
+    netAmount?: boolean
+    pixKey?: boolean
+    protocol?: boolean
+    walletAddress?: boolean
+    network?: boolean
+    hash?: boolean
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["withdrawal"]>
@@ -9732,6 +9812,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    type?: boolean
+    fee?: boolean
+    netAmount?: boolean
+    pixKey?: boolean
+    protocol?: boolean
+    walletAddress?: boolean
+    network?: boolean
+    hash?: boolean
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["withdrawal"]>
@@ -9749,9 +9837,17 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactionId?: boolean
+    type?: boolean
+    fee?: boolean
+    netAmount?: boolean
+    pixKey?: boolean
+    protocol?: boolean
+    walletAddress?: boolean
+    network?: boolean
+    hash?: boolean
   }
 
-  export type WithdrawalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "status" | "paymentMethod" | "externalId" | "bankAccount" | "processedAt" | "createdAt" | "updatedAt" | "transactionId", ExtArgs["result"]["withdrawal"]>
+  export type WithdrawalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "status" | "paymentMethod" | "externalId" | "bankAccount" | "processedAt" | "createdAt" | "updatedAt" | "transactionId" | "type" | "fee" | "netAmount" | "pixKey" | "protocol" | "walletAddress" | "network" | "hash", ExtArgs["result"]["withdrawal"]>
   export type WithdrawalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | Withdrawal$transactionArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -9784,6 +9880,14 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       transactionId: string | null
+      type: string | null
+      fee: Prisma.Decimal | null
+      netAmount: Prisma.Decimal | null
+      pixKey: string | null
+      protocol: string | null
+      walletAddress: string | null
+      network: string | null
+      hash: string | null
     }, ExtArgs["result"]["withdrawal"]>
     composites: {}
   }
@@ -10221,6 +10325,14 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Withdrawal", 'DateTime'>
     readonly updatedAt: FieldRef<"Withdrawal", 'DateTime'>
     readonly transactionId: FieldRef<"Withdrawal", 'String'>
+    readonly type: FieldRef<"Withdrawal", 'String'>
+    readonly fee: FieldRef<"Withdrawal", 'Decimal'>
+    readonly netAmount: FieldRef<"Withdrawal", 'Decimal'>
+    readonly pixKey: FieldRef<"Withdrawal", 'String'>
+    readonly protocol: FieldRef<"Withdrawal", 'String'>
+    readonly walletAddress: FieldRef<"Withdrawal", 'String'>
+    readonly network: FieldRef<"Withdrawal", 'String'>
+    readonly hash: FieldRef<"Withdrawal", 'String'>
   }
     
 
@@ -15874,7 +15986,15 @@ export namespace Prisma {
     processedAt: 'processedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    transactionId: 'transactionId'
+    transactionId: 'transactionId',
+    type: 'type',
+    fee: 'fee',
+    netAmount: 'netAmount',
+    pixKey: 'pixKey',
+    protocol: 'protocol',
+    walletAddress: 'walletAddress',
+    network: 'network',
+    hash: 'hash'
   };
 
   export type WithdrawalScalarFieldEnum = (typeof WithdrawalScalarFieldEnum)[keyof typeof WithdrawalScalarFieldEnum]
@@ -16913,6 +17033,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
     transactionId?: StringNullableFilter<"Withdrawal"> | string | null
+    type?: StringNullableFilter<"Withdrawal"> | string | null
+    fee?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    netAmount?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    pixKey?: StringNullableFilter<"Withdrawal"> | string | null
+    protocol?: StringNullableFilter<"Withdrawal"> | string | null
+    walletAddress?: StringNullableFilter<"Withdrawal"> | string | null
+    network?: StringNullableFilter<"Withdrawal"> | string | null
+    hash?: StringNullableFilter<"Withdrawal"> | string | null
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -16930,6 +17058,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    fee?: SortOrderInput | SortOrder
+    netAmount?: SortOrderInput | SortOrder
+    pixKey?: SortOrderInput | SortOrder
+    protocol?: SortOrderInput | SortOrder
+    walletAddress?: SortOrderInput | SortOrder
+    network?: SortOrderInput | SortOrder
+    hash?: SortOrderInput | SortOrder
     transaction?: TransactionOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -16950,6 +17086,14 @@ export namespace Prisma {
     processedAt?: DateTimeNullableFilter<"Withdrawal"> | Date | string | null
     createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
+    type?: StringNullableFilter<"Withdrawal"> | string | null
+    fee?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    netAmount?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    pixKey?: StringNullableFilter<"Withdrawal"> | string | null
+    protocol?: StringNullableFilter<"Withdrawal"> | string | null
+    walletAddress?: StringNullableFilter<"Withdrawal"> | string | null
+    network?: StringNullableFilter<"Withdrawal"> | string | null
+    hash?: StringNullableFilter<"Withdrawal"> | string | null
     transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "transactionId">
@@ -16967,6 +17111,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    fee?: SortOrderInput | SortOrder
+    netAmount?: SortOrderInput | SortOrder
+    pixKey?: SortOrderInput | SortOrder
+    protocol?: SortOrderInput | SortOrder
+    walletAddress?: SortOrderInput | SortOrder
+    network?: SortOrderInput | SortOrder
+    hash?: SortOrderInput | SortOrder
     _count?: WithdrawalCountOrderByAggregateInput
     _avg?: WithdrawalAvgOrderByAggregateInput
     _max?: WithdrawalMaxOrderByAggregateInput
@@ -16990,6 +17142,14 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Withdrawal"> | Date | string
     transactionId?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+    type?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+    fee?: DecimalNullableWithAggregatesFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    netAmount?: DecimalNullableWithAggregatesFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    pixKey?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+    protocol?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+    walletAddress?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+    network?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+    hash?: StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
   }
 
   export type OrderWhereInput = {
@@ -18169,6 +18329,14 @@ export namespace Prisma {
     processedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
     transaction?: TransactionCreateNestedOneWithoutWithdrawalInput
     user: UserCreateNestedOneWithoutWithdrawalsInput
   }
@@ -18186,6 +18354,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
   }
 
   export type WithdrawalUpdateInput = {
@@ -18199,6 +18375,14 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
     transaction?: TransactionUpdateOneWithoutWithdrawalNestedInput
     user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
   }
@@ -18216,6 +18400,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WithdrawalCreateManyInput = {
@@ -18231,6 +18423,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
   }
 
   export type WithdrawalUpdateManyMutationInput = {
@@ -18244,6 +18444,14 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WithdrawalUncheckedUpdateManyInput = {
@@ -18259,6 +18467,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderCreateInput = {
@@ -19548,10 +19764,20 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrder
+    type?: SortOrder
+    fee?: SortOrder
+    netAmount?: SortOrder
+    pixKey?: SortOrder
+    protocol?: SortOrder
+    walletAddress?: SortOrder
+    network?: SortOrder
+    hash?: SortOrder
   }
 
   export type WithdrawalAvgOrderByAggregateInput = {
     amount?: SortOrder
+    fee?: SortOrder
+    netAmount?: SortOrder
   }
 
   export type WithdrawalMaxOrderByAggregateInput = {
@@ -19566,6 +19792,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrder
+    type?: SortOrder
+    fee?: SortOrder
+    netAmount?: SortOrder
+    pixKey?: SortOrder
+    protocol?: SortOrder
+    walletAddress?: SortOrder
+    network?: SortOrder
+    hash?: SortOrder
   }
 
   export type WithdrawalMinOrderByAggregateInput = {
@@ -19580,10 +19814,20 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactionId?: SortOrder
+    type?: SortOrder
+    fee?: SortOrder
+    netAmount?: SortOrder
+    pixKey?: SortOrder
+    protocol?: SortOrder
+    walletAddress?: SortOrder
+    network?: SortOrder
+    hash?: SortOrder
   }
 
   export type WithdrawalSumOrderByAggregateInput = {
     amount?: SortOrder
+    fee?: SortOrder
+    netAmount?: SortOrder
   }
 
   export type EnumWithdrawalStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -21830,6 +22074,14 @@ export namespace Prisma {
     processedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
     transaction?: TransactionCreateNestedOneWithoutWithdrawalInput
   }
 
@@ -21845,6 +22097,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
   }
 
   export type WithdrawalCreateOrConnectWithoutUserInput = {
@@ -22181,6 +22441,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Withdrawal"> | Date | string
     updatedAt?: DateTimeFilter<"Withdrawal"> | Date | string
     transactionId?: StringNullableFilter<"Withdrawal"> | string | null
+    type?: StringNullableFilter<"Withdrawal"> | string | null
+    fee?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    netAmount?: DecimalNullableFilter<"Withdrawal"> | Decimal | DecimalJsLike | number | string | null
+    pixKey?: StringNullableFilter<"Withdrawal"> | string | null
+    protocol?: StringNullableFilter<"Withdrawal"> | string | null
+    walletAddress?: StringNullableFilter<"Withdrawal"> | string | null
+    network?: StringNullableFilter<"Withdrawal"> | string | null
+    hash?: StringNullableFilter<"Withdrawal"> | string | null
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -24501,6 +24769,14 @@ export namespace Prisma {
     processedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
     user: UserCreateNestedOneWithoutWithdrawalsInput
   }
 
@@ -24516,6 +24792,14 @@ export namespace Prisma {
     processedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
   }
 
   export type WithdrawalCreateOrConnectWithoutTransactionInput = {
@@ -24820,6 +25104,14 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
   }
 
@@ -24835,6 +25127,14 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AccountCreateManyUserInput = {
@@ -24983,6 +25283,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactionId?: string | null
+    type?: string | null
+    fee?: Decimal | DecimalJsLike | number | string | null
+    netAmount?: Decimal | DecimalJsLike | number | string | null
+    pixKey?: string | null
+    protocol?: string | null
+    walletAddress?: string | null
+    network?: string | null
+    hash?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -25410,6 +25718,14 @@ export namespace Prisma {
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
     transaction?: TransactionUpdateOneWithoutWithdrawalNestedInput
   }
 
@@ -25425,6 +25741,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WithdrawalUncheckedUpdateManyWithoutUserInput = {
@@ -25439,6 +25763,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    fee?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    pixKey?: NullableStringFieldUpdateOperationsInput | string | null
+    protocol?: NullableStringFieldUpdateOperationsInput | string | null
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    hash?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type P2PTradeCreateManyOfferInput = {

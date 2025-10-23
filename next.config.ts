@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Production optimizations
-  // output: "standalone", // Disabled due to Windows symlink issues
+  // Production optimizations for Vercel
+  output: "standalone",
 
   // Image optimization
   images: {
@@ -13,8 +13,15 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/img/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.vercel.app",
+        port: "",
+        pathname: "/uploads/**",
+      },
     ],
     formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 60,
   },
 
   // Security headers
@@ -35,6 +42,14 @@ const nextConfig: NextConfig = {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
           },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
         ],
       },
     ];
@@ -45,9 +60,30 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
   },
 
+  // Server external packages
+  serverExternalPackages: ["@prisma/client", "prisma"],
+
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
+  },
+
+  // Webpack optimizations
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  },
+
+  // Environment variables
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
 };
 

@@ -232,7 +232,15 @@ exports.Prisma.WithdrawalScalarFieldEnum = {
   processedAt: 'processedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  transactionId: 'transactionId'
+  transactionId: 'transactionId',
+  type: 'type',
+  fee: 'fee',
+  netAmount: 'netAmount',
+  pixKey: 'pixKey',
+  protocol: 'protocol',
+  walletAddress: 'walletAddress',
+  network: 'network',
+  hash: 'hash'
 };
 
 exports.Prisma.OrderScalarFieldEnum = {

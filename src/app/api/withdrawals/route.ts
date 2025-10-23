@@ -119,10 +119,32 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // For development, use a mock user ID (in production, get from session)
-    const userId = "dev-user-id";
+    // Get the session cookie
+    const sessionCookie = request.cookies.get("better-auth.session");
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "No session cookie found" },
+        { status: 401 }
+      );
+    }
+
+    // Find the session in the database
+    const session = await prisma.session.findUnique({
+      where: { token: sessionCookie.value },
+      include: { user: true },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired session" },
+        { status: 401 }
+      );
+    }
+
+    const userId = session.user.id;
 
     const withdrawals = await prisma.withdrawal.findMany({
       where: {
@@ -134,18 +156,23 @@ export async function GET() {
       take: 50, // Limit to last 50 withdrawals
     });
 
-    // Convert Decimal to Number for frontend
+    // Convert Decimal to Number for frontend and format for new structure
     const formattedWithdrawals = withdrawals.map((withdrawal) => ({
-      ...withdrawal,
+      id: withdrawal.id,
+      type: withdrawal.type || (withdrawal.currency === "BRL" ? "PIX" : "USDT"),
       amount: Number(withdrawal.amount),
+      status: withdrawal.status,
       createdAt: withdrawal.createdAt.toISOString(),
-      updatedAt: withdrawal.updatedAt.toISOString(),
-      processedAt: withdrawal.processedAt?.toISOString() || null,
+      hash: withdrawal.hash || null,
+      protocol: withdrawal.protocol || null,
+      pixKey: withdrawal.pixKey || null,
+      walletAddress: withdrawal.walletAddress || null,
+      network: withdrawal.network || null,
     }));
 
     return NextResponse.json({
       success: true,
-      withdrawals: formattedWithdrawals,
+      data: formattedWithdrawals,
     });
   } catch (error) {
     console.error("Failed to fetch withdrawals:", error);

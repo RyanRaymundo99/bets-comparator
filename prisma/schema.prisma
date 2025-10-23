@@ -163,6 +163,20 @@ model Withdrawal {
   transaction   Transaction?     @relation(fields: [transactionId], references: [id])
   user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // New fields for PIX and USDT withdrawals
+  type          String?          // "PIX" or "USDT"
+  fee           Decimal?         @db.Decimal(20, 2) // Withdrawal fee
+  netAmount     Decimal?         @db.Decimal(20, 2) // Amount after fee
+  
+  // PIX specific fields
+  pixKey        String?          // PIX key (email, CPF, phone)
+  protocol      String?          // PIX protocol number
+  
+  // USDT specific fields
+  walletAddress String?          // Destination wallet address
+  network       String?          // Network (TRC20, ERC20, BSC)
+  hash          String?          // Transaction hash
+
   @@map("withdrawal")
 }
 

@@ -86,7 +86,7 @@ export default function AdminDashboard() {
     balanceChange: 0,
   });
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [, setChartData] = useState<ChartData[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<keyof Transaction>("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");

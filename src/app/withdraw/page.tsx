@@ -11,8 +11,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, TrendingDown, Wallet, Coins, History } from "lucide-react";
+import { 
+  ArrowLeft, 
+  TrendingDown, 
+  Wallet, 
+  Coins, 
+  History, 
+  CreditCard,
+  CheckCircle,
+  Clock,
+  XCircle,
+  ExternalLink
+} from "lucide-react";
 import Link from "next/link";
 import NavbarNew from "@/components/ui/navbar-new";
 import Breadcrumb from "@/components/ui/breadcrumb";
@@ -31,24 +57,39 @@ interface WalletData {
   lastUpdated: string;
 }
 
+interface WithdrawalHistory {
+  id: string;
+  type: "PIX" | "USDT";
+  amount: number;
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "REJECTED";
+  createdAt: string;
+  hash?: string; // Para USDT
+  protocol?: string; // Para PIX
+  pixKey?: string; // Para PIX
+  walletAddress?: string; // Para USDT
+  network?: string; // Para USDT
+}
+
+type WithdrawalType = "PIX" | "USDT";
+
 export default function WithdrawPage() {
   const [walletData, setWalletData] = useState<WalletData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [usdtAmount, setUsdtAmount] = useState("");
+  const [withdrawalType, setWithdrawalType] = useState<WithdrawalType>("PIX");
   const [processing, setProcessing] = useState(false);
-  const [withdrawalHistory, setWithdrawalHistory] = useState<
-    Array<{
-      id?: string;
-      amount?: number;
-      currency?: string;
-      status?: string;
-      createdAt?: string;
-      description?: string;
-      usdtAmount?: number;
-      brlAmount?: number;
-      [key: string]: unknown;
-    }>
-  >([]);
+  const [withdrawalHistory, setWithdrawalHistory] = useState<WithdrawalHistory[]>([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // PIX Form States
+  const [pixAmount, setPixAmount] = useState("");
+  const [pixKey, setPixKey] = useState("");
+  const [pixPassword, setPixPassword] = useState("");
+
+  // USDT Form States
+  const [usdtAmount, setUsdtAmount] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+  const [selectedNetwork, setSelectedNetwork] = useState("TRC20");
 
   const { toast } = useToast();
 
@@ -85,12 +126,95 @@ export default function WithdrawPage() {
     }
   };
 
-  // Sell USDT for BRL
-  const handleSellUSDT = async () => {
+  // Handle PIX withdrawal
+  const handlePIXWithdrawal = async () => {
+    if (!pixAmount || parseFloat(pixAmount) <= 0) {
+      toast({
+        title: "Valor Inválido",
+        description: "Por favor, insira um valor válido",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!pixKey.trim()) {
+      toast({
+        title: "Chave PIX Obrigatória",
+        description: "Por favor, insira sua chave PIX",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!pixPassword.trim()) {
+      toast({
+        title: "Senha Obrigatória",
+        description: "Por favor, insira sua senha de confirmação",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const brlBalance = walletData?.balances.find((b) => b.currency === "BRL");
+    if (!brlBalance || parseFloat(pixAmount) > brlBalance.amount) {
+      toast({
+        title: "Saldo Insuficiente",
+        description: "Você não possui saldo suficiente em BRL",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setProcessing(true);
+      const response = await fetch("/api/withdraw/pix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: parseFloat(pixAmount),
+          pixKey: pixKey.trim(),
+          password: pixPassword,
+        }),
+      });
+
+      if (response.ok) {
+        setSuccessMessage("Saque solicitado com sucesso. O valor será transferido em até 1 hora útil.");
+        setShowSuccessModal(true);
+        setPixAmount("");
+        setPixKey("");
+        setPixPassword("");
+        fetchWalletData();
+        fetchWithdrawalHistory();
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to process PIX withdrawal");
+      }
+    } catch (error) {
+      toast({
+        title: "Erro no Saque",
+        description: error instanceof Error ? error.message : "Falha ao processar saque PIX",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // Handle USDT withdrawal
+  const handleUSDTWithdrawal = async () => {
     if (!usdtAmount || parseFloat(usdtAmount) <= 0) {
       toast({
-        title: "Invalid Amount",
-        description: "Please enter a valid USDT amount",
+        title: "Valor Inválido",
+        description: "Por favor, insira um valor válido em USDT",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!walletAddress.trim()) {
+      toast({
+        title: "Endereço Obrigatório",
+        description: "Por favor, insira o endereço da carteira",
         variant: "destructive",
       });
       return;
@@ -99,8 +223,8 @@ export default function WithdrawPage() {
     const usdtBalance = walletData?.balances.find((b) => b.currency === "USDT");
     if (!usdtBalance || parseFloat(usdtAmount) > usdtBalance.amount) {
       toast({
-        title: "Insufficient Balance",
-        description: "You don&apos;t have enough USDT to sell",
+        title: "Saldo Insuficiente",
+        description: "Você não possui saldo suficiente em USDT",
         variant: "destructive",
       });
       return;
@@ -108,30 +232,31 @@ export default function WithdrawPage() {
 
     try {
       setProcessing(true);
-      const response = await fetch("/api/crypto/sell-usdt", {
+      const response = await fetch("/api/withdraw/crypto", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usdtAmount: parseFloat(usdtAmount) }),
+        body: JSON.stringify({
+          amount: parseFloat(usdtAmount),
+          walletAddress: walletAddress.trim(),
+          network: selectedNetwork,
+        }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        toast({
-          title: "Success",
-          description: `Successfully sold ${data.usdtAmount} USDT for ${data.brlAmount} BRL`,
-        });
+        setSuccessMessage("Transação enviada para processamento. Aguarde a confirmação na blockchain.");
+        setShowSuccessModal(true);
         setUsdtAmount("");
-        fetchWalletData(); // Refresh wallet data
-        fetchWithdrawalHistory(); // Refresh withdrawal history
+        setWalletAddress("");
+        fetchWalletData();
+        fetchWithdrawalHistory();
       } else {
         const error = await response.json();
-        throw new Error(error.error || "Failed to sell USDT");
+        throw new Error(error.error || "Failed to process USDT withdrawal");
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to sell USDT",
+        title: "Erro no Saque",
+        description: error instanceof Error ? error.message : "Falha ao processar saque USDT",
         variant: "destructive",
       });
     } finally {
@@ -139,11 +264,49 @@ export default function WithdrawPage() {
     }
   };
 
-  // Calculate BRL amount user will receive
-  const calculateBRLAmount = () => {
+  // Calculate PIX net amount (3% fee)
+  const calculatePIXNetAmount = () => {
+    if (!pixAmount || parseFloat(pixAmount) <= 0) return 0;
+    const amount = parseFloat(pixAmount);
+    const fee = amount * 0.03; // 3% fee
+    return amount - fee;
+  };
+
+  // Calculate USDT net amount (1 USDT fee)
+  const calculateUSDTNetAmount = () => {
     if (!usdtAmount || parseFloat(usdtAmount) <= 0) return 0;
-    // Using the same rate as buy: 1 USDT = R$ 5.00
-    return parseFloat(usdtAmount) * 5.0;
+    const amount = parseFloat(usdtAmount);
+    return amount - 1; // 1 USDT fee
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
+      case "PROCESSING":
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Processando</Badge>;
+      case "COMPLETED":
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Concluído</Badge>;
+      case "REJECTED":
+        return <Badge variant="secondary" className="bg-red-100 text-red-800">Rejeitado</Badge>;
+      default:
+        return <Badge variant="secondary">Desconhecido</Badge>;
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return <Clock className="h-4 w-4 text-yellow-600" />;
+      case "PROCESSING":
+        return <Clock className="h-4 w-4 text-blue-600" />;
+      case "COMPLETED":
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case "REJECTED":
+        return <XCircle className="h-4 w-4 text-red-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-600" />;
+    }
   };
 
   useEffect(() => {
@@ -163,7 +326,7 @@ export default function WithdrawPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p>Loading withdrawal page...</p>
+              <p>Carregando página de saque...</p>
             </div>
           </div>
         </div>
@@ -194,112 +357,220 @@ export default function WithdrawPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Withdraw Funds</h1>
+            <h1 className="text-3xl font-bold">Withdraw Funds — Saque de Fundos</h1>
             <p className="text-muted-foreground">
-              Sell your USDT for BRL and withdraw to your account
+              Escolha o método de saque e retire seus fundos
             </p>
           </div>
         </div>
 
+        {/* Withdrawal Type Selection */}
+        <div className="flex gap-4 mb-8">
+          <Button
+            variant={withdrawalType === "PIX" ? "default" : "outline"}
+            onClick={() => setWithdrawalType("PIX")}
+            className="flex items-center gap-2 px-6 py-3"
+          >
+            <CreditCard className="h-5 w-5" />
+            💵 Saque via PIX (BRL)
+          </Button>
+          <Button
+            variant={withdrawalType === "USDT" ? "default" : "outline"}
+            onClick={() => setWithdrawalType("USDT")}
+            className="flex items-center gap-2 px-6 py-3"
+          >
+            <Coins className="h-5 w-5" />
+            🪙 Saque via USDT
+          </Button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Withdrawal Card */}
+          {/* Main Withdrawal Form */}
           <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-red-600">
-                  <TrendingDown className="h-5 w-5" />
-                  Sell USDT for BRL
-                </CardTitle>
-                <CardDescription>
-                  Convert your USDT back to Brazilian Real
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Current Balances */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Coins className="h-5 w-5 text-green-500" />
-                      <span className="text-sm text-muted-foreground">
-                        USDT Balance
+            {withdrawalType === "PIX" ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-600">
+                    <CreditCard className="h-5 w-5" />
+                    Saque via PIX (BRL)
+                  </CardTitle>
+                  <CardDescription>
+                    Transfira seus fundos em BRL para sua conta via PIX
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* BRL Balance */}
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Wallet className="h-5 w-5 text-green-600" />
+                      <span className="text-sm font-medium text-green-800">
+                        Saldo disponível:
                       </span>
                     </div>
-                    <p className="text-2xl font-bold text-green-600">
-                      {usdtBalance ? usdtBalance.amount.toFixed(2) : "0.00"}{" "}
-                      USDT
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      ≈ R${" "}
-                      {(usdtBalance ? usdtBalance.amount * 5.0 : 0).toFixed(2)}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Wallet className="h-5 w-5 text-blue-500" />
-                      <span className="text-sm text-muted-foreground">
-                        BRL Balance
-                      </span>
-                    </div>
-                    <p className="text-2xl font-bold text-blue-600">
+                    <p className="text-2xl font-bold text-green-700">
                       R$ {brlBalance ? brlBalance.amount.toFixed(2) : "0.00"}
                     </p>
                   </div>
-                </div>
 
-                {/* Withdrawal Form */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium">
-                      Amount to Sell (USDT)
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={usdtAmount}
-                      onChange={(e) => setUsdtAmount(e.target.value)}
-                      min="0"
-                      step="0.01"
-                      max={usdtBalance ? usdtBalance.amount : undefined}
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Available:{" "}
-                      {usdtBalance ? usdtBalance.amount.toFixed(2) : "0.00"}{" "}
-                      USDT
+                  {/* PIX Form */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="pix-amount">Valor a sacar (BRL)</Label>
+                      <Input
+                        id="pix-amount"
+                        type="number"
+                        placeholder="0.00"
+                        value={pixAmount}
+                        onChange={(e) => setPixAmount(e.target.value)}
+                        min="0"
+                        step="0.01"
+                        max={brlBalance ? brlBalance.amount : undefined}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="pix-key">Chave PIX</Label>
+                      <Input
+                        id="pix-key"
+                        type="text"
+                        placeholder="E-mail, CPF ou telefone"
+                        value={pixKey}
+                        onChange={(e) => setPixKey(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="pix-password">Senha de confirmação</Label>
+                      <Input
+                        id="pix-password"
+                        type="password"
+                        placeholder="Digite sua senha"
+                        value={pixPassword}
+                        onChange={(e) => setPixPassword(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Fee Calculation */}
+                    <div className="p-4 bg-muted rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-muted-foreground">Taxa (3%):</span>
+                        <span className="text-sm font-medium text-red-600">
+                          -R$ {pixAmount ? (parseFloat(pixAmount) * 0.03).toFixed(2) : "0.00"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Você receberá:</span>
+                        <span className="text-lg font-bold text-green-600">
+                          R$ {calculatePIXNetAmount().toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handlePIXWithdrawal}
+                      disabled={
+                        processing || !pixAmount || !pixKey || !pixPassword || parseFloat(pixAmount) <= 0
+                      }
+                      className="w-full bg-green-600 hover:bg-green-700"
+                    >
+                      {processing ? "Processando..." : "Confirmar Saque via PIX"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-600">
+                    <Coins className="h-5 w-5" />
+                    Saque via USDT
+                  </CardTitle>
+                  <CardDescription>
+                    Envie USDT para sua carteira externa
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* USDT Balance */}
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Coins className="h-5 w-5 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-800">
+                        Saldo disponível:
+                      </span>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-700">
+                      {usdtBalance ? usdtBalance.amount.toFixed(2) : "0.00"} USDT
                     </p>
                   </div>
 
-                  {/* Conversion Preview */}
-                  <div className="p-4 bg-muted rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        You&apos;ll Receive:
-                      </span>
-                      <span className="text-lg font-semibold text-green-600">
-                        R$ {calculateBRLAmount().toFixed(2)}
-                      </span>
+                  {/* USDT Form */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="usdt-amount">Valor a sacar (USDT)</Label>
+                      <Input
+                        id="usdt-amount"
+                        type="number"
+                        placeholder="0.00"
+                        value={usdtAmount}
+                        onChange={(e) => setUsdtAmount(e.target.value)}
+                        min="0"
+                        step="0.01"
+                        max={usdtBalance ? usdtBalance.amount : undefined}
+                      />
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-sm text-muted-foreground">
-                        Exchange Rate:
-                      </span>
-                      <span className="text-sm font-medium">
-                        1 USDT = R$ 5.00
-                      </span>
-                    </div>
-                  </div>
 
-                  <Button
-                    onClick={handleSellUSDT}
-                    disabled={
-                      processing || !usdtAmount || parseFloat(usdtAmount) <= 0
-                    }
-                    className="w-full bg-red-600 hover:bg-red-700"
-                  >
-                    {processing ? "Processing..." : "Sell USDT for BRL"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                    <div>
+                      <Label htmlFor="wallet-address">Endereço da carteira</Label>
+                      <Input
+                        id="wallet-address"
+                        type="text"
+                        placeholder="Digite o endereço da carteira"
+                        value={walletAddress}
+                        onChange={(e) => setWalletAddress(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="network">Rede</Label>
+                      <Select value={selectedNetwork} onValueChange={setSelectedNetwork}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a rede" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="TRC20">TRC20 (Tron)</SelectItem>
+                          <SelectItem value="ERC20">ERC20 (Ethereum)</SelectItem>
+                          <SelectItem value="BSC">BSC (Binance Smart Chain)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Fee Calculation */}
+                    <div className="p-4 bg-muted rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-muted-foreground">Taxa de rede:</span>
+                        <span className="text-sm font-medium text-red-600">-1 USDT</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Total líquido:</span>
+                        <span className="text-lg font-bold text-blue-600">
+                          {calculateUSDTNetAmount().toFixed(2)} USDT
+                        </span>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleUSDTWithdrawal}
+                      disabled={
+                        processing || !usdtAmount || !walletAddress || parseFloat(usdtAmount) <= 0
+                      }
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      {processing ? "Processando..." : "Enviar USDT"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -344,7 +615,7 @@ export default function WithdrawPage() {
                     View Wallet
                   </Button>
                 </Link>
-                <Link href="/wallet">
+                <Link href="/trade">
                   <Button variant="outline" className="w-full justify-start">
                     <TrendingDown className="h-4 w-4 mr-2" />
                     Trade Crypto
@@ -360,48 +631,101 @@ export default function WithdrawPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <History className="h-5 w-5" />
-              Withdrawal History
+              Histórico de Saques
             </CardTitle>
-            <CardDescription>Recent USDT to BRL conversions</CardDescription>
+            <CardDescription>Histórico completo de saques realizados</CardDescription>
           </CardHeader>
           <CardContent>
             {withdrawalHistory.length > 0 ? (
-              <div className="space-y-3">
-                {withdrawalHistory.map((withdrawal, index) => (
-                  <div
-                    key={withdrawal.id || index}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium">
-                        {withdrawal.description || "USDT to BRL Conversion"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {withdrawal.createdAt
-                          ? new Date(withdrawal.createdAt).toLocaleString()
-                          : "Unknown date"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <Badge variant="secondary">WITHDRAWAL</Badge>
-                      <p className="font-semibold mt-1">
-                        -{withdrawal.usdtAmount?.toFixed(2) || "0.00"} USDT
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        +R$ {withdrawal.brlAmount?.toFixed(2) || "0.00"}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4">Data</th>
+                      <th className="text-left py-3 px-4">Tipo</th>
+                      <th className="text-left py-3 px-4">Valor</th>
+                      <th className="text-left py-3 px-4">Status</th>
+                      <th className="text-left py-3 px-4">Hash/Protocolo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withdrawalHistory.map((withdrawal) => (
+                      <tr key={withdrawal.id} className="border-b hover:bg-muted/50">
+                        <td className="py-3 px-4">
+                          {new Date(withdrawal.createdAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge variant={withdrawal.type === "PIX" ? "default" : "secondary"}>
+                            {withdrawal.type === "PIX" ? "PIX" : "USDT"}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4 font-medium">
+                          {withdrawal.type === "PIX" 
+                            ? `R$ ${withdrawal.amount.toFixed(2)}`
+                            : `${withdrawal.amount.toFixed(2)} USDT`
+                          }
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(withdrawal.status)}
+                            {getStatusBadge(withdrawal.status)}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          {withdrawal.hash ? (
+                            <div className="flex items-center gap-2">
+                              <code className="text-xs bg-muted px-2 py-1 rounded">
+                                {withdrawal.hash.slice(0, 8)}...
+                              </code>
+                              <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                          ) : withdrawal.protocol ? (
+                            <code className="text-xs bg-muted px-2 py-1 rounded">
+                              {withdrawal.protocol}
+                            </code>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             ) : (
               <p className="text-center text-muted-foreground py-8">
-                No withdrawal history found. Start by selling some USDT for BRL.
+                Nenhum histórico de saque encontrado. Realize seu primeiro saque para ver o histórico aqui.
               </p>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              Saque Processado
+            </DialogTitle>
+            <DialogDescription>
+              {successMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setShowSuccessModal(false)}>
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
