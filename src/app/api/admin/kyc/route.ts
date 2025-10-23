@@ -3,12 +3,15 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Get all users with KYC data
+    // Get all users with KYC data (any document uploaded)
     const users = await prisma.user.findMany({
       where: {
-        documentType: {
-          not: null,
-        },
+        OR: [
+          { documentType: { not: null } },
+          { documentFront: { not: null } },
+          { documentBack: { not: null } },
+          { documentSelfie: { not: null } },
+        ],
       },
       select: {
         id: true,

@@ -41,15 +41,15 @@ interface KYCUser {
   name: string;
   email: string;
   cpf: string;
-  documentType: string;
-  documentNumber: string;
-  documentFront: string;
-  documentBack: string;
-  documentSelfie: string;
+  documentType?: string | null;
+  documentNumber?: string | null;
+  documentFront?: string | null;
+  documentBack?: string | null;
+  documentSelfie?: string | null;
   kycStatus: "PENDING" | "APPROVED" | "REJECTED";
-  kycSubmittedAt: string;
-  kycReviewedAt?: string;
-  kycRejectionReason?: string;
+  kycSubmittedAt?: string | null;
+  kycReviewedAt?: string | null;
+  kycRejectionReason?: string | null;
   createdAt: string;
 }
 
@@ -262,7 +262,8 @@ const AdminKYCPage = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString("pt-BR", {
       year: "numeric",
       month: "short",
@@ -419,7 +420,7 @@ const AdminKYCPage = () => {
                           {getStatusBadge(user.kycStatus)}
                         </div>
                         <p className="text-xs text-gray-400">
-                          Submitted: {formatDate(user.kycSubmittedAt)}
+                          Submitted: {user.kycSubmittedAt ? formatDate(user.kycSubmittedAt) : 'N/A'}
                         </p>
                         {user.kycReviewedAt && (
                           <p className="text-xs text-gray-400">
@@ -480,7 +481,7 @@ const AdminKYCPage = () => {
                                     Document Type
                                   </label>
                                   <p className="text-sm text-white">
-                                    {user.documentType}
+                                    {user.documentType || 'N/A'}
                                   </p>
                                 </div>
                                 <div>
@@ -488,7 +489,7 @@ const AdminKYCPage = () => {
                                     Document Number
                                   </label>
                                   <p className="text-sm text-white">
-                                    {user.documentNumber}
+                                    {user.documentNumber || 'N/A'}
                                   </p>
                                 </div>
                                 <div>
@@ -508,68 +509,81 @@ const AdminKYCPage = () => {
                                     Document Front
                                     <ZoomIn className="w-4 h-4 text-gray-400" />
                                   </h4>
-                                  <div
-                                    className="relative cursor-pointer group"
-                                    onClick={() =>
-                                      handleImageClick(
-                                        user.documentFront,
-                                        "Document Front",
-                                        "Document Front"
-                                      )
-                                    }
-                                  >
-                                    <img
-                                      src={user.documentFront}
-                                      alt="Document Front"
-                                      className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
-                                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  {user.documentFront ? (
+                                    <div
+                                      className="relative cursor-pointer group"
+                                      onClick={() =>
+                                        handleImageClick(
+                                          user.documentFront!,
+                                          "Document Front",
+                                          "Document Front"
+                                        )
+                                      }
+                                    >
+                                      <img
+                                        src={user.documentFront}
+                                        alt="Document Front"
+                                        className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
+                                      />
+                                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
+                                        <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                      </div>
                                     </div>
-                                  </div>
+                                  ) : (
+                                    <div className="w-full h-48 bg-gray-700 rounded-lg border border-gray-600 flex items-center justify-center">
+                                      <p className="text-gray-400">No document uploaded</p>
+                                    </div>
+                                  )}
                                 </div>
                                 <div>
                                   <h4 className="font-medium text-white mb-2 flex items-center gap-2">
                                     Document Back
                                     <ZoomIn className="w-4 h-4 text-gray-400" />
                                   </h4>
-                                  <div
-                                    className="relative cursor-pointer group"
-                                    onClick={() =>
-                                      handleImageClick(
-                                        user.documentBack,
-                                        "Document Back",
-                                        "Document Back"
-                                      )
-                                    }
-                                  >
-                                    <img
-                                      src={user.documentBack}
-                                      alt="Document Back"
-                                      className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
+                                  {user.documentBack ? (
+                                    <div
+                                      className="relative cursor-pointer group"
+                                      onClick={() =>
+                                        handleImageClick(
+                                          user.documentBack!,
+                                          "Document Back",
+                                          "Document Back"
+                                        )
+                                      }
+                                    >
+                                      <img
+                                        src={user.documentBack}
+                                        alt="Document Back"
+                                        className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
                                     />
                                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
                                       <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
                                   </div>
+                                  ) : (
+                                    <div className="w-full h-48 bg-gray-700 rounded-lg border border-gray-600 flex items-center justify-center">
+                                      <p className="text-gray-400">No document uploaded</p>
+                                    </div>
+                                  )}
                                 </div>
                                 <div>
                                   <h4 className="font-medium text-white mb-2 flex items-center gap-2">
                                     Selfie with Document
                                     <ZoomIn className="w-4 h-4 text-gray-400" />
                                   </h4>
-                                  <div
-                                    className="relative cursor-pointer group"
-                                    onClick={() =>
-                                      handleImageClick(
-                                        user.documentSelfie,
-                                        "Selfie with Document",
-                                        "Selfie with Document"
-                                      )
-                                    }
-                                  >
-                                    <img
-                                      src={user.documentSelfie}
+                                  {user.documentSelfie ? (
+                                    <div
+                                      className="relative cursor-pointer group"
+                                      onClick={() =>
+                                        handleImageClick(
+                                          user.documentSelfie!,
+                                          "Selfie with Document",
+                                          "Selfie with Document"
+                                        )
+                                      }
+                                    >
+                                      <img
+                                        src={user.documentSelfie}
                                       alt="Selfie with Document"
                                       className="w-full h-48 object-cover rounded-lg border border-gray-600 group-hover:border-blue-500 transition-colors"
                                     />
@@ -577,6 +591,11 @@ const AdminKYCPage = () => {
                                       <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
                                   </div>
+                                  ) : (
+                                    <div className="w-full h-48 bg-gray-700 rounded-lg border border-gray-600 flex items-center justify-center">
+                                      <p className="text-gray-400">No document uploaded</p>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
 
@@ -587,9 +606,9 @@ const AdminKYCPage = () => {
                                   Fraud Detection Analysis
                                 </h4>
                                 <ImageAnalysisPanel
-                                  documentFront={user.documentFront}
-                                  documentBack={user.documentBack}
-                                  selfie={user.documentSelfie}
+                                  documentFront={user.documentFront || ''}
+                                  documentBack={user.documentBack || ''}
+                                  selfie={user.documentSelfie || ''}
                                   onAnalysisComplete={(result) => {
                                     console.log("Analysis complete:", result);
                                   }}
