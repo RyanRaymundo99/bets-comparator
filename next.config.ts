@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Production optimizations for Vercel
-  output: "standalone",
+  // Remove standalone output for Vercel compatibility
+  // output: "standalone",
 
   // Image optimization
   images: {

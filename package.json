@@ -7,12 +7,20 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
+    "db:reset": "prisma db push --force-reset",
     "vercel-build": "prisma generate && next build",
-    "type-check": "tsc --noEmit"
+    "deploy:vercel": "vercel --prod",
+    "deploy:preview": "vercel",
+    "deploy:check": "npm run type-check && npm run lint && npm run build",
+    "clean": "rm -rf .next && rm -rf node_modules/.cache",
+    "clean:install": "npm run clean && npm install",
+    "preview": "npm run build && npm run start"
   },
   "dependencies": {
     "@binance/connector": "^3.6.1",
