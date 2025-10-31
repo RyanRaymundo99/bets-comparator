@@ -2,14 +2,16 @@
 
 import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema } from "@/lib/schema/signupSchema";
+import { signUpSchema, SignUpFormValues } from "@/lib/schema/signupSchema";
 import {
   CheckCircle,
   Upload,
@@ -18,15 +20,16 @@ import {
   ArrowRight,
   ArrowLeft,
 } from "lucide-react";
-
-interface SignUpFormValues {
-  name: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  password: string;
-  confirmPassword: string;
-}
+import {
+  PasswordField,
+  ConfirmPasswordField,
+} from "@/components/Auth/PasswordField";
+import {
+  FormField,
+  FormItem,
+  FormControl,
+  FormProvider,
+} from "@/components/ui/form";
 
 interface KYCDocumentData {
   documentFront: File;
@@ -46,7 +49,7 @@ const SignupWithMandatoryKYC = () => {
   const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signUpSchema) as any,
     defaultValues: {
       name: "",
       email: "",
@@ -54,6 +57,8 @@ const SignupWithMandatoryKYC = () => {
       cpf: "",
       password: "",
       confirmPassword: "",
+      acceptMarketing: false,
+      acceptTerms: false,
     },
   });
 
@@ -255,96 +260,165 @@ const SignupWithMandatoryKYC = () => {
       </CardHeader>
       <CardContent>
         {currentStep === "info" && (
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" {...form.register("name")} className="mt-1" />
-              {form.formState.errors.name && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.name.message}
-                </p>
-              )}
-            </div>
+          <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" {...form.register("name")} className="mt-1" />
+                {form.formState.errors.name && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {form.formState.errors.name.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                {...form.register("email")}
-                className="mt-1"
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...form.register("email")}
+                  className="mt-1"
+                />
+                {form.formState.errors.email && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {form.formState.errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  {...form.register("phone")}
+                  className="mt-1"
+                />
+                {form.formState.errors.phone && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {form.formState.errors.phone.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="cpf">CPF</Label>
+                <Input id="cpf" {...form.register("cpf")} className="mt-1" />
+                {form.formState.errors.cpf && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {form.formState.errors.cpf.message}
+                  </p>
+                )}
+              </div>
+
+              <PasswordField
+                control={form.control as any}
+                name="password"
+                label="Senha"
+                placeholder="Digite sua senha"
+                description="A senha precisa seguir os padrões listados abaixo do campo"
               />
-              {form.formState.errors.email && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.email.message}
-                </p>
-              )}
-            </div>
 
-            <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" {...form.register("phone")} className="mt-1" />
-              {form.formState.errors.phone && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.phone.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="cpf">CPF</Label>
-              <Input id="cpf" {...form.register("cpf")} className="mt-1" />
-              {form.formState.errors.cpf && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.cpf.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                {...form.register("password")}
-                className="mt-1"
+              <ConfirmPasswordField
+                control={form.control as any}
+                name="confirmPassword"
+                passwordValue={form.watch("password")}
+                label="Confirme sua senha"
+                placeholder="Digite sua senha novamente"
               />
-              {form.formState.errors.password && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.password.message}
-                </p>
-              )}
-            </div>
 
-            <div>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                {...form.register("confirmPassword")}
-                className="mt-1"
+              {/* Marketing Opt-in Checkbox */}
+              <FormField
+                control={form.control as any}
+                name="acceptMarketing"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-start gap-3 pt-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="border-gray-700 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 bg-black/50 backdrop-blur-[5px] mt-1"
+                        />
+                      </FormControl>
+                      <label
+                        htmlFor="acceptMarketing"
+                        className="text-sm text-foreground leading-relaxed cursor-pointer flex-1"
+                        onClick={() => field.onChange(!field.value)}
+                      >
+                        Aceito receber e-mail ou SMS da{" "}
+                        <span className="bg-gray-700 px-2 py-0.5 rounded text-gray-300">
+                          bsmarket
+                        </span>
+                        . Você pode cancelar depois.
+                      </label>
+                    </div>
+                  </FormItem>
+                )}
               />
-              {form.formState.errors.confirmPassword && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating Account...
-                </>
-              ) : (
-                <>
-                  Create Account
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </Button>
-          </form>
+              {/* Terms and Privacy Checkbox */}
+              <FormField
+                control={form.control as any}
+                name="acceptTerms"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-start gap-3 pt-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="border-gray-700 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 bg-black/50 backdrop-blur-[5px] mt-1"
+                        />
+                      </FormControl>
+                      <label
+                        htmlFor="acceptTerms"
+                        className="text-sm text-foreground leading-relaxed cursor-pointer flex-1"
+                        onClick={() => field.onChange(!field.value)}
+                      >
+                        Ao criar a conta, aceito os termos do{" "}
+                        <Link
+                          href="/terms"
+                          className="text-yellow-400 hover:text-yellow-300 underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Contrato de Prestação de Serviços
+                        </Link>{" "}
+                        e{" "}
+                        <Link
+                          href="/privacy"
+                          className="text-yellow-400 hover:text-yellow-300 underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Política de Privacidade
+                        </Link>
+                        .
+                      </label>
+                    </div>
+                    {form.formState.errors.acceptTerms && (
+                      <p className="text-sm text-red-500 mt-2 ml-7">
+                        {form.formState.errors.acceptTerms.message}
+                      </p>
+                    )}
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </FormProvider>
         )}
 
         {currentStep === "kyc" && (

@@ -23,11 +23,28 @@ export const signUpSchema = z
       }),
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters" }),
+      .min(6, { message: "A senha deve ter no mínimo 6 caracteres" })
+      .max(20, { message: "A senha deve ter no máximo 20 caracteres" })
+      .refine((pwd) => /[a-z]/.test(pwd), {
+        message: "A senha deve conter letras minúsculas",
+      })
+      .refine((pwd) => /[A-Z]/.test(pwd), {
+        message: "A senha deve conter letras maiúsculas",
+      })
+      .refine((pwd) => /[0-9]/.test(pwd), {
+        message: "A senha deve conter pelo menos um número",
+      })
+      .refine((pwd) => /[!@#$%^&*(),.?":{}|<>]/.test(pwd), {
+        message: "A senha deve conter pelo menos um caractere especial",
+      }),
     confirmPassword: z.string(),
+    acceptMarketing: z.boolean(),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: "Você deve aceitar os termos para criar uma conta",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "As senhas não coincidem",
     path: ["confirmPassword"],
   });
 

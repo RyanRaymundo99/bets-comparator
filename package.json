@@ -58,6 +58,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-otp-input": "^3.1.1",
+    "recharts": "^3.3.0",
     "speakeasy": "^2.0.0",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",

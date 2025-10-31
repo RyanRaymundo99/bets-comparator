@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ChevronDown, Wallet } from "lucide-react";
+import { Wallet, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,9 +21,9 @@ interface BalanceDisplayProps {
 
 export function BalanceDisplay({ className }: BalanceDisplayProps) {
   const [balances, setBalances] = useState<Balance[]>([]);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>("BRL");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBalances = async () => {
@@ -33,18 +33,6 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
         if (response.ok) {
           const data = await response.json();
           setBalances(data.balances || []);
-
-          // Set default currency to first available or BRL
-          if (data.balances && data.balances.length > 0) {
-            const brlBalance = data.balances.find(
-              (b: Balance) => b.currency === "BRL"
-            );
-            if (brlBalance) {
-              setSelectedCurrency("BRL");
-            } else {
-              setSelectedCurrency(data.balances[0].currency);
-            }
-          }
         } else {
           setError("Failed to fetch balances");
         }
@@ -56,7 +44,20 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
       }
     };
 
+    const fetchUserName = async () => {
+      try {
+        const response = await fetch("/api/user/status");
+        if (response.ok) {
+          const data = await response.json();
+          setUserName(data.user?.name || null);
+        }
+      } catch (err) {
+        console.error("Error fetching user name:", err);
+      }
+    };
+
     fetchBalances();
+    fetchUserName();
   }, []);
 
   const formatBalance = (amount: number, currency: string) => {
@@ -68,29 +69,23 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
         maximumFractionDigits: 2,
       }).format(amount);
     } else {
-      return `${amount.toFixed(8)} ${currency}`;
+      // For USDT and other cryptos, show with more decimal places
+      return `${amount.toFixed(2)} ${currency}`;
     }
   };
 
-  const getCurrentBalance = () => {
-    const balance = balances.find((b) => b.currency === selectedCurrency);
+  const getBalance = (currency: string) => {
+    const balance = balances.find((b) => b.currency === currency);
     return balance ? balance.amount : 0;
   };
 
-  const getCurrencyIcon = (currency: string) => {
-    switch (currency) {
-      case "BRL":
-        return "R$";
-      case "BTC":
-        return "₿";
-      case "ETH":
-        return "Ξ";
-      case "USDT":
-        return "₮";
-      default:
-        return currency;
-    }
+  // Extract first name from full name
+  const getFirstName = (fullName: string | null) => {
+    if (!fullName) return null;
+    return fullName.split(" ")[0];
   };
+
+  const firstName = getFirstName(userName);
 
   if (isLoading) {
     return (
@@ -114,52 +109,49 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
     );
   }
 
+  const brlBalance = getBalance("BRL");
+  const usdtBalance = getBalance("USDT");
+
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      {/* Balance Display */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors">
-        <Wallet className="w-4 h-4 text-blue-300" />
-        <span className="text-sm font-medium">
-          {formatBalance(getCurrentBalance(), selectedCurrency)}
-        </span>
-      </div>
-
-      {/* Currency Dropdown */}
+      {/* Balance Display Button with Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 px-2 text-white hover:text-blue-300 hover:bg-white/10"
+            className="h-8 px-3 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors gap-2"
           >
-            <span className="text-sm font-medium mr-1">
-              {getCurrencyIcon(selectedCurrency)}
-            </span>
+            <Wallet className="w-4 h-4 text-blue-300" />
+            {firstName && (
+              <span className="text-sm font-medium">{firstName}</span>
+            )}
             <ChevronDown className="w-3 h-3" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-32 bg-black/90 border border-white/20 backdrop-blur-md"
+          className="w-48 bg-black/90 border border-white/20 backdrop-blur-md"
         >
-          {balances.map((balance) => (
-            <DropdownMenuItem
-              key={balance.currency}
-              onClick={() => setSelectedCurrency(balance.currency)}
-              className={`text-white hover:bg-white/20 focus:bg-white/20 cursor-pointer ${
-                selectedCurrency === balance.currency
-                  ? "bg-blue-500/20 text-blue-300"
-                  : ""
-              }`}
-            >
-              <div className="flex items-center justify-between w-full">
-                <span className="text-sm">{balance.currency}</span>
-                <span className="text-xs text-white/70">
-                  {formatBalance(balance.amount, balance.currency)}
-                </span>
-              </div>
-            </DropdownMenuItem>
-          ))}
+          {/* BRL Balance */}
+          <DropdownMenuItem className="text-white hover:bg-white/20 focus:bg-white/20 cursor-default">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-sm font-medium">BRL</span>
+              <span className="text-sm font-semibold text-blue-300">
+                {formatBalance(brlBalance, "BRL")}
+              </span>
+            </div>
+          </DropdownMenuItem>
+
+          {/* USDT Balance */}
+          <DropdownMenuItem className="text-white hover:bg-white/20 focus:bg-white/20 cursor-default">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-sm font-medium">USDT</span>
+              <span className="text-sm font-semibold text-blue-300">
+                {formatBalance(usdtBalance, "USDT")}
+              </span>
+            </div>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
