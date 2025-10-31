@@ -49,7 +49,7 @@ const SignupWithMandatoryKYC = () => {
   const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpSchema) as any,
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -312,7 +312,7 @@ const SignupWithMandatoryKYC = () => {
               </div>
 
               <PasswordField
-                control={form.control as any}
+                control={form.control}
                 name="password"
                 label="Senha"
                 placeholder="Digite sua senha"
@@ -320,7 +320,7 @@ const SignupWithMandatoryKYC = () => {
               />
 
               <ConfirmPasswordField
-                control={form.control as any}
+                control={form.control}
                 name="confirmPassword"
                 passwordValue={form.watch("password")}
                 label="Confirme sua senha"
@@ -329,7 +329,7 @@ const SignupWithMandatoryKYC = () => {
 
               {/* Marketing Opt-in Checkbox */}
               <FormField
-                control={form.control as any}
+                control={form.control}
                 name="acceptMarketing"
                 render={({ field }) => (
                   <FormItem>
@@ -359,7 +359,7 @@ const SignupWithMandatoryKYC = () => {
 
               {/* Terms and Privacy Checkbox */}
               <FormField
-                control={form.control as any}
+                control={form.control}
                 name="acceptTerms"
                 render={({ field }) => (
                   <FormItem>
