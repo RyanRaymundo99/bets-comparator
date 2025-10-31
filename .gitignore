@@ -168,8 +168,8 @@ ehthumbs.db
 Thumbs.db
 
 # Lock files (keep package-lock.json for consistency)
+# Note: pnpm-lock.yaml should be committed for pnpm projects
 yarn.lock
-pnpm-lock.yaml
 
 # Local development
 .local/
