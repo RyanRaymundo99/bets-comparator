@@ -256,7 +256,7 @@ export default function ClientDashboard() {
               >
                 <option value="all">Todas as Regiões</option>
                 {regions.map((region) => (
-                  <option key={region} value={region}>
+                  <option key={region} value={region || ""}>
                     {region}
                   </option>
                 ))}
@@ -292,7 +292,7 @@ export default function ClientDashboard() {
                   <div className="space-y-3">
                     {insights.rankings.map((rank: RankingItem, index: number) => (
                       <div
-                        key={rank.name}
+                        key={rank.betName}
                         className="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg"
                       >
                         <div className="text-3xl font-bold text-blue-400">
@@ -301,7 +301,7 @@ export default function ClientDashboard() {
                         <div className="flex-1">
                           <div className="flex items-center space-x-2">
                             <h4 className="text-white font-semibold">
-                              {rank.name}
+                              {rank.betName}
                             </h4>
                             {index === 0 && (
                               <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
@@ -311,7 +311,7 @@ export default function ClientDashboard() {
                             Pontuação: {rank.score}/100
                           </div>
                           <p className="text-gray-300 text-sm mt-2">
-                            {rank.reasoning}
+                            {rank.reason}
                           </p>
                         </div>
                       </div>

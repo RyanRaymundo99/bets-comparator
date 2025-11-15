@@ -7,8 +7,8 @@ export interface ValidatedSession {
     id: string;
     name: string;
     email: string;
-    approvalStatus: string;
-    kycStatus: string;
+    role: string;
+    emailVerified: boolean;
   };
   sessionId: string;
 }
@@ -33,8 +33,8 @@ export async function validateSession(
             id: true,
             name: true,
             email: true,
-            approvalStatus: true,
-            kycStatus: true,
+            role: true,
+            emailVerified: true,
           },
         },
       },

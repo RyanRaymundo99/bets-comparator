@@ -23,26 +23,22 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { name, phone } = await request.json();
+    const { name } = await request.json();
 
     // Update user profile
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         name: name || session.user.name,
-        phone: phone || session.user.phone,
         updatedAt: new Date(),
       },
       select: {
         id: true,
         name: true,
         email: true,
-        phone: true,
-        cpf: true,
-        approvalStatus: true,
-        kycStatus: true,
         emailVerified: true,
-        phoneVerified: true,
+        role: true,
+        image: true,
       },
     });
 

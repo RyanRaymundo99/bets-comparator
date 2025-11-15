@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
 // POST /api/parameters - Create or update a parameter
 export async function POST(request: NextRequest) {
@@ -70,10 +70,10 @@ export async function POST(request: NextRequest) {
       description?: string;
       type?: string;
       options?: string[];
-      valueText?: string;
-      valueNumber?: Prisma.Decimal;
-      valueBoolean?: boolean;
-      valueRating?: number;
+      valueText?: string | null;
+      valueNumber?: Decimal | null;
+      valueBoolean?: boolean | null;
+      valueRating?: number | null;
     } = {
       category,
       unit,
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       type,
       options: options || [],
       valueText: valueText !== undefined ? valueText : null,
-      valueNumber: valueNumber !== undefined ? new Prisma.Decimal(valueNumber) : null,
+      valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
       valueBoolean: valueBoolean !== undefined ? valueBoolean : null,
       valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
     };
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
           data: {
             parameterId: parameter.id,
             valueText: valueText || null,
-            valueNumber: valueNumber !== undefined ? new Prisma.Decimal(valueNumber) : null,
+            valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
             valueBoolean: valueBoolean || null,
             valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
             notes: notes || "Atualização via admin",
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
         data: {
           parameterId: parameter.id,
           valueText: valueText || null,
-          valueNumber: valueNumber !== undefined ? new Prisma.Decimal(valueNumber) : null,
+          valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
           valueBoolean: valueBoolean || null,
           valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
           notes: notes || "Valor inicial",
@@ -155,7 +155,10 @@ export async function GET(request: NextRequest) {
     const betId = searchParams.get("betId");
     const category = searchParams.get("category");
 
-    const where: Prisma.ParameterWhereInput = {};
+    const where: {
+      betId?: string;
+      category?: string;
+    } = {};
 
     if (betId) {
       where.betId = betId;

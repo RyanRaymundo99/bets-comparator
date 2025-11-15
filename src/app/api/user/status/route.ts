@@ -33,13 +33,9 @@ export async function GET(request: NextRequest) {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
-        approvalStatus: session.user.approvalStatus,
-        kycStatus: session.user.kycStatus,
         emailVerified: session.user.emailVerified,
-        phoneVerified: session.user.phoneVerified,
-        kycSubmittedAt: session.user.kycSubmittedAt,
-        kycReviewedAt: session.user.kycReviewedAt,
-        kycRejectionReason: session.user.kycRejectionReason,
+        role: session.user.role,
+        image: session.user.image,
       },
     });
   } catch (error) {
