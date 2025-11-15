@@ -22,10 +22,10 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Update the admin's last seen timestamp to now
+    // Note: adminNotificationLastSeenAt field removed in Bets Comparator
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        adminNotificationLastSeenAt: new Date(),
         updatedAt: new Date(),
       },
     });

@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { hash } from "bcryptjs";
-import { SMSService } from "@/lib/sms";
 
 export async function POST(request: NextRequest) {
   try {
-    const { identifier, code, newPassword, type } = await request.json();
+    const { identifier, code, newPassword } = await request.json();
 
-    if (!identifier || !code || !newPassword || !type) {
+    if (!identifier || !code || !newPassword) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -21,25 +20,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["email", "phone"].includes(type)) {
-      return NextResponse.json(
-        { error: "Type must be 'email' or 'phone'" },
-        { status: 400 }
-      );
-    }
+    // Format identifier (email only)
+    const formattedIdentifier = identifier.toLowerCase();
 
-    // Format identifier based on type
-    const formattedIdentifier =
-      type === "phone"
-        ? SMSService.formatPhoneNumber(identifier)
-        : identifier.toLowerCase();
-
-    // Find user by identifier
+    // Find user by email
     const user = await prisma.user.findFirst({
-      where:
-        type === "email"
-          ? { email: formattedIdentifier }
-          : { phone: formattedIdentifier },
+      where: { email: formattedIdentifier },
     });
 
     if (!user) {
@@ -51,7 +37,7 @@ export async function POST(request: NextRequest) {
     const verification = await prisma.verification.findFirst({
       where: {
         identifier: formattedIdentifier,
-        type: type === "email" ? "EMAIL" : "PHONE",
+        type: "EMAIL",
         purpose: "password_reset",
         value: code,
         expiresAt: {

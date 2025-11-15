@@ -33,6 +33,27 @@ interface Parameter {
   unit?: string | null;
 }
 
+interface RankingItem {
+  betName: string;
+  score: number;
+  reason: string;
+}
+
+interface BetInsight {
+  strengths?: string[];
+  weaknesses?: string[];
+  recommendations?: string[];
+}
+
+interface Insight {
+  type?: string;
+  summary?: string;
+  overallSummary?: string;
+  rankings?: RankingItem[];
+  insights?: BetInsight[];
+  comparisons?: Record<string, unknown>;
+}
+
 export default function ClientDashboard() {
   const [bets, setBets] = useState<Bet[]>([]);
   const [selectedBets, setSelectedBets] = useState<string[]>([]);
@@ -40,7 +61,7 @@ export default function ClientDashboard() {
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [generatingInsights, setGeneratingInsights] = useState(false);
-  const [insights, setInsights] = useState<any>(null);
+  const [insights, setInsights] = useState<Insight | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -192,7 +213,7 @@ export default function ClientDashboard() {
                       {selectedBets.length !== 1 ? "s" : ""}
                     </div>
                     <div className="text-sm text-gray-300">
-                      Clique em "Gerar Insights" para análise com IA
+                      Clique em &quot;Gerar Insights&quot; para análise com IA
                     </div>
                   </div>
                 </div>
@@ -269,7 +290,7 @@ export default function ClientDashboard() {
                     Ranking
                   </h3>
                   <div className="space-y-3">
-                    {insights.rankings.map((rank: any, index: number) => (
+                    {insights.rankings.map((rank: RankingItem, index: number) => (
                       <div
                         key={rank.name}
                         className="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg"

@@ -64,7 +64,17 @@ export async function POST(request: NextRequest) {
     });
 
     let parameter;
-    const paramData: any = {
+    const paramData: {
+      category?: string;
+      unit?: string;
+      description?: string;
+      type?: string;
+      options?: string[];
+      valueText?: string;
+      valueNumber?: Prisma.Decimal;
+      valueBoolean?: boolean;
+      valueRating?: number;
+    } = {
       category,
       unit,
       description,
@@ -145,7 +155,7 @@ export async function GET(request: NextRequest) {
     const betId = searchParams.get("betId");
     const category = searchParams.get("category");
 
-    const where: any = {};
+    const where: Prisma.ParameterWhereInput = {};
 
     if (betId) {
       where.betId = betId;

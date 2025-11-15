@@ -21,6 +21,7 @@ import {
   PARAMETER_CATEGORIES,
   PARAMETER_DEFINITIONS,
   getParametersByCategory,
+  type ParameterDefinition,
 } from "@/lib/parameter-definitions";
 
 interface Bet {
@@ -48,7 +49,7 @@ export default function BetParametersPage() {
   const [bet, setBet] = useState<Bet | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
+  const [parameterValues, setParameterValues] = useState<Record<string, string | number | boolean | null>>({});
   const { toast } = useToast();
   const router = useRouter();
 
@@ -66,12 +67,12 @@ export default function BetParametersPage() {
         setBet(data.bet);
         
         // Pre-fill existing parameter values
-        const values: Record<string, any> = {};
+        const values: Record<string, string | number | boolean | null> = {};
         data.bet.parameters.forEach((param: Parameter) => {
-          if (param.valueText !== null) values[param.name] = param.valueText;
-          else if (param.valueNumber !== null) values[param.name] = param.valueNumber;
-          else if (param.valueBoolean !== null) values[param.name] = param.valueBoolean;
-          else if (param.valueRating !== null) values[param.name] = param.valueRating;
+          if (param.valueText !== null && param.valueText !== undefined) values[param.name] = param.valueText;
+          else if (param.valueNumber !== null && param.valueNumber !== undefined) values[param.name] = param.valueNumber;
+          else if (param.valueBoolean !== null && param.valueBoolean !== undefined) values[param.name] = param.valueBoolean;
+          else if (param.valueRating !== null && param.valueRating !== undefined) values[param.name] = param.valueRating;
         });
         setParameterValues(values);
       } else {
@@ -105,7 +106,19 @@ export default function BetParametersPage() {
         }
 
         // Prepare the parameter data based on type
-        const paramData: any = {
+        const paramData: {
+          betId: string;
+          name: string;
+          category?: string;
+          valueText?: string;
+          valueNumber?: number;
+          valueBoolean?: boolean;
+          valueRating?: number;
+          unit?: string;
+          description?: string;
+          type?: string;
+          options?: string[];
+        } = {
           betId,
           name: def.name,
           category: def.category,
@@ -116,20 +129,20 @@ export default function BetParametersPage() {
         // Set the appropriate value field based on type
         switch (def.type) {
           case "boolean":
-            paramData.valueBoolean = value;
+            paramData.valueBoolean = typeof value === "boolean" ? value : Boolean(value);
             break;
           case "rating":
-            paramData.valueRating = parseInt(value);
+            paramData.valueRating = typeof value === "number" ? value : parseInt(String(value), 10);
             break;
           case "number":
           case "currency":
           case "percentage":
-            paramData.valueNumber = parseFloat(value);
+            paramData.valueNumber = typeof value === "number" ? value : parseFloat(String(value));
             break;
           case "text":
           case "select":
           default:
-            paramData.valueText = value.toString();
+            paramData.valueText = value !== null && value !== undefined ? String(value) : "";
             break;
         }
 
@@ -171,7 +184,7 @@ export default function BetParametersPage() {
     }
   };
 
-  const renderInput = (def: any) => {
+  const renderInput = (def: ParameterDefinition) => {
     const value = parameterValues[def.name];
 
     switch (def.type) {
@@ -232,21 +245,21 @@ export default function BetParametersPage() {
               >
                 <Star
                   className={`w-6 h-6 ${
-                    value >= rating
+                    (value !== null && value !== undefined && Number(value) >= rating)
                       ? "text-yellow-400 fill-yellow-400"
                       : "text-gray-600"
                   }`}
                 />
               </button>
             ))}
-            <span className="text-gray-400 ml-2">{value || 0}/5</span>
+            <span className="text-gray-400 ml-2">{(value !== null && value !== undefined ? Number(value) : 0)}/5</span>
           </div>
         );
 
       case "select":
         return (
           <select
-            value={value || ""}
+            value={value !== null && value !== undefined ? String(value) : ""}
             onChange={(e) =>
               setParameterValues({ ...parameterValues, [def.name]: e.target.value })
             }
@@ -270,7 +283,7 @@ export default function BetParametersPage() {
             <Input
               type="number"
               step="0.01"
-              value={value || ""}
+              value={value !== null && value !== undefined ? String(value) : ""}
               onChange={(e) =>
                 setParameterValues({ ...parameterValues, [def.name]: e.target.value })
               }
@@ -288,7 +301,7 @@ export default function BetParametersPage() {
               step="0.1"
               min="0"
               max="100"
-              value={value || ""}
+              value={value !== null && value !== undefined ? String(value) : ""}
               onChange={(e) =>
                 setParameterValues({ ...parameterValues, [def.name]: e.target.value })
               }
@@ -305,7 +318,7 @@ export default function BetParametersPage() {
         return (
           <Input
             type="number"
-            value={value || ""}
+            value={value !== null && value !== undefined ? String(value) : ""}
             onChange={(e) =>
               setParameterValues({ ...parameterValues, [def.name]: e.target.value })
             }
@@ -320,7 +333,7 @@ export default function BetParametersPage() {
         if (def.name.toLowerCase().includes("descrição") || def.name.toLowerCase().includes("melhorias")) {
           return (
             <Textarea
-              value={value || ""}
+              value={value !== null && value !== undefined ? String(value) : ""}
               onChange={(e) =>
                 setParameterValues({ ...parameterValues, [def.name]: e.target.value })
               }
@@ -332,7 +345,7 @@ export default function BetParametersPage() {
         return (
           <Input
             type="text"
-            value={value || ""}
+            value={value !== null && value !== undefined ? String(value) : ""}
             onChange={(e) =>
               setParameterValues({ ...parameterValues, [def.name]: e.target.value })
             }

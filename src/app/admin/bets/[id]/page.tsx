@@ -15,6 +15,11 @@ import {
   PLATFORM_TYPE_OPTIONS,
 } from "@/lib/parameter-definitions";
 
+interface Parameter {
+  id: string;
+  name: string;
+}
+
 interface Bet {
   id: string;
   name: string;
@@ -27,6 +32,7 @@ interface Bet {
   status?: string;
   scope?: string;
   platformType?: string;
+  parameters?: Parameter[];
 }
 
 export default function EditBetPage() {

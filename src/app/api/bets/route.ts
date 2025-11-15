@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // GET /api/bets - List all bets with optional filters
 export async function GET(request: NextRequest) {
@@ -8,7 +9,7 @@ export async function GET(request: NextRequest) {
     const region = searchParams.get("region");
     const search = searchParams.get("search");
 
-    const where: any = {};
+    const where: Prisma.BetWhereInput = {};
     
     if (region) {
       where.region = region;

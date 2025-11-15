@@ -177,8 +177,8 @@ export default function BetsManagementPage() {
               >
                 <option value="all">Todas as Regiões</option>
                 {regions.map((region) => (
-                  <option key={region} value={region}>
-                    {region}
+                  <option key={region || ""} value={region || ""}>
+                    {region || "N/A"}
                   </option>
                 ))}
               </select>

@@ -40,21 +40,18 @@ export async function PATCH(
     }
 
     const userId = (await params).id;
-    const approvalStatus = action === "approve" ? "APPROVED" : "REJECTED";
 
-    // Update user approval status
+    // Note: approvalStatus removed in Bets Comparator
+    // Update user email verification status only
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        approvalStatus,
         emailVerified: action === "approve" ? true : false,
       },
       select: {
         id: true,
         name: true,
         email: true,
-        cpf: true,
-        approvalStatus: true,
         emailVerified: true,
         createdAt: true,
       },
@@ -104,16 +101,14 @@ export async function GET(
     const userId = (await params).id;
 
     // Get user details
+    // Note: approvalStatus and kycStatus removed in Bets Comparator
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
         id: true,
         name: true,
         email: true,
-        cpf: true,
-        approvalStatus: true,
         emailVerified: true,
-        kycStatus: true,
         createdAt: true,
         updatedAt: true,
       },
