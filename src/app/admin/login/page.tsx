@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,20 +16,41 @@ const AdminLoginPage = () => {
   const { toast } = useToast();
   const router = useRouter();
 
+  // Check if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch("/api/auth/verify-admin-session");
+        const data = await response.json();
+        
+        if (data.valid) {
+          // Already logged in, redirect to admin
+          console.log("Already logged in, redirecting...");
+          router.push("/admin");
+        }
+      } catch (error) {
+        console.log("Not logged in");
+      }
+    };
+    
+    checkSession();
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please fill in all fields",
+        title: "Erro",
+        description: "Preencha todos os campos",
       });
       return;
     }
 
     setLoading(true);
     try {
+      console.log("Attempting login...");
       const response = await fetch("/api/auth/admin-login", {
         method: "POST",
         headers: {
@@ -39,36 +60,34 @@ const AdminLoginPage = () => {
       });
 
       const result = await response.json();
+      console.log("Login response:", result);
 
-      if (response.ok) {
-        console.log("Login successful, redirecting...");
+      if (response.ok && result.success) {
+        console.log("Login successful!");
         toast({
-          title: "Login successful",
-          description: "Welcome to the admin panel",
+          title: "Login realizado!",
+          description: "Redirecionando para o painel...",
         });
 
-        // Add a small delay to ensure the session cookie is set
-        setTimeout(() => {
-          router.push("/admin");
-        }, 1000);
+        // Wait a bit for the cookie to be set
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Fallback redirect after 3 seconds if router.push doesn't work
-        setTimeout(() => {
-          window.location.href = "/admin";
-        }, 3000);
+        // Force hard redirect
+        console.log("Redirecting to /admin");
+        window.location.href = "/admin";
       } else {
         toast({
           variant: "destructive",
-          title: "Login failed",
-          description: result.error || "Invalid credentials",
+          title: "Falha no login",
+          description: result.error || "Credenciais inválidas",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Erro",
+        description: "Ocorreu um erro inesperado",
       });
     } finally {
       setLoading(false);
@@ -76,16 +95,16 @@ const AdminLoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gray-900 border-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
               <Shield className="w-8 h-8 text-white" />
             </div>
           </div>
           <CardTitle className="text-2xl text-white">Admin Login</CardTitle>
-          <p className="text-gray-300">Access the BS Market admin panel</p>
+          <p className="text-gray-300">Acesse o painel Bets Comparator</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -98,49 +117,65 @@ const AdminLoginPage = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@bsmarket.com.br"
+                placeholder="admin@betscomparator.com"
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
                 required
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-white">
-                Password
+                Senha
               </Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter admin password"
+                placeholder="Digite a senha admin"
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
                 required
+                disabled={loading}
               />
             </div>
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Signing in...
+                  Entrando...
                 </>
               ) : (
-                "Sign In"
+                "Entrar"
               )}
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-800 rounded-lg">
+          <div className="mt-6 p-4 bg-blue-900/30 border border-blue-700/50 rounded-lg">
             <h4 className="text-white font-medium mb-2">
-              Default Admin Credentials:
+              📋 Credenciais Padrão Admin:
             </h4>
             <p className="text-gray-300 text-sm">
-              Email: admin@bsmarket.com.br
+              Email: <code className="text-blue-300">admin@betscomparator.com</code>
             </p>
-            <p className="text-gray-300 text-sm">Password: admin123</p>
+            <p className="text-gray-300 text-sm">
+              Senha: <code className="text-blue-300">admin123456</code>
+            </p>
+            <div className="mt-3 pt-3 border-t border-blue-700/30">
+              <p className="text-gray-400 text-xs">
+                💡 <strong>Primeiro acesso?</strong> Crie o admin visitando:
+              </p>
+              <a 
+                href="/api/auth/create-admin" 
+                target="_blank"
+                className="text-blue-400 hover:text-blue-300 text-xs underline mt-1 inline-block"
+              >
+                /api/auth/create-admin
+              </a>
+            </div>
           </div>
         </CardContent>
       </Card>

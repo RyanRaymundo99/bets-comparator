@@ -18,10 +18,18 @@ export async function GET(request: NextRequest) {
       include: { user: true },
     });
 
-    if (!session?.user || session.user.id !== "admin_001") {
+    if (!session?.user) {
       return NextResponse.json({
         valid: false,
-        error: "Invalid session or not admin",
+        error: "Invalid session",
+      });
+    }
+
+    // Check if user has ADMIN role (instead of hardcoded ID)
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({
+        valid: false,
+        error: "Not an admin user",
       });
     }
 
@@ -31,7 +39,7 @@ export async function GET(request: NextRequest) {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
-        role: "admin",
+        role: session.user.role,
       },
     });
   } catch (error) {

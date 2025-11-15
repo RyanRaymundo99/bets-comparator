@@ -1,245 +1,128 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  CheckCircle2,
-  XCircle,
-  Clock,
-  User,
+  Users,
   Mail,
-  CreditCard,
-  FileText,
-  RefreshCw,
-  MoreVertical,
+  Shield,
   Trash2,
-  Edit,
-  UserX,
+  Crown,
+  UserCog,
+  ArrowLeft,
+  RefreshCw,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import NotificationBell from "@/components/admin/NotificationBell";
-import BackToDashboardButton from "@/components/admin/BackToDashboardButton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogFooter,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  cpf: string | null;
-  phone?: string | null;
-  approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
-  kycStatus: "PENDING" | "APPROVED" | "REJECTED";
+  role: "ADMIN" | "CLIENT";
   emailVerified: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [processingUser, setProcessingUser] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [editFormData, setEditFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    cpf: "",
-    approvalStatus: "PENDING" as "PENDING" | "APPROVED" | "REJECTED",
-    kycStatus: "PENDING" as "PENDING" | "APPROVED" | "REJECTED",
-  });
-  const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
-  const fetchUsers = useCallback(
-    async (status?: string) => {
-      try {
-        const url =
-          status && status !== "ALL"
-            ? `/api/admin/users?status=${status}`
-            : "/api/admin/users";
-
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(data.users);
-          setFilteredUsers(data.users);
-        } else {
-          toast({
-            variant: "destructive",
-            title: "Erro",
-            description: "Falha ao carregar usuários",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        toast({
-          variant: "destructive",
-          title: "Erro",
-          description: "Erro ao carregar usuários",
-        });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [toast]
-  );
-
-  const filterUsers = useCallback(
-    (status: string) => {
-      setStatusFilter(status);
-      if (status === "ALL") {
-        setFilteredUsers(users);
-      } else {
-        setFilteredUsers(
-          users.filter((user) => user.approvalStatus === status)
-        );
-      }
-    },
-    [users]
-  );
-
-  useEffect(() => {
-    // Check for URL parameters to set initial filter
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get("status");
-    if (status) {
-      setStatusFilter(status);
-      fetchUsers(status);
-    } else {
-      fetchUsers();
-    }
-  }, [fetchUsers]);
-
-  useEffect(() => {
-    filterUsers(statusFilter);
-  }, [filterUsers, statusFilter]);
-
-  const handleApproval = async (
-    userId: string,
-    action: "approve" | "reject"
-  ) => {
-    setProcessingUser(userId);
+  const fetchUsers = async () => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/approve`, {
+      setLoading(true);
+      const response = await fetch("/api/admin/users");
+      const data = await response.json();
+
+      if (data.success) {
+        setUsers(data.users);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Falha ao carregar usuários",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangeRole = async (userId: string, currentRole: string, userName: string) => {
+    const newRole = currentRole === "ADMIN" ? "CLIENT" : "ADMIN";
+    
+    if (!confirm(`Tem certeza que deseja alterar o papel de "${userName}" para ${newRole}?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ action }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        toast({
-          title: "Sucesso",
-          description: data.message,
-        });
-        // Refresh the users list
-        fetchUsers();
-      } else {
-        const error = await response.json();
-        toast({
-          variant: "destructive",
-          title: "Erro",
-          description: error.error || "Falha ao processar solicitação",
-        });
-      }
-    } catch (error) {
-      console.error("Error processing approval:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Erro ao processar solicitação",
-      });
-    } finally {
-      setProcessingUser(null);
-    }
-  };
-
-  const handleResetToPending = async (userId: string) => {
-    try {
-      setProcessingUser(userId);
-      const response = await fetch(`/api/admin/users/${userId}/reset`, {
-        method: "POST",
+        body: JSON.stringify({ role: newRole }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.success) {
         toast({
           title: "Sucesso",
-          description: "Status do usuário resetado para pendente",
+          description: `Papel alterado para ${newRole}`,
         });
         fetchUsers();
       } else {
-        throw new Error(data.error || "Falha ao resetar status do usuário");
+        throw new Error(data.error);
       }
     } catch (error) {
-      console.error("Error resetting user:", error);
+      console.error("Error changing role:", error);
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Falha ao resetar status do usuário",
+        description: "Falha ao alterar papel do usuário",
       });
-    } finally {
-      setProcessingUser(null);
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
+  const handleDeleteUser = async (userId: string, userName: string, userRole: string) => {
+    if (userRole === "ADMIN") {
+      toast({
+        variant: "destructive",
+        title: "Não permitido",
+        description: "Não é possível deletar usuários ADMIN",
+      });
+      return;
+    }
+
+    if (!confirm(`Tem certeza que deseja DELETAR o usuário "${userName}"? Esta ação não pode ser desfeita!`)) {
+      return;
+    }
+
     try {
-      setProcessingUser(userId);
       const response = await fetch(`/api/admin/users/${userId}/delete`, {
         method: "DELETE",
       });
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.success) {
         toast({
           title: "Sucesso",
-          description: "Usuário deletado permanentemente",
+          description: "Usuário deletado com sucesso",
         });
         fetchUsers();
       } else {
-        throw new Error(data.error || "Falha ao deletar usuário");
+        throw new Error(data.error);
       }
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -248,518 +131,214 @@ export default function AdminUsersPage() {
         title: "Erro",
         description: "Falha ao deletar usuário",
       });
-    } finally {
-      setProcessingUser(null);
     }
   };
 
-  const openDeleteDialog = (user: User) => {
-    const confirmed = window.confirm(
-      `Tem certeza que deseja deletar permanentemente o usuário ${user.name} (${user.email})?\n\nEsta ação não pode ser desfeita e irá deletar todos os dados do usuário.`
-    );
-    if (confirmed) {
-      handleDeleteUser(user.id);
-    }
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  const handleViewProfile = (userId: string) => {
-    router.push(`/admin/users/${userId}`);
-  };
-
-  const handleEditUser = (user: User) => {
-    setEditingUser(user);
-    setEditFormData({
-      name: user.name,
-      email: user.email,
-      phone: user.phone || "",
-      cpf: user.cpf || "",
-      approvalStatus: user.approvalStatus,
-      kycStatus: user.kycStatus,
-    });
-    setEditDialogOpen(true);
-  };
-
-  const handleSaveUser = async () => {
-    if (!editingUser) return;
-
-    try {
-      setSaving(true);
-      const response = await fetch(
-        `/api/admin/users/${editingUser.id}/update-profile`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(editFormData),
-        }
-      );
-
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "User profile updated successfully",
-        });
-        setEditDialogOpen(false);
-        fetchUsers(); // Refresh the users list
-      } else {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update user");
-      }
-    } catch (error) {
-      console.error("Error updating user:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to update user",
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return (
-          <Badge
-            variant="secondary"
-            className="bg-yellow-500/20 text-yellow-600"
-          >
-            <Clock className="w-3 h-3 mr-1" />
-            Pendente
-          </Badge>
-        );
-      case "APPROVED":
-        return (
-          <Badge variant="secondary" className="bg-green-500/20 text-green-600">
-            <CheckCircle2 className="w-3 h-3 mr-1" />
-            Aprovado
-          </Badge>
-        );
-      case "REJECTED":
-        return (
-          <Badge variant="secondary" className="bg-red-500/20 text-red-600">
-            <XCircle className="w-3 h-3 mr-1" />
-            Rejeitado
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
-            <p className="mt-2 text-gray-400">Carregando usuários...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const adminUsers = users.filter((u) => u.role === "ADMIN");
+  const clientUsers = users.filter((u) => u.role === "CLIENT");
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Back to Dashboard Button */}
-        <BackToDashboardButton />
-        
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">User Management</h1>
-            <p className="text-gray-400 mt-1">
-              Gerenciar usuários e verificar documentos
-            </p>
+            <div className="flex items-center space-x-3">
+              <Link href="/admin">
+                <Button
+                  variant="ghost"
+                  className="text-gray-400 hover:text-white"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-white flex items-center">
+                  <Users className="w-8 h-8 mr-3 text-green-400" />
+                  Gestão de Usuários
+                </h1>
+                <p className="text-gray-300 mt-1">
+                  Visualize e gerencie todos os usuários da plataforma
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <NotificationBell />
-            <Link href="/admin/kyc">
-              <Button variant="outline">
-                <FileText className="w-4 h-4 mr-2" />
-                KYC Verification
-              </Button>
-            </Link>
-            <Button onClick={() => fetchUsers()} variant="outline">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Atualizar
-            </Button>
-          </div>
+          <Button
+            onClick={fetchUsers}
+            variant="outline"
+            className="border-gray-700 text-white hover:bg-gray-800"
+            disabled={loading}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Atualizar
+          </Button>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Button
-            variant={statusFilter === "ALL" ? "default" : "outline"}
-            onClick={() => filterUsers("ALL")}
-            size="sm"
-          >
-            All Users ({users.length})
-          </Button>
-          <Button
-            variant={statusFilter === "PENDING" ? "default" : "outline"}
-            onClick={() => filterUsers("PENDING")}
-            size="sm"
-            className="bg-yellow-600 hover:bg-yellow-700 text-white"
-          >
-            Pending (
-            {users.filter((u) => u.approvalStatus === "PENDING").length})
-          </Button>
-          <Button
-            variant={statusFilter === "APPROVED" ? "default" : "outline"}
-            onClick={() => filterUsers("APPROVED")}
-            size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Approved (
-            {users.filter((u) => u.approvalStatus === "APPROVED").length})
-          </Button>
-          <Button
-            variant={statusFilter === "REJECTED" ? "default" : "outline"}
-            onClick={() => filterUsers("REJECTED")}
-            size="sm"
-            className="bg-red-600 hover:bg-red-700 text-white"
-          >
-            Rejected (
-            {users.filter((u) => u.approvalStatus === "REJECTED").length})
-          </Button>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-700/50 backdrop-blur-xl">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-bold text-white">
+                    {users.length}
+                  </div>
+                  <div className="text-sm text-blue-200 mt-1">
+                    Total de Usuários
+                  </div>
+                </div>
+                <Users className="w-12 h-12 text-blue-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-700/50 backdrop-blur-xl">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-bold text-white">
+                    {adminUsers.length}
+                  </div>
+                  <div className="text-sm text-purple-200 mt-1">
+                    Administradores
+                  </div>
+                </div>
+                <Crown className="w-12 h-12 text-purple-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-900/50 to-green-800/30 border-green-700/50 backdrop-blur-xl">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-bold text-white">
+                    {clientUsers.length}
+                  </div>
+                  <div className="text-sm text-green-200 mt-1">Clientes</div>
+                </div>
+                <UserCog className="w-12 h-12 text-green-400" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Users List */}
-        <div className="grid gap-4">
-          {filteredUsers.length === 0 ? (
-            <Card className="bg-gray-900 border-gray-800">
-              <CardContent className="p-8 text-center">
-                <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2 text-white">
-                  {statusFilter === "ALL"
-                    ? "Nenhum usuário encontrado"
-                    : `Nenhum usuário ${statusFilter.toLowerCase()} encontrado`}
-                </h3>
-                <p className="text-gray-400">
-                  {statusFilter === "ALL"
-                    ? "Não há usuários para exibir no momento."
-                    : `Não há usuários com status ${statusFilter.toLowerCase()} no momento.`}
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredUsers.map((user) => (
+        {loading ? (
+          <Card className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl">
+            <CardContent className="p-12 text-center text-gray-400">
+              Carregando usuários...
+            </CardContent>
+          </Card>
+        ) : users.length === 0 ? (
+          <Card className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl">
+            <CardContent className="p-12 text-center">
+              <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">
+                Nenhum usuário encontrado
+              </h3>
+              <p className="text-gray-400">
+                Os usuários aparecerão aqui quando se cadastrarem
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {users.map((user) => (
               <Card
                 key={user.id}
-                className="hover:shadow-md transition-shadow bg-gray-900 border-gray-800"
+                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl hover:border-blue-500/50 transition-all"
               >
-                <CardContent className="p-6">
+                <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary" />
-                        </div>
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                        {user.role === "ADMIN" ? (
+                          <Crown className="w-6 h-6 text-white" />
+                        ) : (
+                          <Users className="w-6 h-6 text-white" />
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="text-lg font-semibold truncate">
-                            {user.name}
-                          </h3>
-                          {getStatusBadge(user.approvalStatus)}
-                        </div>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                      <div>
+                        <CardTitle className="text-white flex items-center space-x-2">
+                          <span>{user.name}</span>
+                          {user.role === "ADMIN" && (
+                            <Badge className="bg-purple-600">ADMIN</Badge>
+                          )}
+                          {user.role === "CLIENT" && (
+                            <Badge className="bg-blue-600">CLIENT</Badge>
+                          )}
+                        </CardTitle>
+                        <div className="flex items-center space-x-4 mt-1 text-sm text-gray-400">
                           <div className="flex items-center space-x-1">
                             <Mail className="w-4 h-4" />
                             <span>{user.email}</span>
                           </div>
-                          {user.cpf && (
-                            <div className="flex items-center space-x-1">
-                              <CreditCard className="w-4 h-4" />
-                              <span>{user.cpf}</span>
-                            </div>
+                          {user.emailVerified && (
+                            <Badge variant="outline" className="text-green-400 border-green-400">
+                              Verificado
+                            </Badge>
                           )}
-                          <span>Criado em {formatDate(user.createdAt)}</span>
                         </div>
                       </div>
                     </div>
-
-                    {/* Action Buttons */}
                     <div className="flex items-center space-x-2">
-                      {user.approvalStatus === "PENDING" && (
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xs text-gray-400 mr-2">
-                            Ações:
-                          </span>
-                          <Button
-                            size="sm"
-                            onClick={() => handleApproval(user.id, "approve")}
-                            disabled={processingUser === user.id}
-                            className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
-                          >
-                            {processingUser === user.id ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            ) : (
-                              <>
-                                <CheckCircle2 className="w-4 h-4 mr-1" />
-                                Aprovar
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleApproval(user.id, "reject")}
-                            disabled={processingUser === user.id}
-                            className="bg-red-600 hover:bg-red-700 border-0 shadow-sm"
-                          >
-                            {processingUser === user.id ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            ) : (
-                              <>
-                                <XCircle className="w-4 h-4 mr-1" />
-                                Rejeitar
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      )}
-
-                      {(user.approvalStatus === "APPROVED" ||
-                        user.approvalStatus === "REJECTED") && (
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xs text-gray-400 mr-2">
-                            Ações:
-                          </span>
-                          <Button
-                            size="sm"
-                            onClick={() => handleResetToPending(user.id)}
-                            disabled={processingUser === user.id}
-                            className="bg-orange-600 hover:bg-orange-700 text-white border-0 shadow-sm"
-                          >
-                            {processingUser === user.id ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            ) : (
-                              <>
-                                <Clock className="w-4 h-4 mr-1" />
-                                Resetar
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleApproval(user.id, "approve")}
-                            disabled={processingUser === user.id}
-                            className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
-                          >
-                            {processingUser === user.id ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            ) : (
-                              <>
-                                <CheckCircle2 className="w-4 h-4 mr-1" />
-                                Re-aprovar
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleApproval(user.id, "reject")}
-                            disabled={processingUser === user.id}
-                            className="bg-red-600 hover:bg-red-700 border-0 shadow-sm"
-                          >
-                            {processingUser === user.id ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            ) : (
-                              <>
-                                <XCircle className="w-4 h-4 mr-1" />
-                                Rejeitar
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                      <Button
+                        onClick={() => handleChangeRole(user.id, user.role, user.name)}
+                        variant="outline"
+                        size="sm"
+                        className="border-purple-500 text-purple-400 hover:bg-purple-900/30"
+                      >
+                        {user.role === "ADMIN" ? (
+                          <>
+                            <UserCog className="w-4 h-4 mr-2" />
+                            Tornar Cliente
+                          </>
+                        ) : (
+                          <>
+                            <Shield className="w-4 h-4 mr-2" />
+                            Tornar Admin
+                          </>
+                        )}
+                      </Button>
+                      {user.role !== "ADMIN" && (
+                        <Button
+                          onClick={() => handleDeleteUser(user.id, user.name, user.role)}
+                          variant="outline"
+                          size="sm"
+                          className="border-red-500 text-red-400 hover:bg-red-900/30"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       )}
                     </div>
-
-                    {/* User Menu Dropdown */}
-                    <div className="ml-4">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-gray-800"
-                          >
-                            <MoreVertical className="h-4 w-4 text-gray-400" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="bg-gray-900 border-gray-800"
-                        >
-                          <DropdownMenuItem
-                            onClick={() => handleEditUser(user)}
-                            className="text-white hover:bg-gray-800 focus:bg-gray-800"
-                          >
-                            <Edit className="mr-2 h-4 w-4 text-blue-400" />
-                            Editar Usuário
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleViewProfile(user.id)}
-                            className="text-white hover:bg-gray-800 focus:bg-gray-800"
-                          >
-                            <UserX className="mr-2 h-4 w-4 text-green-400" />
-                            Ver Perfil
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-gray-700" />
-                          <DropdownMenuItem
-                            className="text-red-400 hover:bg-red-900/20 focus:bg-red-900/20"
-                            onClick={() => openDeleteDialog(user)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Deletar Usuário
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Criado em:</span>
+                      <span className="text-gray-300 ml-2">
+                        {new Date(user.createdAt).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Atualizado em:</span>
+                      <span className="text-gray-300 ml-2">
+                        {new Date(user.updatedAt).toLocaleDateString("pt-BR")}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Edit User Modal */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit User: {editingUser?.name}</DialogTitle>
-            <DialogDescription>
-              Update user information and status. Changes will be applied
-              immediately.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-name">Full Name</Label>
-                <Input
-                  id="edit-name"
-                  value={editFormData.name}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, name: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-email">Email</Label>
-                <Input
-                  id="edit-email"
-                  type="email"
-                  value={editFormData.email}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, email: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-phone">Phone</Label>
-                <Input
-                  id="edit-phone"
-                  value={editFormData.phone}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, phone: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-cpf">CPF</Label>
-                <Input
-                  id="edit-cpf"
-                  value={editFormData.cpf}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, cpf: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-approval-status">Approval Status</Label>
-                <Select
-                  value={editFormData.approvalStatus}
-                  onValueChange={(value: "PENDING" | "APPROVED" | "REJECTED") =>
-                    setEditFormData({ ...editFormData, approvalStatus: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PENDING">Pending</SelectItem>
-                    <SelectItem value="APPROVED">Approved</SelectItem>
-                    <SelectItem value="REJECTED">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-kyc-status">KYC Status</Label>
-                <Select
-                  value={editFormData.kycStatus}
-                  onValueChange={(value: "PENDING" | "APPROVED" | "REJECTED") =>
-                    setEditFormData({ ...editFormData, kycStatus: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PENDING">Pending</SelectItem>
-                    <SelectItem value="APPROVED">Approved</SelectItem>
-                    <SelectItem value="REJECTED">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            ))}
           </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setEditDialogOpen(false)}
-              disabled={saving}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleSaveUser} disabled={saving}>
-              {saving ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        )}
+      </div>
     </div>
   );
 }

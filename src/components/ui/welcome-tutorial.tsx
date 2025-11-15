@@ -38,8 +38,8 @@ export function WelcomeTutorial({
 
   const tutorialSteps = [
     {
-      title: "Welcome to BS Market! 🎉",
-      description: `Hi ${userName}! Welcome to your new crypto trading account. Let's get you started with a quick tour.`,
+      title: "Welcome to Bets Comparator! 🎉",
+      description: `Hi ${userName}! Welcome to your new Bets Comparator account. Let's get you started with a quick tour.`,
       icon: <CheckCircle className="h-8 w-8 text-green-500" />,
       content: (
         <div className="space-y-4">

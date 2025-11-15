@@ -1,7 +1,7 @@
 {
-  "name": "Build Strategy",
-  "short_name": "BS Market",
-  "description": "Plataforma avançada de negociação de criptoativos",
+  "name": "Bets Comparator",
+  "short_name": "Bets Comparator",
+  "description": "Plataforma SaaS de comparação de casas de apostas regulamentadas",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

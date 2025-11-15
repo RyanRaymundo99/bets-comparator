@@ -25,34 +25,40 @@ export async function middleware(request: NextRequest) {
       const sessionToken = request.cookies.get("better-auth.session")?.value;
 
       if (!sessionToken) {
+        console.log("No session token found, redirecting to login");
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
 
       // Verify session by calling our API endpoint
-      const baseUrl = process.env.BETTER_AUTH_URL || request.nextUrl.origin;
+      const baseUrl = request.nextUrl.origin;
       const verifyResponse = await fetch(
         `${baseUrl}/api/auth/verify-admin-session`,
         {
           headers: {
             cookie: `better-auth.session=${sessionToken}`,
           },
+          cache: 'no-store', // Don't cache the verification
         }
       );
 
       if (!verifyResponse.ok) {
+        console.log("Session verification failed, redirecting to login");
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
 
       const verifyData = await verifyResponse.json();
 
       if (!verifyData.valid) {
+        console.log("Session not valid, redirecting to login");
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
 
+      console.log("Admin session verified, allowing access");
       // User is authenticated admin, allow access
       return response;
     } catch (error) {
       console.error("Middleware error:", error);
+      // On error, redirect to login
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }

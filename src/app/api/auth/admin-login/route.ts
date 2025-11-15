@@ -8,38 +8,45 @@ export async function POST(request: NextRequest) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "Email e senha são obrigatórios" },
         { status: 400 }
       );
     }
 
-    // Find admin user
-    const adminUser = await prisma.user.findFirst({
+    // Find user by email (check for ADMIN role)
+    const user = await prisma.user.findUnique({
       where: {
         email: email.toLowerCase(),
-        id: "admin_001", // Ensure it's the admin user
       },
     });
 
-    if (!adminUser) {
+    if (!user) {
       return NextResponse.json(
-        { error: "Invalid admin credentials" },
+        { error: "Credenciais inválidas" },
         { status: 401 }
+      );
+    }
+
+    // Check if user is ADMIN
+    if (user.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Acesso negado. Apenas administradores podem acessar." },
+        { status: 403 }
       );
     }
 
     // Verify password
-    if (!adminUser.password) {
+    if (!user.password) {
       return NextResponse.json(
-        { error: "Invalid admin credentials" },
+        { error: "Credenciais inválidas" },
         { status: 401 }
       );
     }
 
-    const isPasswordValid = await compare(password, adminUser.password);
+    const isPasswordValid = await compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Invalid admin credentials" },
+        { error: "Credenciais inválidas" },
         { status: 401 }
       );
     }
@@ -53,7 +60,7 @@ export async function POST(request: NextRequest) {
       data: {
         id: sessionId,
         token: sessionId,
-        userId: adminUser.id,
+        userId: user.id,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -63,19 +70,19 @@ export async function POST(request: NextRequest) {
     // Set admin session cookie
     const response = NextResponse.json({
       success: true,
-      message: "Admin login successful",
+      message: "Login realizado com sucesso",
       user: {
-        id: adminUser.id,
-        name: adminUser.name,
-        email: adminUser.email,
-        role: "admin",
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       },
     });
 
     console.log("Setting session cookie:", sessionId);
     response.cookies.set("better-auth.session", sessionId, {
-      httpOnly: false, // Changed to false for debugging
-      secure: false, // Changed to false for local development
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 24 * 60 * 60, // 24 hours
       path: "/",
@@ -86,7 +93,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Admin login error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

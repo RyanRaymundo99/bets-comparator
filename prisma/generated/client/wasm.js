@@ -5,13 +5,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
   Decimal,
+  Debug,
   objectEnumValues,
   makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
   Public,
   getRuntime,
-  skip
-} = require('./runtime/index-browser.js')
+  createParam,
+} = require('./runtime/wasm-engine-edge.js')
 
 
 const Prisma = {}
@@ -20,79 +35,35 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.12.0
- * Query Engine version: 8047c96bbd92db98a2abc7c9323ce77c02c89dbc
+ * Prisma Client JS version: 6.17.1
+ * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
  */
 Prisma.prismaVersion = {
-  client: "6.12.0",
-  engine: "8047c96bbd92db98a2abc7c9323ce77c02c89dbc"
+  client: "6.17.1",
+  engine: "272a37d34178c2894197e17273bf937f25acdeac"
 }
 
-Prisma.PrismaClientKnownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)};
-Prisma.PrismaClientUnknownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientRustPanicError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientInitializationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientValidationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
+Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
+Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
+Prisma.PrismaClientInitializationError = PrismaClientInitializationError
+Prisma.PrismaClientValidationError = PrismaClientValidationError
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.empty = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.join = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.raw = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.sql = sqltag
+Prisma.empty = empty
+Prisma.join = join
+Prisma.raw = raw
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.defineExtension = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.getExtensionContext = Extensions.getExtensionContext
+Prisma.defineExtension = Extensions.defineExtension
 
 /**
  * Shorthand utilities for JSON filtering
@@ -109,10 +80,11 @@ Prisma.NullTypes = {
 
 
 
+
+
 /**
  * Enums
  */
-
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -124,27 +96,10 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  cpf: 'cpf',
-  phone: 'phone',
   password: 'password',
   emailVerified: 'emailVerified',
-  phoneVerified: 'phoneVerified',
-  approvalStatus: 'approvalStatus',
+  role: 'role',
   image: 'image',
-  kycStatus: 'kycStatus',
-  kycData: 'kycData',
-  documentType: 'documentType',
-  documentNumber: 'documentNumber',
-  documentFront: 'documentFront',
-  documentBack: 'documentBack',
-  documentSelfie: 'documentSelfie',
-  kycSubmittedAt: 'kycSubmittedAt',
-  kycReviewedAt: 'kycReviewedAt',
-  kycRejectionReason: 'kycRejectionReason',
-  adminNotificationLastSeenAt: 'adminNotificationLastSeenAt',
-  twoFactorEnabled: 'twoFactorEnabled',
-  twoFactorSecret: 'twoFactorSecret',
-  twoFactorBackupCodes: 'twoFactorBackupCodes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -189,124 +144,59 @@ exports.Prisma.VerificationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.BalanceScalarFieldEnum = {
+exports.Prisma.BetScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  currency: 'currency',
-  amount: 'amount',
-  locked: 'locked',
+  name: 'name',
+  company: 'company',
+  domain: 'domain',
+  cnpj: 'cnpj',
+  url: 'url',
+  region: 'region',
+  license: 'license',
+  status: 'status',
+  scope: 'scope',
+  platformType: 'platformType',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.DepositScalarFieldEnum = {
+exports.Prisma.ParameterScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  amount: 'amount',
-  currency: 'currency',
-  status: 'status',
-  paymentMethod: 'paymentMethod',
-  externalId: 'externalId',
-  proofUrl: 'proofUrl',
-  confirmedAt: 'confirmedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  transactionId: 'transactionId',
-  paymentId: 'paymentId',
-  paymentStatus: 'paymentStatus',
-  paymentAmount: 'paymentAmount',
-  fee: 'fee',
-  pixQrCode: 'pixQrCode',
-  pixQrCodeBase64: 'pixQrCodeBase64'
-};
-
-exports.Prisma.WithdrawalScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  amount: 'amount',
-  currency: 'currency',
-  status: 'status',
-  paymentMethod: 'paymentMethod',
-  externalId: 'externalId',
-  bankAccount: 'bankAccount',
-  processedAt: 'processedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  transactionId: 'transactionId',
-  type: 'type',
-  fee: 'fee',
-  netAmount: 'netAmount',
-  pixKey: 'pixKey',
-  protocol: 'protocol',
-  walletAddress: 'walletAddress',
-  network: 'network',
-  hash: 'hash'
-};
-
-exports.Prisma.OrderScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  baseCurrency: 'baseCurrency',
-  quoteCurrency: 'quoteCurrency',
-  amount: 'amount',
-  price: 'price',
-  total: 'total',
-  status: 'status',
-  externalOrderId: 'externalOrderId',
-  executedAt: 'executedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  transactionId: 'transactionId'
-};
-
-exports.Prisma.P2POfferScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  cryptoCurrency: 'cryptoCurrency',
-  fiatCurrency: 'fiatCurrency',
-  cryptoAmount: 'cryptoAmount',
-  fiatAmount: 'fiatAmount',
-  price: 'price',
-  status: 'status',
-  paymentMethods: 'paymentMethods',
-  minTrade: 'minTrade',
-  maxTrade: 'maxTrade',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.P2PTradeScalarFieldEnum = {
-  id: 'id',
-  offerId: 'offerId',
-  buyerId: 'buyerId',
-  sellerId: 'sellerId',
-  cryptoAmount: 'cryptoAmount',
-  fiatAmount: 'fiatAmount',
-  status: 'status',
-  paymentProof: 'paymentProof',
-  cryptoReleased: 'cryptoReleased',
-  fiatConfirmed: 'fiatConfirmed',
-  disputeReason: 'disputeReason',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  buyerTransactionId: 'buyerTransactionId',
-  sellerTransactionId: 'sellerTransactionId'
-};
-
-exports.Prisma.TransactionScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  amount: 'amount',
-  currency: 'currency',
-  balance: 'balance',
+  betId: 'betId',
+  name: 'name',
+  category: 'category',
+  valueText: 'valueText',
+  valueNumber: 'valueNumber',
+  valueBoolean: 'valueBoolean',
+  valueRating: 'valueRating',
+  unit: 'unit',
   description: 'description',
-  metadata: 'metadata',
+  type: 'type',
+  options: 'options',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ParameterHistoryScalarFieldEnum = {
+  id: 'id',
+  parameterId: 'parameterId',
+  valueText: 'valueText',
+  valueNumber: 'valueNumber',
+  valueBoolean: 'valueBoolean',
+  valueRating: 'valueRating',
+  notes: 'notes',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.ComparisonScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  selectedBets: 'selectedBets',
+  filters: 'filters',
+  insights: 'insights',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -319,13 +209,14 @@ exports.Prisma.NullableJsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
-};
-
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 
 exports.Prisma.JsonNullValueFilter = {
@@ -333,94 +224,14 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
-
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
-};
-exports.ApprovalStatus = exports.$Enums.ApprovalStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-};
-
-exports.KYCStatus = exports.$Enums.KYCStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-};
-
-exports.DocumentType = exports.$Enums.DocumentType = {
-  RG: 'RG',
-  HABILITACAO: 'HABILITACAO',
-  CNH: 'CNH',
-  PASSPORT: 'PASSPORT'
-};
-
 exports.VerificationType = exports.$Enums.VerificationType = {
   EMAIL: 'EMAIL',
-  PHONE: 'PHONE',
   PASSWORD_RESET: 'PASSWORD_RESET'
 };
 
-exports.DepositStatus = exports.$Enums.DepositStatus = {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  REJECTED: 'REJECTED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
-  PENDING: 'PENDING',
-  PROCESSING: 'PROCESSING',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.OrderType = exports.$Enums.OrderType = {
-  BUY: 'BUY',
-  SELL: 'SELL'
-};
-
-exports.OrderStatus = exports.$Enums.OrderStatus = {
-  PENDING: 'PENDING',
-  EXECUTING: 'EXECUTING',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.OfferType = exports.$Enums.OfferType = {
-  BUY: 'BUY',
-  SELL: 'SELL'
-};
-
-exports.OfferStatus = exports.$Enums.OfferStatus = {
-  ACTIVE: 'ACTIVE',
-  PAUSED: 'PAUSED',
-  CANCELLED: 'CANCELLED',
-  EXPIRED: 'EXPIRED'
-};
-
-exports.TradeStatus = exports.$Enums.TradeStatus = {
-  PENDING: 'PENDING',
-  PAYMENT_SENT: 'PAYMENT_SENT',
-  PAYMENT_CONFIRMED: 'PAYMENT_CONFIRMED',
-  CRYPTO_RELEASED: 'CRYPTO_RELEASED',
-  COMPLETED: 'COMPLETED',
-  DISPUTED: 'DISPUTED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.TransactionType = exports.$Enums.TransactionType = {
-  DEPOSIT: 'DEPOSIT',
-  WITHDRAWAL: 'WITHDRAWAL',
-  BUY_CRYPTO: 'BUY_CRYPTO',
-  SELL_CRYPTO: 'SELL_CRYPTO',
-  P2P_TRADE: 'P2P_TRADE',
-  FEE: 'FEE',
-  REFUND: 'REFUND'
+exports.UserRole = exports.$Enums.UserRole = {
+  ADMIN: 'ADMIN',
+  CLIENT: 'CLIENT'
 };
 
 exports.Prisma.ModelName = {
@@ -428,42 +239,88 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
-  Balance: 'Balance',
-  Deposit: 'Deposit',
-  Withdrawal: 'Withdrawal',
-  Order: 'Order',
-  P2POffer: 'P2POffer',
-  P2PTrade: 'P2PTrade',
-  Transaction: 'Transaction'
+  Bet: 'Bet',
+  Parameter: 'Parameter',
+  ParameterHistory: 'ParameterHistory',
+  Comparison: 'Comparison'
 };
-
 /**
- * This is a stub Prisma Client that will error at runtime if called.
+ * Create the Client
  */
-class PrismaClient {
-  constructor() {
-    return new Proxy(this, {
-      get(target, prop) {
-        let message
-        const runtime = getRuntime()
-        if (runtime.isEdge) {
-          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
-- Use Prisma Accelerate: https://pris.ly/d/accelerate
-- Use Driver Adapters: https://pris.ly/d/driver-adapters
-`;
-        } else {
-          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
-        }
-
-        message += `
-If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
-
-        throw new Error(message)
+const config = {
+  "generator": {
+    "name": "client",
+    "provider": {
+      "fromEnvVar": null,
+      "value": "prisma-client-js"
+    },
+    "output": {
+      "value": "C:\\Users\\Rian9\\OneDrive\\Documents\\GitHub\\bets-comparator\\prisma\\generated\\client",
+      "fromEnvVar": null
+    },
+    "config": {
+      "engineType": "library"
+    },
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "windows",
+        "native": true
       }
-    })
+    ],
+    "previewFeatures": [],
+    "sourceFilePath": "C:\\Users\\Rian9\\OneDrive\\Documents\\GitHub\\bets-comparator\\prisma\\schema.prisma",
+    "isCustomOutput": true
+  },
+  "relativeEnvPaths": {
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
+  },
+  "relativePath": "../..",
+  "clientVersion": "6.17.1",
+  "engineVersion": "272a37d34178c2894197e17273bf937f25acdeac",
+  "datasourceNames": [
+    "db"
+  ],
+  "activeProvider": "postgresql",
+  "postinstall": false,
+  "inlineDatasources": {
+    "db": {
+      "url": {
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
+      }
+    }
+  },
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ========================================\n// AUTHENTICATION MODELS\n// ========================================\n\nmodel User {\n  id            String       @id @map(\"_id\")\n  name          String\n  email         String       @unique\n  password      String?\n  emailVerified Boolean      @default(false)\n  role          UserRole     @default(CLIENT)\n  image         String?\n  createdAt     DateTime\n  updatedAt     DateTime\n  accounts      Account[]\n  sessions      Session[]\n  comparisons   Comparison[]\n\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id @map(\"_id\")\n  expiresAt DateTime\n  token     String   @unique\n  createdAt DateTime\n  updatedAt DateTime\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id @map(\"_id\")\n  accountId             String\n  providerId            String\n  userId                String\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime\n  updatedAt             DateTime\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id          String           @id @map(\"_id\")\n  identifier  String // email\n  value       String // verification code\n  type        VerificationType // EMAIL or PASSWORD_RESET\n  purpose     String? // Additional context like \"signup\", \"password_reset\"\n  attempts    Int              @default(0)\n  maxAttempts Int              @default(3)\n  expiresAt   DateTime\n  createdAt   DateTime?        @default(now())\n  updatedAt   DateTime?        @updatedAt\n\n  @@map(\"verification\")\n}\n\nenum VerificationType {\n  EMAIL\n  PASSWORD_RESET\n}\n\nenum UserRole {\n  ADMIN\n  CLIENT\n}\n\n// ========================================\n// BETS COMPARATOR MODELS\n// ========================================\n\nmodel Bet {\n  id           String      @id @default(cuid())\n  name         String\n  company      String? // Company name (e.g., \"PIXBET SOLUÇÕES TECNOLÓGICAS LTDA\")\n  domain       String?     @unique // Main domain (e.g., \"pix.bet.br\")\n  cnpj         String? // CNPJ if available\n  url          String? // Website URL (kept for compatibility)\n  region       String? // Region/scope (kept for compatibility)\n  license      String? // License info (kept for compatibility)\n  status       String?     @default(\"Funcionando\") // Funcionando, Fora do ar, etc\n  scope        String? // Brasil or Mundial\n  platformType String? // Casino, Sports, Ambos\n  createdAt    DateTime    @default(now())\n  updatedAt    DateTime    @updatedAt\n  parameters   Parameter[]\n\n  @@map(\"bet\")\n}\n\nmodel Parameter {\n  id       String  @id @default(cuid())\n  betId    String\n  name     String\n  category String? // Category from parameter definitions\n\n  // Different value types to support all parameter types\n  valueText    String? // For text values\n  valueNumber  Decimal? @db.Decimal(20, 2) // For numeric values\n  valueBoolean Boolean? // For yes/no values\n  valueRating  Int? // For star ratings (0-5)\n\n  unit        String? // e.g., \"R$\", \"%\", \"score\"\n  description String?  @db.Text // Longer descriptions\n  type        String? // \"text\", \"number\", \"currency\", \"boolean\", \"rating\", \"percentage\", \"select\"\n  options     String[] // For select type parameters\n\n  createdAt DateTime           @default(now())\n  updatedAt DateTime           @updatedAt\n  bet       Bet                @relation(fields: [betId], references: [id], onDelete: Cascade)\n  history   ParameterHistory[]\n\n  @@unique([betId, name])\n  @@map(\"parameter\")\n}\n\nmodel ParameterHistory {\n  id          String @id @default(cuid())\n  parameterId String\n\n  // Store all value types for history\n  valueText    String?\n  valueNumber  Decimal? @db.Decimal(20, 2)\n  valueBoolean Boolean?\n  valueRating  Int?\n\n  notes     String?   @db.Text // Optional notes about why the value changed\n  createdAt DateTime  @default(now())\n  parameter Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)\n\n  @@map(\"parameter_history\")\n}\n\nmodel Comparison {\n  id           String   @id @default(cuid())\n  userId       String\n  name         String? // Optional name for saved comparisons\n  selectedBets String[] // Array of bet IDs\n  filters      Json? // Store filter settings\n  insights     String? // AI-generated insights\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"comparison\")\n}\n",
+  "inlineSchemaHash": "f0e208bfcf863ec34d6a769f84267bc713b8a52221c784d830aae3f0d509c822",
+  "copyEngine": true
+}
+config.dirname = '/'
+
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"accounts\",\"kind\":\"object\",\"type\":\"Account\",\"relationName\":\"AccountToUser\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUser\"},{\"name\":\"comparisons\",\"kind\":\"object\",\"type\":\"Comparison\",\"relationName\":\"ComparisonToUser\"}],\"dbName\":\"user\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SessionToUser\"}],\"dbName\":\"session\"},\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"accountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"idToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AccountToUser\"}],\"dbName\":\"account\"},\"Verification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"identifier\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"VerificationType\"},{\"name\":\"purpose\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"attempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"maxAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"verification\"},\"Bet\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"company\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cnpj\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"region\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"license\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"platformType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parameters\",\"kind\":\"object\",\"type\":\"Parameter\",\"relationName\":\"BetToParameter\"}],\"dbName\":\"bet\"},\"Parameter\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"betId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueNumber\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"valueBoolean\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"valueRating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unit\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"options\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"bet\",\"kind\":\"object\",\"type\":\"Bet\",\"relationName\":\"BetToParameter\"},{\"name\":\"history\",\"kind\":\"object\",\"type\":\"ParameterHistory\",\"relationName\":\"ParameterToParameterHistory\"}],\"dbName\":\"parameter\"},\"ParameterHistory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parameterId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueNumber\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"valueBoolean\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"valueRating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parameter\",\"kind\":\"object\",\"type\":\"Parameter\",\"relationName\":\"ParameterToParameterHistory\"}],\"dbName\":\"parameter_history\"},\"Comparison\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"selectedBets\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"filters\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"insights\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ComparisonToUser\"}],\"dbName\":\"comparison\"}},\"enums\":{},\"types\":{}}")
+defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
   }
 }
+config.compilerWasm = undefined
 
+config.injectableEdgeEnv = () => ({
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
+})
+
+if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
+  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
+}
+
+const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-
 Object.assign(exports, Prisma)
+

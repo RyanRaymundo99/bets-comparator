@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+// DELETE - Delete user
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -8,91 +9,29 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    // Get the session cookie
-    const sessionCookie = request.cookies.get("better-auth.session");
-
-    if (!sessionCookie?.value) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Find the session in the database
-    const session = await prisma.session.findUnique({
-      where: { token: sessionCookie.value },
-      include: { user: true },
-    });
-
-    if (!session || session.expiresAt <= new Date()) {
-      return NextResponse.json(
-        { error: "Invalid or expired session" },
-        { status: 401 }
-      );
-    }
-
     // Check if user exists
-    const userToDelete = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id },
     });
 
-    if (!userToDelete) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    // Prevent deleting the current admin user
-    if (session.user.id === id) {
+    if (!user) {
       return NextResponse.json(
-        { error: "Cannot delete your own account" },
-        { status: 400 }
+        { success: false, error: "User not found" },
+        { status: 404 }
       );
     }
 
-    // Delete user and all related data in a transaction
-    await prisma.$transaction(async (tx) => {
-      // Delete user sessions
-      await tx.session.deleteMany({
-        where: { userId: id },
-      });
+    // Don't allow deleting ADMIN users
+    if (user.role === "ADMIN") {
+      return NextResponse.json(
+        { success: false, error: "Cannot delete ADMIN users" },
+        { status: 403 }
+      );
+    }
 
-      // Delete user transactions
-      await tx.transaction.deleteMany({
-        where: { userId: id },
-      });
-
-      // Delete user deposits
-      await tx.deposit.deleteMany({
-        where: { userId: id },
-      });
-
-      // Delete user withdrawals
-      await tx.withdrawal.deleteMany({
-        where: { userId: id },
-      });
-
-      // Delete user orders
-      await tx.order.deleteMany({
-        where: { userId: id },
-      });
-
-      // Delete P2P offers created by user
-      await tx.p2POffer.deleteMany({
-        where: { userId: id },
-      });
-
-      // Delete P2P trades where user is buyer or seller
-      await tx.p2PTrade.deleteMany({
-        where: {
-          OR: [{ buyerId: id }, { sellerId: id }],
-        },
-      });
-
-      // Delete user balances
-      await tx.balance.deleteMany({
-        where: { userId: id },
-      });
-
-      // Finally, delete the user
-      await tx.user.delete({
-        where: { id },
-      });
+    // Delete user (sessions and comparisons will be cascade deleted)
+    await prisma.user.delete({
+      where: { id },
     });
 
     return NextResponse.json({
@@ -102,9 +41,8 @@ export async function DELETE(
   } catch (error) {
     console.error("Error deleting user:", error);
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { success: false, error: "Failed to delete user" },
       { status: 500 }
     );
   }
 }
-

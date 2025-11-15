@@ -1,4 +1,4 @@
-# Vercel Configuration for BS Market
+# Vercel Configuration for Bets Comparator
 
 ## 🚀 Deploy Instructions
 

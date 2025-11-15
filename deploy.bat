@@ -1,9 +1,9 @@
 @echo off
-REM BS Market - Quick Deployment Script for Windows
-REM This script helps you deploy BS Market to Vercel
+REM Bets Comparator - Quick Deployment Script for Windows
+REM This script helps you deploy Bets Comparator to Vercel
 
 echo.
-echo 🚀 BS Market - Deployment Script
+echo 🚀 Bets Comparator - Deployment Script
 echo ================================
 echo.
 

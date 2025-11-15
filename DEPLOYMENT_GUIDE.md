@@ -1,4 +1,4 @@
-# 🚀 BS Market - Complete Deployment Guide
+# 🚀 Bets Comparator - Complete Deployment Guide
 
 ## Quick Start (5 minutes)
 
@@ -11,7 +11,7 @@
 
 ### 2. One-Click Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/bs-market)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/bets-comparator)
 
 ## Manual Deployment
 

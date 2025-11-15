@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# BS Market - Quick Deployment Script
-# This script helps you deploy BS Market to Vercel
+# Bets Comparator - Quick Deployment Script
+# This script helps you deploy Bets Comparator to Vercel
 
 set -e
 
-echo "🚀 BS Market - Deployment Script"
+echo "🚀 Bets Comparator - Deployment Script"
 echo "================================"
 
 # Colors for output

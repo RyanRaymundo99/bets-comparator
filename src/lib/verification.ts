@@ -56,17 +56,17 @@ export class VerificationService {
       // Send email
       const subject =
         purpose === "signup"
-          ? "Verify your BS Market email address"
-          : "BS Market email verification";
+          ? "Verify your Bets Comparator email address"
+          : "Bets Comparator email verification";
 
-      const text = `Your BS Market verification code is: ${code}
+      const text = `Your Bets Comparator verification code is: ${code}
 
 This code will expire in 10 minutes.
 
 If you didn't request this verification, please ignore this email.
 
 Best regards,
-The BS Market Team`;
+The Bets Comparator Team`;
 
       const emailResult = await sendEmail({
         to: email,
@@ -131,7 +131,7 @@ The BS Market Team`;
       // Send email
       const emailResult = await sendEmail({
         to: formattedIdentifier,
-        subject: "BS Market Password Reset Code",
+        subject: "Bets Comparator Password Reset Code",
         text: `Your password reset code is: ${code}
 
 This code will expire in 10 minutes.
@@ -139,7 +139,7 @@ This code will expire in 10 minutes.
 If you didn't request a password reset, please ignore this email.
 
 Best regards,
-The BS Market Team`,
+The Bets Comparator Team`,
       });
 
       if (emailResult.success) {

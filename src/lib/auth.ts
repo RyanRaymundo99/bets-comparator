@@ -30,8 +30,8 @@ export const getAuth = (): ReturnType<typeof betterAuth> => {
             console.log("🔄 Sending password reset email to:", user.email);
             const result = await sendEmail({
               to: user.email,
-              subject: "BS Market - Reset your password",
-              text: `Hi there!\n\nYou requested to reset your password for your BS Market account.\n\nClick the link below to reset your password:\n${url}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request this, please ignore this email.\n\nThanks,\nBS Market Team`,
+              subject: "Bets Comparator - Reset your password",
+              text: `Hi there!\n\nYou requested to reset your password for your Bets Comparator account.\n\nClick the link below to reset your password:\n${url}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request this, please ignore this email.\n\nThanks,\nBets Comparator Team`,
             });
             console.log("✅ Password reset email sent successfully:", result);
           } catch (error) {

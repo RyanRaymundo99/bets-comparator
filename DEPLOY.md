@@ -1,4 +1,4 @@
-# BS Market - Deploy no Vercel
+# Bets Comparator - Deploy no Vercel
 
 ## 🚀 Deploy Rápido
 
@@ -22,7 +22,7 @@
 1. Faça push do código para GitHub
 2. Acesse [vercel.com](https://vercel.com)
 3. Conecte sua conta GitHub
-4. Importe o repositório BS Market
+4. Importe o repositório Bets Comparator
 5. Configure as variáveis de ambiente
 6. Deploy automático!
 
@@ -178,4 +178,4 @@ Para problemas específicos:
 
 ---
 
-**BS Market** - Plataforma de Trading Crypto 🚀
+**Bets Comparator** - Plataforma SaaS de Comparação de Casas de Apostas 🚀
