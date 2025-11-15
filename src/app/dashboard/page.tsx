@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useFetch } from "@/hooks/use-fetch";
+import { useApi } from "@/hooks/use-api";
 
 interface Bet {
   id: string;
@@ -55,43 +57,65 @@ interface Insight {
 }
 
 export default function ClientDashboard() {
-  const [bets, setBets] = useState<Bet[]>([]);
   const [selectedBets, setSelectedBets] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
-  const [loading, setLoading] = useState(true);
-  const [generatingInsights, setGeneratingInsights] = useState(false);
   const [insights, setInsights] = useState<Insight | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
-  const fetchBets = async () => {
-    try {
-      setLoading(true);
+  // Fetch bets using reusable hook
+  const {
+    data: betsData,
+    loading,
+    refetch: refetchBets,
+  } = useFetch<{ bets: Bet[] }>(
+    () => {
       const params = new URLSearchParams();
       if (selectedRegion !== "all") {
         params.append("region", selectedRegion);
       }
-
-      const response = await fetch(`/api/bets?${params.toString()}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setBets(data.bets);
-      } else {
-        throw new Error(data.error);
-      }
-    } catch (error) {
-      console.error("Error fetching bets:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Falha ao carregar casas de apostas",
-      });
-    } finally {
-      setLoading(false);
+      return `/api/bets?${params.toString()}`;
+    },
+    {
+      showToast: true,
+      errorMessage: "Falha ao carregar casas de apostas",
+      dependencies: [selectedRegion],
     }
-  };
+  );
+
+  const bets = betsData?.bets || [];
+
+  // Generate insights using reusable hook
+  const generateInsightsApi = useCallback(
+    async () => {
+      if (selectedBets.length === 0) {
+        throw new Error("Selecione pelo menos uma casa de apostas");
+      }
+      return fetch("/api/insights", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          betIds: selectedBets,
+          type: selectedBets.length > 1 ? "comparative" : "single",
+        }),
+      });
+    },
+    [selectedBets]
+  );
+
+  const {
+    loading: generatingInsights,
+    execute: generateInsights,
+  } = useApi<Insight>(generateInsightsApi, {
+    onSuccess: (data) => {
+      setInsights(data);
+    },
+    successMessage: "Insights gerados com sucesso!",
+    errorMessage: "Falha ao gerar insights",
+  });
 
   const handleGenerateInsights = async () => {
     if (selectedBets.length === 0) {
@@ -102,41 +126,7 @@ export default function ClientDashboard() {
       });
       return;
     }
-
-    try {
-      setGeneratingInsights(true);
-      const response = await fetch("/api/insights", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          betIds: selectedBets,
-          type: selectedBets.length > 1 ? "comparative" : "single",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setInsights(data);
-        toast({
-          title: "Sucesso",
-          description: "Insights gerados com sucesso!",
-        });
-      } else {
-        throw new Error(data.error);
-      }
-    } catch (error) {
-      console.error("Error generating insights:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Falha ao gerar insights",
-      });
-    } finally {
-      setGeneratingInsights(false);
-    }
+    await generateInsights();
   };
 
   const handleToggleBet = (betId: string) => {
@@ -148,10 +138,6 @@ export default function ClientDashboard() {
     // Clear insights when selection changes
     setInsights(null);
   };
-
-  useEffect(() => {
-    fetchBets();
-  }, [selectedRegion]);
 
   const filteredBets = bets.filter((bet) =>
     searchTerm
@@ -184,7 +170,7 @@ export default function ClientDashboard() {
           </div>
           <div className="flex items-center space-x-2">
             <Button
-              onClick={fetchBets}
+              onClick={refetchBets}
               variant="outline"
               className="border-gray-700 text-white hover:bg-gray-800"
             >

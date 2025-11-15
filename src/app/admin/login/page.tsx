@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,37 +8,37 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useFormSubmit } from "@/hooks/use-form-submit";
+import { useFetch } from "@/hooks/use-fetch";
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
   // Check if already logged in
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch("/api/auth/verify-admin-session");
-        const data = await response.json();
-        
-        if (data.valid) {
-          // Already logged in, redirect to admin
-          console.log("Already logged in, redirecting...");
+  const { data: sessionData } = useFetch<{ valid: boolean }>(
+    "/api/auth/verify-admin-session",
+    {
+      immediate: true,
+      showToast: false,
+      onSuccess: (data) => {
+        if (data?.valid) {
           router.push("/admin");
         }
-      } catch (error) {
-        console.log("Not logged in");
-      }
-    };
-    
-    checkSession();
-  }, [router]);
+      },
+    }
+  );
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Form submission with reusable hook
+  const { loading, submit } = useFormSubmit({
+    successMessage: "Login realizado! Redirecionando para o painel...",
+    errorMessage: "Credenciais inválidas",
+    redirect: "/admin",
+  });
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (!email || !password) {
       toast({
         variant: "destructive",
@@ -48,50 +48,15 @@ const AdminLoginPage = () => {
       return;
     }
 
-    setLoading(true);
-    try {
-      console.log("Attempting login...");
-      const response = await fetch("/api/auth/admin-login", {
+    await submit(e, async () => {
+      return fetch("/api/auth/admin-login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
-
-      const result = await response.json();
-      console.log("Login response:", result);
-
-      if (response.ok && result.success) {
-        console.log("Login successful!");
-        toast({
-          title: "Login realizado!",
-          description: "Redirecionando para o painel...",
-        });
-
-        // Wait a bit for the cookie to be set
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Force hard redirect
-        console.log("Redirecting to /admin");
-        window.location.href = "/admin";
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Falha no login",
-          description: result.error || "Credenciais inválidas",
-        });
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Ocorreu um erro inesperado",
-      });
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (

@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import prisma from "./prisma";
+import { logger } from "./logger";
 
 export interface ValidatedSession {
   userId: string;
@@ -63,7 +64,7 @@ export async function validateSession(
       sessionId: session.id,
     };
   } catch (error) {
-    console.error("Session validation error:", error);
+    logger.error("Session validation error", error);
     return null;
   }
 }
@@ -80,7 +81,7 @@ export async function refreshSession(sessionId: string): Promise<boolean> {
     });
     return true;
   } catch (error) {
-    console.error("Session refresh error:", error);
+    logger.error("Session refresh error", error);
     return false;
   }
 }

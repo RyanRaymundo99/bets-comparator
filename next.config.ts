@@ -58,7 +58,24 @@ const nextConfig: NextConfig = {
 
   // Performance optimizations
   experimental: {
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
+      "@radix-ui/react-navigation-menu",
+      "@radix-ui/react-progress",
+      "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-toast",
+    ],
+    // Enable partial prerendering for better performance
+    ppr: false, // Can enable when stable
   },
 
   // Server external packages
@@ -69,8 +86,14 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 
+  // Bundle optimization
+  swcMinify: true,
+
+  // Compression (enabled by default in production)
+  compress: true,
+
   // Webpack optimizations
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -78,6 +101,49 @@ const nextConfig: NextConfig = {
         net: false,
         tls: false,
       };
+
+      // Optimize bundle splitting
+      if (!dev) {
+        config.optimization = {
+          ...config.optimization,
+          splitChunks: {
+            chunks: "all",
+            cacheGroups: {
+              default: false,
+              vendors: false,
+              // Vendor chunk for large libraries
+              vendor: {
+                name: "vendor",
+                chunks: "all",
+                test: /node_modules/,
+                priority: 20,
+              },
+              // Separate chunk for Radix UI
+              radix: {
+                name: "radix",
+                test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+                chunks: "all",
+                priority: 30,
+              },
+              // Separate chunk for Recharts (large library)
+              recharts: {
+                name: "recharts",
+                test: /[\\/]node_modules[\\/]recharts[\\/]/,
+                chunks: "all",
+                priority: 30,
+              },
+              // Common chunk for shared code
+              common: {
+                name: "common",
+                minChunks: 2,
+                chunks: "all",
+                priority: 10,
+                reuseExistingChunk: true,
+              },
+            },
+          },
+        };
+      }
     }
     return config;
   },

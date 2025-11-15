@@ -6,11 +6,17 @@ import { Toaster } from "@/components/ui/toaster";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // Improve font loading performance
+  preload: true,
+  fallback: ["system-ui", "arial"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: false, // Only preload primary font
+  fallback: ["monospace"],
 });
 
 export const metadata: Metadata = {
@@ -50,13 +56,11 @@ export default function RootLayout({
           href="/shortname-logo.svg"
           as="image"
           type="image/svg+xml"
+          fetchPriority="high"
         />
-        <link
-          rel="preload"
-          href="/user-profile.svg"
-          as="image"
-          type="image/svg+xml"
-        />
+        {/* DNS prefetch for external resources */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

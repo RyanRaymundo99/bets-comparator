@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatCurrency, getFirstName } from "@/lib/formatters";
 
 interface Balance {
   currency: string;
@@ -60,29 +61,9 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
     fetchUserName();
   }, []);
 
-  const formatBalance = (amount: number, currency: string) => {
-    if (currency === "BRL") {
-      return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(amount);
-    } else {
-      // For USDT and other cryptos, show with more decimal places
-      return `${amount.toFixed(2)} ${currency}`;
-    }
-  };
-
   const getBalance = (currency: string) => {
     const balance = balances.find((b) => b.currency === currency);
     return balance ? balance.amount : 0;
-  };
-
-  // Extract first name from full name
-  const getFirstName = (fullName: string | null) => {
-    if (!fullName) return null;
-    return fullName.split(" ")[0];
   };
 
   const firstName = getFirstName(userName);
@@ -138,7 +119,7 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
             <div className="flex items-center justify-between w-full">
               <span className="text-sm font-medium">BRL</span>
               <span className="text-sm font-semibold text-blue-300">
-                {formatBalance(brlBalance, "BRL")}
+                {formatCurrency(brlBalance, "BRL")}
               </span>
             </div>
           </DropdownMenuItem>
@@ -148,7 +129,7 @@ export function BalanceDisplay({ className }: BalanceDisplayProps) {
             <div className="flex items-center justify-between w-full">
               <span className="text-sm font-medium">USDT</span>
               <span className="text-sm font-semibold text-blue-300">
-                {formatBalance(usdtBalance, "USDT")}
+                {formatCurrency(usdtBalance, "USDT")}
               </span>
             </div>
           </DropdownMenuItem>

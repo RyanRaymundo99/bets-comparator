@@ -1,93 +1,78 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import {
+  successResponse,
+  errorResponse,
+  badRequestResponse,
+  conflictResponse,
+  withErrorHandling,
+} from "@/lib/api-response";
 
 // GET /api/bets - List all bets with optional filters
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const region = searchParams.get("region");
-    const search = searchParams.get("search");
+export const GET = withErrorHandling(async (request: NextRequest) => {
+  const { searchParams } = new URL(request.url);
+  const region = searchParams.get("region");
+  const search = searchParams.get("search");
 
-    const where: Record<string, unknown> = {};
-    
-    if (region) {
-      where.region = region;
-    }
-    
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { cnpj: { contains: search, mode: "insensitive" } },
-      ];
-    }
+  const where: Record<string, unknown> = {};
 
-    const bets = await prisma.bet.findMany({
-      where,
-      include: {
-        parameters: {
-          orderBy: { name: "asc" },
-        },
-      },
-      orderBy: { name: "asc" },
-    });
-
-    return NextResponse.json({ success: true, bets });
-  } catch (error) {
-    console.error("Error fetching bets:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch bets" },
-      { status: 500 }
-    );
+  if (region) {
+    where.region = region;
   }
-}
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { cnpj: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  const bets = await prisma.bet.findMany({
+    where,
+    include: {
+      parameters: {
+        orderBy: { name: "asc" },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  return successResponse({ bets });
+});
 
 // POST /api/bets - Create a new bet
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { name, cnpj, url, region, license } = body;
+export const POST = withErrorHandling(async (request: NextRequest) => {
+  const body = await request.json();
+  const { name, cnpj, url, region, license } = body;
 
-    if (!name) {
-      return NextResponse.json(
-        { success: false, error: "Name is required" },
-        { status: 400 }
-      );
-    }
+  if (!name) {
+    return badRequestResponse("Name is required");
+  }
 
-    // Check if CNPJ already exists
-    if (cnpj) {
-      const existingBet = await prisma.bet.findFirst({
-        where: { cnpj },
-      });
-
-      if (existingBet) {
-        return NextResponse.json(
-          { success: false, error: "A bet with this CNPJ already exists" },
-          { status: 409 }
-        );
-      }
-    }
-
-    const bet = await prisma.bet.create({
-      data: {
-        name,
-        cnpj,
-        url,
-        region,
-        license,
-      },
-      include: {
-        parameters: true,
-      },
+  // Check if CNPJ already exists
+  if (cnpj) {
+    const existingBet = await prisma.bet.findFirst({
+      where: { cnpj },
     });
 
-    return NextResponse.json({ success: true, bet }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating bet:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to create bet" },
-      { status: 500 }
-    );
+    if (existingBet) {
+      return conflictResponse("A bet with this CNPJ already exists");
+    }
   }
-}
+
+  const bet = await prisma.bet.create({
+    data: {
+      name,
+      cnpj,
+      url,
+      region,
+      license,
+    },
+    include: {
+      parameters: true,
+    },
+  });
+
+  return successResponse({ bet }, 201);
+});
 
