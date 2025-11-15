@@ -18,7 +18,7 @@ const AdminLoginPage = () => {
   const router = useRouter();
 
   // Check if already logged in
-  const { data: sessionData } = useFetch<{ valid: boolean }>(
+  useFetch<{ valid: boolean }>(
     "/api/auth/verify-admin-session",
     {
       immediate: true,

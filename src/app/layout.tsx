@@ -58,21 +58,13 @@ export default function RootLayout({
           type="image/svg+xml"
           fetchPriority="high"
         />
-        {/* DNS prefetch for external resources */}
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-        {/* Preconnect to external domains */}
+        {/* Preconnect to external domains (Next.js handles this automatically, but explicit is fine) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-
-        {/* DNS prefetch for performance */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
         {/* Performance meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />

@@ -1,6 +1,5 @@
 import { useFetch } from "./use-fetch";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 interface AdminSessionData {
   valid: boolean;

@@ -86,9 +86,6 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 
-  // Bundle optimization
-  swcMinify: true,
-
   // Compression (enabled by default in production)
   compress: true,
 

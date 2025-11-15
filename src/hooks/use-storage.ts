@@ -3,9 +3,7 @@ import {
   getStorageItem,
   setStorageItem,
   removeStorageItem,
-  getStorageObject,
   setStorageObject,
-  hasStorageItem,
 } from "@/lib/storage";
 
 /**
@@ -46,8 +44,8 @@ export function useStorage<T = string>(
         } else {
           setStorageObject(key, value);
         }
-      } catch (error) {
-        console.error(`Error setting storage key "${key}":`, error);
+      } catch {
+        // Silently fail - storage might be disabled
       }
     },
     [key]
@@ -57,8 +55,8 @@ export function useStorage<T = string>(
     try {
       setStoredValue(null);
       removeStorageItem(key);
-    } catch (error) {
-      console.error(`Error removing storage key "${key}":`, error);
+    } catch {
+      // Silently fail - storage might be disabled
     }
   }, [key]);
 
@@ -98,10 +96,6 @@ export function useStorageBoolean(
     },
     [setValue]
   );
-
-  const toggle = useCallback(() => {
-    setBoolean(!(value ?? defaultValue));
-  }, [value, defaultValue, setBoolean]);
 
   return [value ?? defaultValue, setBoolean, removeValue];
 }

@@ -8,41 +8,13 @@ import dynamic from "next/dynamic";
 /**
  * Lazy load Recharts components (large library ~200KB)
  * Use these instead of direct imports to reduce initial bundle
+ * 
+ * Note: These are dynamically imported to reduce initial bundle size.
+ * The components will be loaded only when actually used.
+ * 
+ * Usage: Import the entire recharts module lazily when needed
  */
-export const LazyRecharts = {
-  AreaChart: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.AreaChart })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  Area: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.Area })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  XAxis: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.XAxis })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  YAxis: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.YAxis })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  CartesianGrid: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.CartesianGrid })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  Tooltip: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.Tooltip })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  ResponsiveContainer: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-  Legend: dynamic(
-    () => import("recharts").then((mod) => ({ default: mod.Legend })),
-    { ssr: false }
-  ) as React.ComponentType<any>,
-};
+export const loadRecharts = () => import("recharts");
 
 /**
  * Lazy load heavy components
