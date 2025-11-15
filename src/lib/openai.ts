@@ -23,7 +23,7 @@ export interface BetData {
   name: string;
   parameters: {
     name: string;
-    value: string | number | boolean | null;
+    value: string | number | boolean;
     category?: string;
     unit?: string;
   }[];

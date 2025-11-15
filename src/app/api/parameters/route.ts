@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
 
 // POST /api/parameters - Create or update a parameter
 export async function POST(request: NextRequest) {
@@ -72,7 +71,7 @@ export async function POST(request: NextRequest) {
       type?: string;
       options?: string[];
       valueText?: string;
-      valueNumber?: Decimal;
+      valueNumber?: Prisma.Decimal;
       valueBoolean?: boolean;
       valueRating?: number;
     } = {
@@ -82,7 +81,7 @@ export async function POST(request: NextRequest) {
       type,
       options: options || [],
       valueText: valueText !== undefined ? valueText : null,
-      valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
+      valueNumber: valueNumber !== undefined ? new Prisma.Decimal(valueNumber) : null,
       valueBoolean: valueBoolean !== undefined ? valueBoolean : null,
       valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
     };
@@ -106,7 +105,7 @@ export async function POST(request: NextRequest) {
           data: {
             parameterId: parameter.id,
             valueText: valueText || null,
-            valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
+            valueNumber: valueNumber !== undefined ? new Prisma.Decimal(valueNumber) : null,
             valueBoolean: valueBoolean || null,
             valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
             notes: notes || "Atualização via admin",
@@ -128,7 +127,7 @@ export async function POST(request: NextRequest) {
         data: {
           parameterId: parameter.id,
           valueText: valueText || null,
-          valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
+          valueNumber: valueNumber !== undefined ? new Prisma.Decimal(valueNumber) : null,
           valueBoolean: valueBoolean || null,
           valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
           notes: notes || "Valor inicial",

@@ -41,26 +41,33 @@ export async function POST(request: NextRequest) {
       name: bet.name,
       region: bet.region || undefined,
       license: bet.license || undefined,
-      parameters: bet.parameters.map(p => {
-        // Get value based on type
-        let value: string | number | boolean | null = null;
-        if (p.valueText !== null) {
-          value = p.valueText;
-        } else if (p.valueNumber !== null) {
-          value = Number(p.valueNumber);
-        } else if (p.valueBoolean !== null) {
-          value = p.valueBoolean;
-        } else if (p.valueRating !== null) {
-          value = p.valueRating;
-        }
-        
-        return {
-          name: p.name,
-          value: value,
-          category: p.category || undefined,
-          unit: p.unit || undefined,
-        };
-      }),
+      parameters: bet.parameters
+        .map(p => {
+          // Get the appropriate value based on type
+          let value: string | number | boolean | null = null;
+          if (p.valueText !== null) {
+            value = p.valueText;
+          } else if (p.valueNumber !== null) {
+            value = p.valueNumber.toNumber();
+          } else if (p.valueBoolean !== null) {
+            value = p.valueBoolean;
+          } else if (p.valueRating !== null) {
+            value = p.valueRating;
+          }
+          
+          // Skip parameters with null values
+          if (value === null) {
+            return null;
+          }
+          
+          return {
+            name: p.name,
+            value: value,
+            category: p.category || undefined,
+            unit: p.unit || undefined,
+          };
+        })
+        .filter((p): p is NonNullable<typeof p> => p !== null),
     }));
 
     let result;

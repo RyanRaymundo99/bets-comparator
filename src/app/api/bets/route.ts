@@ -16,13 +16,13 @@ export async function GET(request: NextRequest) {
     
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: "insensitive" as const } },
-        { cnpj: { contains: search, mode: "insensitive" as const } },
+        { name: { contains: search, mode: "insensitive" } },
+        { cnpj: { contains: search, mode: "insensitive" } },
       ];
     }
 
     const bets = await prisma.bet.findMany({
-      where: where as never,
+      where,
       include: {
         parameters: {
           orderBy: { name: "asc" },

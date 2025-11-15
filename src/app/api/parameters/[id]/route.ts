@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "../../../../../prisma/generated/client";
 import { getParameterDefinition } from "@/lib/parameter-definitions";
 
 // GET /api/parameters/[id] - Get a specific parameter with history
@@ -56,22 +55,21 @@ export async function PATCH(
       );
     }
 
-    // Check if parameter exists
-    const existingParameter = await prisma.parameter.findUnique({
+    let parameter = await prisma.parameter.findUnique({
       where: { id },
     });
 
-    if (!existingParameter) {
+    if (!parameter) {
       return NextResponse.json(
         { success: false, error: "Parameter not found" },
         { status: 404 }
       );
     }
 
-    const paramDef = getParameterDefinition(existingParameter.name);
+    const paramDef = getParameterDefinition(parameter.name);
     if (!paramDef) {
       return NextResponse.json(
-        { success: false, error: `Parameter definition for '${existingParameter.name}' not found` },
+        { success: false, error: `Parameter definition for '${parameter.name}' not found` },
         { status: 400 }
       );
     }
@@ -106,8 +104,7 @@ export async function PATCH(
         );
     }
 
-    // Update parameter
-    const parameter = await prisma.parameter.update({
+    parameter = await prisma.parameter.update({
       where: { id },
       data: dataToUpdate,
       include: {

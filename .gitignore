@@ -188,3 +188,7 @@ local/
 # Temporary files
 *.tmp
 *.temp
+
+# Prisma temporary files
+prisma/generated/client/query_engine-*.dll.node.tmp*
+prisma/generated/client/*.tmp*
