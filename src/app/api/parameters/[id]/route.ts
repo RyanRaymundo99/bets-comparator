@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
+import { getParameterDefinition } from "@/lib/parameter-definitions";
 
 // GET /api/parameters/[id] - Get a specific parameter with history
 export async function GET(
@@ -45,7 +47,14 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, category, value, unit, description, notes } = body;
+    const { value, notes } = body;
+
+    if (value === undefined) {
+      return NextResponse.json(
+        { success: false, error: "value is required for update" },
+        { status: 400 }
+      );
+    }
 
     // Check if parameter exists
     const existingParameter = await prisma.parameter.findUnique({
@@ -59,16 +68,48 @@ export async function PATCH(
       );
     }
 
+    const paramDef = getParameterDefinition(existingParameter.name);
+    if (!paramDef) {
+      return NextResponse.json(
+        { success: false, error: `Parameter definition for '${existingParameter.name}' not found` },
+        { status: 400 }
+      );
+    }
+
+    const dataToUpdate: Record<string, unknown> = {};
+    const historyValue: Record<string, unknown> = {};
+
+    switch (paramDef.type) {
+      case "text":
+      case "select":
+        dataToUpdate.valueText = String(value);
+        historyValue.valueText = String(value);
+        break;
+      case "number":
+      case "currency":
+      case "percentage":
+        dataToUpdate.valueNumber = new Decimal(value);
+        historyValue.valueNumber = new Decimal(value);
+        break;
+      case "boolean":
+        dataToUpdate.valueBoolean = Boolean(value);
+        historyValue.valueBoolean = Boolean(value);
+        break;
+      case "rating":
+        dataToUpdate.valueRating = parseInt(value, 10);
+        historyValue.valueRating = parseInt(value, 10);
+        break;
+      default:
+        return NextResponse.json(
+          { success: false, error: `Unsupported parameter type: ${paramDef.type}` },
+          { status: 400 }
+        );
+    }
+
     // Update parameter
     const parameter = await prisma.parameter.update({
       where: { id },
-      data: {
-        ...(name && { name }),
-        ...(category !== undefined && { category }),
-        ...(value !== undefined && { value: new Prisma.Decimal(value) }),
-        ...(unit !== undefined && { unit }),
-        ...(description !== undefined && { description }),
-      },
+      data: dataToUpdate,
       include: {
         bet: true,
         history: {
@@ -78,16 +119,14 @@ export async function PATCH(
       },
     });
 
-    // Create history entry if value changed
-    if (value !== undefined && existingParameter.value.toString() !== value.toString()) {
-      await prisma.parameterHistory.create({
-        data: {
-          parameterId: parameter.id,
-          value: new Prisma.Decimal(value),
-          notes: notes || `Updated from ${existingParameter.value} to ${value}`,
-        },
-      });
-    }
+    // Create history entry
+    await prisma.parameterHistory.create({
+      data: {
+        parameterId: parameter.id,
+        notes: notes || null,
+        ...historyValue,
+      },
+    });
 
     return NextResponse.json({ success: true, parameter });
   } catch (error) {

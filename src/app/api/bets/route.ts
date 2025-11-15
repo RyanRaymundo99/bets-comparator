@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 
 // GET /api/bets - List all bets with optional filters
 export async function GET(request: NextRequest) {
@@ -9,7 +8,7 @@ export async function GET(request: NextRequest) {
     const region = searchParams.get("region");
     const search = searchParams.get("search");
 
-    const where: Prisma.BetWhereInput = {};
+    const where: Record<string, unknown> = {};
     
     if (region) {
       where.region = region;
@@ -17,13 +16,13 @@ export async function GET(request: NextRequest) {
     
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { cnpj: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" as const } },
+        { cnpj: { contains: search, mode: "insensitive" as const } },
       ];
     }
 
     const bets = await prisma.bet.findMany({
-      where,
+      where: where as never,
       include: {
         parameters: {
           orderBy: { name: "asc" },
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     // Check if CNPJ already exists
     if (cnpj) {
-      const existingBet = await prisma.bet.findUnique({
+      const existingBet = await prisma.bet.findFirst({
         where: { cnpj },
       });
 

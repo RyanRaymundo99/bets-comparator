@@ -39,12 +39,26 @@ export async function GET(
       name: bet.name,
       region: bet.region || undefined,
       license: bet.license || undefined,
-      parameters: bet.parameters.map(p => ({
-        name: p.name,
-        value: parseFloat(p.value.toString()),
-        category: p.category || undefined,
-        unit: p.unit || undefined,
-      })),
+      parameters: bet.parameters.map(p => {
+        // Get value based on type
+        let value: string | number | boolean | null = null;
+        if (p.valueText !== null) {
+          value = p.valueText;
+        } else if (p.valueNumber !== null) {
+          value = Number(p.valueNumber);
+        } else if (p.valueBoolean !== null) {
+          value = p.valueBoolean;
+        } else if (p.valueRating !== null) {
+          value = p.valueRating;
+        }
+        
+        return {
+          name: p.name,
+          value: value,
+          category: p.category || undefined,
+          unit: p.unit || undefined,
+        };
+      }),
     };
 
     // Generate insights

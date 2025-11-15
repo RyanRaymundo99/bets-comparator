@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, cpf, password } = await request.json();
+    const { name, email, password } = await request.json();
 
     // Validate required fields
-    if (!name || !email || !cpf || !password) {
+    if (!name || !email || !password) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -15,15 +15,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.user.findUnique({
       where: {
-        OR: [{ email: email.toLowerCase() }, { cpf: cpf.replace(/\D/g, "") }],
+        email: email.toLowerCase(),
       },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "User with this email or CPF already exists" },
+        { error: "User with this email already exists" },
         { status: 400 }
       );
     }
@@ -34,29 +34,14 @@ export async function POST(request: NextRequest) {
     // Create user with email verification only
     const user = await prisma.user.create({
       data: {
-        id: `user_${Date.now()}`,
+        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name,
         email: email.toLowerCase(),
-        cpf: cpf.replace(/\D/g, ""),
         password: hashedPassword,
         emailVerified: false, // Will be verified via email
-        phoneVerified: true, // Skip phone verification
-        phone: null, // No phone required
-        approvalStatus: "PENDING",
-        kycStatus: "PENDING",
-        twoFactorEnabled: false,
+        role: "CLIENT",
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
-    });
-
-    // Create initial balance
-    await prisma.balance.create({
-      data: {
-        userId: user.id,
-        currency: "BRL",
-        amount: 0,
-        locked: 0,
       },
     });
 

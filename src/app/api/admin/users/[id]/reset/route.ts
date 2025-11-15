@@ -28,11 +28,10 @@ export async function POST(
       );
     }
 
-    // Reset user approval status to pending
+    // Reset user email verification status
     const user = await prisma.user.update({
       where: { id },
       data: {
-        approvalStatus: "PENDING",
         emailVerified: false,
         updatedAt: new Date(),
       },
@@ -40,12 +39,12 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: "User status reset to pending successfully",
+      message: "User email verification reset successfully",
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-        approvalStatus: user.approvalStatus,
+        emailVerified: user.emailVerified,
       },
     });
   } catch (error) {

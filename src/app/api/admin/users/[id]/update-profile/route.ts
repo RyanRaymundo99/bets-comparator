@@ -7,7 +7,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const { name, email, phone, cpf, approvalStatus, kycStatus } = await request.json();
+    const { name, email, role } = await request.json();
 
     const sessionCookie = request.cookies.get("better-auth.session");
 
@@ -50,54 +50,21 @@ export async function PATCH(
       }
     }
 
-    // Check for phone conflicts if phone is being changed
-    if (phone && phone !== existingUser.phone) {
-      const phoneExists = await prisma.user.findUnique({
-        where: { phone },
-      });
-
-      if (phoneExists) {
-        return NextResponse.json(
-          { error: "Phone number already exists" },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Check for CPF conflicts if CPF is being changed
-    if (cpf && cpf !== existingUser.cpf) {
-      const cpfExists = await prisma.user.findUnique({
-        where: { cpf },
-      });
-
-      if (cpfExists) {
-        return NextResponse.json(
-          { error: "CPF already exists" },
-          { status: 400 }
-        );
-      }
-    }
-
     // Update user
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
         ...(name && { name }),
         ...(email && { email }),
-        ...(phone !== undefined && { phone }),
-        ...(cpf !== undefined && { cpf }),
-        ...(approvalStatus && { approvalStatus }),
-        ...(kycStatus && { kycStatus }),
+        ...(role && { role }),
         updatedAt: new Date(),
       },
       select: {
         id: true,
         name: true,
         email: true,
-        phone: true,
-        cpf: true,
-        approvalStatus: true,
-        kycStatus: true,
+        role: true,
+        emailVerified: true,
         updatedAt: true,
       },
     });
