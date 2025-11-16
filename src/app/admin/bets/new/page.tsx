@@ -10,26 +10,48 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Generate a random Bet ID like UF87F
+function generateBetId(): string {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+  const letter1 = letters[Math.floor(Math.random() * letters.length)];
+  const letter2 = letters[Math.floor(Math.random() * letters.length)];
+  const num1 = numbers[Math.floor(Math.random() * numbers.length)];
+  const num2 = numbers[Math.floor(Math.random() * numbers.length)];
+  const letter3 = letters[Math.floor(Math.random() * letters.length)];
+  return `${letter1}${letter2}${num1}${num2}${letter3}`;
+}
+
 export default function NewBetPage() {
   const [formData, setFormData] = useState({
+    betId: generateBetId(),
     name: "",
+    company: "",
+    domain: "",
     cnpj: "",
     url: "",
     region: "",
     license: "",
+    status: "Funcionando",
+    scope: "",
+    platformType: "",
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
+  const handleGenerateBetId = () => {
+    setFormData({ ...formData, betId: generateBetId() });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name) {
+    if (!formData.betId || !formData.name) {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Nome é obrigatório",
+        description: "Bet ID e Nome são obrigatórios",
       });
       return;
     }
@@ -98,6 +120,36 @@ export default function NewBetPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
+                <Label htmlFor="betId" className="text-gray-300">
+                  Bet ID * (ex: UF87F)
+                </Label>
+                <div className="flex space-x-2">
+                  <Input
+                    id="betId"
+                    placeholder="UF87F"
+                    value={formData.betId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, betId: e.target.value.toUpperCase() })
+                    }
+                    className="bg-gray-800 border-gray-700 text-white uppercase"
+                    required
+                    maxLength={5}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleGenerateBetId}
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  >
+                    Gerar
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-400">
+                  ID único que os usuários usarão para vincular sua casa de apostas
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="name" className="text-gray-300">
                   Nome *
                 </Label>
@@ -110,6 +162,36 @@ export default function NewBetPage() {
                   }
                   className="bg-gray-800 border-gray-700 text-white"
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="company" className="text-gray-300">
+                  Empresa
+                </Label>
+                <Input
+                  id="company"
+                  placeholder="Nome da empresa"
+                  value={formData.company}
+                  onChange={(e) =>
+                    setFormData({ ...formData, company: e.target.value })
+                  }
+                  className="bg-gray-800 border-gray-700 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="domain" className="text-gray-300">
+                  Domínio
+                </Label>
+                <Input
+                  id="domain"
+                  placeholder="exemplo.com"
+                  value={formData.domain}
+                  onChange={(e) =>
+                    setFormData({ ...formData, domain: e.target.value })
+                  }
+                  className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
 
@@ -172,6 +254,62 @@ export default function NewBetPage() {
                   }
                   className="bg-gray-800 border-gray-700 text-white"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status" className="text-gray-300">
+                  Status
+                </Label>
+                <select
+                  id="status"
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value })
+                  }
+                  className="w-full px-4 py-2 bg-gray-800 border-gray-700 text-white rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Funcionando">Funcionando</option>
+                  <option value="Fora do ar">Fora do ar</option>
+                  <option value="Redirect Pro Principal">Redirect Pro Principal</option>
+                  <option value="Anunciado pra entrar no Ar">Anunciado pra entrar no Ar</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="scope" className="text-gray-300">
+                  Abrangência
+                </Label>
+                <select
+                  id="scope"
+                  value={formData.scope}
+                  onChange={(e) =>
+                    setFormData({ ...formData, scope: e.target.value })
+                  }
+                  className="w-full px-4 py-2 bg-gray-800 border-gray-700 text-white rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Selecione...</option>
+                  <option value="Brasil">Brasil</option>
+                  <option value="Mundial">Mundial</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="platformType" className="text-gray-300">
+                  Tipo de Plataforma
+                </Label>
+                <select
+                  id="platformType"
+                  value={formData.platformType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, platformType: e.target.value })
+                  }
+                  className="w-full px-4 py-2 bg-gray-800 border-gray-700 text-white rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Selecione...</option>
+                  <option value="Casino">Casino</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Ambos">Ambos</option>
+                </select>
               </div>
 
               <div className="flex space-x-4 pt-4">

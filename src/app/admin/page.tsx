@@ -11,16 +11,19 @@ import {
   Plus,
   Building2,
   Sliders,
+  Clock,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useFetch } from "@/hooks/use-fetch";
 
 interface DashboardStats {
   totalBets: number;
   totalParameters: number;
   totalUsers: number;
   totalComparisons: number;
+  pendingRequests: number;
 }
 
 export default function AdminDashboard() {
@@ -29,10 +32,29 @@ export default function AdminDashboard() {
     totalParameters: 0,
     totalUsers: 0,
     totalComparisons: 0,
+    pendingRequests: 0,
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
+
+  // Verify admin session
+  const { data: sessionData, loading: sessionLoading } = useFetch<{
+    valid: boolean;
+  }>("/api/auth/verify-admin-session", {
+    immediate: true,
+    showToast: false,
+    onSuccess: (data) => {
+      if (data && !data.valid) {
+        console.log("Admin session invalid, redirecting to login");
+        router.push("/admin/login");
+      }
+    },
+    onError: () => {
+      console.log("Admin session check failed, redirecting to login");
+      router.push("/admin/login");
+    },
+  });
 
   const fetchStats = useCallback(async () => {
     try {
@@ -41,20 +63,38 @@ export default function AdminDashboard() {
       // Fetch bets
       const betsResponse = await fetch("/api/bets");
       const betsData = await betsResponse.json();
-      
+
       // Fetch parameters
       const parametersResponse = await fetch("/api/parameters");
       const parametersData = await parametersResponse.json();
-      
+
       // Fetch users
       const usersResponse = await fetch("/api/admin/users");
       const usersData = await usersResponse.json();
-      
+
+      // Fetch pending requests
+      const requestsResponse = await fetch(
+        "/api/admin/bet-link-requests?status=PENDING"
+      );
+      const requestsData = await requestsResponse.json();
+
+      console.log("Bets data:", betsData);
+      console.log("Parameters data:", parametersData);
+      console.log("Users data:", usersData);
+      console.log("Requests data:", requestsData);
+
       setStats({
-        totalBets: betsData.bets?.length || 0,
-        totalParameters: parametersData.parameters?.length || 0,
+        totalBets: betsData.data?.bets?.length || betsData.bets?.length || 0,
+        totalParameters:
+          parametersData.data?.parameters?.length ||
+          parametersData.parameters?.length ||
+          0,
         totalUsers: usersData.users?.length || 0,
         totalComparisons: 0, // Will be implemented later
+        pendingRequests:
+          requestsData.data?.requests?.length ||
+          requestsData.requests?.length ||
+          0,
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -79,8 +119,25 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    // Only fetch stats if session is valid
+    if (!sessionLoading && sessionData?.valid) {
+      fetchStats();
+    }
+  }, [fetchStats, sessionLoading, sessionData]);
+
+  // Show loading while checking session
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-white">Verificando sessão...</div>
+      </div>
+    );
+  }
+
+  // If session is invalid, don't render (redirect will happen)
+  if (!sessionData?.valid) {
+    return null;
+  }
 
   if (loading) {
     return (
@@ -175,6 +232,26 @@ export default function AdminDashboard() {
                   {stats.totalUsers}
                 </div>
                 <p className="text-xs text-green-200/70 mt-1 group-hover:text-green-100">
+                  Clique para gerenciar
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Bet Link Requests */}
+          <Link href="/admin/bet-link-requests">
+            <Card className="bg-gradient-to-br from-yellow-900/50 to-yellow-800/30 border-yellow-700/50 hover:border-yellow-500 transition-all duration-200 cursor-pointer group backdrop-blur-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-yellow-100 group-hover:text-white">
+                  Solicitações Pendentes
+                </CardTitle>
+                <Clock className="h-5 w-5 text-yellow-400 group-hover:text-yellow-300" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-white group-hover:text-yellow-100">
+                  {stats.pendingRequests}
+                </div>
+                <p className="text-xs text-yellow-200/70 mt-1 group-hover:text-yellow-100">
                   Clique para gerenciar
                 </p>
               </CardContent>
@@ -300,9 +377,7 @@ export default function AdminDashboard() {
                 <div className="text-3xl font-bold text-orange-400">
                   {stats.totalComparisons}
                 </div>
-                <div className="text-sm text-gray-300 mt-1">
-                  Comparações
-                </div>
+                <div className="text-sm text-gray-300 mt-1">Comparações</div>
               </div>
             </div>
           </CardContent>

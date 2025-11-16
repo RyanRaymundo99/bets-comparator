@@ -49,10 +49,25 @@ export type Parameter = $Result.DefaultSelection<Prisma.$ParameterPayload>
  */
 export type ParameterHistory = $Result.DefaultSelection<Prisma.$ParameterHistoryPayload>
 /**
+ * Model UserBet
+ * 
+ */
+export type UserBet = $Result.DefaultSelection<Prisma.$UserBetPayload>
+/**
+ * Model UserParameter
+ * 
+ */
+export type UserParameter = $Result.DefaultSelection<Prisma.$UserParameterPayload>
+/**
  * Model Comparison
  * 
  */
 export type Comparison = $Result.DefaultSelection<Prisma.$ComparisonPayload>
+/**
+ * Model BetLinkRequest
+ * 
+ */
+export type BetLinkRequest = $Result.DefaultSelection<Prisma.$BetLinkRequestPayload>
 
 /**
  * Enums
@@ -73,6 +88,15 @@ export const UserRole: {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
+
+export const RequestStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type RequestStatus = (typeof RequestStatus)[keyof typeof RequestStatus]
+
 }
 
 export type VerificationType = $Enums.VerificationType
@@ -82,6 +106,10 @@ export const VerificationType: typeof $Enums.VerificationType
 export type UserRole = $Enums.UserRole
 
 export const UserRole: typeof $Enums.UserRole
+
+export type RequestStatus = $Enums.RequestStatus
+
+export const RequestStatus: typeof $Enums.RequestStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -272,6 +300,26 @@ export class PrismaClient<
   get parameterHistory(): Prisma.ParameterHistoryDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.userBet`: Exposes CRUD operations for the **UserBet** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserBets
+    * const userBets = await prisma.userBet.findMany()
+    * ```
+    */
+  get userBet(): Prisma.UserBetDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.userParameter`: Exposes CRUD operations for the **UserParameter** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserParameters
+    * const userParameters = await prisma.userParameter.findMany()
+    * ```
+    */
+  get userParameter(): Prisma.UserParameterDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.comparison`: Exposes CRUD operations for the **Comparison** model.
     * Example usage:
     * ```ts
@@ -280,6 +328,16 @@ export class PrismaClient<
     * ```
     */
   get comparison(): Prisma.ComparisonDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.betLinkRequest`: Exposes CRUD operations for the **BetLinkRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BetLinkRequests
+    * const betLinkRequests = await prisma.betLinkRequest.findMany()
+    * ```
+    */
+  get betLinkRequest(): Prisma.BetLinkRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -727,7 +785,10 @@ export namespace Prisma {
     Bet: 'Bet',
     Parameter: 'Parameter',
     ParameterHistory: 'ParameterHistory',
-    Comparison: 'Comparison'
+    UserBet: 'UserBet',
+    UserParameter: 'UserParameter',
+    Comparison: 'Comparison',
+    BetLinkRequest: 'BetLinkRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -746,7 +807,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "bet" | "parameter" | "parameterHistory" | "comparison"
+      modelProps: "user" | "session" | "account" | "verification" | "bet" | "parameter" | "parameterHistory" | "userBet" | "userParameter" | "comparison" | "betLinkRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1268,6 +1329,154 @@ export namespace Prisma {
           }
         }
       }
+      UserBet: {
+        payload: Prisma.$UserBetPayload<ExtArgs>
+        fields: Prisma.UserBetFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserBetFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserBetFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>
+          }
+          findFirst: {
+            args: Prisma.UserBetFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserBetFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>
+          }
+          findMany: {
+            args: Prisma.UserBetFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>[]
+          }
+          create: {
+            args: Prisma.UserBetCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>
+          }
+          createMany: {
+            args: Prisma.UserBetCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserBetCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>[]
+          }
+          delete: {
+            args: Prisma.UserBetDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>
+          }
+          update: {
+            args: Prisma.UserBetUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserBetDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserBetUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserBetUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserBetUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBetPayload>
+          }
+          aggregate: {
+            args: Prisma.UserBetAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserBet>
+          }
+          groupBy: {
+            args: Prisma.UserBetGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserBetGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserBetCountArgs<ExtArgs>
+            result: $Utils.Optional<UserBetCountAggregateOutputType> | number
+          }
+        }
+      }
+      UserParameter: {
+        payload: Prisma.$UserParameterPayload<ExtArgs>
+        fields: Prisma.UserParameterFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserParameterFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserParameterFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>
+          }
+          findFirst: {
+            args: Prisma.UserParameterFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserParameterFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>
+          }
+          findMany: {
+            args: Prisma.UserParameterFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>[]
+          }
+          create: {
+            args: Prisma.UserParameterCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>
+          }
+          createMany: {
+            args: Prisma.UserParameterCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserParameterCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>[]
+          }
+          delete: {
+            args: Prisma.UserParameterDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>
+          }
+          update: {
+            args: Prisma.UserParameterUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserParameterDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserParameterUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserParameterUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserParameterUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserParameterPayload>
+          }
+          aggregate: {
+            args: Prisma.UserParameterAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserParameter>
+          }
+          groupBy: {
+            args: Prisma.UserParameterGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserParameterGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserParameterCountArgs<ExtArgs>
+            result: $Utils.Optional<UserParameterCountAggregateOutputType> | number
+          }
+        }
+      }
       Comparison: {
         payload: Prisma.$ComparisonPayload<ExtArgs>
         fields: Prisma.ComparisonFieldRefs
@@ -1339,6 +1548,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ComparisonCountArgs<ExtArgs>
             result: $Utils.Optional<ComparisonCountAggregateOutputType> | number
+          }
+        }
+      }
+      BetLinkRequest: {
+        payload: Prisma.$BetLinkRequestPayload<ExtArgs>
+        fields: Prisma.BetLinkRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BetLinkRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BetLinkRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.BetLinkRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BetLinkRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>
+          }
+          findMany: {
+            args: Prisma.BetLinkRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>[]
+          }
+          create: {
+            args: Prisma.BetLinkRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>
+          }
+          createMany: {
+            args: Prisma.BetLinkRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BetLinkRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.BetLinkRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>
+          }
+          update: {
+            args: Prisma.BetLinkRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.BetLinkRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BetLinkRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BetLinkRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.BetLinkRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BetLinkRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.BetLinkRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBetLinkRequest>
+          }
+          groupBy: {
+            args: Prisma.BetLinkRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BetLinkRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BetLinkRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<BetLinkRequestCountAggregateOutputType> | number
           }
         }
       }
@@ -1445,7 +1728,10 @@ export namespace Prisma {
     bet?: BetOmit
     parameter?: ParameterOmit
     parameterHistory?: ParameterHistoryOmit
+    userBet?: UserBetOmit
+    userParameter?: UserParameterOmit
     comparison?: ComparisonOmit
+    betLinkRequest?: BetLinkRequestOmit
   }
 
   /* Types for Logging */
@@ -1529,12 +1815,16 @@ export namespace Prisma {
     accounts: number
     sessions: number
     comparisons: number
+    userBets: number
+    betLinkRequests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     comparisons?: boolean | UserCountOutputTypeCountComparisonsArgs
+    userBets?: boolean | UserCountOutputTypeCountUserBetsArgs
+    betLinkRequests?: boolean | UserCountOutputTypeCountBetLinkRequestsArgs
   }
 
   // Custom InputTypes
@@ -1569,6 +1859,20 @@ export namespace Prisma {
     where?: ComparisonWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountUserBetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserBetWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBetLinkRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BetLinkRequestWhereInput
+  }
+
 
   /**
    * Count Type BetCountOutputType
@@ -1576,10 +1880,14 @@ export namespace Prisma {
 
   export type BetCountOutputType = {
     parameters: number
+    userBets: number
+    linkRequests: number
   }
 
   export type BetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     parameters?: boolean | BetCountOutputTypeCountParametersArgs
+    userBets?: boolean | BetCountOutputTypeCountUserBetsArgs
+    linkRequests?: boolean | BetCountOutputTypeCountLinkRequestsArgs
   }
 
   // Custom InputTypes
@@ -1598,6 +1906,20 @@ export namespace Prisma {
    */
   export type BetCountOutputTypeCountParametersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParameterWhereInput
+  }
+
+  /**
+   * BetCountOutputType without action
+   */
+  export type BetCountOutputTypeCountUserBetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserBetWhereInput
+  }
+
+  /**
+   * BetCountOutputType without action
+   */
+  export type BetCountOutputTypeCountLinkRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BetLinkRequestWhereInput
   }
 
 
@@ -1629,6 +1951,37 @@ export namespace Prisma {
    */
   export type ParameterCountOutputTypeCountHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ParameterHistoryWhereInput
+  }
+
+
+  /**
+   * Count Type UserBetCountOutputType
+   */
+
+  export type UserBetCountOutputType = {
+    parameters: number
+  }
+
+  export type UserBetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    parameters?: boolean | UserBetCountOutputTypeCountParametersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UserBetCountOutputType without action
+   */
+  export type UserBetCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBetCountOutputType
+     */
+    select?: UserBetCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserBetCountOutputType without action
+   */
+  export type UserBetCountOutputTypeCountParametersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserParameterWhereInput
   }
 
 
@@ -1835,6 +2188,8 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     comparisons?: boolean | User$comparisonsArgs<ExtArgs>
+    userBets?: boolean | User$userBetsArgs<ExtArgs>
+    betLinkRequests?: boolean | User$betLinkRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1879,6 +2234,8 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     comparisons?: boolean | User$comparisonsArgs<ExtArgs>
+    userBets?: boolean | User$userBetsArgs<ExtArgs>
+    betLinkRequests?: boolean | User$betLinkRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1890,6 +2247,8 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       comparisons: Prisma.$ComparisonPayload<ExtArgs>[]
+      userBets: Prisma.$UserBetPayload<ExtArgs>[]
+      betLinkRequests: Prisma.$BetLinkRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2298,6 +2657,8 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comparisons<T extends User$comparisonsArgs<ExtArgs> = {}>(args?: Subset<T, User$comparisonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ComparisonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userBets<T extends User$userBetsArgs<ExtArgs> = {}>(args?: Subset<T, User$userBetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    betLinkRequests<T extends User$betLinkRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$betLinkRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2793,6 +3154,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ComparisonScalarFieldEnum | ComparisonScalarFieldEnum[]
+  }
+
+  /**
+   * User.userBets
+   */
+  export type User$userBetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    where?: UserBetWhereInput
+    orderBy?: UserBetOrderByWithRelationInput | UserBetOrderByWithRelationInput[]
+    cursor?: UserBetWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserBetScalarFieldEnum | UserBetScalarFieldEnum[]
+  }
+
+  /**
+   * User.betLinkRequests
+   */
+  export type User$betLinkRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    where?: BetLinkRequestWhereInput
+    orderBy?: BetLinkRequestOrderByWithRelationInput | BetLinkRequestOrderByWithRelationInput[]
+    cursor?: BetLinkRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BetLinkRequestScalarFieldEnum | BetLinkRequestScalarFieldEnum[]
   }
 
   /**
@@ -6183,6 +6592,7 @@ export namespace Prisma {
 
   export type BetMinAggregateOutputType = {
     id: string | null
+    betId: string | null
     name: string | null
     company: string | null
     domain: string | null
@@ -6199,6 +6609,7 @@ export namespace Prisma {
 
   export type BetMaxAggregateOutputType = {
     id: string | null
+    betId: string | null
     name: string | null
     company: string | null
     domain: string | null
@@ -6215,6 +6626,7 @@ export namespace Prisma {
 
   export type BetCountAggregateOutputType = {
     id: number
+    betId: number
     name: number
     company: number
     domain: number
@@ -6233,6 +6645,7 @@ export namespace Prisma {
 
   export type BetMinAggregateInputType = {
     id?: true
+    betId?: true
     name?: true
     company?: true
     domain?: true
@@ -6249,6 +6662,7 @@ export namespace Prisma {
 
   export type BetMaxAggregateInputType = {
     id?: true
+    betId?: true
     name?: true
     company?: true
     domain?: true
@@ -6265,6 +6679,7 @@ export namespace Prisma {
 
   export type BetCountAggregateInputType = {
     id?: true
+    betId?: true
     name?: true
     company?: true
     domain?: true
@@ -6354,6 +6769,7 @@ export namespace Prisma {
 
   export type BetGroupByOutputType = {
     id: string
+    betId: string | null
     name: string
     company: string | null
     domain: string | null
@@ -6387,6 +6803,7 @@ export namespace Prisma {
 
   export type BetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    betId?: boolean
     name?: boolean
     company?: boolean
     domain?: boolean
@@ -6400,11 +6817,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     parameters?: boolean | Bet$parametersArgs<ExtArgs>
+    userBets?: boolean | Bet$userBetsArgs<ExtArgs>
+    linkRequests?: boolean | Bet$linkRequestsArgs<ExtArgs>
     _count?: boolean | BetCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["bet"]>
 
   export type BetSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    betId?: boolean
     name?: boolean
     company?: boolean
     domain?: boolean
@@ -6421,6 +6841,7 @@ export namespace Prisma {
 
   export type BetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    betId?: boolean
     name?: boolean
     company?: boolean
     domain?: boolean
@@ -6437,6 +6858,7 @@ export namespace Prisma {
 
   export type BetSelectScalar = {
     id?: boolean
+    betId?: boolean
     name?: boolean
     company?: boolean
     domain?: boolean
@@ -6451,9 +6873,11 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "company" | "domain" | "cnpj" | "url" | "region" | "license" | "status" | "scope" | "platformType" | "createdAt" | "updatedAt", ExtArgs["result"]["bet"]>
+  export type BetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "betId" | "name" | "company" | "domain" | "cnpj" | "url" | "region" | "license" | "status" | "scope" | "platformType" | "createdAt" | "updatedAt", ExtArgs["result"]["bet"]>
   export type BetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     parameters?: boolean | Bet$parametersArgs<ExtArgs>
+    userBets?: boolean | Bet$userBetsArgs<ExtArgs>
+    linkRequests?: boolean | Bet$linkRequestsArgs<ExtArgs>
     _count?: boolean | BetCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6463,9 +6887,12 @@ export namespace Prisma {
     name: "Bet"
     objects: {
       parameters: Prisma.$ParameterPayload<ExtArgs>[]
+      userBets: Prisma.$UserBetPayload<ExtArgs>[]
+      linkRequests: Prisma.$BetLinkRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      betId: string | null
       name: string
       company: string | null
       domain: string | null
@@ -6873,6 +7300,8 @@ export namespace Prisma {
   export interface Prisma__BetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     parameters<T extends Bet$parametersArgs<ExtArgs> = {}>(args?: Subset<T, Bet$parametersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParameterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userBets<T extends Bet$userBetsArgs<ExtArgs> = {}>(args?: Subset<T, Bet$userBetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    linkRequests<T extends Bet$linkRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Bet$linkRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6903,6 +7332,7 @@ export namespace Prisma {
    */
   interface BetFieldRefs {
     readonly id: FieldRef<"Bet", 'String'>
+    readonly betId: FieldRef<"Bet", 'String'>
     readonly name: FieldRef<"Bet", 'String'>
     readonly company: FieldRef<"Bet", 'String'>
     readonly domain: FieldRef<"Bet", 'String'>
@@ -7324,6 +7754,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParameterScalarFieldEnum | ParameterScalarFieldEnum[]
+  }
+
+  /**
+   * Bet.userBets
+   */
+  export type Bet$userBetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    where?: UserBetWhereInput
+    orderBy?: UserBetOrderByWithRelationInput | UserBetOrderByWithRelationInput[]
+    cursor?: UserBetWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserBetScalarFieldEnum | UserBetScalarFieldEnum[]
+  }
+
+  /**
+   * Bet.linkRequests
+   */
+  export type Bet$linkRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    where?: BetLinkRequestWhereInput
+    orderBy?: BetLinkRequestOrderByWithRelationInput | BetLinkRequestOrderByWithRelationInput[]
+    cursor?: BetLinkRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BetLinkRequestScalarFieldEnum | BetLinkRequestScalarFieldEnum[]
   }
 
   /**
@@ -9720,6 +10198,2311 @@ export namespace Prisma {
 
 
   /**
+   * Model UserBet
+   */
+
+  export type AggregateUserBet = {
+    _count: UserBetCountAggregateOutputType | null
+    _min: UserBetMinAggregateOutputType | null
+    _max: UserBetMaxAggregateOutputType | null
+  }
+
+  export type UserBetMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    betId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserBetMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    betId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserBetCountAggregateOutputType = {
+    id: number
+    userId: number
+    betId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UserBetMinAggregateInputType = {
+    id?: true
+    userId?: true
+    betId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserBetMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    betId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserBetCountAggregateInputType = {
+    id?: true
+    userId?: true
+    betId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UserBetAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserBet to aggregate.
+     */
+    where?: UserBetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBets to fetch.
+     */
+    orderBy?: UserBetOrderByWithRelationInput | UserBetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserBetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserBets
+    **/
+    _count?: true | UserBetCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserBetMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserBetMaxAggregateInputType
+  }
+
+  export type GetUserBetAggregateType<T extends UserBetAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserBet]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserBet[P]>
+      : GetScalarType<T[P], AggregateUserBet[P]>
+  }
+
+
+
+
+  export type UserBetGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserBetWhereInput
+    orderBy?: UserBetOrderByWithAggregationInput | UserBetOrderByWithAggregationInput[]
+    by: UserBetScalarFieldEnum[] | UserBetScalarFieldEnum
+    having?: UserBetScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserBetCountAggregateInputType | true
+    _min?: UserBetMinAggregateInputType
+    _max?: UserBetMaxAggregateInputType
+  }
+
+  export type UserBetGroupByOutputType = {
+    id: string
+    userId: string
+    betId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: UserBetCountAggregateOutputType | null
+    _min: UserBetMinAggregateOutputType | null
+    _max: UserBetMaxAggregateOutputType | null
+  }
+
+  type GetUserBetGroupByPayload<T extends UserBetGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserBetGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserBetGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserBetGroupByOutputType[P]>
+            : GetScalarType<T[P], UserBetGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserBetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parameters?: boolean | UserBet$parametersArgs<ExtArgs>
+    _count?: boolean | UserBetCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userBet"]>
+
+  export type UserBetSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userBet"]>
+
+  export type UserBetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userBet"]>
+
+  export type UserBetSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UserBetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "betId" | "createdAt" | "updatedAt", ExtArgs["result"]["userBet"]>
+  export type UserBetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parameters?: boolean | UserBet$parametersArgs<ExtArgs>
+    _count?: boolean | UserBetCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type UserBetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type UserBetIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $UserBetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserBet"
+    objects: {
+      bet: Prisma.$BetPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      parameters: Prisma.$UserParameterPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      betId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["userBet"]>
+    composites: {}
+  }
+
+  type UserBetGetPayload<S extends boolean | null | undefined | UserBetDefaultArgs> = $Result.GetResult<Prisma.$UserBetPayload, S>
+
+  type UserBetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserBetFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserBetCountAggregateInputType | true
+    }
+
+  export interface UserBetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserBet'], meta: { name: 'UserBet' } }
+    /**
+     * Find zero or one UserBet that matches the filter.
+     * @param {UserBetFindUniqueArgs} args - Arguments to find a UserBet
+     * @example
+     * // Get one UserBet
+     * const userBet = await prisma.userBet.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserBetFindUniqueArgs>(args: SelectSubset<T, UserBetFindUniqueArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserBet that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserBetFindUniqueOrThrowArgs} args - Arguments to find a UserBet
+     * @example
+     * // Get one UserBet
+     * const userBet = await prisma.userBet.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserBetFindUniqueOrThrowArgs>(args: SelectSubset<T, UserBetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserBet that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetFindFirstArgs} args - Arguments to find a UserBet
+     * @example
+     * // Get one UserBet
+     * const userBet = await prisma.userBet.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserBetFindFirstArgs>(args?: SelectSubset<T, UserBetFindFirstArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserBet that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetFindFirstOrThrowArgs} args - Arguments to find a UserBet
+     * @example
+     * // Get one UserBet
+     * const userBet = await prisma.userBet.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserBetFindFirstOrThrowArgs>(args?: SelectSubset<T, UserBetFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserBets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserBets
+     * const userBets = await prisma.userBet.findMany()
+     * 
+     * // Get first 10 UserBets
+     * const userBets = await prisma.userBet.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userBetWithIdOnly = await prisma.userBet.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserBetFindManyArgs>(args?: SelectSubset<T, UserBetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserBet.
+     * @param {UserBetCreateArgs} args - Arguments to create a UserBet.
+     * @example
+     * // Create one UserBet
+     * const UserBet = await prisma.userBet.create({
+     *   data: {
+     *     // ... data to create a UserBet
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserBetCreateArgs>(args: SelectSubset<T, UserBetCreateArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserBets.
+     * @param {UserBetCreateManyArgs} args - Arguments to create many UserBets.
+     * @example
+     * // Create many UserBets
+     * const userBet = await prisma.userBet.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserBetCreateManyArgs>(args?: SelectSubset<T, UserBetCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserBets and returns the data saved in the database.
+     * @param {UserBetCreateManyAndReturnArgs} args - Arguments to create many UserBets.
+     * @example
+     * // Create many UserBets
+     * const userBet = await prisma.userBet.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserBets and only return the `id`
+     * const userBetWithIdOnly = await prisma.userBet.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserBetCreateManyAndReturnArgs>(args?: SelectSubset<T, UserBetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserBet.
+     * @param {UserBetDeleteArgs} args - Arguments to delete one UserBet.
+     * @example
+     * // Delete one UserBet
+     * const UserBet = await prisma.userBet.delete({
+     *   where: {
+     *     // ... filter to delete one UserBet
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserBetDeleteArgs>(args: SelectSubset<T, UserBetDeleteArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserBet.
+     * @param {UserBetUpdateArgs} args - Arguments to update one UserBet.
+     * @example
+     * // Update one UserBet
+     * const userBet = await prisma.userBet.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserBetUpdateArgs>(args: SelectSubset<T, UserBetUpdateArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserBets.
+     * @param {UserBetDeleteManyArgs} args - Arguments to filter UserBets to delete.
+     * @example
+     * // Delete a few UserBets
+     * const { count } = await prisma.userBet.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserBetDeleteManyArgs>(args?: SelectSubset<T, UserBetDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserBets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserBets
+     * const userBet = await prisma.userBet.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserBetUpdateManyArgs>(args: SelectSubset<T, UserBetUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserBets and returns the data updated in the database.
+     * @param {UserBetUpdateManyAndReturnArgs} args - Arguments to update many UserBets.
+     * @example
+     * // Update many UserBets
+     * const userBet = await prisma.userBet.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserBets and only return the `id`
+     * const userBetWithIdOnly = await prisma.userBet.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserBetUpdateManyAndReturnArgs>(args: SelectSubset<T, UserBetUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserBet.
+     * @param {UserBetUpsertArgs} args - Arguments to update or create a UserBet.
+     * @example
+     * // Update or create a UserBet
+     * const userBet = await prisma.userBet.upsert({
+     *   create: {
+     *     // ... data to create a UserBet
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserBet we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserBetUpsertArgs>(args: SelectSubset<T, UserBetUpsertArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserBets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetCountArgs} args - Arguments to filter UserBets to count.
+     * @example
+     * // Count the number of UserBets
+     * const count = await prisma.userBet.count({
+     *   where: {
+     *     // ... the filter for the UserBets we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserBetCountArgs>(
+      args?: Subset<T, UserBetCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserBetCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserBet.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserBetAggregateArgs>(args: Subset<T, UserBetAggregateArgs>): Prisma.PrismaPromise<GetUserBetAggregateType<T>>
+
+    /**
+     * Group by UserBet.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBetGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserBetGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserBetGroupByArgs['orderBy'] }
+        : { orderBy?: UserBetGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserBetGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserBetGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserBet model
+   */
+  readonly fields: UserBetFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserBet.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserBetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    bet<T extends BetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BetDefaultArgs<ExtArgs>>): Prisma__BetClient<$Result.GetResult<Prisma.$BetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parameters<T extends UserBet$parametersArgs<ExtArgs> = {}>(args?: Subset<T, UserBet$parametersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserBet model
+   */
+  interface UserBetFieldRefs {
+    readonly id: FieldRef<"UserBet", 'String'>
+    readonly userId: FieldRef<"UserBet", 'String'>
+    readonly betId: FieldRef<"UserBet", 'String'>
+    readonly createdAt: FieldRef<"UserBet", 'DateTime'>
+    readonly updatedAt: FieldRef<"UserBet", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserBet findUnique
+   */
+  export type UserBetFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * Filter, which UserBet to fetch.
+     */
+    where: UserBetWhereUniqueInput
+  }
+
+  /**
+   * UserBet findUniqueOrThrow
+   */
+  export type UserBetFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * Filter, which UserBet to fetch.
+     */
+    where: UserBetWhereUniqueInput
+  }
+
+  /**
+   * UserBet findFirst
+   */
+  export type UserBetFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * Filter, which UserBet to fetch.
+     */
+    where?: UserBetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBets to fetch.
+     */
+    orderBy?: UserBetOrderByWithRelationInput | UserBetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserBets.
+     */
+    cursor?: UserBetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserBets.
+     */
+    distinct?: UserBetScalarFieldEnum | UserBetScalarFieldEnum[]
+  }
+
+  /**
+   * UserBet findFirstOrThrow
+   */
+  export type UserBetFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * Filter, which UserBet to fetch.
+     */
+    where?: UserBetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBets to fetch.
+     */
+    orderBy?: UserBetOrderByWithRelationInput | UserBetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserBets.
+     */
+    cursor?: UserBetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserBets.
+     */
+    distinct?: UserBetScalarFieldEnum | UserBetScalarFieldEnum[]
+  }
+
+  /**
+   * UserBet findMany
+   */
+  export type UserBetFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * Filter, which UserBets to fetch.
+     */
+    where?: UserBetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBets to fetch.
+     */
+    orderBy?: UserBetOrderByWithRelationInput | UserBetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserBets.
+     */
+    cursor?: UserBetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBets.
+     */
+    skip?: number
+    distinct?: UserBetScalarFieldEnum | UserBetScalarFieldEnum[]
+  }
+
+  /**
+   * UserBet create
+   */
+  export type UserBetCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserBet.
+     */
+    data: XOR<UserBetCreateInput, UserBetUncheckedCreateInput>
+  }
+
+  /**
+   * UserBet createMany
+   */
+  export type UserBetCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserBets.
+     */
+    data: UserBetCreateManyInput | UserBetCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserBet createManyAndReturn
+   */
+  export type UserBetCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserBets.
+     */
+    data: UserBetCreateManyInput | UserBetCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserBet update
+   */
+  export type UserBetUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserBet.
+     */
+    data: XOR<UserBetUpdateInput, UserBetUncheckedUpdateInput>
+    /**
+     * Choose, which UserBet to update.
+     */
+    where: UserBetWhereUniqueInput
+  }
+
+  /**
+   * UserBet updateMany
+   */
+  export type UserBetUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserBets.
+     */
+    data: XOR<UserBetUpdateManyMutationInput, UserBetUncheckedUpdateManyInput>
+    /**
+     * Filter which UserBets to update
+     */
+    where?: UserBetWhereInput
+    /**
+     * Limit how many UserBets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserBet updateManyAndReturn
+   */
+  export type UserBetUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * The data used to update UserBets.
+     */
+    data: XOR<UserBetUpdateManyMutationInput, UserBetUncheckedUpdateManyInput>
+    /**
+     * Filter which UserBets to update
+     */
+    where?: UserBetWhereInput
+    /**
+     * Limit how many UserBets to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserBet upsert
+   */
+  export type UserBetUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserBet to update in case it exists.
+     */
+    where: UserBetWhereUniqueInput
+    /**
+     * In case the UserBet found by the `where` argument doesn't exist, create a new UserBet with this data.
+     */
+    create: XOR<UserBetCreateInput, UserBetUncheckedCreateInput>
+    /**
+     * In case the UserBet was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserBetUpdateInput, UserBetUncheckedUpdateInput>
+  }
+
+  /**
+   * UserBet delete
+   */
+  export type UserBetDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+    /**
+     * Filter which UserBet to delete.
+     */
+    where: UserBetWhereUniqueInput
+  }
+
+  /**
+   * UserBet deleteMany
+   */
+  export type UserBetDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserBets to delete
+     */
+    where?: UserBetWhereInput
+    /**
+     * Limit how many UserBets to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserBet.parameters
+   */
+  export type UserBet$parametersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    where?: UserParameterWhereInput
+    orderBy?: UserParameterOrderByWithRelationInput | UserParameterOrderByWithRelationInput[]
+    cursor?: UserParameterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserParameterScalarFieldEnum | UserParameterScalarFieldEnum[]
+  }
+
+  /**
+   * UserBet without action
+   */
+  export type UserBetDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBet
+     */
+    select?: UserBetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBet
+     */
+    omit?: UserBetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserBetInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UserParameter
+   */
+
+  export type AggregateUserParameter = {
+    _count: UserParameterCountAggregateOutputType | null
+    _avg: UserParameterAvgAggregateOutputType | null
+    _sum: UserParameterSumAggregateOutputType | null
+    _min: UserParameterMinAggregateOutputType | null
+    _max: UserParameterMaxAggregateOutputType | null
+  }
+
+  export type UserParameterAvgAggregateOutputType = {
+    valueNumber: Decimal | null
+    valueRating: number | null
+  }
+
+  export type UserParameterSumAggregateOutputType = {
+    valueNumber: Decimal | null
+    valueRating: number | null
+  }
+
+  export type UserParameterMinAggregateOutputType = {
+    id: string | null
+    userBetId: string | null
+    name: string | null
+    category: string | null
+    valueText: string | null
+    valueNumber: Decimal | null
+    valueBoolean: boolean | null
+    valueRating: number | null
+    unit: string | null
+    description: string | null
+    type: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserParameterMaxAggregateOutputType = {
+    id: string | null
+    userBetId: string | null
+    name: string | null
+    category: string | null
+    valueText: string | null
+    valueNumber: Decimal | null
+    valueBoolean: boolean | null
+    valueRating: number | null
+    unit: string | null
+    description: string | null
+    type: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserParameterCountAggregateOutputType = {
+    id: number
+    userBetId: number
+    name: number
+    category: number
+    valueText: number
+    valueNumber: number
+    valueBoolean: number
+    valueRating: number
+    unit: number
+    description: number
+    type: number
+    options: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UserParameterAvgAggregateInputType = {
+    valueNumber?: true
+    valueRating?: true
+  }
+
+  export type UserParameterSumAggregateInputType = {
+    valueNumber?: true
+    valueRating?: true
+  }
+
+  export type UserParameterMinAggregateInputType = {
+    id?: true
+    userBetId?: true
+    name?: true
+    category?: true
+    valueText?: true
+    valueNumber?: true
+    valueBoolean?: true
+    valueRating?: true
+    unit?: true
+    description?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserParameterMaxAggregateInputType = {
+    id?: true
+    userBetId?: true
+    name?: true
+    category?: true
+    valueText?: true
+    valueNumber?: true
+    valueBoolean?: true
+    valueRating?: true
+    unit?: true
+    description?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserParameterCountAggregateInputType = {
+    id?: true
+    userBetId?: true
+    name?: true
+    category?: true
+    valueText?: true
+    valueNumber?: true
+    valueBoolean?: true
+    valueRating?: true
+    unit?: true
+    description?: true
+    type?: true
+    options?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UserParameterAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserParameter to aggregate.
+     */
+    where?: UserParameterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserParameters to fetch.
+     */
+    orderBy?: UserParameterOrderByWithRelationInput | UserParameterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserParameterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserParameters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserParameters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserParameters
+    **/
+    _count?: true | UserParameterCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UserParameterAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserParameterSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserParameterMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserParameterMaxAggregateInputType
+  }
+
+  export type GetUserParameterAggregateType<T extends UserParameterAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserParameter]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserParameter[P]>
+      : GetScalarType<T[P], AggregateUserParameter[P]>
+  }
+
+
+
+
+  export type UserParameterGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserParameterWhereInput
+    orderBy?: UserParameterOrderByWithAggregationInput | UserParameterOrderByWithAggregationInput[]
+    by: UserParameterScalarFieldEnum[] | UserParameterScalarFieldEnum
+    having?: UserParameterScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserParameterCountAggregateInputType | true
+    _avg?: UserParameterAvgAggregateInputType
+    _sum?: UserParameterSumAggregateInputType
+    _min?: UserParameterMinAggregateInputType
+    _max?: UserParameterMaxAggregateInputType
+  }
+
+  export type UserParameterGroupByOutputType = {
+    id: string
+    userBetId: string
+    name: string
+    category: string | null
+    valueText: string | null
+    valueNumber: Decimal | null
+    valueBoolean: boolean | null
+    valueRating: number | null
+    unit: string | null
+    description: string | null
+    type: string | null
+    options: string[]
+    createdAt: Date
+    updatedAt: Date
+    _count: UserParameterCountAggregateOutputType | null
+    _avg: UserParameterAvgAggregateOutputType | null
+    _sum: UserParameterSumAggregateOutputType | null
+    _min: UserParameterMinAggregateOutputType | null
+    _max: UserParameterMaxAggregateOutputType | null
+  }
+
+  type GetUserParameterGroupByPayload<T extends UserParameterGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserParameterGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserParameterGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserParameterGroupByOutputType[P]>
+            : GetScalarType<T[P], UserParameterGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserParameterSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userBetId?: boolean
+    name?: boolean
+    category?: boolean
+    valueText?: boolean
+    valueNumber?: boolean
+    valueBoolean?: boolean
+    valueRating?: boolean
+    unit?: boolean
+    description?: boolean
+    type?: boolean
+    options?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userBet?: boolean | UserBetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userParameter"]>
+
+  export type UserParameterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userBetId?: boolean
+    name?: boolean
+    category?: boolean
+    valueText?: boolean
+    valueNumber?: boolean
+    valueBoolean?: boolean
+    valueRating?: boolean
+    unit?: boolean
+    description?: boolean
+    type?: boolean
+    options?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userBet?: boolean | UserBetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userParameter"]>
+
+  export type UserParameterSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userBetId?: boolean
+    name?: boolean
+    category?: boolean
+    valueText?: boolean
+    valueNumber?: boolean
+    valueBoolean?: boolean
+    valueRating?: boolean
+    unit?: boolean
+    description?: boolean
+    type?: boolean
+    options?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userBet?: boolean | UserBetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userParameter"]>
+
+  export type UserParameterSelectScalar = {
+    id?: boolean
+    userBetId?: boolean
+    name?: boolean
+    category?: boolean
+    valueText?: boolean
+    valueNumber?: boolean
+    valueBoolean?: boolean
+    valueRating?: boolean
+    unit?: boolean
+    description?: boolean
+    type?: boolean
+    options?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UserParameterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userBetId" | "name" | "category" | "valueText" | "valueNumber" | "valueBoolean" | "valueRating" | "unit" | "description" | "type" | "options" | "createdAt" | "updatedAt", ExtArgs["result"]["userParameter"]>
+  export type UserParameterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    userBet?: boolean | UserBetDefaultArgs<ExtArgs>
+  }
+  export type UserParameterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    userBet?: boolean | UserBetDefaultArgs<ExtArgs>
+  }
+  export type UserParameterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    userBet?: boolean | UserBetDefaultArgs<ExtArgs>
+  }
+
+  export type $UserParameterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserParameter"
+    objects: {
+      userBet: Prisma.$UserBetPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userBetId: string
+      name: string
+      category: string | null
+      valueText: string | null
+      valueNumber: Prisma.Decimal | null
+      valueBoolean: boolean | null
+      valueRating: number | null
+      unit: string | null
+      description: string | null
+      type: string | null
+      options: string[]
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["userParameter"]>
+    composites: {}
+  }
+
+  type UserParameterGetPayload<S extends boolean | null | undefined | UserParameterDefaultArgs> = $Result.GetResult<Prisma.$UserParameterPayload, S>
+
+  type UserParameterCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserParameterFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserParameterCountAggregateInputType | true
+    }
+
+  export interface UserParameterDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserParameter'], meta: { name: 'UserParameter' } }
+    /**
+     * Find zero or one UserParameter that matches the filter.
+     * @param {UserParameterFindUniqueArgs} args - Arguments to find a UserParameter
+     * @example
+     * // Get one UserParameter
+     * const userParameter = await prisma.userParameter.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserParameterFindUniqueArgs>(args: SelectSubset<T, UserParameterFindUniqueArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserParameter that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserParameterFindUniqueOrThrowArgs} args - Arguments to find a UserParameter
+     * @example
+     * // Get one UserParameter
+     * const userParameter = await prisma.userParameter.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserParameterFindUniqueOrThrowArgs>(args: SelectSubset<T, UserParameterFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserParameter that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterFindFirstArgs} args - Arguments to find a UserParameter
+     * @example
+     * // Get one UserParameter
+     * const userParameter = await prisma.userParameter.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserParameterFindFirstArgs>(args?: SelectSubset<T, UserParameterFindFirstArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserParameter that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterFindFirstOrThrowArgs} args - Arguments to find a UserParameter
+     * @example
+     * // Get one UserParameter
+     * const userParameter = await prisma.userParameter.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserParameterFindFirstOrThrowArgs>(args?: SelectSubset<T, UserParameterFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserParameters that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserParameters
+     * const userParameters = await prisma.userParameter.findMany()
+     * 
+     * // Get first 10 UserParameters
+     * const userParameters = await prisma.userParameter.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userParameterWithIdOnly = await prisma.userParameter.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserParameterFindManyArgs>(args?: SelectSubset<T, UserParameterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserParameter.
+     * @param {UserParameterCreateArgs} args - Arguments to create a UserParameter.
+     * @example
+     * // Create one UserParameter
+     * const UserParameter = await prisma.userParameter.create({
+     *   data: {
+     *     // ... data to create a UserParameter
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserParameterCreateArgs>(args: SelectSubset<T, UserParameterCreateArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserParameters.
+     * @param {UserParameterCreateManyArgs} args - Arguments to create many UserParameters.
+     * @example
+     * // Create many UserParameters
+     * const userParameter = await prisma.userParameter.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserParameterCreateManyArgs>(args?: SelectSubset<T, UserParameterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserParameters and returns the data saved in the database.
+     * @param {UserParameterCreateManyAndReturnArgs} args - Arguments to create many UserParameters.
+     * @example
+     * // Create many UserParameters
+     * const userParameter = await prisma.userParameter.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserParameters and only return the `id`
+     * const userParameterWithIdOnly = await prisma.userParameter.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserParameterCreateManyAndReturnArgs>(args?: SelectSubset<T, UserParameterCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserParameter.
+     * @param {UserParameterDeleteArgs} args - Arguments to delete one UserParameter.
+     * @example
+     * // Delete one UserParameter
+     * const UserParameter = await prisma.userParameter.delete({
+     *   where: {
+     *     // ... filter to delete one UserParameter
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserParameterDeleteArgs>(args: SelectSubset<T, UserParameterDeleteArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserParameter.
+     * @param {UserParameterUpdateArgs} args - Arguments to update one UserParameter.
+     * @example
+     * // Update one UserParameter
+     * const userParameter = await prisma.userParameter.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserParameterUpdateArgs>(args: SelectSubset<T, UserParameterUpdateArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserParameters.
+     * @param {UserParameterDeleteManyArgs} args - Arguments to filter UserParameters to delete.
+     * @example
+     * // Delete a few UserParameters
+     * const { count } = await prisma.userParameter.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserParameterDeleteManyArgs>(args?: SelectSubset<T, UserParameterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserParameters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserParameters
+     * const userParameter = await prisma.userParameter.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserParameterUpdateManyArgs>(args: SelectSubset<T, UserParameterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserParameters and returns the data updated in the database.
+     * @param {UserParameterUpdateManyAndReturnArgs} args - Arguments to update many UserParameters.
+     * @example
+     * // Update many UserParameters
+     * const userParameter = await prisma.userParameter.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserParameters and only return the `id`
+     * const userParameterWithIdOnly = await prisma.userParameter.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserParameterUpdateManyAndReturnArgs>(args: SelectSubset<T, UserParameterUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserParameter.
+     * @param {UserParameterUpsertArgs} args - Arguments to update or create a UserParameter.
+     * @example
+     * // Update or create a UserParameter
+     * const userParameter = await prisma.userParameter.upsert({
+     *   create: {
+     *     // ... data to create a UserParameter
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserParameter we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserParameterUpsertArgs>(args: SelectSubset<T, UserParameterUpsertArgs<ExtArgs>>): Prisma__UserParameterClient<$Result.GetResult<Prisma.$UserParameterPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserParameters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterCountArgs} args - Arguments to filter UserParameters to count.
+     * @example
+     * // Count the number of UserParameters
+     * const count = await prisma.userParameter.count({
+     *   where: {
+     *     // ... the filter for the UserParameters we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserParameterCountArgs>(
+      args?: Subset<T, UserParameterCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserParameterCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserParameter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserParameterAggregateArgs>(args: Subset<T, UserParameterAggregateArgs>): Prisma.PrismaPromise<GetUserParameterAggregateType<T>>
+
+    /**
+     * Group by UserParameter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserParameterGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserParameterGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserParameterGroupByArgs['orderBy'] }
+        : { orderBy?: UserParameterGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserParameterGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserParameterGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserParameter model
+   */
+  readonly fields: UserParameterFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserParameter.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserParameterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    userBet<T extends UserBetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserBetDefaultArgs<ExtArgs>>): Prisma__UserBetClient<$Result.GetResult<Prisma.$UserBetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserParameter model
+   */
+  interface UserParameterFieldRefs {
+    readonly id: FieldRef<"UserParameter", 'String'>
+    readonly userBetId: FieldRef<"UserParameter", 'String'>
+    readonly name: FieldRef<"UserParameter", 'String'>
+    readonly category: FieldRef<"UserParameter", 'String'>
+    readonly valueText: FieldRef<"UserParameter", 'String'>
+    readonly valueNumber: FieldRef<"UserParameter", 'Decimal'>
+    readonly valueBoolean: FieldRef<"UserParameter", 'Boolean'>
+    readonly valueRating: FieldRef<"UserParameter", 'Int'>
+    readonly unit: FieldRef<"UserParameter", 'String'>
+    readonly description: FieldRef<"UserParameter", 'String'>
+    readonly type: FieldRef<"UserParameter", 'String'>
+    readonly options: FieldRef<"UserParameter", 'String[]'>
+    readonly createdAt: FieldRef<"UserParameter", 'DateTime'>
+    readonly updatedAt: FieldRef<"UserParameter", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserParameter findUnique
+   */
+  export type UserParameterFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * Filter, which UserParameter to fetch.
+     */
+    where: UserParameterWhereUniqueInput
+  }
+
+  /**
+   * UserParameter findUniqueOrThrow
+   */
+  export type UserParameterFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * Filter, which UserParameter to fetch.
+     */
+    where: UserParameterWhereUniqueInput
+  }
+
+  /**
+   * UserParameter findFirst
+   */
+  export type UserParameterFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * Filter, which UserParameter to fetch.
+     */
+    where?: UserParameterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserParameters to fetch.
+     */
+    orderBy?: UserParameterOrderByWithRelationInput | UserParameterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserParameters.
+     */
+    cursor?: UserParameterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserParameters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserParameters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserParameters.
+     */
+    distinct?: UserParameterScalarFieldEnum | UserParameterScalarFieldEnum[]
+  }
+
+  /**
+   * UserParameter findFirstOrThrow
+   */
+  export type UserParameterFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * Filter, which UserParameter to fetch.
+     */
+    where?: UserParameterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserParameters to fetch.
+     */
+    orderBy?: UserParameterOrderByWithRelationInput | UserParameterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserParameters.
+     */
+    cursor?: UserParameterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserParameters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserParameters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserParameters.
+     */
+    distinct?: UserParameterScalarFieldEnum | UserParameterScalarFieldEnum[]
+  }
+
+  /**
+   * UserParameter findMany
+   */
+  export type UserParameterFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * Filter, which UserParameters to fetch.
+     */
+    where?: UserParameterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserParameters to fetch.
+     */
+    orderBy?: UserParameterOrderByWithRelationInput | UserParameterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserParameters.
+     */
+    cursor?: UserParameterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserParameters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserParameters.
+     */
+    skip?: number
+    distinct?: UserParameterScalarFieldEnum | UserParameterScalarFieldEnum[]
+  }
+
+  /**
+   * UserParameter create
+   */
+  export type UserParameterCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserParameter.
+     */
+    data: XOR<UserParameterCreateInput, UserParameterUncheckedCreateInput>
+  }
+
+  /**
+   * UserParameter createMany
+   */
+  export type UserParameterCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserParameters.
+     */
+    data: UserParameterCreateManyInput | UserParameterCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserParameter createManyAndReturn
+   */
+  export type UserParameterCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserParameters.
+     */
+    data: UserParameterCreateManyInput | UserParameterCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserParameter update
+   */
+  export type UserParameterUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserParameter.
+     */
+    data: XOR<UserParameterUpdateInput, UserParameterUncheckedUpdateInput>
+    /**
+     * Choose, which UserParameter to update.
+     */
+    where: UserParameterWhereUniqueInput
+  }
+
+  /**
+   * UserParameter updateMany
+   */
+  export type UserParameterUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserParameters.
+     */
+    data: XOR<UserParameterUpdateManyMutationInput, UserParameterUncheckedUpdateManyInput>
+    /**
+     * Filter which UserParameters to update
+     */
+    where?: UserParameterWhereInput
+    /**
+     * Limit how many UserParameters to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserParameter updateManyAndReturn
+   */
+  export type UserParameterUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * The data used to update UserParameters.
+     */
+    data: XOR<UserParameterUpdateManyMutationInput, UserParameterUncheckedUpdateManyInput>
+    /**
+     * Filter which UserParameters to update
+     */
+    where?: UserParameterWhereInput
+    /**
+     * Limit how many UserParameters to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserParameter upsert
+   */
+  export type UserParameterUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserParameter to update in case it exists.
+     */
+    where: UserParameterWhereUniqueInput
+    /**
+     * In case the UserParameter found by the `where` argument doesn't exist, create a new UserParameter with this data.
+     */
+    create: XOR<UserParameterCreateInput, UserParameterUncheckedCreateInput>
+    /**
+     * In case the UserParameter was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserParameterUpdateInput, UserParameterUncheckedUpdateInput>
+  }
+
+  /**
+   * UserParameter delete
+   */
+  export type UserParameterDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+    /**
+     * Filter which UserParameter to delete.
+     */
+    where: UserParameterWhereUniqueInput
+  }
+
+  /**
+   * UserParameter deleteMany
+   */
+  export type UserParameterDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserParameters to delete
+     */
+    where?: UserParameterWhereInput
+    /**
+     * Limit how many UserParameters to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserParameter without action
+   */
+  export type UserParameterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserParameter
+     */
+    select?: UserParameterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserParameter
+     */
+    omit?: UserParameterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserParameterInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Comparison
    */
 
@@ -10809,6 +13592,1111 @@ export namespace Prisma {
 
 
   /**
+   * Model BetLinkRequest
+   */
+
+  export type AggregateBetLinkRequest = {
+    _count: BetLinkRequestCountAggregateOutputType | null
+    _min: BetLinkRequestMinAggregateOutputType | null
+    _max: BetLinkRequestMaxAggregateOutputType | null
+  }
+
+  export type BetLinkRequestMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    betId: string | null
+    status: $Enums.RequestStatus | null
+    requestedAt: Date | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    notes: string | null
+  }
+
+  export type BetLinkRequestMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    betId: string | null
+    status: $Enums.RequestStatus | null
+    requestedAt: Date | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    notes: string | null
+  }
+
+  export type BetLinkRequestCountAggregateOutputType = {
+    id: number
+    userId: number
+    betId: number
+    status: number
+    requestedAt: number
+    reviewedAt: number
+    reviewedBy: number
+    notes: number
+    _all: number
+  }
+
+
+  export type BetLinkRequestMinAggregateInputType = {
+    id?: true
+    userId?: true
+    betId?: true
+    status?: true
+    requestedAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    notes?: true
+  }
+
+  export type BetLinkRequestMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    betId?: true
+    status?: true
+    requestedAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    notes?: true
+  }
+
+  export type BetLinkRequestCountAggregateInputType = {
+    id?: true
+    userId?: true
+    betId?: true
+    status?: true
+    requestedAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    notes?: true
+    _all?: true
+  }
+
+  export type BetLinkRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BetLinkRequest to aggregate.
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BetLinkRequests to fetch.
+     */
+    orderBy?: BetLinkRequestOrderByWithRelationInput | BetLinkRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BetLinkRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BetLinkRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BetLinkRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BetLinkRequests
+    **/
+    _count?: true | BetLinkRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BetLinkRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BetLinkRequestMaxAggregateInputType
+  }
+
+  export type GetBetLinkRequestAggregateType<T extends BetLinkRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateBetLinkRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBetLinkRequest[P]>
+      : GetScalarType<T[P], AggregateBetLinkRequest[P]>
+  }
+
+
+
+
+  export type BetLinkRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BetLinkRequestWhereInput
+    orderBy?: BetLinkRequestOrderByWithAggregationInput | BetLinkRequestOrderByWithAggregationInput[]
+    by: BetLinkRequestScalarFieldEnum[] | BetLinkRequestScalarFieldEnum
+    having?: BetLinkRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BetLinkRequestCountAggregateInputType | true
+    _min?: BetLinkRequestMinAggregateInputType
+    _max?: BetLinkRequestMaxAggregateInputType
+  }
+
+  export type BetLinkRequestGroupByOutputType = {
+    id: string
+    userId: string
+    betId: string
+    status: $Enums.RequestStatus
+    requestedAt: Date
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    notes: string | null
+    _count: BetLinkRequestCountAggregateOutputType | null
+    _min: BetLinkRequestMinAggregateOutputType | null
+    _max: BetLinkRequestMaxAggregateOutputType | null
+  }
+
+  type GetBetLinkRequestGroupByPayload<T extends BetLinkRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BetLinkRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BetLinkRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BetLinkRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], BetLinkRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BetLinkRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    status?: boolean
+    requestedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    notes?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["betLinkRequest"]>
+
+  export type BetLinkRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    status?: boolean
+    requestedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    notes?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["betLinkRequest"]>
+
+  export type BetLinkRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    status?: boolean
+    requestedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    notes?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["betLinkRequest"]>
+
+  export type BetLinkRequestSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    betId?: boolean
+    status?: boolean
+    requestedAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    notes?: boolean
+  }
+
+  export type BetLinkRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "betId" | "status" | "requestedAt" | "reviewedAt" | "reviewedBy" | "notes", ExtArgs["result"]["betLinkRequest"]>
+  export type BetLinkRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+  }
+  export type BetLinkRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+  }
+  export type BetLinkRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    bet?: boolean | BetDefaultArgs<ExtArgs>
+  }
+
+  export type $BetLinkRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BetLinkRequest"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      bet: Prisma.$BetPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      betId: string
+      status: $Enums.RequestStatus
+      requestedAt: Date
+      reviewedAt: Date | null
+      reviewedBy: string | null
+      notes: string | null
+    }, ExtArgs["result"]["betLinkRequest"]>
+    composites: {}
+  }
+
+  type BetLinkRequestGetPayload<S extends boolean | null | undefined | BetLinkRequestDefaultArgs> = $Result.GetResult<Prisma.$BetLinkRequestPayload, S>
+
+  type BetLinkRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BetLinkRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BetLinkRequestCountAggregateInputType | true
+    }
+
+  export interface BetLinkRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BetLinkRequest'], meta: { name: 'BetLinkRequest' } }
+    /**
+     * Find zero or one BetLinkRequest that matches the filter.
+     * @param {BetLinkRequestFindUniqueArgs} args - Arguments to find a BetLinkRequest
+     * @example
+     * // Get one BetLinkRequest
+     * const betLinkRequest = await prisma.betLinkRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BetLinkRequestFindUniqueArgs>(args: SelectSubset<T, BetLinkRequestFindUniqueArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BetLinkRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BetLinkRequestFindUniqueOrThrowArgs} args - Arguments to find a BetLinkRequest
+     * @example
+     * // Get one BetLinkRequest
+     * const betLinkRequest = await prisma.betLinkRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BetLinkRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, BetLinkRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BetLinkRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestFindFirstArgs} args - Arguments to find a BetLinkRequest
+     * @example
+     * // Get one BetLinkRequest
+     * const betLinkRequest = await prisma.betLinkRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BetLinkRequestFindFirstArgs>(args?: SelectSubset<T, BetLinkRequestFindFirstArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BetLinkRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestFindFirstOrThrowArgs} args - Arguments to find a BetLinkRequest
+     * @example
+     * // Get one BetLinkRequest
+     * const betLinkRequest = await prisma.betLinkRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BetLinkRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, BetLinkRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BetLinkRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BetLinkRequests
+     * const betLinkRequests = await prisma.betLinkRequest.findMany()
+     * 
+     * // Get first 10 BetLinkRequests
+     * const betLinkRequests = await prisma.betLinkRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const betLinkRequestWithIdOnly = await prisma.betLinkRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BetLinkRequestFindManyArgs>(args?: SelectSubset<T, BetLinkRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BetLinkRequest.
+     * @param {BetLinkRequestCreateArgs} args - Arguments to create a BetLinkRequest.
+     * @example
+     * // Create one BetLinkRequest
+     * const BetLinkRequest = await prisma.betLinkRequest.create({
+     *   data: {
+     *     // ... data to create a BetLinkRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends BetLinkRequestCreateArgs>(args: SelectSubset<T, BetLinkRequestCreateArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BetLinkRequests.
+     * @param {BetLinkRequestCreateManyArgs} args - Arguments to create many BetLinkRequests.
+     * @example
+     * // Create many BetLinkRequests
+     * const betLinkRequest = await prisma.betLinkRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BetLinkRequestCreateManyArgs>(args?: SelectSubset<T, BetLinkRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BetLinkRequests and returns the data saved in the database.
+     * @param {BetLinkRequestCreateManyAndReturnArgs} args - Arguments to create many BetLinkRequests.
+     * @example
+     * // Create many BetLinkRequests
+     * const betLinkRequest = await prisma.betLinkRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BetLinkRequests and only return the `id`
+     * const betLinkRequestWithIdOnly = await prisma.betLinkRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BetLinkRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, BetLinkRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BetLinkRequest.
+     * @param {BetLinkRequestDeleteArgs} args - Arguments to delete one BetLinkRequest.
+     * @example
+     * // Delete one BetLinkRequest
+     * const BetLinkRequest = await prisma.betLinkRequest.delete({
+     *   where: {
+     *     // ... filter to delete one BetLinkRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BetLinkRequestDeleteArgs>(args: SelectSubset<T, BetLinkRequestDeleteArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BetLinkRequest.
+     * @param {BetLinkRequestUpdateArgs} args - Arguments to update one BetLinkRequest.
+     * @example
+     * // Update one BetLinkRequest
+     * const betLinkRequest = await prisma.betLinkRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BetLinkRequestUpdateArgs>(args: SelectSubset<T, BetLinkRequestUpdateArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BetLinkRequests.
+     * @param {BetLinkRequestDeleteManyArgs} args - Arguments to filter BetLinkRequests to delete.
+     * @example
+     * // Delete a few BetLinkRequests
+     * const { count } = await prisma.betLinkRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BetLinkRequestDeleteManyArgs>(args?: SelectSubset<T, BetLinkRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BetLinkRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BetLinkRequests
+     * const betLinkRequest = await prisma.betLinkRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BetLinkRequestUpdateManyArgs>(args: SelectSubset<T, BetLinkRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BetLinkRequests and returns the data updated in the database.
+     * @param {BetLinkRequestUpdateManyAndReturnArgs} args - Arguments to update many BetLinkRequests.
+     * @example
+     * // Update many BetLinkRequests
+     * const betLinkRequest = await prisma.betLinkRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BetLinkRequests and only return the `id`
+     * const betLinkRequestWithIdOnly = await prisma.betLinkRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BetLinkRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, BetLinkRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BetLinkRequest.
+     * @param {BetLinkRequestUpsertArgs} args - Arguments to update or create a BetLinkRequest.
+     * @example
+     * // Update or create a BetLinkRequest
+     * const betLinkRequest = await prisma.betLinkRequest.upsert({
+     *   create: {
+     *     // ... data to create a BetLinkRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BetLinkRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BetLinkRequestUpsertArgs>(args: SelectSubset<T, BetLinkRequestUpsertArgs<ExtArgs>>): Prisma__BetLinkRequestClient<$Result.GetResult<Prisma.$BetLinkRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BetLinkRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestCountArgs} args - Arguments to filter BetLinkRequests to count.
+     * @example
+     * // Count the number of BetLinkRequests
+     * const count = await prisma.betLinkRequest.count({
+     *   where: {
+     *     // ... the filter for the BetLinkRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends BetLinkRequestCountArgs>(
+      args?: Subset<T, BetLinkRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BetLinkRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BetLinkRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BetLinkRequestAggregateArgs>(args: Subset<T, BetLinkRequestAggregateArgs>): Prisma.PrismaPromise<GetBetLinkRequestAggregateType<T>>
+
+    /**
+     * Group by BetLinkRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BetLinkRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BetLinkRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BetLinkRequestGroupByArgs['orderBy'] }
+        : { orderBy?: BetLinkRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BetLinkRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBetLinkRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BetLinkRequest model
+   */
+  readonly fields: BetLinkRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BetLinkRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BetLinkRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    bet<T extends BetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BetDefaultArgs<ExtArgs>>): Prisma__BetClient<$Result.GetResult<Prisma.$BetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BetLinkRequest model
+   */
+  interface BetLinkRequestFieldRefs {
+    readonly id: FieldRef<"BetLinkRequest", 'String'>
+    readonly userId: FieldRef<"BetLinkRequest", 'String'>
+    readonly betId: FieldRef<"BetLinkRequest", 'String'>
+    readonly status: FieldRef<"BetLinkRequest", 'RequestStatus'>
+    readonly requestedAt: FieldRef<"BetLinkRequest", 'DateTime'>
+    readonly reviewedAt: FieldRef<"BetLinkRequest", 'DateTime'>
+    readonly reviewedBy: FieldRef<"BetLinkRequest", 'String'>
+    readonly notes: FieldRef<"BetLinkRequest", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BetLinkRequest findUnique
+   */
+  export type BetLinkRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which BetLinkRequest to fetch.
+     */
+    where: BetLinkRequestWhereUniqueInput
+  }
+
+  /**
+   * BetLinkRequest findUniqueOrThrow
+   */
+  export type BetLinkRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which BetLinkRequest to fetch.
+     */
+    where: BetLinkRequestWhereUniqueInput
+  }
+
+  /**
+   * BetLinkRequest findFirst
+   */
+  export type BetLinkRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which BetLinkRequest to fetch.
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BetLinkRequests to fetch.
+     */
+    orderBy?: BetLinkRequestOrderByWithRelationInput | BetLinkRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BetLinkRequests.
+     */
+    cursor?: BetLinkRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BetLinkRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BetLinkRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BetLinkRequests.
+     */
+    distinct?: BetLinkRequestScalarFieldEnum | BetLinkRequestScalarFieldEnum[]
+  }
+
+  /**
+   * BetLinkRequest findFirstOrThrow
+   */
+  export type BetLinkRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which BetLinkRequest to fetch.
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BetLinkRequests to fetch.
+     */
+    orderBy?: BetLinkRequestOrderByWithRelationInput | BetLinkRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BetLinkRequests.
+     */
+    cursor?: BetLinkRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BetLinkRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BetLinkRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BetLinkRequests.
+     */
+    distinct?: BetLinkRequestScalarFieldEnum | BetLinkRequestScalarFieldEnum[]
+  }
+
+  /**
+   * BetLinkRequest findMany
+   */
+  export type BetLinkRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which BetLinkRequests to fetch.
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BetLinkRequests to fetch.
+     */
+    orderBy?: BetLinkRequestOrderByWithRelationInput | BetLinkRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BetLinkRequests.
+     */
+    cursor?: BetLinkRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BetLinkRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BetLinkRequests.
+     */
+    skip?: number
+    distinct?: BetLinkRequestScalarFieldEnum | BetLinkRequestScalarFieldEnum[]
+  }
+
+  /**
+   * BetLinkRequest create
+   */
+  export type BetLinkRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BetLinkRequest.
+     */
+    data: XOR<BetLinkRequestCreateInput, BetLinkRequestUncheckedCreateInput>
+  }
+
+  /**
+   * BetLinkRequest createMany
+   */
+  export type BetLinkRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BetLinkRequests.
+     */
+    data: BetLinkRequestCreateManyInput | BetLinkRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BetLinkRequest createManyAndReturn
+   */
+  export type BetLinkRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many BetLinkRequests.
+     */
+    data: BetLinkRequestCreateManyInput | BetLinkRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BetLinkRequest update
+   */
+  export type BetLinkRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BetLinkRequest.
+     */
+    data: XOR<BetLinkRequestUpdateInput, BetLinkRequestUncheckedUpdateInput>
+    /**
+     * Choose, which BetLinkRequest to update.
+     */
+    where: BetLinkRequestWhereUniqueInput
+  }
+
+  /**
+   * BetLinkRequest updateMany
+   */
+  export type BetLinkRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BetLinkRequests.
+     */
+    data: XOR<BetLinkRequestUpdateManyMutationInput, BetLinkRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which BetLinkRequests to update
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * Limit how many BetLinkRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BetLinkRequest updateManyAndReturn
+   */
+  export type BetLinkRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update BetLinkRequests.
+     */
+    data: XOR<BetLinkRequestUpdateManyMutationInput, BetLinkRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which BetLinkRequests to update
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * Limit how many BetLinkRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BetLinkRequest upsert
+   */
+  export type BetLinkRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BetLinkRequest to update in case it exists.
+     */
+    where: BetLinkRequestWhereUniqueInput
+    /**
+     * In case the BetLinkRequest found by the `where` argument doesn't exist, create a new BetLinkRequest with this data.
+     */
+    create: XOR<BetLinkRequestCreateInput, BetLinkRequestUncheckedCreateInput>
+    /**
+     * In case the BetLinkRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BetLinkRequestUpdateInput, BetLinkRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * BetLinkRequest delete
+   */
+  export type BetLinkRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+    /**
+     * Filter which BetLinkRequest to delete.
+     */
+    where: BetLinkRequestWhereUniqueInput
+  }
+
+  /**
+   * BetLinkRequest deleteMany
+   */
+  export type BetLinkRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BetLinkRequests to delete
+     */
+    where?: BetLinkRequestWhereInput
+    /**
+     * Limit how many BetLinkRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BetLinkRequest without action
+   */
+  export type BetLinkRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BetLinkRequest
+     */
+    select?: BetLinkRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BetLinkRequest
+     */
+    omit?: BetLinkRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BetLinkRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -10888,6 +14776,7 @@ export namespace Prisma {
 
   export const BetScalarFieldEnum: {
     id: 'id',
+    betId: 'betId',
     name: 'name',
     company: 'company',
     domain: 'domain',
@@ -10939,6 +14828,37 @@ export namespace Prisma {
   export type ParameterHistoryScalarFieldEnum = (typeof ParameterHistoryScalarFieldEnum)[keyof typeof ParameterHistoryScalarFieldEnum]
 
 
+  export const UserBetScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    betId: 'betId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UserBetScalarFieldEnum = (typeof UserBetScalarFieldEnum)[keyof typeof UserBetScalarFieldEnum]
+
+
+  export const UserParameterScalarFieldEnum: {
+    id: 'id',
+    userBetId: 'userBetId',
+    name: 'name',
+    category: 'category',
+    valueText: 'valueText',
+    valueNumber: 'valueNumber',
+    valueBoolean: 'valueBoolean',
+    valueRating: 'valueRating',
+    unit: 'unit',
+    description: 'description',
+    type: 'type',
+    options: 'options',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UserParameterScalarFieldEnum = (typeof UserParameterScalarFieldEnum)[keyof typeof UserParameterScalarFieldEnum]
+
+
   export const ComparisonScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -10951,6 +14871,20 @@ export namespace Prisma {
   };
 
   export type ComparisonScalarFieldEnum = (typeof ComparisonScalarFieldEnum)[keyof typeof ComparisonScalarFieldEnum]
+
+
+  export const BetLinkRequestScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    betId: 'betId',
+    status: 'status',
+    requestedAt: 'requestedAt',
+    reviewedAt: 'reviewedAt',
+    reviewedBy: 'reviewedBy',
+    notes: 'notes'
+  };
+
+  export type BetLinkRequestScalarFieldEnum = (typeof BetLinkRequestScalarFieldEnum)[keyof typeof BetLinkRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11105,6 +15039,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'RequestStatus'
+   */
+  export type EnumRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'RequestStatus[]'
+   */
+  export type ListEnumRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RequestStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -11137,6 +15085,8 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     comparisons?: ComparisonListRelationFilter
+    userBets?: UserBetListRelationFilter
+    betLinkRequests?: BetLinkRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11152,6 +15102,8 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     comparisons?: ComparisonOrderByRelationAggregateInput
+    userBets?: UserBetOrderByRelationAggregateInput
+    betLinkRequests?: BetLinkRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11170,6 +15122,8 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     comparisons?: ComparisonListRelationFilter
+    userBets?: UserBetListRelationFilter
+    betLinkRequests?: BetLinkRequestListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11451,6 +15405,7 @@ export namespace Prisma {
     OR?: BetWhereInput[]
     NOT?: BetWhereInput | BetWhereInput[]
     id?: StringFilter<"Bet"> | string
+    betId?: StringNullableFilter<"Bet"> | string | null
     name?: StringFilter<"Bet"> | string
     company?: StringNullableFilter<"Bet"> | string | null
     domain?: StringNullableFilter<"Bet"> | string | null
@@ -11464,10 +15419,13 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Bet"> | Date | string
     updatedAt?: DateTimeFilter<"Bet"> | Date | string
     parameters?: ParameterListRelationFilter
+    userBets?: UserBetListRelationFilter
+    linkRequests?: BetLinkRequestListRelationFilter
   }
 
   export type BetOrderByWithRelationInput = {
     id?: SortOrder
+    betId?: SortOrderInput | SortOrder
     name?: SortOrder
     company?: SortOrderInput | SortOrder
     domain?: SortOrderInput | SortOrder
@@ -11481,10 +15439,13 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     parameters?: ParameterOrderByRelationAggregateInput
+    userBets?: UserBetOrderByRelationAggregateInput
+    linkRequests?: BetLinkRequestOrderByRelationAggregateInput
   }
 
   export type BetWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    betId?: string
     domain?: string
     AND?: BetWhereInput | BetWhereInput[]
     OR?: BetWhereInput[]
@@ -11501,10 +15462,13 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Bet"> | Date | string
     updatedAt?: DateTimeFilter<"Bet"> | Date | string
     parameters?: ParameterListRelationFilter
-  }, "id" | "domain">
+    userBets?: UserBetListRelationFilter
+    linkRequests?: BetLinkRequestListRelationFilter
+  }, "id" | "betId" | "domain">
 
   export type BetOrderByWithAggregationInput = {
     id?: SortOrder
+    betId?: SortOrderInput | SortOrder
     name?: SortOrder
     company?: SortOrderInput | SortOrder
     domain?: SortOrderInput | SortOrder
@@ -11527,6 +15491,7 @@ export namespace Prisma {
     OR?: BetScalarWhereWithAggregatesInput[]
     NOT?: BetScalarWhereWithAggregatesInput | BetScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Bet"> | string
+    betId?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     name?: StringWithAggregatesFilter<"Bet"> | string
     company?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     domain?: StringNullableWithAggregatesFilter<"Bet"> | string | null
@@ -11719,6 +15684,171 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"ParameterHistory"> | Date | string
   }
 
+  export type UserBetWhereInput = {
+    AND?: UserBetWhereInput | UserBetWhereInput[]
+    OR?: UserBetWhereInput[]
+    NOT?: UserBetWhereInput | UserBetWhereInput[]
+    id?: StringFilter<"UserBet"> | string
+    userId?: StringFilter<"UserBet"> | string
+    betId?: StringFilter<"UserBet"> | string
+    createdAt?: DateTimeFilter<"UserBet"> | Date | string
+    updatedAt?: DateTimeFilter<"UserBet"> | Date | string
+    bet?: XOR<BetScalarRelationFilter, BetWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    parameters?: UserParameterListRelationFilter
+  }
+
+  export type UserBetOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    bet?: BetOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    parameters?: UserParameterOrderByRelationAggregateInput
+  }
+
+  export type UserBetWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_betId?: UserBetUserIdBetIdCompoundUniqueInput
+    AND?: UserBetWhereInput | UserBetWhereInput[]
+    OR?: UserBetWhereInput[]
+    NOT?: UserBetWhereInput | UserBetWhereInput[]
+    userId?: StringFilter<"UserBet"> | string
+    betId?: StringFilter<"UserBet"> | string
+    createdAt?: DateTimeFilter<"UserBet"> | Date | string
+    updatedAt?: DateTimeFilter<"UserBet"> | Date | string
+    bet?: XOR<BetScalarRelationFilter, BetWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    parameters?: UserParameterListRelationFilter
+  }, "id" | "userId_betId">
+
+  export type UserBetOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UserBetCountOrderByAggregateInput
+    _max?: UserBetMaxOrderByAggregateInput
+    _min?: UserBetMinOrderByAggregateInput
+  }
+
+  export type UserBetScalarWhereWithAggregatesInput = {
+    AND?: UserBetScalarWhereWithAggregatesInput | UserBetScalarWhereWithAggregatesInput[]
+    OR?: UserBetScalarWhereWithAggregatesInput[]
+    NOT?: UserBetScalarWhereWithAggregatesInput | UserBetScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserBet"> | string
+    userId?: StringWithAggregatesFilter<"UserBet"> | string
+    betId?: StringWithAggregatesFilter<"UserBet"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"UserBet"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UserBet"> | Date | string
+  }
+
+  export type UserParameterWhereInput = {
+    AND?: UserParameterWhereInput | UserParameterWhereInput[]
+    OR?: UserParameterWhereInput[]
+    NOT?: UserParameterWhereInput | UserParameterWhereInput[]
+    id?: StringFilter<"UserParameter"> | string
+    userBetId?: StringFilter<"UserParameter"> | string
+    name?: StringFilter<"UserParameter"> | string
+    category?: StringNullableFilter<"UserParameter"> | string | null
+    valueText?: StringNullableFilter<"UserParameter"> | string | null
+    valueNumber?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: BoolNullableFilter<"UserParameter"> | boolean | null
+    valueRating?: IntNullableFilter<"UserParameter"> | number | null
+    unit?: StringNullableFilter<"UserParameter"> | string | null
+    description?: StringNullableFilter<"UserParameter"> | string | null
+    type?: StringNullableFilter<"UserParameter"> | string | null
+    options?: StringNullableListFilter<"UserParameter">
+    createdAt?: DateTimeFilter<"UserParameter"> | Date | string
+    updatedAt?: DateTimeFilter<"UserParameter"> | Date | string
+    userBet?: XOR<UserBetScalarRelationFilter, UserBetWhereInput>
+  }
+
+  export type UserParameterOrderByWithRelationInput = {
+    id?: SortOrder
+    userBetId?: SortOrder
+    name?: SortOrder
+    category?: SortOrderInput | SortOrder
+    valueText?: SortOrderInput | SortOrder
+    valueNumber?: SortOrderInput | SortOrder
+    valueBoolean?: SortOrderInput | SortOrder
+    valueRating?: SortOrderInput | SortOrder
+    unit?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    options?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userBet?: UserBetOrderByWithRelationInput
+  }
+
+  export type UserParameterWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userBetId_name?: UserParameterUserBetIdNameCompoundUniqueInput
+    AND?: UserParameterWhereInput | UserParameterWhereInput[]
+    OR?: UserParameterWhereInput[]
+    NOT?: UserParameterWhereInput | UserParameterWhereInput[]
+    userBetId?: StringFilter<"UserParameter"> | string
+    name?: StringFilter<"UserParameter"> | string
+    category?: StringNullableFilter<"UserParameter"> | string | null
+    valueText?: StringNullableFilter<"UserParameter"> | string | null
+    valueNumber?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: BoolNullableFilter<"UserParameter"> | boolean | null
+    valueRating?: IntNullableFilter<"UserParameter"> | number | null
+    unit?: StringNullableFilter<"UserParameter"> | string | null
+    description?: StringNullableFilter<"UserParameter"> | string | null
+    type?: StringNullableFilter<"UserParameter"> | string | null
+    options?: StringNullableListFilter<"UserParameter">
+    createdAt?: DateTimeFilter<"UserParameter"> | Date | string
+    updatedAt?: DateTimeFilter<"UserParameter"> | Date | string
+    userBet?: XOR<UserBetScalarRelationFilter, UserBetWhereInput>
+  }, "id" | "userBetId_name">
+
+  export type UserParameterOrderByWithAggregationInput = {
+    id?: SortOrder
+    userBetId?: SortOrder
+    name?: SortOrder
+    category?: SortOrderInput | SortOrder
+    valueText?: SortOrderInput | SortOrder
+    valueNumber?: SortOrderInput | SortOrder
+    valueBoolean?: SortOrderInput | SortOrder
+    valueRating?: SortOrderInput | SortOrder
+    unit?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
+    options?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UserParameterCountOrderByAggregateInput
+    _avg?: UserParameterAvgOrderByAggregateInput
+    _max?: UserParameterMaxOrderByAggregateInput
+    _min?: UserParameterMinOrderByAggregateInput
+    _sum?: UserParameterSumOrderByAggregateInput
+  }
+
+  export type UserParameterScalarWhereWithAggregatesInput = {
+    AND?: UserParameterScalarWhereWithAggregatesInput | UserParameterScalarWhereWithAggregatesInput[]
+    OR?: UserParameterScalarWhereWithAggregatesInput[]
+    NOT?: UserParameterScalarWhereWithAggregatesInput | UserParameterScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserParameter"> | string
+    userBetId?: StringWithAggregatesFilter<"UserParameter"> | string
+    name?: StringWithAggregatesFilter<"UserParameter"> | string
+    category?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
+    valueText?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
+    valueNumber?: DecimalNullableWithAggregatesFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: BoolNullableWithAggregatesFilter<"UserParameter"> | boolean | null
+    valueRating?: IntNullableWithAggregatesFilter<"UserParameter"> | number | null
+    unit?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
+    description?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
+    type?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
+    options?: StringNullableListFilter<"UserParameter">
+    createdAt?: DateTimeWithAggregatesFilter<"UserParameter"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UserParameter"> | Date | string
+  }
+
   export type ComparisonWhereInput = {
     AND?: ComparisonWhereInput | ComparisonWhereInput[]
     OR?: ComparisonWhereInput[]
@@ -11789,6 +15919,80 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Comparison"> | Date | string
   }
 
+  export type BetLinkRequestWhereInput = {
+    AND?: BetLinkRequestWhereInput | BetLinkRequestWhereInput[]
+    OR?: BetLinkRequestWhereInput[]
+    NOT?: BetLinkRequestWhereInput | BetLinkRequestWhereInput[]
+    id?: StringFilter<"BetLinkRequest"> | string
+    userId?: StringFilter<"BetLinkRequest"> | string
+    betId?: StringFilter<"BetLinkRequest"> | string
+    status?: EnumRequestStatusFilter<"BetLinkRequest"> | $Enums.RequestStatus
+    requestedAt?: DateTimeFilter<"BetLinkRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"BetLinkRequest"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"BetLinkRequest"> | string | null
+    notes?: StringNullableFilter<"BetLinkRequest"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    bet?: XOR<BetScalarRelationFilter, BetWhereInput>
+  }
+
+  export type BetLinkRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    status?: SortOrder
+    requestedAt?: SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+    bet?: BetOrderByWithRelationInput
+  }
+
+  export type BetLinkRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_betId?: BetLinkRequestUserIdBetIdCompoundUniqueInput
+    AND?: BetLinkRequestWhereInput | BetLinkRequestWhereInput[]
+    OR?: BetLinkRequestWhereInput[]
+    NOT?: BetLinkRequestWhereInput | BetLinkRequestWhereInput[]
+    userId?: StringFilter<"BetLinkRequest"> | string
+    betId?: StringFilter<"BetLinkRequest"> | string
+    status?: EnumRequestStatusFilter<"BetLinkRequest"> | $Enums.RequestStatus
+    requestedAt?: DateTimeFilter<"BetLinkRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"BetLinkRequest"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"BetLinkRequest"> | string | null
+    notes?: StringNullableFilter<"BetLinkRequest"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    bet?: XOR<BetScalarRelationFilter, BetWhereInput>
+  }, "id" | "userId_betId">
+
+  export type BetLinkRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    status?: SortOrder
+    requestedAt?: SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    _count?: BetLinkRequestCountOrderByAggregateInput
+    _max?: BetLinkRequestMaxOrderByAggregateInput
+    _min?: BetLinkRequestMinOrderByAggregateInput
+  }
+
+  export type BetLinkRequestScalarWhereWithAggregatesInput = {
+    AND?: BetLinkRequestScalarWhereWithAggregatesInput | BetLinkRequestScalarWhereWithAggregatesInput[]
+    OR?: BetLinkRequestScalarWhereWithAggregatesInput[]
+    NOT?: BetLinkRequestScalarWhereWithAggregatesInput | BetLinkRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BetLinkRequest"> | string
+    userId?: StringWithAggregatesFilter<"BetLinkRequest"> | string
+    betId?: StringWithAggregatesFilter<"BetLinkRequest"> | string
+    status?: EnumRequestStatusWithAggregatesFilter<"BetLinkRequest"> | $Enums.RequestStatus
+    requestedAt?: DateTimeWithAggregatesFilter<"BetLinkRequest"> | Date | string
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"BetLinkRequest"> | Date | string | null
+    reviewedBy?: StringNullableWithAggregatesFilter<"BetLinkRequest"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"BetLinkRequest"> | string | null
+  }
+
   export type UserCreateInput = {
     id: string
     name: string
@@ -11802,6 +16006,8 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     comparisons?: ComparisonCreateNestedManyWithoutUserInput
+    userBets?: UserBetCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11817,6 +16023,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     comparisons?: ComparisonUncheckedCreateNestedManyWithoutUserInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11832,6 +16040,8 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     comparisons?: ComparisonUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11847,6 +16057,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     comparisons?: ComparisonUncheckedUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12165,6 +16377,7 @@ export namespace Prisma {
 
   export type BetCreateInput = {
     id?: string
+    betId?: string | null
     name: string
     company?: string | null
     domain?: string | null
@@ -12178,10 +16391,13 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     parameters?: ParameterCreateNestedManyWithoutBetInput
+    userBets?: UserBetCreateNestedManyWithoutBetInput
+    linkRequests?: BetLinkRequestCreateNestedManyWithoutBetInput
   }
 
   export type BetUncheckedCreateInput = {
     id?: string
+    betId?: string | null
     name: string
     company?: string | null
     domain?: string | null
@@ -12195,10 +16411,13 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     parameters?: ParameterUncheckedCreateNestedManyWithoutBetInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutBetInput
+    linkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutBetInput
   }
 
   export type BetUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     company?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12212,10 +16431,13 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parameters?: ParameterUpdateManyWithoutBetNestedInput
+    userBets?: UserBetUpdateManyWithoutBetNestedInput
+    linkRequests?: BetLinkRequestUpdateManyWithoutBetNestedInput
   }
 
   export type BetUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     company?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12229,10 +16451,13 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     parameters?: ParameterUncheckedUpdateManyWithoutBetNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutBetNestedInput
+    linkRequests?: BetLinkRequestUncheckedUpdateManyWithoutBetNestedInput
   }
 
   export type BetCreateManyInput = {
     id?: string
+    betId?: string | null
     name: string
     company?: string | null
     domain?: string | null
@@ -12249,6 +16474,7 @@ export namespace Prisma {
 
   export type BetUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     company?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12265,6 +16491,7 @@ export namespace Prisma {
 
   export type BetUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     company?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12477,6 +16704,182 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserBetCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bet: BetCreateNestedOneWithoutUserBetsInput
+    user: UserCreateNestedOneWithoutUserBetsInput
+    parameters?: UserParameterCreateNestedManyWithoutUserBetInput
+  }
+
+  export type UserBetUncheckedCreateInput = {
+    id?: string
+    userId: string
+    betId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: UserParameterUncheckedCreateNestedManyWithoutUserBetInput
+  }
+
+  export type UserBetUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bet?: BetUpdateOneRequiredWithoutUserBetsNestedInput
+    user?: UserUpdateOneRequiredWithoutUserBetsNestedInput
+    parameters?: UserParameterUpdateManyWithoutUserBetNestedInput
+  }
+
+  export type UserBetUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: UserParameterUncheckedUpdateManyWithoutUserBetNestedInput
+  }
+
+  export type UserBetCreateManyInput = {
+    id?: string
+    userId: string
+    betId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserBetUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserBetUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserParameterCreateInput = {
+    id?: string
+    name: string
+    category?: string | null
+    valueText?: string | null
+    valueNumber?: Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: boolean | null
+    valueRating?: number | null
+    unit?: string | null
+    description?: string | null
+    type?: string | null
+    options?: UserParameterCreateoptionsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userBet: UserBetCreateNestedOneWithoutParametersInput
+  }
+
+  export type UserParameterUncheckedCreateInput = {
+    id?: string
+    userBetId: string
+    name: string
+    category?: string | null
+    valueText?: string | null
+    valueNumber?: Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: boolean | null
+    valueRating?: number | null
+    unit?: string | null
+    description?: string | null
+    type?: string | null
+    options?: UserParameterCreateoptionsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserParameterUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userBet?: UserBetUpdateOneRequiredWithoutParametersNestedInput
+  }
+
+  export type UserParameterUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userBetId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserParameterCreateManyInput = {
+    id?: string
+    userBetId: string
+    name: string
+    category?: string | null
+    valueText?: string | null
+    valueNumber?: Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: boolean | null
+    valueRating?: number | null
+    unit?: string | null
+    description?: string | null
+    type?: string | null
+    options?: UserParameterCreateoptionsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserParameterUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserParameterUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userBetId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ComparisonCreateInput = {
     id?: string
     name?: string | null
@@ -12553,6 +16956,81 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BetLinkRequestCreateInput = {
+    id?: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+    user: UserCreateNestedOneWithoutBetLinkRequestsInput
+    bet: BetCreateNestedOneWithoutLinkRequestsInput
+  }
+
+  export type BetLinkRequestUncheckedCreateInput = {
+    id?: string
+    userId: string
+    betId: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+  }
+
+  export type BetLinkRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutBetLinkRequestsNestedInput
+    bet?: BetUpdateOneRequiredWithoutLinkRequestsNestedInput
+  }
+
+  export type BetLinkRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BetLinkRequestCreateManyInput = {
+    id?: string
+    userId: string
+    betId: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+  }
+
+  export type BetLinkRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BetLinkRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -12624,6 +17102,18 @@ export namespace Prisma {
     none?: ComparisonWhereInput
   }
 
+  export type UserBetListRelationFilter = {
+    every?: UserBetWhereInput
+    some?: UserBetWhereInput
+    none?: UserBetWhereInput
+  }
+
+  export type BetLinkRequestListRelationFilter = {
+    every?: BetLinkRequestWhereInput
+    some?: BetLinkRequestWhereInput
+    none?: BetLinkRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -12638,6 +17128,14 @@ export namespace Prisma {
   }
 
   export type ComparisonOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserBetOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BetLinkRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12961,6 +17459,7 @@ export namespace Prisma {
 
   export type BetCountOrderByAggregateInput = {
     id?: SortOrder
+    betId?: SortOrder
     name?: SortOrder
     company?: SortOrder
     domain?: SortOrder
@@ -12977,6 +17476,7 @@ export namespace Prisma {
 
   export type BetMaxOrderByAggregateInput = {
     id?: SortOrder
+    betId?: SortOrder
     name?: SortOrder
     company?: SortOrder
     domain?: SortOrder
@@ -12993,6 +17493,7 @@ export namespace Prisma {
 
   export type BetMinOrderByAggregateInput = {
     id?: SortOrder
+    betId?: SortOrder
     name?: SortOrder
     company?: SortOrder
     domain?: SortOrder
@@ -13208,6 +17709,114 @@ export namespace Prisma {
     valueNumber?: SortOrder
     valueRating?: SortOrder
   }
+
+  export type UserParameterListRelationFilter = {
+    every?: UserParameterWhereInput
+    some?: UserParameterWhereInput
+    none?: UserParameterWhereInput
+  }
+
+  export type UserParameterOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserBetUserIdBetIdCompoundUniqueInput = {
+    userId: string
+    betId: string
+  }
+
+  export type UserBetCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBetMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBetMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBetScalarRelationFilter = {
+    is?: UserBetWhereInput
+    isNot?: UserBetWhereInput
+  }
+
+  export type UserParameterUserBetIdNameCompoundUniqueInput = {
+    userBetId: string
+    name: string
+  }
+
+  export type UserParameterCountOrderByAggregateInput = {
+    id?: SortOrder
+    userBetId?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    valueText?: SortOrder
+    valueNumber?: SortOrder
+    valueBoolean?: SortOrder
+    valueRating?: SortOrder
+    unit?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    options?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserParameterAvgOrderByAggregateInput = {
+    valueNumber?: SortOrder
+    valueRating?: SortOrder
+  }
+
+  export type UserParameterMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userBetId?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    valueText?: SortOrder
+    valueNumber?: SortOrder
+    valueBoolean?: SortOrder
+    valueRating?: SortOrder
+    unit?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserParameterMinOrderByAggregateInput = {
+    id?: SortOrder
+    userBetId?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    valueText?: SortOrder
+    valueNumber?: SortOrder
+    valueBoolean?: SortOrder
+    valueRating?: SortOrder
+    unit?: SortOrder
+    description?: SortOrder
+    type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserParameterSumOrderByAggregateInput = {
+    valueNumber?: SortOrder
+    valueRating?: SortOrder
+  }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -13287,6 +17896,61 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type EnumRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusFilter<$PrismaModel> | $Enums.RequestStatus
+  }
+
+  export type BetLinkRequestUserIdBetIdCompoundUniqueInput = {
+    userId: string
+    betId: string
+  }
+
+  export type BetLinkRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    status?: SortOrder
+    requestedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type BetLinkRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    status?: SortOrder
+    requestedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type BetLinkRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    betId?: SortOrder
+    status?: SortOrder
+    requestedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type EnumRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.RequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumRequestStatusFilter<$PrismaModel>
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -13308,6 +17972,20 @@ export namespace Prisma {
     connect?: ComparisonWhereUniqueInput | ComparisonWhereUniqueInput[]
   }
 
+  export type UserBetCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserBetCreateWithoutUserInput, UserBetUncheckedCreateWithoutUserInput> | UserBetCreateWithoutUserInput[] | UserBetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutUserInput | UserBetCreateOrConnectWithoutUserInput[]
+    createMany?: UserBetCreateManyUserInputEnvelope
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+  }
+
+  export type BetLinkRequestCreateNestedManyWithoutUserInput = {
+    create?: XOR<BetLinkRequestCreateWithoutUserInput, BetLinkRequestUncheckedCreateWithoutUserInput> | BetLinkRequestCreateWithoutUserInput[] | BetLinkRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutUserInput | BetLinkRequestCreateOrConnectWithoutUserInput[]
+    createMany?: BetLinkRequestCreateManyUserInputEnvelope
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -13327,6 +18005,20 @@ export namespace Prisma {
     connectOrCreate?: ComparisonCreateOrConnectWithoutUserInput | ComparisonCreateOrConnectWithoutUserInput[]
     createMany?: ComparisonCreateManyUserInputEnvelope
     connect?: ComparisonWhereUniqueInput | ComparisonWhereUniqueInput[]
+  }
+
+  export type UserBetUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserBetCreateWithoutUserInput, UserBetUncheckedCreateWithoutUserInput> | UserBetCreateWithoutUserInput[] | UserBetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutUserInput | UserBetCreateOrConnectWithoutUserInput[]
+    createMany?: UserBetCreateManyUserInputEnvelope
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+  }
+
+  export type BetLinkRequestUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<BetLinkRequestCreateWithoutUserInput, BetLinkRequestUncheckedCreateWithoutUserInput> | BetLinkRequestCreateWithoutUserInput[] | BetLinkRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutUserInput | BetLinkRequestCreateOrConnectWithoutUserInput[]
+    createMany?: BetLinkRequestCreateManyUserInputEnvelope
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -13391,6 +18083,34 @@ export namespace Prisma {
     deleteMany?: ComparisonScalarWhereInput | ComparisonScalarWhereInput[]
   }
 
+  export type UserBetUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserBetCreateWithoutUserInput, UserBetUncheckedCreateWithoutUserInput> | UserBetCreateWithoutUserInput[] | UserBetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutUserInput | UserBetCreateOrConnectWithoutUserInput[]
+    upsert?: UserBetUpsertWithWhereUniqueWithoutUserInput | UserBetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserBetCreateManyUserInputEnvelope
+    set?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    disconnect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    delete?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    update?: UserBetUpdateWithWhereUniqueWithoutUserInput | UserBetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserBetUpdateManyWithWhereWithoutUserInput | UserBetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserBetScalarWhereInput | UserBetScalarWhereInput[]
+  }
+
+  export type BetLinkRequestUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BetLinkRequestCreateWithoutUserInput, BetLinkRequestUncheckedCreateWithoutUserInput> | BetLinkRequestCreateWithoutUserInput[] | BetLinkRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutUserInput | BetLinkRequestCreateOrConnectWithoutUserInput[]
+    upsert?: BetLinkRequestUpsertWithWhereUniqueWithoutUserInput | BetLinkRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BetLinkRequestCreateManyUserInputEnvelope
+    set?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    disconnect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    delete?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    update?: BetLinkRequestUpdateWithWhereUniqueWithoutUserInput | BetLinkRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BetLinkRequestUpdateManyWithWhereWithoutUserInput | BetLinkRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BetLinkRequestScalarWhereInput | BetLinkRequestScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -13431,6 +18151,34 @@ export namespace Prisma {
     update?: ComparisonUpdateWithWhereUniqueWithoutUserInput | ComparisonUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ComparisonUpdateManyWithWhereWithoutUserInput | ComparisonUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ComparisonScalarWhereInput | ComparisonScalarWhereInput[]
+  }
+
+  export type UserBetUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserBetCreateWithoutUserInput, UserBetUncheckedCreateWithoutUserInput> | UserBetCreateWithoutUserInput[] | UserBetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutUserInput | UserBetCreateOrConnectWithoutUserInput[]
+    upsert?: UserBetUpsertWithWhereUniqueWithoutUserInput | UserBetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserBetCreateManyUserInputEnvelope
+    set?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    disconnect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    delete?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    update?: UserBetUpdateWithWhereUniqueWithoutUserInput | UserBetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserBetUpdateManyWithWhereWithoutUserInput | UserBetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserBetScalarWhereInput | UserBetScalarWhereInput[]
+  }
+
+  export type BetLinkRequestUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BetLinkRequestCreateWithoutUserInput, BetLinkRequestUncheckedCreateWithoutUserInput> | BetLinkRequestCreateWithoutUserInput[] | BetLinkRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutUserInput | BetLinkRequestCreateOrConnectWithoutUserInput[]
+    upsert?: BetLinkRequestUpsertWithWhereUniqueWithoutUserInput | BetLinkRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BetLinkRequestCreateManyUserInputEnvelope
+    set?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    disconnect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    delete?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    update?: BetLinkRequestUpdateWithWhereUniqueWithoutUserInput | BetLinkRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BetLinkRequestUpdateManyWithWhereWithoutUserInput | BetLinkRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BetLinkRequestScalarWhereInput | BetLinkRequestScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -13484,11 +18232,39 @@ export namespace Prisma {
     connect?: ParameterWhereUniqueInput | ParameterWhereUniqueInput[]
   }
 
+  export type UserBetCreateNestedManyWithoutBetInput = {
+    create?: XOR<UserBetCreateWithoutBetInput, UserBetUncheckedCreateWithoutBetInput> | UserBetCreateWithoutBetInput[] | UserBetUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutBetInput | UserBetCreateOrConnectWithoutBetInput[]
+    createMany?: UserBetCreateManyBetInputEnvelope
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+  }
+
+  export type BetLinkRequestCreateNestedManyWithoutBetInput = {
+    create?: XOR<BetLinkRequestCreateWithoutBetInput, BetLinkRequestUncheckedCreateWithoutBetInput> | BetLinkRequestCreateWithoutBetInput[] | BetLinkRequestUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutBetInput | BetLinkRequestCreateOrConnectWithoutBetInput[]
+    createMany?: BetLinkRequestCreateManyBetInputEnvelope
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+  }
+
   export type ParameterUncheckedCreateNestedManyWithoutBetInput = {
     create?: XOR<ParameterCreateWithoutBetInput, ParameterUncheckedCreateWithoutBetInput> | ParameterCreateWithoutBetInput[] | ParameterUncheckedCreateWithoutBetInput[]
     connectOrCreate?: ParameterCreateOrConnectWithoutBetInput | ParameterCreateOrConnectWithoutBetInput[]
     createMany?: ParameterCreateManyBetInputEnvelope
     connect?: ParameterWhereUniqueInput | ParameterWhereUniqueInput[]
+  }
+
+  export type UserBetUncheckedCreateNestedManyWithoutBetInput = {
+    create?: XOR<UserBetCreateWithoutBetInput, UserBetUncheckedCreateWithoutBetInput> | UserBetCreateWithoutBetInput[] | UserBetUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutBetInput | UserBetCreateOrConnectWithoutBetInput[]
+    createMany?: UserBetCreateManyBetInputEnvelope
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+  }
+
+  export type BetLinkRequestUncheckedCreateNestedManyWithoutBetInput = {
+    create?: XOR<BetLinkRequestCreateWithoutBetInput, BetLinkRequestUncheckedCreateWithoutBetInput> | BetLinkRequestCreateWithoutBetInput[] | BetLinkRequestUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutBetInput | BetLinkRequestCreateOrConnectWithoutBetInput[]
+    createMany?: BetLinkRequestCreateManyBetInputEnvelope
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
   }
 
   export type ParameterUpdateManyWithoutBetNestedInput = {
@@ -13505,6 +18281,34 @@ export namespace Prisma {
     deleteMany?: ParameterScalarWhereInput | ParameterScalarWhereInput[]
   }
 
+  export type UserBetUpdateManyWithoutBetNestedInput = {
+    create?: XOR<UserBetCreateWithoutBetInput, UserBetUncheckedCreateWithoutBetInput> | UserBetCreateWithoutBetInput[] | UserBetUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutBetInput | UserBetCreateOrConnectWithoutBetInput[]
+    upsert?: UserBetUpsertWithWhereUniqueWithoutBetInput | UserBetUpsertWithWhereUniqueWithoutBetInput[]
+    createMany?: UserBetCreateManyBetInputEnvelope
+    set?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    disconnect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    delete?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    update?: UserBetUpdateWithWhereUniqueWithoutBetInput | UserBetUpdateWithWhereUniqueWithoutBetInput[]
+    updateMany?: UserBetUpdateManyWithWhereWithoutBetInput | UserBetUpdateManyWithWhereWithoutBetInput[]
+    deleteMany?: UserBetScalarWhereInput | UserBetScalarWhereInput[]
+  }
+
+  export type BetLinkRequestUpdateManyWithoutBetNestedInput = {
+    create?: XOR<BetLinkRequestCreateWithoutBetInput, BetLinkRequestUncheckedCreateWithoutBetInput> | BetLinkRequestCreateWithoutBetInput[] | BetLinkRequestUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutBetInput | BetLinkRequestCreateOrConnectWithoutBetInput[]
+    upsert?: BetLinkRequestUpsertWithWhereUniqueWithoutBetInput | BetLinkRequestUpsertWithWhereUniqueWithoutBetInput[]
+    createMany?: BetLinkRequestCreateManyBetInputEnvelope
+    set?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    disconnect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    delete?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    update?: BetLinkRequestUpdateWithWhereUniqueWithoutBetInput | BetLinkRequestUpdateWithWhereUniqueWithoutBetInput[]
+    updateMany?: BetLinkRequestUpdateManyWithWhereWithoutBetInput | BetLinkRequestUpdateManyWithWhereWithoutBetInput[]
+    deleteMany?: BetLinkRequestScalarWhereInput | BetLinkRequestScalarWhereInput[]
+  }
+
   export type ParameterUncheckedUpdateManyWithoutBetNestedInput = {
     create?: XOR<ParameterCreateWithoutBetInput, ParameterUncheckedCreateWithoutBetInput> | ParameterCreateWithoutBetInput[] | ParameterUncheckedCreateWithoutBetInput[]
     connectOrCreate?: ParameterCreateOrConnectWithoutBetInput | ParameterCreateOrConnectWithoutBetInput[]
@@ -13517,6 +18321,34 @@ export namespace Prisma {
     update?: ParameterUpdateWithWhereUniqueWithoutBetInput | ParameterUpdateWithWhereUniqueWithoutBetInput[]
     updateMany?: ParameterUpdateManyWithWhereWithoutBetInput | ParameterUpdateManyWithWhereWithoutBetInput[]
     deleteMany?: ParameterScalarWhereInput | ParameterScalarWhereInput[]
+  }
+
+  export type UserBetUncheckedUpdateManyWithoutBetNestedInput = {
+    create?: XOR<UserBetCreateWithoutBetInput, UserBetUncheckedCreateWithoutBetInput> | UserBetCreateWithoutBetInput[] | UserBetUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: UserBetCreateOrConnectWithoutBetInput | UserBetCreateOrConnectWithoutBetInput[]
+    upsert?: UserBetUpsertWithWhereUniqueWithoutBetInput | UserBetUpsertWithWhereUniqueWithoutBetInput[]
+    createMany?: UserBetCreateManyBetInputEnvelope
+    set?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    disconnect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    delete?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    connect?: UserBetWhereUniqueInput | UserBetWhereUniqueInput[]
+    update?: UserBetUpdateWithWhereUniqueWithoutBetInput | UserBetUpdateWithWhereUniqueWithoutBetInput[]
+    updateMany?: UserBetUpdateManyWithWhereWithoutBetInput | UserBetUpdateManyWithWhereWithoutBetInput[]
+    deleteMany?: UserBetScalarWhereInput | UserBetScalarWhereInput[]
+  }
+
+  export type BetLinkRequestUncheckedUpdateManyWithoutBetNestedInput = {
+    create?: XOR<BetLinkRequestCreateWithoutBetInput, BetLinkRequestUncheckedCreateWithoutBetInput> | BetLinkRequestCreateWithoutBetInput[] | BetLinkRequestUncheckedCreateWithoutBetInput[]
+    connectOrCreate?: BetLinkRequestCreateOrConnectWithoutBetInput | BetLinkRequestCreateOrConnectWithoutBetInput[]
+    upsert?: BetLinkRequestUpsertWithWhereUniqueWithoutBetInput | BetLinkRequestUpsertWithWhereUniqueWithoutBetInput[]
+    createMany?: BetLinkRequestCreateManyBetInputEnvelope
+    set?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    disconnect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    delete?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    connect?: BetLinkRequestWhereUniqueInput | BetLinkRequestWhereUniqueInput[]
+    update?: BetLinkRequestUpdateWithWhereUniqueWithoutBetInput | BetLinkRequestUpdateWithWhereUniqueWithoutBetInput[]
+    updateMany?: BetLinkRequestUpdateManyWithWhereWithoutBetInput | BetLinkRequestUpdateManyWithWhereWithoutBetInput[]
+    deleteMany?: BetLinkRequestScalarWhereInput | BetLinkRequestScalarWhereInput[]
   }
 
   export type ParameterCreateoptionsInput = {
@@ -13618,6 +18450,99 @@ export namespace Prisma {
     update?: XOR<XOR<ParameterUpdateToOneWithWhereWithoutHistoryInput, ParameterUpdateWithoutHistoryInput>, ParameterUncheckedUpdateWithoutHistoryInput>
   }
 
+  export type BetCreateNestedOneWithoutUserBetsInput = {
+    create?: XOR<BetCreateWithoutUserBetsInput, BetUncheckedCreateWithoutUserBetsInput>
+    connectOrCreate?: BetCreateOrConnectWithoutUserBetsInput
+    connect?: BetWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutUserBetsInput = {
+    create?: XOR<UserCreateWithoutUserBetsInput, UserUncheckedCreateWithoutUserBetsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUserBetsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserParameterCreateNestedManyWithoutUserBetInput = {
+    create?: XOR<UserParameterCreateWithoutUserBetInput, UserParameterUncheckedCreateWithoutUserBetInput> | UserParameterCreateWithoutUserBetInput[] | UserParameterUncheckedCreateWithoutUserBetInput[]
+    connectOrCreate?: UserParameterCreateOrConnectWithoutUserBetInput | UserParameterCreateOrConnectWithoutUserBetInput[]
+    createMany?: UserParameterCreateManyUserBetInputEnvelope
+    connect?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+  }
+
+  export type UserParameterUncheckedCreateNestedManyWithoutUserBetInput = {
+    create?: XOR<UserParameterCreateWithoutUserBetInput, UserParameterUncheckedCreateWithoutUserBetInput> | UserParameterCreateWithoutUserBetInput[] | UserParameterUncheckedCreateWithoutUserBetInput[]
+    connectOrCreate?: UserParameterCreateOrConnectWithoutUserBetInput | UserParameterCreateOrConnectWithoutUserBetInput[]
+    createMany?: UserParameterCreateManyUserBetInputEnvelope
+    connect?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+  }
+
+  export type BetUpdateOneRequiredWithoutUserBetsNestedInput = {
+    create?: XOR<BetCreateWithoutUserBetsInput, BetUncheckedCreateWithoutUserBetsInput>
+    connectOrCreate?: BetCreateOrConnectWithoutUserBetsInput
+    upsert?: BetUpsertWithoutUserBetsInput
+    connect?: BetWhereUniqueInput
+    update?: XOR<XOR<BetUpdateToOneWithWhereWithoutUserBetsInput, BetUpdateWithoutUserBetsInput>, BetUncheckedUpdateWithoutUserBetsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutUserBetsNestedInput = {
+    create?: XOR<UserCreateWithoutUserBetsInput, UserUncheckedCreateWithoutUserBetsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUserBetsInput
+    upsert?: UserUpsertWithoutUserBetsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserBetsInput, UserUpdateWithoutUserBetsInput>, UserUncheckedUpdateWithoutUserBetsInput>
+  }
+
+  export type UserParameterUpdateManyWithoutUserBetNestedInput = {
+    create?: XOR<UserParameterCreateWithoutUserBetInput, UserParameterUncheckedCreateWithoutUserBetInput> | UserParameterCreateWithoutUserBetInput[] | UserParameterUncheckedCreateWithoutUserBetInput[]
+    connectOrCreate?: UserParameterCreateOrConnectWithoutUserBetInput | UserParameterCreateOrConnectWithoutUserBetInput[]
+    upsert?: UserParameterUpsertWithWhereUniqueWithoutUserBetInput | UserParameterUpsertWithWhereUniqueWithoutUserBetInput[]
+    createMany?: UserParameterCreateManyUserBetInputEnvelope
+    set?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    disconnect?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    delete?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    connect?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    update?: UserParameterUpdateWithWhereUniqueWithoutUserBetInput | UserParameterUpdateWithWhereUniqueWithoutUserBetInput[]
+    updateMany?: UserParameterUpdateManyWithWhereWithoutUserBetInput | UserParameterUpdateManyWithWhereWithoutUserBetInput[]
+    deleteMany?: UserParameterScalarWhereInput | UserParameterScalarWhereInput[]
+  }
+
+  export type UserParameterUncheckedUpdateManyWithoutUserBetNestedInput = {
+    create?: XOR<UserParameterCreateWithoutUserBetInput, UserParameterUncheckedCreateWithoutUserBetInput> | UserParameterCreateWithoutUserBetInput[] | UserParameterUncheckedCreateWithoutUserBetInput[]
+    connectOrCreate?: UserParameterCreateOrConnectWithoutUserBetInput | UserParameterCreateOrConnectWithoutUserBetInput[]
+    upsert?: UserParameterUpsertWithWhereUniqueWithoutUserBetInput | UserParameterUpsertWithWhereUniqueWithoutUserBetInput[]
+    createMany?: UserParameterCreateManyUserBetInputEnvelope
+    set?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    disconnect?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    delete?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    connect?: UserParameterWhereUniqueInput | UserParameterWhereUniqueInput[]
+    update?: UserParameterUpdateWithWhereUniqueWithoutUserBetInput | UserParameterUpdateWithWhereUniqueWithoutUserBetInput[]
+    updateMany?: UserParameterUpdateManyWithWhereWithoutUserBetInput | UserParameterUpdateManyWithWhereWithoutUserBetInput[]
+    deleteMany?: UserParameterScalarWhereInput | UserParameterScalarWhereInput[]
+  }
+
+  export type UserParameterCreateoptionsInput = {
+    set: string[]
+  }
+
+  export type UserBetCreateNestedOneWithoutParametersInput = {
+    create?: XOR<UserBetCreateWithoutParametersInput, UserBetUncheckedCreateWithoutParametersInput>
+    connectOrCreate?: UserBetCreateOrConnectWithoutParametersInput
+    connect?: UserBetWhereUniqueInput
+  }
+
+  export type UserParameterUpdateoptionsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserBetUpdateOneRequiredWithoutParametersNestedInput = {
+    create?: XOR<UserBetCreateWithoutParametersInput, UserBetUncheckedCreateWithoutParametersInput>
+    connectOrCreate?: UserBetCreateOrConnectWithoutParametersInput
+    upsert?: UserBetUpsertWithoutParametersInput
+    connect?: UserBetWhereUniqueInput
+    update?: XOR<XOR<UserBetUpdateToOneWithWhereWithoutParametersInput, UserBetUpdateWithoutParametersInput>, UserBetUncheckedUpdateWithoutParametersInput>
+  }
+
   export type ComparisonCreateselectedBetsInput = {
     set: string[]
   }
@@ -13639,6 +18564,38 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutComparisonsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutComparisonsInput, UserUpdateWithoutComparisonsInput>, UserUncheckedUpdateWithoutComparisonsInput>
+  }
+
+  export type UserCreateNestedOneWithoutBetLinkRequestsInput = {
+    create?: XOR<UserCreateWithoutBetLinkRequestsInput, UserUncheckedCreateWithoutBetLinkRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBetLinkRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type BetCreateNestedOneWithoutLinkRequestsInput = {
+    create?: XOR<BetCreateWithoutLinkRequestsInput, BetUncheckedCreateWithoutLinkRequestsInput>
+    connectOrCreate?: BetCreateOrConnectWithoutLinkRequestsInput
+    connect?: BetWhereUniqueInput
+  }
+
+  export type EnumRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RequestStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutBetLinkRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutBetLinkRequestsInput, UserUncheckedCreateWithoutBetLinkRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBetLinkRequestsInput
+    upsert?: UserUpsertWithoutBetLinkRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBetLinkRequestsInput, UserUpdateWithoutBetLinkRequestsInput>, UserUncheckedUpdateWithoutBetLinkRequestsInput>
+  }
+
+  export type BetUpdateOneRequiredWithoutLinkRequestsNestedInput = {
+    create?: XOR<BetCreateWithoutLinkRequestsInput, BetUncheckedCreateWithoutLinkRequestsInput>
+    connectOrCreate?: BetCreateOrConnectWithoutLinkRequestsInput
+    upsert?: BetUpsertWithoutLinkRequestsInput
+    connect?: BetWhereUniqueInput
+    update?: XOR<XOR<BetUpdateToOneWithWhereWithoutLinkRequestsInput, BetUpdateWithoutLinkRequestsInput>, BetUncheckedUpdateWithoutLinkRequestsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -13939,6 +18896,23 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusFilter<$PrismaModel> | $Enums.RequestStatus
+  }
+
+  export type NestedEnumRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.RequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumRequestStatusFilter<$PrismaModel>
+  }
+
   export type AccountCreateWithoutUserInput = {
     id: string
     accountId: string
@@ -14039,6 +19013,62 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserBetCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bet: BetCreateNestedOneWithoutUserBetsInput
+    parameters?: UserParameterCreateNestedManyWithoutUserBetInput
+  }
+
+  export type UserBetUncheckedCreateWithoutUserInput = {
+    id?: string
+    betId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: UserParameterUncheckedCreateNestedManyWithoutUserBetInput
+  }
+
+  export type UserBetCreateOrConnectWithoutUserInput = {
+    where: UserBetWhereUniqueInput
+    create: XOR<UserBetCreateWithoutUserInput, UserBetUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserBetCreateManyUserInputEnvelope = {
+    data: UserBetCreateManyUserInput | UserBetCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BetLinkRequestCreateWithoutUserInput = {
+    id?: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+    bet: BetCreateNestedOneWithoutLinkRequestsInput
+  }
+
+  export type BetLinkRequestUncheckedCreateWithoutUserInput = {
+    id?: string
+    betId: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+  }
+
+  export type BetLinkRequestCreateOrConnectWithoutUserInput = {
+    where: BetLinkRequestWhereUniqueInput
+    create: XOR<BetLinkRequestCreateWithoutUserInput, BetLinkRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type BetLinkRequestCreateManyUserInputEnvelope = {
+    data: BetLinkRequestCreateManyUserInput | BetLinkRequestCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -14134,6 +19164,63 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Comparison"> | Date | string
   }
 
+  export type UserBetUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserBetWhereUniqueInput
+    update: XOR<UserBetUpdateWithoutUserInput, UserBetUncheckedUpdateWithoutUserInput>
+    create: XOR<UserBetCreateWithoutUserInput, UserBetUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserBetUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserBetWhereUniqueInput
+    data: XOR<UserBetUpdateWithoutUserInput, UserBetUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserBetUpdateManyWithWhereWithoutUserInput = {
+    where: UserBetScalarWhereInput
+    data: XOR<UserBetUpdateManyMutationInput, UserBetUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserBetScalarWhereInput = {
+    AND?: UserBetScalarWhereInput | UserBetScalarWhereInput[]
+    OR?: UserBetScalarWhereInput[]
+    NOT?: UserBetScalarWhereInput | UserBetScalarWhereInput[]
+    id?: StringFilter<"UserBet"> | string
+    userId?: StringFilter<"UserBet"> | string
+    betId?: StringFilter<"UserBet"> | string
+    createdAt?: DateTimeFilter<"UserBet"> | Date | string
+    updatedAt?: DateTimeFilter<"UserBet"> | Date | string
+  }
+
+  export type BetLinkRequestUpsertWithWhereUniqueWithoutUserInput = {
+    where: BetLinkRequestWhereUniqueInput
+    update: XOR<BetLinkRequestUpdateWithoutUserInput, BetLinkRequestUncheckedUpdateWithoutUserInput>
+    create: XOR<BetLinkRequestCreateWithoutUserInput, BetLinkRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type BetLinkRequestUpdateWithWhereUniqueWithoutUserInput = {
+    where: BetLinkRequestWhereUniqueInput
+    data: XOR<BetLinkRequestUpdateWithoutUserInput, BetLinkRequestUncheckedUpdateWithoutUserInput>
+  }
+
+  export type BetLinkRequestUpdateManyWithWhereWithoutUserInput = {
+    where: BetLinkRequestScalarWhereInput
+    data: XOR<BetLinkRequestUpdateManyMutationInput, BetLinkRequestUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type BetLinkRequestScalarWhereInput = {
+    AND?: BetLinkRequestScalarWhereInput | BetLinkRequestScalarWhereInput[]
+    OR?: BetLinkRequestScalarWhereInput[]
+    NOT?: BetLinkRequestScalarWhereInput | BetLinkRequestScalarWhereInput[]
+    id?: StringFilter<"BetLinkRequest"> | string
+    userId?: StringFilter<"BetLinkRequest"> | string
+    betId?: StringFilter<"BetLinkRequest"> | string
+    status?: EnumRequestStatusFilter<"BetLinkRequest"> | $Enums.RequestStatus
+    requestedAt?: DateTimeFilter<"BetLinkRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"BetLinkRequest"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"BetLinkRequest"> | string | null
+    notes?: StringNullableFilter<"BetLinkRequest"> | string | null
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id: string
     name: string
@@ -14146,6 +19233,8 @@ export namespace Prisma {
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     comparisons?: ComparisonCreateNestedManyWithoutUserInput
+    userBets?: UserBetCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -14160,6 +19249,8 @@ export namespace Prisma {
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     comparisons?: ComparisonUncheckedCreateNestedManyWithoutUserInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -14190,6 +19281,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     comparisons?: ComparisonUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -14204,6 +19297,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     comparisons?: ComparisonUncheckedUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -14218,6 +19313,8 @@ export namespace Prisma {
     updatedAt: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     comparisons?: ComparisonCreateNestedManyWithoutUserInput
+    userBets?: UserBetCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -14232,6 +19329,8 @@ export namespace Prisma {
     updatedAt: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     comparisons?: ComparisonUncheckedCreateNestedManyWithoutUserInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -14262,6 +19361,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     comparisons?: ComparisonUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -14276,6 +19377,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     comparisons?: ComparisonUncheckedUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ParameterCreateWithoutBetInput = {
@@ -14322,6 +19425,62 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserBetCreateWithoutBetInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutUserBetsInput
+    parameters?: UserParameterCreateNestedManyWithoutUserBetInput
+  }
+
+  export type UserBetUncheckedCreateWithoutBetInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: UserParameterUncheckedCreateNestedManyWithoutUserBetInput
+  }
+
+  export type UserBetCreateOrConnectWithoutBetInput = {
+    where: UserBetWhereUniqueInput
+    create: XOR<UserBetCreateWithoutBetInput, UserBetUncheckedCreateWithoutBetInput>
+  }
+
+  export type UserBetCreateManyBetInputEnvelope = {
+    data: UserBetCreateManyBetInput | UserBetCreateManyBetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BetLinkRequestCreateWithoutBetInput = {
+    id?: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+    user: UserCreateNestedOneWithoutBetLinkRequestsInput
+  }
+
+  export type BetLinkRequestUncheckedCreateWithoutBetInput = {
+    id?: string
+    userId: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
+  }
+
+  export type BetLinkRequestCreateOrConnectWithoutBetInput = {
+    where: BetLinkRequestWhereUniqueInput
+    create: XOR<BetLinkRequestCreateWithoutBetInput, BetLinkRequestUncheckedCreateWithoutBetInput>
+  }
+
+  export type BetLinkRequestCreateManyBetInputEnvelope = {
+    data: BetLinkRequestCreateManyBetInput | BetLinkRequestCreateManyBetInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ParameterUpsertWithWhereUniqueWithoutBetInput = {
     where: ParameterWhereUniqueInput
     update: XOR<ParameterUpdateWithoutBetInput, ParameterUncheckedUpdateWithoutBetInput>
@@ -14358,8 +19517,41 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Parameter"> | Date | string
   }
 
+  export type UserBetUpsertWithWhereUniqueWithoutBetInput = {
+    where: UserBetWhereUniqueInput
+    update: XOR<UserBetUpdateWithoutBetInput, UserBetUncheckedUpdateWithoutBetInput>
+    create: XOR<UserBetCreateWithoutBetInput, UserBetUncheckedCreateWithoutBetInput>
+  }
+
+  export type UserBetUpdateWithWhereUniqueWithoutBetInput = {
+    where: UserBetWhereUniqueInput
+    data: XOR<UserBetUpdateWithoutBetInput, UserBetUncheckedUpdateWithoutBetInput>
+  }
+
+  export type UserBetUpdateManyWithWhereWithoutBetInput = {
+    where: UserBetScalarWhereInput
+    data: XOR<UserBetUpdateManyMutationInput, UserBetUncheckedUpdateManyWithoutBetInput>
+  }
+
+  export type BetLinkRequestUpsertWithWhereUniqueWithoutBetInput = {
+    where: BetLinkRequestWhereUniqueInput
+    update: XOR<BetLinkRequestUpdateWithoutBetInput, BetLinkRequestUncheckedUpdateWithoutBetInput>
+    create: XOR<BetLinkRequestCreateWithoutBetInput, BetLinkRequestUncheckedCreateWithoutBetInput>
+  }
+
+  export type BetLinkRequestUpdateWithWhereUniqueWithoutBetInput = {
+    where: BetLinkRequestWhereUniqueInput
+    data: XOR<BetLinkRequestUpdateWithoutBetInput, BetLinkRequestUncheckedUpdateWithoutBetInput>
+  }
+
+  export type BetLinkRequestUpdateManyWithWhereWithoutBetInput = {
+    where: BetLinkRequestScalarWhereInput
+    data: XOR<BetLinkRequestUpdateManyMutationInput, BetLinkRequestUncheckedUpdateManyWithoutBetInput>
+  }
+
   export type BetCreateWithoutParametersInput = {
     id?: string
+    betId?: string | null
     name: string
     company?: string | null
     domain?: string | null
@@ -14372,10 +19564,13 @@ export namespace Prisma {
     platformType?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    userBets?: UserBetCreateNestedManyWithoutBetInput
+    linkRequests?: BetLinkRequestCreateNestedManyWithoutBetInput
   }
 
   export type BetUncheckedCreateWithoutParametersInput = {
     id?: string
+    betId?: string | null
     name: string
     company?: string | null
     domain?: string | null
@@ -14388,6 +19583,8 @@ export namespace Prisma {
     platformType?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    userBets?: UserBetUncheckedCreateNestedManyWithoutBetInput
+    linkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutBetInput
   }
 
   export type BetCreateOrConnectWithoutParametersInput = {
@@ -14438,6 +19635,7 @@ export namespace Prisma {
 
   export type BetUpdateWithoutParametersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     company?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14450,10 +19648,13 @@ export namespace Prisma {
     platformType?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userBets?: UserBetUpdateManyWithoutBetNestedInput
+    linkRequests?: BetLinkRequestUpdateManyWithoutBetNestedInput
   }
 
   export type BetUncheckedUpdateWithoutParametersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     company?: NullableStringFieldUpdateOperationsInput | string | null
     domain?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14466,6 +19667,8 @@ export namespace Prisma {
     platformType?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userBets?: UserBetUncheckedUpdateManyWithoutBetNestedInput
+    linkRequests?: BetLinkRequestUncheckedUpdateManyWithoutBetNestedInput
   }
 
   export type ParameterHistoryUpsertWithWhereUniqueWithoutParameterInput = {
@@ -14582,6 +19785,304 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BetCreateWithoutUserBetsInput = {
+    id?: string
+    betId?: string | null
+    name: string
+    company?: string | null
+    domain?: string | null
+    cnpj?: string | null
+    url?: string | null
+    region?: string | null
+    license?: string | null
+    status?: string | null
+    scope?: string | null
+    platformType?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: ParameterCreateNestedManyWithoutBetInput
+    linkRequests?: BetLinkRequestCreateNestedManyWithoutBetInput
+  }
+
+  export type BetUncheckedCreateWithoutUserBetsInput = {
+    id?: string
+    betId?: string | null
+    name: string
+    company?: string | null
+    domain?: string | null
+    cnpj?: string | null
+    url?: string | null
+    region?: string | null
+    license?: string | null
+    status?: string | null
+    scope?: string | null
+    platformType?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: ParameterUncheckedCreateNestedManyWithoutBetInput
+    linkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutBetInput
+  }
+
+  export type BetCreateOrConnectWithoutUserBetsInput = {
+    where: BetWhereUniqueInput
+    create: XOR<BetCreateWithoutUserBetsInput, BetUncheckedCreateWithoutUserBetsInput>
+  }
+
+  export type UserCreateWithoutUserBetsInput = {
+    id: string
+    name: string
+    email: string
+    password?: string | null
+    emailVerified?: boolean
+    role?: $Enums.UserRole
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    comparisons?: ComparisonCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutUserBetsInput = {
+    id: string
+    name: string
+    email: string
+    password?: string | null
+    emailVerified?: boolean
+    role?: $Enums.UserRole
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    comparisons?: ComparisonUncheckedCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutUserBetsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutUserBetsInput, UserUncheckedCreateWithoutUserBetsInput>
+  }
+
+  export type UserParameterCreateWithoutUserBetInput = {
+    id?: string
+    name: string
+    category?: string | null
+    valueText?: string | null
+    valueNumber?: Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: boolean | null
+    valueRating?: number | null
+    unit?: string | null
+    description?: string | null
+    type?: string | null
+    options?: UserParameterCreateoptionsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserParameterUncheckedCreateWithoutUserBetInput = {
+    id?: string
+    name: string
+    category?: string | null
+    valueText?: string | null
+    valueNumber?: Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: boolean | null
+    valueRating?: number | null
+    unit?: string | null
+    description?: string | null
+    type?: string | null
+    options?: UserParameterCreateoptionsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserParameterCreateOrConnectWithoutUserBetInput = {
+    where: UserParameterWhereUniqueInput
+    create: XOR<UserParameterCreateWithoutUserBetInput, UserParameterUncheckedCreateWithoutUserBetInput>
+  }
+
+  export type UserParameterCreateManyUserBetInputEnvelope = {
+    data: UserParameterCreateManyUserBetInput | UserParameterCreateManyUserBetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BetUpsertWithoutUserBetsInput = {
+    update: XOR<BetUpdateWithoutUserBetsInput, BetUncheckedUpdateWithoutUserBetsInput>
+    create: XOR<BetCreateWithoutUserBetsInput, BetUncheckedCreateWithoutUserBetsInput>
+    where?: BetWhereInput
+  }
+
+  export type BetUpdateToOneWithWhereWithoutUserBetsInput = {
+    where?: BetWhereInput
+    data: XOR<BetUpdateWithoutUserBetsInput, BetUncheckedUpdateWithoutUserBetsInput>
+  }
+
+  export type BetUpdateWithoutUserBetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    domain?: NullableStringFieldUpdateOperationsInput | string | null
+    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    region?: NullableStringFieldUpdateOperationsInput | string | null
+    license?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    platformType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: ParameterUpdateManyWithoutBetNestedInput
+    linkRequests?: BetLinkRequestUpdateManyWithoutBetNestedInput
+  }
+
+  export type BetUncheckedUpdateWithoutUserBetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    domain?: NullableStringFieldUpdateOperationsInput | string | null
+    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    region?: NullableStringFieldUpdateOperationsInput | string | null
+    license?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    platformType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: ParameterUncheckedUpdateManyWithoutBetNestedInput
+    linkRequests?: BetLinkRequestUncheckedUpdateManyWithoutBetNestedInput
+  }
+
+  export type UserUpsertWithoutUserBetsInput = {
+    update: XOR<UserUpdateWithoutUserBetsInput, UserUncheckedUpdateWithoutUserBetsInput>
+    create: XOR<UserCreateWithoutUserBetsInput, UserUncheckedCreateWithoutUserBetsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutUserBetsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutUserBetsInput, UserUncheckedUpdateWithoutUserBetsInput>
+  }
+
+  export type UserUpdateWithoutUserBetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    comparisons?: ComparisonUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutUserBetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    comparisons?: ComparisonUncheckedUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserParameterUpsertWithWhereUniqueWithoutUserBetInput = {
+    where: UserParameterWhereUniqueInput
+    update: XOR<UserParameterUpdateWithoutUserBetInput, UserParameterUncheckedUpdateWithoutUserBetInput>
+    create: XOR<UserParameterCreateWithoutUserBetInput, UserParameterUncheckedCreateWithoutUserBetInput>
+  }
+
+  export type UserParameterUpdateWithWhereUniqueWithoutUserBetInput = {
+    where: UserParameterWhereUniqueInput
+    data: XOR<UserParameterUpdateWithoutUserBetInput, UserParameterUncheckedUpdateWithoutUserBetInput>
+  }
+
+  export type UserParameterUpdateManyWithWhereWithoutUserBetInput = {
+    where: UserParameterScalarWhereInput
+    data: XOR<UserParameterUpdateManyMutationInput, UserParameterUncheckedUpdateManyWithoutUserBetInput>
+  }
+
+  export type UserParameterScalarWhereInput = {
+    AND?: UserParameterScalarWhereInput | UserParameterScalarWhereInput[]
+    OR?: UserParameterScalarWhereInput[]
+    NOT?: UserParameterScalarWhereInput | UserParameterScalarWhereInput[]
+    id?: StringFilter<"UserParameter"> | string
+    userBetId?: StringFilter<"UserParameter"> | string
+    name?: StringFilter<"UserParameter"> | string
+    category?: StringNullableFilter<"UserParameter"> | string | null
+    valueText?: StringNullableFilter<"UserParameter"> | string | null
+    valueNumber?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: BoolNullableFilter<"UserParameter"> | boolean | null
+    valueRating?: IntNullableFilter<"UserParameter"> | number | null
+    unit?: StringNullableFilter<"UserParameter"> | string | null
+    description?: StringNullableFilter<"UserParameter"> | string | null
+    type?: StringNullableFilter<"UserParameter"> | string | null
+    options?: StringNullableListFilter<"UserParameter">
+    createdAt?: DateTimeFilter<"UserParameter"> | Date | string
+    updatedAt?: DateTimeFilter<"UserParameter"> | Date | string
+  }
+
+  export type UserBetCreateWithoutParametersInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bet: BetCreateNestedOneWithoutUserBetsInput
+    user: UserCreateNestedOneWithoutUserBetsInput
+  }
+
+  export type UserBetUncheckedCreateWithoutParametersInput = {
+    id?: string
+    userId: string
+    betId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserBetCreateOrConnectWithoutParametersInput = {
+    where: UserBetWhereUniqueInput
+    create: XOR<UserBetCreateWithoutParametersInput, UserBetUncheckedCreateWithoutParametersInput>
+  }
+
+  export type UserBetUpsertWithoutParametersInput = {
+    update: XOR<UserBetUpdateWithoutParametersInput, UserBetUncheckedUpdateWithoutParametersInput>
+    create: XOR<UserBetCreateWithoutParametersInput, UserBetUncheckedCreateWithoutParametersInput>
+    where?: UserBetWhereInput
+  }
+
+  export type UserBetUpdateToOneWithWhereWithoutParametersInput = {
+    where?: UserBetWhereInput
+    data: XOR<UserBetUpdateWithoutParametersInput, UserBetUncheckedUpdateWithoutParametersInput>
+  }
+
+  export type UserBetUpdateWithoutParametersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bet?: BetUpdateOneRequiredWithoutUserBetsNestedInput
+    user?: UserUpdateOneRequiredWithoutUserBetsNestedInput
+  }
+
+  export type UserBetUncheckedUpdateWithoutParametersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateWithoutComparisonsInput = {
     id: string
     name: string
@@ -14594,6 +20095,8 @@ export namespace Prisma {
     updatedAt: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    userBets?: UserBetCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutComparisonsInput = {
@@ -14608,6 +20111,8 @@ export namespace Prisma {
     updatedAt: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutUserInput
+    betLinkRequests?: BetLinkRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutComparisonsInput = {
@@ -14638,6 +20143,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutComparisonsInput = {
@@ -14652,6 +20159,180 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutUserNestedInput
+    betLinkRequests?: BetLinkRequestUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutBetLinkRequestsInput = {
+    id: string
+    name: string
+    email: string
+    password?: string | null
+    emailVerified?: boolean
+    role?: $Enums.UserRole
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    comparisons?: ComparisonCreateNestedManyWithoutUserInput
+    userBets?: UserBetCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBetLinkRequestsInput = {
+    id: string
+    name: string
+    email: string
+    password?: string | null
+    emailVerified?: boolean
+    role?: $Enums.UserRole
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    comparisons?: ComparisonUncheckedCreateNestedManyWithoutUserInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBetLinkRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBetLinkRequestsInput, UserUncheckedCreateWithoutBetLinkRequestsInput>
+  }
+
+  export type BetCreateWithoutLinkRequestsInput = {
+    id?: string
+    betId?: string | null
+    name: string
+    company?: string | null
+    domain?: string | null
+    cnpj?: string | null
+    url?: string | null
+    region?: string | null
+    license?: string | null
+    status?: string | null
+    scope?: string | null
+    platformType?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: ParameterCreateNestedManyWithoutBetInput
+    userBets?: UserBetCreateNestedManyWithoutBetInput
+  }
+
+  export type BetUncheckedCreateWithoutLinkRequestsInput = {
+    id?: string
+    betId?: string | null
+    name: string
+    company?: string | null
+    domain?: string | null
+    cnpj?: string | null
+    url?: string | null
+    region?: string | null
+    license?: string | null
+    status?: string | null
+    scope?: string | null
+    platformType?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parameters?: ParameterUncheckedCreateNestedManyWithoutBetInput
+    userBets?: UserBetUncheckedCreateNestedManyWithoutBetInput
+  }
+
+  export type BetCreateOrConnectWithoutLinkRequestsInput = {
+    where: BetWhereUniqueInput
+    create: XOR<BetCreateWithoutLinkRequestsInput, BetUncheckedCreateWithoutLinkRequestsInput>
+  }
+
+  export type UserUpsertWithoutBetLinkRequestsInput = {
+    update: XOR<UserUpdateWithoutBetLinkRequestsInput, UserUncheckedUpdateWithoutBetLinkRequestsInput>
+    create: XOR<UserCreateWithoutBetLinkRequestsInput, UserUncheckedCreateWithoutBetLinkRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBetLinkRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBetLinkRequestsInput, UserUncheckedUpdateWithoutBetLinkRequestsInput>
+  }
+
+  export type UserUpdateWithoutBetLinkRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    comparisons?: ComparisonUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBetLinkRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    comparisons?: ComparisonUncheckedUpdateManyWithoutUserNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type BetUpsertWithoutLinkRequestsInput = {
+    update: XOR<BetUpdateWithoutLinkRequestsInput, BetUncheckedUpdateWithoutLinkRequestsInput>
+    create: XOR<BetCreateWithoutLinkRequestsInput, BetUncheckedCreateWithoutLinkRequestsInput>
+    where?: BetWhereInput
+  }
+
+  export type BetUpdateToOneWithWhereWithoutLinkRequestsInput = {
+    where?: BetWhereInput
+    data: XOR<BetUpdateWithoutLinkRequestsInput, BetUncheckedUpdateWithoutLinkRequestsInput>
+  }
+
+  export type BetUpdateWithoutLinkRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    domain?: NullableStringFieldUpdateOperationsInput | string | null
+    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    region?: NullableStringFieldUpdateOperationsInput | string | null
+    license?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    platformType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: ParameterUpdateManyWithoutBetNestedInput
+    userBets?: UserBetUpdateManyWithoutBetNestedInput
+  }
+
+  export type BetUncheckedUpdateWithoutLinkRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    domain?: NullableStringFieldUpdateOperationsInput | string | null
+    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    region?: NullableStringFieldUpdateOperationsInput | string | null
+    license?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    platformType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: ParameterUncheckedUpdateManyWithoutBetNestedInput
+    userBets?: UserBetUncheckedUpdateManyWithoutBetNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -14687,6 +20368,23 @@ export namespace Prisma {
     insights?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type UserBetCreateManyUserInput = {
+    id?: string
+    betId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BetLinkRequestCreateManyUserInput = {
+    id?: string
+    betId: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -14794,6 +20492,59 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserBetUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bet?: BetUpdateOneRequiredWithoutUserBetsNestedInput
+    parameters?: UserParameterUpdateManyWithoutUserBetNestedInput
+  }
+
+  export type UserBetUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: UserParameterUncheckedUpdateManyWithoutUserBetNestedInput
+  }
+
+  export type UserBetUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BetLinkRequestUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    bet?: BetUpdateOneRequiredWithoutLinkRequestsNestedInput
+  }
+
+  export type BetLinkRequestUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BetLinkRequestUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    betId?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ParameterCreateManyBetInput = {
     id?: string
     name: string
@@ -14808,6 +20559,23 @@ export namespace Prisma {
     options?: ParameterCreateoptionsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type UserBetCreateManyBetInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BetLinkRequestCreateManyBetInput = {
+    id?: string
+    userId: string
+    status?: $Enums.RequestStatus
+    requestedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    notes?: string | null
   }
 
   export type ParameterUpdateWithoutBetInput = {
@@ -14860,6 +20628,59 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserBetUpdateWithoutBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutUserBetsNestedInput
+    parameters?: UserParameterUpdateManyWithoutUserBetNestedInput
+  }
+
+  export type UserBetUncheckedUpdateWithoutBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parameters?: UserParameterUncheckedUpdateManyWithoutUserBetNestedInput
+  }
+
+  export type UserBetUncheckedUpdateManyWithoutBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BetLinkRequestUpdateWithoutBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutBetLinkRequestsNestedInput
+  }
+
+  export type BetLinkRequestUncheckedUpdateWithoutBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BetLinkRequestUncheckedUpdateManyWithoutBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ParameterHistoryCreateManyParameterInput = {
     id?: string
     valueText?: string | null
@@ -14898,6 +20719,70 @@ export namespace Prisma {
     valueRating?: NullableIntFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserParameterCreateManyUserBetInput = {
+    id?: string
+    name: string
+    category?: string | null
+    valueText?: string | null
+    valueNumber?: Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: boolean | null
+    valueRating?: number | null
+    unit?: string | null
+    description?: string | null
+    type?: string | null
+    options?: UserParameterCreateoptionsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserParameterUpdateWithoutUserBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserParameterUncheckedUpdateWithoutUserBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserParameterUncheckedUpdateManyWithoutUserBetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    valueText?: NullableStringFieldUpdateOperationsInput | string | null
+    valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: UserParameterUpdateoptionsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

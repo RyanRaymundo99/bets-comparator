@@ -25,6 +25,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   comparisons   Comparison[]
+  userBets      UserBet[] // User's linked bets with their parameters
 
   @@map("user")
 }
@@ -93,11 +94,12 @@ enum UserRole {
 
 model Bet {
   id           String      @id @default(cuid())
+  betId        String?     @unique // Unique Bet ID like "UF87F" - required for user linking
   name         String
   company      String? // Company name (e.g., "PIXBET SOLUÇÕES TECNOLÓGICAS LTDA")
   domain       String?     @unique // Main domain (e.g., "pix.bet.br")
   cnpj         String? // CNPJ if available
-  url          String? // Website URL (kept for compatibility)
+  url          String? // Website URL
   region       String? // Region/scope (kept for compatibility)
   license      String? // License info (kept for compatibility)
   status       String?     @default("Funcionando") // Funcionando, Fora do ar, etc
@@ -105,7 +107,8 @@ model Bet {
   platformType String? // Casino, Sports, Ambos
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  parameters   Parameter[]
+  parameters   Parameter[] // Admin-defined parameters (template)
+  userBets     UserBet[] // User instances of this bet
 
   @@map("bet")
 }
@@ -153,11 +156,50 @@ model ParameterHistory {
   @@map("parameter_history")
 }
 
+model UserBet {
+  id         String          @id @default(cuid())
+  userId     String
+  betId      String // Reference to the Bet (admin-created)
+  bet        Bet             @relation(fields: [betId], references: [id], onDelete: Cascade)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  parameters UserParameter[] // User's own parameter values for this bet
+
+  @@unique([userId, betId]) // One user can only link to a bet once
+  @@map("user_bet")
+}
+
+model UserParameter {
+  id        String  @id @default(cuid())
+  userBetId String
+  name      String // Parameter name (matches admin parameter name)
+  category  String? // Category from parameter definitions
+
+  // Different value types to support all parameter types
+  valueText    String? // For text values
+  valueNumber  Decimal? @db.Decimal(20, 2) // For numeric values
+  valueBoolean Boolean? // For yes/no values
+  valueRating  Int? // For star ratings (0-5)
+
+  unit        String? // e.g., "R$", "%", "score"
+  description String?  @db.Text
+  type        String? // "text", "number", "currency", "boolean", "rating", "percentage", "select"
+  options     String[] // For select type parameters
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userBet   UserBet  @relation(fields: [userBetId], references: [id], onDelete: Cascade)
+
+  @@unique([userBetId, name]) // One parameter per name per user bet
+  @@map("user_parameter")
+}
+
 model Comparison {
   id           String   @id @default(cuid())
   userId       String
   name         String? // Optional name for saved comparisons
-  selectedBets String[] // Array of bet IDs
+  selectedBets String[] // Array of bet IDs or userBet IDs
   filters      Json? // Store filter settings
   insights     String? // AI-generated insights
   createdAt    DateTime @default(now())

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Users,
   Mail,
@@ -13,6 +14,9 @@ import {
   UserCog,
   ArrowLeft,
   RefreshCw,
+  Building2,
+  Link as LinkIcon,
+  Unlink,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
@@ -26,11 +30,21 @@ interface User {
   emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
+  userBets?: Array<{
+    id: string;
+    bet: {
+      id: string;
+      name: string;
+      betId: string | null;
+    };
+  }>;
 }
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [linkingUserId, setLinkingUserId] = useState<string | null>(null);
+  const [betIdInputs, setBetIdInputs] = useState<Record<string, string>>({});
   const { toast } = useToast();
   const router = useRouter();
 
@@ -91,6 +105,89 @@ export default function AdminUsersPage() {
         title: "Erro",
         description: "Falha ao alterar papel do usuário",
       });
+    }
+  };
+
+  const handleLinkBet = async (userId: string, betId: string) => {
+    if (!betId.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Por favor, insira um Bet ID",
+      });
+      return;
+    }
+
+    try {
+      setLinkingUserId(userId);
+      const response = await fetch(`/api/admin/users/${userId}/link-bet`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ betId: betId.trim().toUpperCase() }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Sucesso",
+          description: `Usuário vinculado à casa "${data.userBet.bet.name}"`,
+        });
+        setBetIdInputs((prev) => {
+          const newInputs = { ...prev };
+          delete newInputs[userId];
+          return newInputs;
+        });
+        setLinkingUserId(null);
+        fetchUsers();
+      } else {
+        throw new Error(data.error || "Falha ao vincular usuário");
+      }
+    } catch (error) {
+      console.error("Error linking bet:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao vincular usuário à casa",
+      });
+    } finally {
+      setLinkingUserId(null);
+    }
+  };
+
+  const handleUnlinkBet = async (userId: string, userName: string) => {
+    if (!confirm(`Tem certeza que deseja desvincular "${userName}" da sua casa de apostas?`)) {
+      return;
+    }
+
+    try {
+      setLinkingUserId(userId);
+      const response = await fetch(`/api/admin/users/${userId}/link-bet`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Sucesso",
+          description: `Usuário desvinculado de "${data.betName}"`,
+        });
+        fetchUsers();
+      } else {
+        throw new Error(data.error || "Falha ao desvincular usuário");
+      }
+    } catch (error) {
+      console.error("Error unlinking bet:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao desvincular usuário",
+      });
+    } finally {
+      setLinkingUserId(null);
     }
   };
 
@@ -319,18 +416,103 @@ export default function AdminUsersPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Criado em:</span>
-                      <span className="text-gray-300 ml-2">
-                        {new Date(user.createdAt).toLocaleDateString("pt-BR")}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Atualizado em:</span>
-                      <span className="text-gray-300 ml-2">
-                        {new Date(user.updatedAt).toLocaleDateString("pt-BR")}
-                      </span>
+                  <div className="space-y-4">
+                    {/* Linked Bet Info */}
+                    {user.userBets && user.userBets.length > 0 && user.userBets[0]?.bet ? (
+                      <div className="p-3 bg-blue-900/30 border border-blue-700/50 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Building2 className="w-4 h-4 text-blue-400" />
+                            <div>
+                              <div className="text-sm font-medium text-blue-200">
+                                Casa Vinculada: {user.userBets[0].bet.name}
+                              </div>
+                              {user.userBets[0].bet.betId && (
+                                <div className="text-xs text-blue-300">
+                                  Bet ID: {user.userBets[0].bet.betId}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {user.role === "CLIENT" && (
+                            <Button
+                              onClick={() => handleUnlinkBet(user.id, user.name)}
+                              variant="outline"
+                              size="sm"
+                              disabled={linkingUserId === user.id}
+                              className="border-red-500 text-red-400 hover:bg-red-900/30"
+                            >
+                              <Unlink className="w-4 h-4 mr-2" />
+                              Desvincular
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ) : user.role === "CLIENT" ? (
+                      <div className="space-y-2">
+                        <Link href="/admin/bet-link-requests">
+                          <div className="p-3 bg-yellow-900/30 border border-yellow-700/50 rounded-lg hover:bg-yellow-900/40 transition-colors cursor-pointer">
+                            <div className="flex items-center space-x-2">
+                              <Clock className="w-4 h-4 text-yellow-400" />
+                              <span className="text-sm text-yellow-200">
+                                Ver solicitações pendentes
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                        <div className="p-3 bg-gray-800/50 border border-gray-700/50 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <Building2 className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm text-gray-400">Nenhuma casa vinculada</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Input
+                                placeholder="Bet ID (ex: UF87F)"
+                                value={betIdInputs[user.id] || ""}
+                                onChange={(e) => setBetIdInputs((prev) => ({
+                                  ...prev,
+                                  [user.id]: e.target.value,
+                                }))}
+                                onKeyDown={(e) => {
+                                  const betId = betIdInputs[user.id] || "";
+                                  if (e.key === "Enter" && betId.trim()) {
+                                    handleLinkBet(user.id, betId);
+                                  }
+                                }}
+                                className="w-32 h-8 bg-gray-800 border-gray-700 text-white text-xs"
+                                disabled={linkingUserId === user.id}
+                              />
+                              <Button
+                                onClick={() => handleLinkBet(user.id, betIdInputs[user.id] || "")}
+                                variant="outline"
+                                size="sm"
+                                disabled={linkingUserId === user.id || !betIdInputs[user.id]?.trim()}
+                                className="border-blue-500 text-blue-400 hover:bg-blue-900/30"
+                              >
+                                <LinkIcon className="w-4 h-4 mr-2" />
+                                {linkingUserId === user.id ? "Vinculando..." : "Vincular"}
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                    
+                    {/* User Info */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-500">Criado em:</span>
+                        <span className="text-gray-300 ml-2">
+                          {new Date(user.createdAt).toLocaleDateString("pt-BR")}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Atualizado em:</span>
+                        <span className="text-gray-300 ml-2">
+                          {new Date(user.updatedAt).toLocaleDateString("pt-BR")}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

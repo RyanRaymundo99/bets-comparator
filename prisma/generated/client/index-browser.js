@@ -174,6 +174,7 @@ exports.Prisma.VerificationScalarFieldEnum = {
 
 exports.Prisma.BetScalarFieldEnum = {
   id: 'id',
+  betId: 'betId',
   name: 'name',
   company: 'company',
   domain: 'domain',
@@ -216,6 +217,31 @@ exports.Prisma.ParameterHistoryScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.UserBetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  betId: 'betId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserParameterScalarFieldEnum = {
+  id: 'id',
+  userBetId: 'userBetId',
+  name: 'name',
+  category: 'category',
+  valueText: 'valueText',
+  valueNumber: 'valueNumber',
+  valueBoolean: 'valueBoolean',
+  valueRating: 'valueRating',
+  unit: 'unit',
+  description: 'description',
+  type: 'type',
+  options: 'options',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ComparisonScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -225,6 +251,17 @@ exports.Prisma.ComparisonScalarFieldEnum = {
   insights: 'insights',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BetLinkRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  betId: 'betId',
+  status: 'status',
+  requestedAt: 'requestedAt',
+  reviewedAt: 'reviewedAt',
+  reviewedBy: 'reviewedBy',
+  notes: 'notes'
 };
 
 exports.Prisma.SortOrder = {
@@ -262,6 +299,12 @@ exports.VerificationType = exports.$Enums.VerificationType = {
   PASSWORD_RESET: 'PASSWORD_RESET'
 };
 
+exports.RequestStatus = exports.$Enums.RequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -270,7 +313,10 @@ exports.Prisma.ModelName = {
   Bet: 'Bet',
   Parameter: 'Parameter',
   ParameterHistory: 'ParameterHistory',
-  Comparison: 'Comparison'
+  UserBet: 'UserBet',
+  UserParameter: 'UserParameter',
+  Comparison: 'Comparison',
+  BetLinkRequest: 'BetLinkRequest'
 };
 
 /**

@@ -59,8 +59,13 @@ export default function BetsManagementPage() {
       const response = await fetch(`/api/bets?${params.toString()}`);
       const data = await response.json();
 
+      console.log("Bets API response:", data);
+
       if (data.success) {
-        setBets(data.bets);
+        // Handle both response structures: data.data.bets or data.bets
+        const bets = data.data?.bets || data.bets;
+        // Ensure bets is always an array
+        setBets(Array.isArray(bets) ? bets : []);
       } else {
         throw new Error(data.error);
       }
@@ -111,14 +116,17 @@ export default function BetsManagementPage() {
     fetchBets();
   }, [selectedRegion]);
 
-  const filteredBets = bets.filter((bet) =>
+  // Ensure bets is always an array to prevent filter errors
+  const safeBets = Array.isArray(bets) ? bets : [];
+  
+  const filteredBets = safeBets.filter((bet) =>
     searchTerm
       ? bet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         bet.cnpj?.toLowerCase().includes(searchTerm.toLowerCase())
       : true
   );
 
-  const regions = Array.from(new Set(bets.map((b) => b.region).filter(Boolean)));
+  const regions = Array.from(new Set(safeBets.map((b) => b.region).filter(Boolean)));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
@@ -191,7 +199,7 @@ export default function BetsManagementPage() {
           <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-700/50 backdrop-blur-xl">
             <CardContent className="pt-6">
               <div className="text-3xl font-bold text-white">
-                {bets.length}
+                {safeBets.length}
               </div>
               <div className="text-sm text-blue-200 mt-1">
                 Total de Casas de Apostas
@@ -201,7 +209,7 @@ export default function BetsManagementPage() {
           <Card className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-700/50 backdrop-blur-xl">
             <CardContent className="pt-6">
               <div className="text-3xl font-bold text-white">
-                {bets.reduce((acc, bet) => acc + bet.parameters.length, 0)}
+                {safeBets.reduce((acc, bet) => acc + (bet.parameters?.length || 0), 0)}
               </div>
               <div className="text-sm text-purple-200 mt-1">
                 Total de Parâmetros
@@ -279,7 +287,7 @@ export default function BetsManagementPage() {
                     )}
                     <div className="text-gray-300">
                       <span className="text-gray-500">Parâmetros:</span>{" "}
-                      {bet.parameters.length}
+                      {bet.parameters?.length || 0}
                     </div>
                   </div>
                   <div className="flex space-x-2 pt-3 border-t border-gray-700">

@@ -14,6 +14,18 @@ export async function GET(request: NextRequest) {
         image: true,
         createdAt: true,
         updatedAt: true,
+        userBets: {
+          include: {
+            bet: {
+              select: {
+                id: true,
+                name: true,
+                betId: true,
+              },
+            },
+          },
+          take: 1, // Only get the first linked bet
+        },
       },
       orderBy: [
         { role: "desc" }, // ADMIN first
