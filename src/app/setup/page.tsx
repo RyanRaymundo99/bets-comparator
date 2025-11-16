@@ -81,7 +81,7 @@ export default function SetupPage() {
     }
   };
 
-  const handleLinkBet = async (e: React.FormEvent) => {
+  const handleLinkBet = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!betId || !betInfo) {

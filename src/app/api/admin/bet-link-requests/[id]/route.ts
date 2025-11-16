@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import {
   successResponse,
@@ -6,6 +6,7 @@ import {
   notFoundResponse,
   unauthorizedResponse,
   withErrorHandling,
+  ApiResponse,
 } from "@/lib/api-response";
 import { requireAdmin } from "@/lib/auth-helpers";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
@@ -17,7 +18,9 @@ export const PATCH = withErrorHandling(async (
   { params }: { params: Promise<{ id: string }> }
 ) => {
   const session = await requireAdmin(request);
-  if (session instanceof Response) return session;
+  if (session instanceof Response) {
+    return session as NextResponse<ApiResponse>;
+  }
 
   const { id } = await params;
   const body = await request.json();

@@ -59,7 +59,7 @@ async function generateBetIds() {
 
     for (const bet of betsWithoutId) {
       let attempts = 0;
-      let newBetId: string;
+      let newBetId: string | undefined;
       let isUnique = false;
 
       // Generate unique Bet ID (try up to 100 times)
@@ -72,7 +72,7 @@ async function generateBetIds() {
         attempts++;
       }
 
-      if (!isUnique) {
+      if (!isUnique || !newBetId) {
         console.error(`Failed to generate unique Bet ID for bet: ${bet.name} (${bet.id})`);
         errorCount++;
         continue;
@@ -81,7 +81,7 @@ async function generateBetIds() {
       try {
         await prisma.bet.update({
           where: { id: bet.id },
-          data: { betId: newBetId! },
+          data: { betId: newBetId },
         });
         console.log(`✓ Generated Bet ID "${newBetId}" for "${bet.name}"`);
         successCount++;

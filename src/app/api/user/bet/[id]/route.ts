@@ -11,7 +11,7 @@ import { getSession } from "@/lib/auth-helpers";
 // GET /api/user/bet/[id] - Get user's bet by userBet ID
 export const GET = withErrorHandling(async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
   const session = await getSession(request);
   
@@ -19,7 +19,7 @@ export const GET = withErrorHandling(async (
     return unauthorizedResponse("Authentication required");
   }
 
-  const userBetId = params.id;
+  const { id: userBetId } = await params;
 
   const userBet = await prisma.userBet.findUnique({
     where: { id: userBetId },

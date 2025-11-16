@@ -74,19 +74,41 @@ export default function ClientDashboard() {
   const router = useRouter();
 
   // Check if user has linked a bet
-  const { data: linkStatus, loading: checkingLink } = useFetch<{
+  interface LinkStatus {
     hasLinkedBet: boolean;
-    userBet: any;
-    pendingRequest: any;
-  }>("/api/user/link-bet", {
-    immediate: true,
-    showToast: false,
-    onSuccess: (data) => {
-      if (!data?.hasLinkedBet && !data?.pendingRequest) {
-        router.push("/setup");
-      }
-    },
-  });
+    userBet: {
+      id: string;
+      bet: {
+        id: string;
+        name: string;
+        betId: string | null;
+        parameters: Parameter[];
+      };
+      parameters: Parameter[];
+    } | null;
+    pendingRequest: {
+      id: string;
+      bet: {
+        id: string;
+        name: string;
+        betId: string | null;
+      };
+      status: string;
+      requestedAt: string;
+    } | null;
+  }
+  const { data: linkStatus, loading: checkingLink } = useFetch<LinkStatus>(
+    "/api/user/link-bet",
+    {
+      immediate: true,
+      showToast: false,
+      onSuccess: (data) => {
+        if (!data?.hasLinkedBet && !data?.pendingRequest) {
+          router.push("/setup");
+        }
+      },
+    }
+  );
 
   // Fetch bets using reusable hook
   const {
@@ -243,9 +265,9 @@ export default function ClientDashboard() {
                 <div className="flex items-center gap-2 text-sm text-yellow-200">
                   <Clock className="w-4 h-4" />
                   <span>
-                    Solicitação pendente para "
-                    {linkStatus.pendingRequest.bet?.name}". Aguardando aprovação
-                    do administrador.
+                    Solicitação pendente para &quot;
+                    {linkStatus.pendingRequest.bet?.name}&quot;. Aguardando
+                    aprovação do administrador.
                   </span>
                 </div>
               </div>

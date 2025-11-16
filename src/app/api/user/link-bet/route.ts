@@ -8,8 +8,6 @@ import {
   withErrorHandling,
 } from "@/lib/api-response";
 import { getSession } from "@/lib/auth-helpers";
-import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
-import { Decimal } from "@prisma/client/runtime/library";
 
 // POST /api/user/link-bet - Link user to a bet by Bet ID
 export const POST = withErrorHandling(async (request: NextRequest) => {
@@ -70,7 +68,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   }
 
   // Create a request instead of directly linking
-  const request = await prisma.betLinkRequest.create({
+  const linkRequest = await prisma.betLinkRequest.create({
     data: {
       userId: session.userId,
       betId: bet.id,
@@ -97,10 +95,10 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   return successResponse({ 
     message: "Request submitted successfully. Waiting for admin approval.",
     request: {
-      id: request.id,
-      bet: request.bet,
-      status: request.status,
-      requestedAt: request.requestedAt,
+      id: linkRequest.id,
+      bet: linkRequest.bet,
+      status: linkRequest.status,
+      requestedAt: linkRequest.requestedAt,
     },
   }, 201);
 });
