@@ -15,7 +15,6 @@ import {
   CheckCircle,
   XCircle,
   Percent,
-  DollarSign,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
@@ -28,7 +27,7 @@ import {
 } from "@/lib/parameter-definitions";
 import dynamic from "next/dynamic";
 
-// Lazy load charts to reduce bundle size
+// Lazy load charts
 const BarChart = dynamic(
   () => import("recharts").then((mod) => mod.BarChart),
   { ssr: false }
@@ -78,79 +77,34 @@ interface Parameter {
   id: string;
   name: string;
   category?: string;
-  valueText?: string;
-  valueNumber?: number;
-  valueBoolean?: boolean;
-  valueRating?: number;
-  type?: string;
-  unit?: string;
-  options?: string[];
+  valueText?: string | null;
+  valueNumber?: number | null;
+  valueBoolean?: boolean | null;
+  valueRating?: number | null;
+  unit?: string | null;
+  type?: string | null;
+  description?: string | null;
 }
 
-export default function MyBetParametersPage() {
+export default function BetParametersViewPage() {
   const params = useParams();
-  const userBetId = params.id as string;
+  const betId = params.id as string;
   const [bet, setBet] = useState<Bet | null>(null);
   const [loading, setLoading] = useState(true);
-  const [parameterValues, setParameterValues] = useState<
-    Record<string, string | number | boolean | null>
-  >({});
   const { toast } = useToast();
 
   useEffect(() => {
     fetchBet();
-  }, [userBetId]);
+  }, [betId]);
 
   const fetchBet = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/user/bet/${userBetId}`);
+      const response = await fetch(`/api/bets/${betId}`);
       const data = await response.json();
 
       if (data.success) {
-        console.log("API Response:", data);
-        console.log("Parameters from API:", data.data.parameters);
-        console.log("Number of parameters:", data.data.parameters?.length || 0);
-        
-        const betData = {
-          id: data.data.bet.id,
-          name: data.data.bet.name,
-          url: data.data.bet.url,
-          parameters: data.data.parameters || [],
-        };
-        setBet(betData);
-
-        const values: Record<string, string | number | boolean | null> = {};
-        (data.data.parameters || []).forEach((param: Parameter) => {
-          // Check each value type and map accordingly
-          if (param.valueText !== null && param.valueText !== undefined && param.valueText !== "") {
-            values[param.name] = param.valueText;
-          } else if (
-            param.valueNumber !== null &&
-            param.valueNumber !== undefined
-          ) {
-            // Convert Decimal to number
-            values[param.name] = typeof param.valueNumber === 'object' 
-              ? Number(param.valueNumber.toString()) 
-              : Number(param.valueNumber);
-          } else if (
-            param.valueBoolean !== null &&
-            param.valueBoolean !== undefined
-          ) {
-            values[param.name] = param.valueBoolean;
-          } else if (
-            param.valueRating !== null &&
-            param.valueRating !== undefined
-          ) {
-            values[param.name] = Number(param.valueRating);
-          } else {
-            // Explicitly set to null if no value
-            values[param.name] = null;
-          }
-        });
-        console.log("Parameter values mapped:", values);
-        console.log("Total parameter values:", Object.keys(values).length);
-        setParameterValues(values);
+        setBet(data.data?.bet || data.bet);
       } else {
         throw new Error(data.error);
       }
@@ -159,7 +113,7 @@ export default function MyBetParametersPage() {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Falha ao carregar sua casa de apostas",
+        description: "Falha ao carregar parâmetros da casa de apostas",
       });
     } finally {
       setLoading(false);
@@ -171,10 +125,15 @@ export default function MyBetParametersPage() {
     if (!bet) return null;
 
     const totalParams = PARAMETER_DEFINITIONS.length;
-    const filledParams = Object.values(parameterValues).filter(
-      (v) => v !== null && v !== undefined && v !== ""
+    const filledParams = bet.parameters.filter(
+      (p) =>
+        (p.valueText !== null && p.valueText !== undefined) ||
+        (p.valueNumber !== null && p.valueNumber !== undefined) ||
+        (p.valueBoolean !== null && p.valueBoolean !== undefined) ||
+        (p.valueRating !== null && p.valueRating !== undefined)
     ).length;
-    const completionRate = totalParams > 0 ? (filledParams / totalParams) * 100 : 0;
+    const completionRate =
+      totalParams > 0 ? (filledParams / totalParams) * 100 : 0;
 
     // Count by type - map types from definitions
     const numericParams = bet.parameters.filter((p) => {
@@ -190,9 +149,14 @@ export default function MyBetParametersPage() {
         p.valueNumber !== undefined
       );
     });
-    const booleanParams = bet.parameters.filter(
-      (p) => p.valueBoolean !== null && p.valueBoolean !== undefined
-    );
+    const booleanParams = bet.parameters.filter((p) => {
+      const def = PARAMETER_DEFINITIONS.find((d) => d.name === p.name);
+      return (
+        def?.type === "boolean" &&
+        p.valueBoolean !== null &&
+        p.valueBoolean !== undefined
+      );
+    });
     const ratingParams = bet.parameters.filter((p) => {
       const def = PARAMETER_DEFINITIONS.find((d) => d.name === p.name);
       return (
@@ -202,7 +166,6 @@ export default function MyBetParametersPage() {
       );
     });
 
-    // Calculate average rating
     const ratings = ratingParams
       .map((p) => p.valueRating)
       .filter((r): r is number => r !== null && r !== undefined);
@@ -211,7 +174,6 @@ export default function MyBetParametersPage() {
         ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
         : 0;
 
-    // Count yes/no for booleans
     const yesCount = booleanParams.filter((p) => p.valueBoolean === true).length;
     const noCount = booleanParams.filter((p) => p.valueBoolean === false).length;
 
@@ -226,13 +188,13 @@ export default function MyBetParametersPage() {
       yesCount,
       noCount,
     };
-  }, [bet, parameterValues]);
+  }, [bet]);
 
   // Prepare chart data
   const chartData = useMemo(() => {
     if (!bet) return [];
 
-    const numericParams = bet.parameters
+    return bet.parameters
       .filter((p) => {
         const def = PARAMETER_DEFINITIONS.find((d) => d.name === p.name);
         const isNumeric =
@@ -246,17 +208,14 @@ export default function MyBetParametersPage() {
           p.valueNumber !== undefined
         );
       })
-      .slice(0, 10) // Limit to 10 for readability
+      .slice(0, 10)
       .map((p) => ({
         name: p.name.length > 15 ? p.name.substring(0, 15) + "..." : p.name,
         value: p.valueNumber || 0,
         fullName: p.name,
       }));
-
-    return numericParams;
   }, [bet]);
 
-  // Prepare rating chart data
   const ratingData = useMemo(() => {
     if (!bet) return [];
 
@@ -276,7 +235,6 @@ export default function MyBetParametersPage() {
       }));
   }, [bet]);
 
-  // Prepare boolean pie chart data
   const booleanData = useMemo(() => {
     if (!stats) return [];
     return [
@@ -285,136 +243,84 @@ export default function MyBetParametersPage() {
     ];
   }, [stats]);
 
-  const renderValue = (def: ParameterDefinition) => {
-    const value = parameterValues[def.name];
-    
-    // Debug: log when value is not found
-    if (value === undefined) {
-      console.warn(`Value not found for parameter: ${def.name}`);
-    }
-
-    if (value === null || value === undefined || value === "") {
+  const renderValue = (param: Parameter) => {
+    if (param.valueText !== null && param.valueText !== undefined) {
       return (
-        <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-gray-500 italic">
-          Não preenchido
+        <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-white">
+          {param.valueText}
         </div>
       );
     }
-
-    switch (def.type) {
-      case "boolean":
-        return (
-          <div className="flex items-center space-x-2">
-            <div
-              className={`px-4 py-2 rounded-md flex items-center space-x-2 ${
-                value === true
-                  ? "bg-green-900/30 border border-green-700 text-green-300"
-                  : "bg-red-900/30 border border-red-700 text-red-300"
-              }`}
-            >
-              {value === true ? (
-                <CheckCircle className="w-4 h-4" />
-              ) : (
-                <XCircle className="w-4 h-4" />
-              )}
-              <span>{value === true ? "Sim" : "Não"}</span>
-            </div>
-          </div>
-        );
-
-      case "select":
-        return (
+    if (param.valueNumber !== null && param.valueNumber !== undefined) {
+      const formatted = param.valueNumber.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      return (
+        <div className="space-y-2">
           <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-white">
-            {String(value)}
+            {formatted}
+            {param.unit ? ` ${param.unit}` : ""}
           </div>
-        );
-
-      case "rating":
-        const ratingValue = value as number;
-        return (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="flex space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`w-5 h-5 ${
-                      ratingValue >= star
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-600"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-gray-300 text-sm">{ratingValue}/5</span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div
-                className="bg-yellow-400 h-2 rounded-full transition-all"
-                style={{ width: `${(ratingValue / 5) * 100}%` }}
-              />
-            </div>
-          </div>
-        );
-
-      case "number":
-      case "currency":
-      case "percentage":
-        const numValue = typeof value === "number" ? value : parseFloat(String(value)) || 0;
-        return (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-white flex-1">
-                {numValue.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </div>
-              {def.unit && (
-                <span className="text-gray-400 text-sm whitespace-nowrap">
-                  {def.unit}
-                </span>
-              )}
-            </div>
-            {def.max && (
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div
-                  className="bg-blue-500 h-2 rounded-full transition-all"
-                  style={{
-                    width: `${Math.min((numValue / def.max) * 100, 100)}%`,
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        );
-
-      case "text":
-      default:
-        if (
-          def.name.toLowerCase().includes("descrição") ||
-          def.name.toLowerCase().includes("melhorias")
-        ) {
-          return (
-            <div className="px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-md text-white min-h-[80px] whitespace-pre-wrap">
-              {String(value)}
-            </div>
-          );
-        }
-        return (
-          <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-white">
-            {String(value)}
-          </div>
-        );
+        </div>
+      );
     }
+    if (param.valueBoolean !== null && param.valueBoolean !== undefined) {
+      return (
+        <div
+          className={`px-4 py-2 rounded-md flex items-center space-x-2 ${
+            param.valueBoolean === true
+              ? "bg-green-900/30 border border-green-700 text-green-300"
+              : "bg-red-900/30 border border-red-700 text-red-300"
+          }`}
+        >
+          {param.valueBoolean === true ? (
+            <CheckCircle className="w-4 h-4" />
+          ) : (
+            <XCircle className="w-4 h-4" />
+          )}
+          <span>{param.valueBoolean === true ? "Sim" : "Não"}</span>
+        </div>
+      );
+    }
+    if (param.valueRating !== null && param.valueRating !== undefined) {
+      const rating = param.valueRating;
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${
+                  i < rating
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-2">
+            <div
+              className="bg-yellow-400 h-2 rounded-full transition-all"
+              style={{ width: `${(rating / 5) * 100}%` }}
+            />
+          </div>
+        </div>
+      );
+    }
+    return (
+      <span className="text-gray-500 italic px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md block">
+        Não preenchido
+      </span>
+    );
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
-          <div className="text-gray-300">Carregando...</div>
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-400" />
+          <p className="text-gray-300">Carregando parâmetros...</p>
         </div>
       </div>
     );
@@ -422,19 +328,37 @@ export default function MyBetParametersPage() {
 
   if (!bet || !stats) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8 flex items-center justify-center">
-        <div className="text-center">
-          <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-300 mb-2">
-            Casa de apostas não encontrada
-          </h3>
-          <Link href="/dashboard">
-            <Button className="mt-4">Voltar para dashboard</Button>
-          </Link>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+        <Card className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl">
+          <CardContent className="p-8 text-center">
+            <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">
+              Casa de apostas não encontrada
+            </h3>
+            <Link href="/dashboard">
+              <Button variant="outline" className="mt-4">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar ao Dashboard
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }
+
+  // Group parameters by category from actual data
+  const parametersByCategory: Record<string, Parameter[]> = {};
+  bet.parameters.forEach((param) => {
+    const def = PARAMETER_DEFINITIONS.find((d) => d.name === param.name);
+    if (def) {
+      const category = def.category;
+      if (!parametersByCategory[category]) {
+        parametersByCategory[category] = [];
+      }
+      parametersByCategory[category].push(param);
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-4 sm:p-6 lg:p-8">
@@ -452,11 +376,12 @@ export default function MyBetParametersPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center">
+                <Building2 className="w-6 h-6 sm:w-8 sm:h-8 mr-3 text-blue-400" />
                 {bet.name}
               </h1>
               <p className="text-gray-300 mt-1 text-sm sm:text-base">
-                Visualize os parâmetros da sua casa de apostas
+                Visualize os parâmetros desta casa de apostas
               </p>
             </div>
           </div>
@@ -711,72 +636,56 @@ export default function MyBetParametersPage() {
           </CardContent>
         </Card>
 
-        {/* Debug: Show total parameters */}
-        {bet && (
-          <Card className="bg-yellow-900/20 border-yellow-700/50 mb-4">
-            <CardContent className="pt-6">
-              <p className="text-yellow-200 text-sm font-mono">
-                DEBUG: Total parameters from API: {bet.parameters.length} | 
-                Total definitions: {PARAMETER_DEFINITIONS.length} | 
-                Mapped values: {Object.keys(parameterValues).length} |
-                Categories: {PARAMETER_CATEGORIES.length}
-              </p>
-              <p className="text-yellow-300 text-xs mt-2">
-                Categories being rendered: {PARAMETER_CATEGORIES.map(c => {
-                  const defs = getParametersByCategory(c);
-                  return `${c}(${defs.length})`;
-                }).join(', ')}
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Parameters by Category */}
-        <div className="space-y-6">
-          {PARAMETER_CATEGORIES.map((category) => {
-            const categoryDefs = getParametersByCategory(category);
-            if (categoryDefs.length === 0) return null;
+        {PARAMETER_CATEGORIES.map((category) => {
+          const categoryParams = parametersByCategory[category] || [];
+          if (categoryParams.length === 0) return null;
 
-            return (
-              <Card
-                key={category}
-                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl"
-              >
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center text-lg sm:text-xl">
-                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-400" />
-                    {category}
-                    <span className="ml-3 text-sm text-gray-400 font-normal">
-                      ({categoryDefs.length} parâmetros)
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                    {categoryDefs.map((def) => {
-                      return (
-                        <div key={def.name} className="space-y-2">
-                          <Label className="text-white text-sm sm:text-base">
-                            {def.name}
-                            {def.unit && (
-                              <span className="text-gray-400 ml-1 text-xs sm:text-sm">
-                                ({def.unit})
-                              </span>
-                            )}
-                          </Label>
-                          {def.description && (
-                            <p className="text-xs text-gray-400">{def.description}</p>
+          return (
+            <Card
+              key={category}
+              className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl"
+            >
+              <CardHeader>
+                <CardTitle className="text-white flex items-center text-lg sm:text-xl">
+                  <Eye className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-purple-400" />
+                  {category}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {categoryParams.map((param) => {
+                    const paramDef = PARAMETER_DEFINITIONS.find(
+                      (def) => def.name === param.name
+                    );
+                    return (
+                      <div
+                        key={param.id}
+                        className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between">
+                            <Label className="text-white text-sm font-medium">
+                              {param.name}
+                            </Label>
+                          </div>
+                          <div className="text-white text-base">
+                            {renderValue(param)}
+                          </div>
+                          {param.description && (
+                            <p className="text-xs text-gray-400 mt-1">
+                              {param.description}
+                            </p>
                           )}
-                          {renderValue(def)}
                         </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

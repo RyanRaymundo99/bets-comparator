@@ -476,7 +476,7 @@ export default function ClientDashboard() {
                   const isSelected = selectedBets.includes(userBet.id);
                   return (
                     <Card
-                      className={`cursor-pointer transition-all h-full ${
+                      className={`cursor-pointer transition-all ${
                         isSelected
                           ? "bg-gradient-to-br from-blue-900/70 to-purple-900/70 border-blue-500"
                           : "bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 hover:border-blue-500/50"
@@ -496,39 +496,44 @@ export default function ClientDashboard() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2 sm:space-y-3 pt-0">
-                        <div className="flex flex-col gap-1.5 text-xs sm:text-sm">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                           <span className="text-green-400 font-medium">
                             ✓ Minha Casa
                           </span>
                           {userBet.region && (
-                            <span className="text-gray-300">
-                              {userBet.region}
-                            </span>
+                            <>
+                              <span className="text-gray-500">•</span>
+                              <span className="text-gray-300">
+                                {userBet.region}
+                              </span>
+                            </>
                           )}
+                          <span className="text-gray-500">•</span>
                           <span className="text-gray-300">
                             {userBet.parameters.length} parâmetros
                           </span>
                         </div>
-                        <div className="flex flex-col gap-2 pt-2 border-t border-gray-700">
+                        <div className="pt-2 border-t border-gray-700">
                           <Link
                             href={`/my-bet/${linkStatus?.userBet?.id}/parameters`}
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Button
                               variant="outline"
-                              size="sm"
-                              className="w-full border-green-500 text-green-400 hover:bg-green-900/30 text-xs sm:text-sm"
+                              size="icon"
+                              className="border-blue-500 text-blue-400 hover:bg-blue-900/30 rounded-full h-8 w-8"
                             >
-                              <BarChart3 className="w-3 h-3 mr-1 sm:mr-2" />
-                              Ver Parâmetros
+                              <BarChart3 className="w-4 h-4" />
                             </Button>
                           </Link>
-                          {isSelected && (
-                            <div className="text-center px-3 py-2 text-xs text-blue-300 font-medium">
+                        </div>
+                        {isSelected && (
+                          <div className="pt-2 border-t border-blue-700">
+                            <div className="text-xs text-blue-300 font-medium">
                               ✓ Selecionada
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   );
@@ -585,6 +590,20 @@ export default function ClientDashboard() {
                               <span className="text-gray-300">
                                 {bet.parameters.length} parâmetros
                               </span>
+                            </div>
+                            <div className="pt-2 border-t border-gray-700">
+                              <Link
+                                href={`/bets/${bet.id}/parameters`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="border-blue-500 text-blue-400 hover:bg-blue-900/30 rounded-full h-8 w-8"
+                                >
+                                  <BarChart3 className="w-4 h-4" />
+                                </Button>
+                              </Link>
                             </div>
                             {isSelected && (
                               <div className="pt-2 border-t border-blue-700">
