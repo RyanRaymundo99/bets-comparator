@@ -508,24 +508,40 @@ export default function ClientDashboard() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4">
-            {/* User's Bet - Sidebar */}
-            {userBet && (
-              <div className="lg:col-span-1">
-                <h2 className="text-xl font-bold text-white mb-4 flex items-center">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center mr-3">
-                    <Building2 className="w-5 h-5 text-green-400" />
-                  </div>
-                  Minha Casa
-                </h2>
-                {(() => {
+          <div className="space-y-6">
+            {/* All Bets Grid - Including User's Bet */}
+            <div>
+              {(userBet || otherBets.length > 0) && (
+                <>
+                  {userBet && (
+                    <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center mr-3">
+                        <Building2 className="w-5 h-5 text-green-400" />
+                      </div>
+                      Minha Casa
+                    </h2>
+                  )}
+                  {otherBets.length > 0 && (
+                    <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center mr-3 shadow-lg">
+                        <Building2 className="w-5 h-5 text-blue-300" />
+                      </div>
+                      {userBet ? "Outras Casas de Apostas" : "Casas de Apostas"}
+                    </h2>
+                  )}
+                </>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* User's Bet Card */}
+                {userBet && (() => {
                   const isSelected = selectedBets.includes(userBet.id);
                   const isExpanded = expandedCards.has(userBet.id);
                   const hasDetails = userBet.region || userBet.license;
                   
                   return (
                     <Card
-                      className={`relative bg-gradient-to-br from-[#1e3a5f]/50 via-[#2d4a75]/40 to-[#3a5a8a]/30 border-[#4a6a9a]/30 backdrop-blur-xl hover:border-[#5a7ba5]/50 hover:shadow-2xl hover:shadow-[#3a5a8a]/20 hover:scale-[1.02] transition-all duration-500 rounded-2xl overflow-hidden group cursor-pointer ${
+                      key={userBet.id}
+                      className={`relative bg-gradient-to-br from-[#1e3a5f]/50 via-[#2d4a75]/40 to-[#3a5a8a]/30 border-[#4a6a9a]/30 backdrop-blur-xl hover:border-[#5a7ba5]/50 hover:shadow-2xl hover:shadow-[#3a5a8a]/20 hover:scale-[1.03] transition-all duration-500 rounded-2xl overflow-hidden group cursor-pointer ${
                         isSelected ? "ring-2 ring-blue-400/50" : ""
                       }`}
                       onClick={() => handleToggleBet(userBet.id)}
@@ -639,21 +655,9 @@ export default function ClientDashboard() {
                     </Card>
                   );
                 })()}
-              </div>
-            )}
-
-            {/* Other Bets Grid */}
-            <div className={userBet ? "lg:col-span-3" : "lg:col-span-4"}>
-              {otherBets.length > 0 && (
-                <>
-                  <h2 className="text-xl font-bold text-white mb-4 flex items-center">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center mr-3 shadow-lg">
-                      <Building2 className="w-5 h-5 text-blue-300" />
-                    </div>
-                    Outras Casas de Apostas
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {otherBets.map((bet, index) => {
+                
+                {/* Other Bets Cards */}
+                {otherBets.map((bet, index) => {
                       const isSelected = selectedBets.includes(bet.id);
                       const isExpanded = expandedCards.has(bet.id);
                       const hasDetails = bet.region || bet.license;
@@ -776,9 +780,7 @@ export default function ClientDashboard() {
                         </Card>
                       );
                     })}
-                  </div>
-                </>
-              )}
+              </div>
             </div>
           </div>
         )}
