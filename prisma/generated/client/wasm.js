@@ -5,28 +5,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
-  PrismaClientKnownRequestError,
-  PrismaClientUnknownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientInitializationError,
-  PrismaClientValidationError,
-  getPrismaClient,
-  sqltag,
-  empty,
-  join,
-  raw,
-  skip,
   Decimal,
-  Debug,
   objectEnumValues,
   makeStrictEnum,
-  Extensions,
-  warnOnce,
-  defineDmmfProperty,
   Public,
   getRuntime,
-  createParam,
-} = require('./runtime/wasm-engine-edge.js')
+  skip
+} = require('./runtime/index-browser.js')
 
 
 const Prisma = {}
@@ -35,35 +20,79 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.17.1
- * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
+ * Prisma Client JS version: 6.12.0
+ * Query Engine version: 8047c96bbd92db98a2abc7c9323ce77c02c89dbc
  */
 Prisma.prismaVersion = {
-  client: "6.17.1",
-  engine: "272a37d34178c2894197e17273bf937f25acdeac"
+  client: "6.12.0",
+  engine: "8047c96bbd92db98a2abc7c9323ce77c02c89dbc"
 }
 
-Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
-Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
-Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
-Prisma.PrismaClientInitializationError = PrismaClientInitializationError
-Prisma.PrismaClientValidationError = PrismaClientValidationError
+Prisma.PrismaClientKnownRequestError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)};
+Prisma.PrismaClientUnknownRequestError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.PrismaClientRustPanicError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.PrismaClientInitializationError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.PrismaClientValidationError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = sqltag
-Prisma.empty = empty
-Prisma.join = join
-Prisma.raw = raw
+Prisma.sql = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.empty = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.join = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.raw = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = Extensions.getExtensionContext
-Prisma.defineExtension = Extensions.defineExtension
+Prisma.getExtensionContext = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.defineExtension = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
 
 /**
  * Shorthand utilities for JSON filtering
@@ -80,11 +109,10 @@ Prisma.NullTypes = {
 
 
 
-
-
 /**
  * Enums
  */
+
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -261,14 +289,14 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
-exports.VerificationType = exports.$Enums.VerificationType = {
-  EMAIL: 'EMAIL',
-  PASSWORD_RESET: 'PASSWORD_RESET'
-};
-
 exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
   CLIENT: 'CLIENT'
+};
+
+exports.VerificationType = exports.$Enums.VerificationType = {
+  EMAIL: 'EMAIL',
+  PASSWORD_RESET: 'PASSWORD_RESET'
 };
 
 exports.RequestStatus = exports.$Enums.RequestStatus = {
@@ -290,83 +318,34 @@ exports.Prisma.ModelName = {
   Comparison: 'Comparison',
   BetLinkRequest: 'BetLinkRequest'
 };
+
 /**
- * Create the Client
+ * This is a stub Prisma Client that will error at runtime if called.
  */
-const config = {
-  "generator": {
-    "name": "client",
-    "provider": {
-      "fromEnvVar": null,
-      "value": "prisma-client-js"
-    },
-    "output": {
-      "value": "C:\\Users\\Rian9\\OneDrive\\Documents\\GitHub\\bets-comparator\\prisma\\generated\\client",
-      "fromEnvVar": null
-    },
-    "config": {
-      "engineType": "library"
-    },
-    "binaryTargets": [
-      {
-        "fromEnvVar": null,
-        "value": "windows",
-        "native": true
-      }
-    ],
-    "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Rian9\\OneDrive\\Documents\\GitHub\\bets-comparator\\prisma\\schema.prisma",
-    "isCustomOutput": true
-  },
-  "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
-  },
-  "relativePath": "../..",
-  "clientVersion": "6.17.1",
-  "engineVersion": "272a37d34178c2894197e17273bf937f25acdeac",
-  "datasourceNames": [
-    "db"
-  ],
-  "activeProvider": "postgresql",
-  "postinstall": false,
-  "inlineDatasources": {
-    "db": {
-      "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
-      }
-    }
-  },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ========================================\n// AUTHENTICATION MODELS\n// ========================================\n\nmodel User {\n  id              String           @id @map(\"_id\")\n  name            String\n  email           String           @unique\n  password        String?\n  emailVerified   Boolean          @default(false)\n  role            UserRole         @default(CLIENT)\n  image           String?\n  createdAt       DateTime\n  updatedAt       DateTime\n  accounts        Account[]\n  sessions        Session[]\n  comparisons     Comparison[]\n  userBets        UserBet[] // User's linked bets with their parameters\n  betLinkRequests BetLinkRequest[] // User's bet linking requests\n\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id @map(\"_id\")\n  expiresAt DateTime\n  token     String   @unique\n  createdAt DateTime\n  updatedAt DateTime\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id @map(\"_id\")\n  accountId             String\n  providerId            String\n  userId                String\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime\n  updatedAt             DateTime\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id          String           @id @map(\"_id\")\n  identifier  String // email\n  value       String // verification code\n  type        VerificationType // EMAIL or PASSWORD_RESET\n  purpose     String? // Additional context like \"signup\", \"password_reset\"\n  attempts    Int              @default(0)\n  maxAttempts Int              @default(3)\n  expiresAt   DateTime\n  createdAt   DateTime?        @default(now())\n  updatedAt   DateTime?        @updatedAt\n\n  @@map(\"verification\")\n}\n\nenum VerificationType {\n  EMAIL\n  PASSWORD_RESET\n}\n\nenum UserRole {\n  ADMIN\n  CLIENT\n}\n\n// ========================================\n// BETS COMPARATOR MODELS\n// ========================================\n\nmodel Bet {\n  id           String           @id @default(cuid())\n  betId        String?          @unique // Unique Bet ID like \"UF87F\" - required for user linking\n  name         String\n  company      String? // Company name (e.g., \"PIXBET SOLUÇÕES TECNOLÓGICAS LTDA\")\n  domain       String?          @unique // Main domain (e.g., \"pix.bet.br\")\n  cnpj         String? // CNPJ if available\n  url          String? // Website URL\n  region       String? // Region/scope (kept for compatibility)\n  license      String? // License info (kept for compatibility)\n  status       String?          @default(\"Funcionando\") // Funcionando, Fora do ar, etc\n  scope        String? // Brasil or Mundial\n  platformType String? // Casino, Sports, Ambos\n  createdAt    DateTime         @default(now())\n  updatedAt    DateTime         @updatedAt\n  parameters   Parameter[] // Admin-defined parameters (template)\n  userBets     UserBet[] // User instances of this bet\n  linkRequests BetLinkRequest[] // Link requests for this bet\n\n  @@map(\"bet\")\n}\n\nmodel Parameter {\n  id       String  @id @default(cuid())\n  betId    String\n  name     String\n  category String? // Category from parameter definitions\n\n  // Different value types to support all parameter types\n  valueText    String? // For text values\n  valueNumber  Decimal? @db.Decimal(20, 2) // For numeric values\n  valueBoolean Boolean? // For yes/no values\n  valueRating  Int? // For star ratings (0-5)\n\n  unit        String? // e.g., \"R$\", \"%\", \"score\"\n  description String?  @db.Text // Longer descriptions\n  type        String? // \"text\", \"number\", \"currency\", \"boolean\", \"rating\", \"percentage\", \"select\"\n  options     String[] // For select type parameters\n\n  createdAt DateTime           @default(now())\n  updatedAt DateTime           @updatedAt\n  bet       Bet                @relation(fields: [betId], references: [id], onDelete: Cascade)\n  history   ParameterHistory[]\n\n  @@unique([betId, name])\n  @@map(\"parameter\")\n}\n\nmodel ParameterHistory {\n  id          String @id @default(cuid())\n  parameterId String\n\n  // Store all value types for history\n  valueText    String?\n  valueNumber  Decimal? @db.Decimal(20, 2)\n  valueBoolean Boolean?\n  valueRating  Int?\n\n  notes     String?   @db.Text // Optional notes about why the value changed\n  createdAt DateTime  @default(now())\n  parameter Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)\n\n  @@map(\"parameter_history\")\n}\n\nmodel UserBet {\n  id         String          @id @default(cuid())\n  userId     String\n  betId      String // Reference to the Bet (admin-created)\n  bet        Bet             @relation(fields: [betId], references: [id], onDelete: Cascade)\n  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)\n  createdAt  DateTime        @default(now())\n  updatedAt  DateTime        @updatedAt\n  parameters UserParameter[] // User's own parameter values for this bet\n\n  @@unique([userId, betId]) // One user can only link to a bet once\n  @@map(\"user_bet\")\n}\n\nmodel UserParameter {\n  id        String  @id @default(cuid())\n  userBetId String\n  name      String // Parameter name (matches admin parameter name)\n  category  String? // Category from parameter definitions\n\n  // Different value types to support all parameter types\n  valueText    String? // For text values\n  valueNumber  Decimal? @db.Decimal(20, 2) // For numeric values\n  valueBoolean Boolean? // For yes/no values\n  valueRating  Int? // For star ratings (0-5)\n\n  unit        String? // e.g., \"R$\", \"%\", \"score\"\n  description String?  @db.Text\n  type        String? // \"text\", \"number\", \"currency\", \"boolean\", \"rating\", \"percentage\", \"select\"\n  options     String[] // For select type parameters\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  userBet   UserBet  @relation(fields: [userBetId], references: [id], onDelete: Cascade)\n\n  @@unique([userBetId, name]) // One parameter per name per user bet\n  @@map(\"user_parameter\")\n}\n\nmodel Comparison {\n  id           String   @id @default(cuid())\n  userId       String\n  name         String? // Optional name for saved comparisons\n  selectedBets String[] // Array of bet IDs or userBet IDs\n  filters      Json? // Store filter settings\n  insights     String? // AI-generated insights\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"comparison\")\n}\n\nmodel BetLinkRequest {\n  id          String        @id @default(cuid())\n  userId      String\n  betId       String // Reference to the Bet (admin-created)\n  status      RequestStatus @default(PENDING) // PENDING, APPROVED, REJECTED\n  requestedAt DateTime      @default(now())\n  reviewedAt  DateTime?\n  reviewedBy  String? // Admin user ID who reviewed\n  notes       String?       @db.Text // Optional notes from admin\n  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)\n  bet         Bet           @relation(fields: [betId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, betId]) // One pending request per user per bet\n  @@map(\"bet_link_request\")\n}\n\nenum RequestStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n",
-  "inlineSchemaHash": "3b17af0b589535682b297115154ddb43035f09dfab3baa462a6e6949626baa0f",
-  "copyEngine": true
-}
-config.dirname = '/'
+class PrismaClient {
+  constructor() {
+    return new Proxy(this, {
+      get(target, prop) {
+        let message
+        const runtime = getRuntime()
+        if (runtime.isEdge) {
+          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
+- Use Prisma Accelerate: https://pris.ly/d/accelerate
+- Use Driver Adapters: https://pris.ly/d/driver-adapters
+`;
+        } else {
+          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
+        }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"accounts\",\"kind\":\"object\",\"type\":\"Account\",\"relationName\":\"AccountToUser\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUser\"},{\"name\":\"comparisons\",\"kind\":\"object\",\"type\":\"Comparison\",\"relationName\":\"ComparisonToUser\"},{\"name\":\"userBets\",\"kind\":\"object\",\"type\":\"UserBet\",\"relationName\":\"UserToUserBet\"},{\"name\":\"betLinkRequests\",\"kind\":\"object\",\"type\":\"BetLinkRequest\",\"relationName\":\"BetLinkRequestToUser\"}],\"dbName\":\"user\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SessionToUser\"}],\"dbName\":\"session\"},\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"accountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"idToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AccountToUser\"}],\"dbName\":\"account\"},\"Verification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"identifier\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"VerificationType\"},{\"name\":\"purpose\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"attempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"maxAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"verification\"},\"Bet\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"betId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"company\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cnpj\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"region\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"license\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"platformType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parameters\",\"kind\":\"object\",\"type\":\"Parameter\",\"relationName\":\"BetToParameter\"},{\"name\":\"userBets\",\"kind\":\"object\",\"type\":\"UserBet\",\"relationName\":\"BetToUserBet\"},{\"name\":\"linkRequests\",\"kind\":\"object\",\"type\":\"BetLinkRequest\",\"relationName\":\"BetToBetLinkRequest\"}],\"dbName\":\"bet\"},\"Parameter\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"betId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueNumber\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"valueBoolean\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"valueRating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unit\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"options\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"bet\",\"kind\":\"object\",\"type\":\"Bet\",\"relationName\":\"BetToParameter\"},{\"name\":\"history\",\"kind\":\"object\",\"type\":\"ParameterHistory\",\"relationName\":\"ParameterToParameterHistory\"}],\"dbName\":\"parameter\"},\"ParameterHistory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parameterId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueNumber\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"valueBoolean\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"valueRating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parameter\",\"kind\":\"object\",\"type\":\"Parameter\",\"relationName\":\"ParameterToParameterHistory\"}],\"dbName\":\"parameter_history\"},\"UserBet\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"betId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bet\",\"kind\":\"object\",\"type\":\"Bet\",\"relationName\":\"BetToUserBet\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserBet\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parameters\",\"kind\":\"object\",\"type\":\"UserParameter\",\"relationName\":\"UserBetToUserParameter\"}],\"dbName\":\"user_bet\"},\"UserParameter\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userBetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"valueNumber\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"valueBoolean\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"valueRating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unit\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"options\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userBet\",\"kind\":\"object\",\"type\":\"UserBet\",\"relationName\":\"UserBetToUserParameter\"}],\"dbName\":\"user_parameter\"},\"Comparison\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"selectedBets\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"filters\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"insights\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ComparisonToUser\"}],\"dbName\":\"comparison\"},\"BetLinkRequest\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"betId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"RequestStatus\"},{\"name\":\"requestedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"reviewedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"reviewedBy\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BetLinkRequestToUser\"},{\"name\":\"bet\",\"kind\":\"object\",\"type\":\"Bet\",\"relationName\":\"BetToBetLinkRequest\"}],\"dbName\":\"bet_link_request\"}},\"enums\":{},\"types\":{}}")
-defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
-config.engineWasm = {
-  getRuntime: async () => require('./query_engine_bg.js'),
-  getQueryEngineWasmModule: async () => {
-    const loader = (await import('#wasm-engine-loader')).default
-    const engine = (await loader).default
-    return engine
+        message += `
+If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
+
+        throw new Error(message)
+      }
+    })
   }
 }
-config.compilerWasm = undefined
 
-config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
-})
-
-if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
-  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
-}
-
-const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-Object.assign(exports, Prisma)
 
+Object.assign(exports, Prisma)

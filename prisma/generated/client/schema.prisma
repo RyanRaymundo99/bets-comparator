@@ -13,19 +13,20 @@ datasource db {
 // ========================================
 
 model User {
-  id            String       @id @map("_id")
-  name          String
-  email         String       @unique
-  password      String?
-  emailVerified Boolean      @default(false)
-  role          UserRole     @default(CLIENT)
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  accounts      Account[]
-  sessions      Session[]
-  comparisons   Comparison[]
-  userBets      UserBet[] // User's linked bets with their parameters
+  id              String           @id @map("_id")
+  name            String
+  email           String           @unique
+  password        String?
+  emailVerified   Boolean          @default(false)
+  role            UserRole         @default(CLIENT)
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  accounts        Account[]
+  sessions        Session[]
+  comparisons     Comparison[]
+  userBets        UserBet[] // User's linked bets with their parameters
+  betLinkRequests BetLinkRequest[] // User's bet linking requests
 
   @@map("user")
 }
@@ -93,22 +94,23 @@ enum UserRole {
 // ========================================
 
 model Bet {
-  id           String      @id @default(cuid())
-  betId        String?     @unique // Unique Bet ID like "UF87F" - required for user linking
+  id           String           @id @default(cuid())
+  betId        String?          @unique // Unique Bet ID like "UF87F" - required for user linking
   name         String
   company      String? // Company name (e.g., "PIXBET SOLUÇÕES TECNOLÓGICAS LTDA")
-  domain       String?     @unique // Main domain (e.g., "pix.bet.br")
+  domain       String?          @unique // Main domain (e.g., "pix.bet.br")
   cnpj         String? // CNPJ if available
   url          String? // Website URL
   region       String? // Region/scope (kept for compatibility)
   license      String? // License info (kept for compatibility)
-  status       String?     @default("Funcionando") // Funcionando, Fora do ar, etc
+  status       String?          @default("Funcionando") // Funcionando, Fora do ar, etc
   scope        String? // Brasil or Mundial
   platformType String? // Casino, Sports, Ambos
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
   parameters   Parameter[] // Admin-defined parameters (template)
   userBets     UserBet[] // User instances of this bet
+  linkRequests BetLinkRequest[] // Link requests for this bet
 
   @@map("bet")
 }
@@ -207,4 +209,26 @@ model Comparison {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("comparison")
+}
+
+model BetLinkRequest {
+  id          String        @id @default(cuid())
+  userId      String
+  betId       String // Reference to the Bet (admin-created)
+  status      RequestStatus @default(PENDING) // PENDING, APPROVED, REJECTED
+  requestedAt DateTime      @default(now())
+  reviewedAt  DateTime?
+  reviewedBy  String? // Admin user ID who reviewed
+  notes       String?       @db.Text // Optional notes from admin
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bet         Bet           @relation(fields: [betId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, betId]) // One pending request per user per bet
+  @@map("bet_link_request")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
