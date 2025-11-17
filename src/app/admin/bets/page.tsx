@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  ExternalLink,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
@@ -332,16 +333,30 @@ export default function BetsManagementPage() {
                   <div className="absolute inset-0 bg-gradient-to-br from-[#3a5a8a]/0 to-[#4a6a9a]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
                   <CardHeader className="relative pb-4 pt-6 px-6">
-                    <CardTitle className="text-white flex items-center justify-between">
-                      <span className="truncate font-bold text-xl group-hover:text-blue-100 transition-colors duration-300">
-                        {bet.name}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0 shadow-lg">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-white font-bold text-xl group-hover:text-blue-100 transition-colors duration-300 mb-1">
+                          {bet.name}
+                        </CardTitle>
+                        {bet.url && (
+                          <a
+                            href={bet.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1.5 text-blue-300/70 hover:text-blue-200 transition-colors text-sm group/link"
+                          >
+                            <span className="truncate">{bet.url}</span>
+                            <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 group-hover/link:scale-110 transition-transform" />
+                          </a>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
                           <Building2 className="w-6 h-6 text-blue-200" />
                         </div>
                       </div>
-                    </CardTitle>
+                    </div>
                   </CardHeader>
                   
                   <CardContent className="relative space-y-4 px-6 pb-6">
