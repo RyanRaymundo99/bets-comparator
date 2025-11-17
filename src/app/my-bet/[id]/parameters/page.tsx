@@ -63,9 +63,7 @@ const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), {
 const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), {
   ssr: false,
 });
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), {
-  ssr: false,
-});
+import { Legend } from "recharts";
 
 interface Bet {
   id: string;
@@ -130,8 +128,8 @@ export default function MyBetParametersPage() {
             param.valueNumber !== undefined
           ) {
             // Convert Decimal to number
-            values[param.name] = typeof param.valueNumber === 'object' 
-              ? Number(param.valueNumber.toString()) 
+            values[param.name] = typeof param.valueNumber === 'object' && param.valueNumber !== null
+              ? Number((param.valueNumber as { toString: () => string }).toString())
               : Number(param.valueNumber);
           } else if (
             param.valueBoolean !== null &&
@@ -674,9 +672,10 @@ export default function MyBetParametersPage() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
+                      label={(props: { name?: string; percent?: number }) => {
+                        const { name = "", percent = 0 } = props;
+                        return `${name}: ${(percent * 100).toFixed(0)}%`;
+                      }}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"

@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   Building2,
   Star,
-  Loader2,
   Eye,
   BarChart3,
   TrendingUp,
@@ -22,10 +21,9 @@ import { useParams } from "next/navigation";
 import {
   PARAMETER_CATEGORIES,
   PARAMETER_DEFINITIONS,
-  getParametersByCategory,
-  type ParameterDefinition,
 } from "@/lib/parameter-definitions";
 import dynamic from "next/dynamic";
+import { Legend } from "recharts";
 
 // Lazy load charts
 const BarChart = dynamic(
@@ -60,9 +58,6 @@ const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), {
   ssr: false,
 });
 const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), {
-  ssr: false,
-});
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), {
   ssr: false,
 });
 
@@ -640,9 +635,10 @@ export default function BetParametersViewPage() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
+                      label={(props: { name?: string; percent?: number }) => {
+                        const { name = "", percent = 0 } = props;
+                        return `${name}: ${(percent * 100).toFixed(0)}%`;
+                      }}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
@@ -697,11 +693,7 @@ export default function BetParametersViewPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categoryParams.map((param) => {
-                    const paramDef = PARAMETER_DEFINITIONS.find(
-                      (def) => def.name === param.name
-                    );
-                    return (
+                  {categoryParams.map((param) => (
                       <div
                         key={param.id}
                         className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50"
@@ -722,8 +714,7 @@ export default function BetParametersViewPage() {
                           )}
                         </div>
                       </div>
-                    );
-                  })}
+                    ))}
                 </div>
               </CardContent>
             </Card>
