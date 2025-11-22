@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
 import { ComparisonRadarChart } from "@/components/ui/comparison-radar-chart";
+import { ComparisonAdvantages } from "@/components/ui/comparison-advantages";
 
 interface Bet {
   id: string;
@@ -283,6 +284,11 @@ export default function ComparisonPage() {
         {/* Radar Chart Comparison */}
         {bets.length >= 2 && (
           <ComparisonRadarChart bets={bets} />
+        )}
+
+        {/* Comparison Advantages Dropdown */}
+        {bets.length === 2 && (
+          <ComparisonAdvantages bets={bets} />
         )}
 
         {/* Parameters Cards - Organized by Parameter */}
