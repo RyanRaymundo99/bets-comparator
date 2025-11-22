@@ -120,34 +120,23 @@ export default function SignupPage() {
   return (
     <AuthLayout
       title="Criar Conta"
-      description={
-        <>
-          Já tem uma conta?{" "}
-          <Link
-            href="/login"
-            className="text-blue-300 hover:text-blue-200 hover:underline transition-colors"
-          >
-            Fazer login
-          </Link>
-          .
-        </>
-      }
-      showLogo={true}
+      description=""
+      showLogo={false}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Name Field */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-300">
+            <Label htmlFor="name" className="text-slate-900 font-medium">
               Nome Completo
             </Label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 id="name"
                 placeholder="João Silva"
                 {...form.register("name")}
-                className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400 focus:border-blue-500"
+                className="pl-10 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-lg"
                 disabled={pending}
               />
             </div>
@@ -155,17 +144,17 @@ export default function SignupPage() {
 
           {/* Email Field */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-300">
+            <Label htmlFor="email" className="text-slate-900 font-medium">
               Email
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 id="email"
                 type="email"
                 placeholder="joao.silva@exemplo.com"
                 {...form.register("email")}
-                className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400 focus:border-blue-500"
+                className="pl-10 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-lg"
                 disabled={pending}
               />
             </div>
@@ -173,36 +162,36 @@ export default function SignupPage() {
 
           {/* Password Field */}
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-gray-300">
+            <Label htmlFor="password" className="text-slate-900 font-medium">
               Senha
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 {...form.register("password")}
-                className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400 focus:border-blue-500"
+                className="pl-10 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-lg"
                 disabled={pending}
               />
             </div>
-            <p className="text-xs text-gray-400">Mínimo de 8 caracteres</p>
+            <p className="text-xs text-slate-500">Mínimo de 8 caracteres</p>
           </div>
 
           {/* Confirm Password Field */}
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-gray-300">
+            <Label htmlFor="confirmPassword" className="text-slate-900 font-medium">
               Confirmar Senha
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
                 {...form.register("confirmPassword")}
-                className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400 focus:border-blue-500"
+                className="pl-10 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-lg"
                 disabled={pending}
               />
             </div>
@@ -211,38 +200,31 @@ export default function SignupPage() {
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 transition-all duration-200 h-12 text-base font-medium backdrop-blur-[10px] relative overflow-hidden"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-12 text-base rounded-lg transition-colors duration-200"
             disabled={pending}
-            style={{
-              boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.1)",
-            }}
           >
-            {/* Mirror effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-30 pointer-events-none rounded-md"></div>
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-
             {pending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2 relative z-10" />
-                <span className="relative z-10">Criando conta...</span>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Criando conta...
               </>
             ) : (
               <>
-                <span className="relative z-10">Criar Conta</span>
-                <ArrowRight className="h-4 w-4 ml-2 relative z-10" />
+                Criar Conta
+                <ArrowRight className="h-4 w-4 ml-2" />
               </>
             )}
           </Button>
         </form>
       </Form>
 
-      <div className="mt-8 text-center text-xs text-gray-300">
+      <div className="mt-8 text-center text-xs text-slate-500">
         Ao criar uma conta, você concorda com nossos{" "}
-        <Link href="/terms" className="text-blue-300 hover:underline">
+        <Link href="/terms" className="text-blue-600 hover:underline">
           termos de serviço
         </Link>{" "}
         e{" "}
-        <Link href="/privacy" className="text-blue-300 hover:underline">
+        <Link href="/privacy" className="text-blue-600 hover:underline">
           política de privacidade
         </Link>
         .

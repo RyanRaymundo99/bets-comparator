@@ -68,39 +68,39 @@ export const EmailField: React.FC<EmailFieldProps> = ({
     setValidationResult(null);
   };
 
-  // Determine icon and validation state
+  // Determine icon and validation state for light theme
   const getIcon = () => {
     if (isValidating) {
       return null;
     }
 
     if (validationResult?.isValid) {
-      return <CheckCircle2 className="h-5 w-5 text-green-500" />;
+      return <CheckCircle2 className="h-5 w-5 text-green-600" />;
     }
 
     if (validationResult?.isValid === false) {
-      return <AlertCircle className="h-5 w-5 text-red-500" />;
+      return <AlertCircle className="h-5 w-5 text-red-600" />;
     }
 
-    return <Mail className="h-5 w-5 text-gray-300" />;
+    return <Mail className="h-5 w-5 text-slate-400" />;
   };
 
-  // Determine validation message
+  // Update validation message colors for light theme
   const getValidationMessage = () => {
     if (isValidating) {
       return null;
     }
 
     if (validationResult?.isValid) {
-      return <span className="text-green-500 text-sm">Email válido</span>;
+      return <span className="text-green-600 text-sm">Email válido</span>;
     }
 
     if (validationResult?.isValid === false) {
-      return <span className="text-red-500 text-sm">Email inválido</span>;
+      return <span className="text-red-600 text-sm">Email inválido</span>;
     }
 
     return (
-      <span className="text-gray-400 text-sm">
+      <span className="text-slate-500 text-sm">
         Digite seu endereço de email
       </span>
     );
@@ -109,7 +109,7 @@ export const EmailField: React.FC<EmailFieldProps> = ({
   return (
     <div className={cn("space-y-2", className)}>
       {label && (
-        <Label htmlFor="email" className="text-sm font-medium text-gray-200">
+        <Label htmlFor="email" className="text-sm font-medium text-slate-900">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </Label>
@@ -126,7 +126,7 @@ export const EmailField: React.FC<EmailFieldProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           className={cn(
-            "w-full pl-10 pr-10 h-12 bg-white/5 border border-white/10 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-200",
+            "w-full pl-10 pr-10 h-12 bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all duration-200 rounded-lg",
             validationResult?.isValid === true &&
               "border-green-500 focus:border-green-500 focus:ring-green-500",
             validationResult?.isValid === false &&
@@ -145,7 +145,7 @@ export const EmailField: React.FC<EmailFieldProps> = ({
       {getValidationMessage()}
 
       {/* Error message */}
-      {error && <span className="text-red-500 text-sm">{error}</span>}
+      {error && <span className="text-red-600 text-sm">{error}</span>}
     </div>
   );
 };
