@@ -119,7 +119,19 @@ async function main() {
         }
 
         // Gerar parâmetros aleatórios para cada definição
-        const parametersToCreate = [];
+        const parametersToCreate: Array<{
+          betId: string;
+          name: string;
+          category: string;
+          type: string;
+          unit: string | null;
+          description: string | null;
+          options: string[];
+          valueText?: string | null;
+          valueNumber?: Decimal | number | null;
+          valueBoolean?: boolean | null;
+          valueRating?: number | null;
+        }> = [];
         
         for (const paramDef of PARAMETER_DEFINITIONS) {
           // 80% de chance de criar o parâmetro (não todos, para parecer mais realista)
@@ -133,7 +145,19 @@ async function main() {
               randomValue.valueBoolean !== undefined ||
               randomValue.valueRating !== undefined
             ) {
-              parametersToCreate.push({
+              const paramToCreate: {
+                betId: string;
+                name: string;
+                category: string;
+                type: string;
+                unit: string | null;
+                description: string | null;
+                options: string[];
+                valueText?: string | null;
+                valueNumber?: Decimal | null;
+                valueBoolean?: boolean | null;
+                valueRating?: number | null;
+              } = {
                 betId: bet.id,
                 name: paramDef.name,
                 category: paramDef.category,
@@ -142,7 +166,8 @@ async function main() {
                 description: paramDef.description || null,
                 options: paramDef.options || [],
                 ...randomValue,
-              });
+              };
+              parametersToCreate.push(paramToCreate);
             }
           }
         }
@@ -163,7 +188,7 @@ async function main() {
           });
 
           const historyPromises = createdParams.map((param) => {
-            const paramData = parametersToCreate.find((p) => p.name === param.name);
+            const paramData = parametersToCreate.find((p) => p.name === param.name) || null;
             if (!paramData) return null;
 
             return prisma.parameterHistory.create({

@@ -206,15 +206,15 @@ function findAdvantages(bet1: Bet, bet2: Bet): {
         bet1Advantages.push({
           parameter: paramName,
           description: `Tem ${paramName.toLowerCase()} preenchido`,
-          value1: formatValue(param1),
-          value2: formatValue(param2),
+          value1: formatValue(param1 || null),
+          value2: formatValue(param2 || null),
         });
       } else if (param2?.valueText && param2.valueText !== "-") {
         bet2Advantages.push({
           parameter: paramName,
           description: `Tem ${paramName.toLowerCase()} preenchido`,
-          value1: formatValue(param1),
-          value2: formatValue(param2),
+          value1: formatValue(param1 || null),
+          value2: formatValue(param2 || null),
         });
       }
     }

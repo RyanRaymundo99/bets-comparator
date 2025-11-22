@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PARAMETER_CATEGORIES } from "@/lib/parameter-definitions";
+import { Legend } from "recharts";
 
 // Lazy load radar chart components
 const RadarChart = dynamic(
@@ -29,9 +30,6 @@ const ResponsiveContainer = dynamic(
   () => import("recharts").then((mod) => mod.ResponsiveContainer),
   { ssr: false }
 );
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), {
-  ssr: false,
-});
 const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
   ssr: false,
 });
@@ -227,6 +225,8 @@ export function ComparisonRadarChart({ bets }: ComparisonRadarChartProps) {
                   dataKey="category"
                   tick={{ fill: "#64748b", fontSize: 12 }}
                   className="text-xs"
+                  reversed={false}
+                  scale="auto"
                 />
                 <PolarRadiusAxis
                   angle={90}
@@ -240,7 +240,7 @@ export function ComparisonRadarChart({ bets }: ComparisonRadarChartProps) {
                     borderRadius: "8px",
                     color: "#1e293b",
                   }}
-                  formatter={(value: number) => `${value} pontos`}
+                  formatter={(value: unknown) => `${value} pontos`}
                 />
                 <Legend />
                 {bets.map((bet, index) => {

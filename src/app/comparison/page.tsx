@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Building2, ExternalLink, ChevronDown } from "lucide-react";
+import { ArrowLeft, Building2, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
@@ -32,7 +32,7 @@ interface Parameter {
   type?: string | null;
 }
 
-export default function ComparisonPage() {
+function ComparisonPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -377,6 +377,23 @@ export default function ComparisonPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ComparisonPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-100 border-t-blue-600 mb-6"></div>
+            <p className="text-slate-700 font-semibold text-lg">Carregando comparação...</p>
+          </div>
+        </div>
+      }
+    >
+      <ComparisonPageContent />
+    </Suspense>
   );
 }
 
