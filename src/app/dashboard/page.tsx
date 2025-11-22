@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import {
   Building2,
   Search,
-  BarChart3,
   Star,
   ArrowRight,
   Sparkles,
@@ -244,9 +243,8 @@ export default function ClientDashboard() {
   // Show loading while checking link status
   if (checkingLink) {
     return (
-      <div className="min-h-screen bg-white text-slate-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-100 border-t-blue-600 mb-6"></div>
+      <div className="min-h-screen bg-white text-slate-800 flex items-center justify-center animate-in fade-in duration-200">
+        <div className="text-center animate-in fade-in duration-200">
           <p className="text-slate-700 font-semibold text-lg">Carregando...</p>
         </div>
       </div>
@@ -606,22 +604,6 @@ export default function ClientDashboard() {
                           </div>
                         )}
 
-                        {/* Botões de ação */}
-                        <div className="flex gap-2 pt-2 border-t border-slate-200">
-                          <Link
-                            href={`/my-bet/${linkStatus?.userBet?.id}/parameters`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-1"
-                          >
-                            <Button
-                              variant="outline"
-                              className="w-full border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all rounded-lg font-medium"
-                            >
-                              <BarChart3 className="w-4 h-4 mr-2" />
-                              Parâmetros
-                            </Button>
-                          </Link>
-                        </div>
                       </CardContent>
                     </Card>
                   );
@@ -728,22 +710,6 @@ export default function ClientDashboard() {
                               </div>
                             )}
 
-                            {/* Botões de ação */}
-                            <div className="flex gap-2 pt-2 border-t border-slate-200">
-                              <Link
-                                href={`/bets/${bet.id}/parameters`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="flex-1"
-                              >
-                                <Button
-                                  variant="outline"
-                                  className="w-full border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all rounded-lg font-medium"
-                                >
-                                  <BarChart3 className="w-4 h-4 mr-2" />
-                                  Parâmetros
-                                </Button>
-                              </Link>
-                            </div>
                           </CardContent>
                         </Card>
                       );
@@ -756,10 +722,15 @@ export default function ClientDashboard() {
         {/* Comparison Widget - Flutuante */}
         {selectedBets.length > 0 && (
           <div className="fixed bottom-6 right-6 z-50 max-w-md w-full">
-            {isComparisonWidgetExpanded ? (
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                isComparisonWidgetExpanded ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              style={{ display: isComparisonWidgetExpanded ? "block" : "none" }}
+            >
               <Card className="bg-white border-2 border-blue-200 shadow-2xl rounded-2xl overflow-hidden">
                 <CardHeader 
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white pb-3 cursor-pointer"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white pb-3 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                   onClick={() => setIsComparisonWidgetExpanded(false)}
                 >
                   <div className="flex items-center justify-between">
@@ -797,7 +768,7 @@ export default function ClientDashboard() {
                             e.stopPropagation();
                             handleToggleBet(bet.id);
                           }}
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer flex-shrink-0 z-10"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors duration-200 cursor-pointer flex-shrink-0 z-10"
                           type="button"
                           aria-label={`Remover ${bet.name} da comparação`}
                         >
@@ -812,7 +783,7 @@ export default function ClientDashboard() {
                     <Button
                       onClick={handleCompare}
                       disabled={selectedBets.length === 0}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200"
                     >
                       Comparar
                     </Button>
@@ -821,7 +792,7 @@ export default function ClientDashboard() {
                         const addMore = document.querySelector('[data-add-more]');
                         addMore?.scrollIntoView({ behavior: 'smooth' });
                       }}
-                      className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition-colors"
+                      className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition-colors duration-200"
                       data-add-more
                     >
                       <Plus className="w-5 h-5" />
@@ -829,10 +800,17 @@ export default function ClientDashboard() {
                   </div>
                 </CardContent>
               </Card>
-            ) : (
-              // Widget colapsado - apenas barra horizontal
+            </div>
+            
+            {/* Widget colapsado */}
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                !isComparisonWidgetExpanded ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              style={{ display: !isComparisonWidgetExpanded ? "flex" : "none" }}
+            >
               <div
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full px-6 py-3 shadow-2xl cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-between gap-4"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full px-6 py-3 shadow-2xl cursor-pointer hover:opacity-90 transition-opacity duration-200 flex items-center justify-between gap-4 w-full"
                 onClick={() => setIsComparisonWidgetExpanded(true)}
               >
                 <div className="flex items-center gap-3">
@@ -844,7 +822,7 @@ export default function ClientDashboard() {
                 </div>
                 <ChevronUp className="w-5 h-5" />
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>

@@ -8,6 +8,7 @@ import { ArrowLeft, Building2, ExternalLink, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
+import { ComparisonRadarChart } from "@/components/ui/comparison-radar-chart";
 
 interface Bet {
   id: string;
@@ -260,14 +261,33 @@ export default function ComparisonPage() {
           )}
         </div>
 
+        {/* Summary Section - Between VS and Parameters */}
+        <div className="flex flex-col items-center justify-center py-8 space-y-4">
+          <div className="text-center space-y-2">
+            <p className="text-sm text-slate-500 font-medium uppercase tracking-wider">
+              {allParameters.length} CARACTERÍSTICAS COMPARADAS
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+              {bets.map((bet, index) => (
+                <React.Fragment key={bet.id}>
+                  <span className={index === 0 ? "border-b-4 border-blue-600" : ""}>
+                    {bet.name}
+                  </span>
+                  {index < bets.length - 1 && <span className="mx-3">vs</span>}
+                </React.Fragment>
+              ))}
+            </h2>
+          </div>
+        </div>
+
+        {/* Radar Chart Comparison */}
+        {bets.length >= 2 && (
+          <ComparisonRadarChart bets={bets} />
+        )}
+
         {/* Parameters Cards - Organized by Parameter */}
         {allParameters.length > 0 && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-slate-900">
-                {allParameters.length} CARACTERÍSTICAS COMPARADAS
-              </h3>
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {allParameters.map((param) => {
                 // Buscar definição do parâmetro para pegar descrição

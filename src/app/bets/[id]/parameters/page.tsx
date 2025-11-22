@@ -241,7 +241,7 @@ export default function BetParametersViewPage() {
   const renderValue = (param: Parameter) => {
     if (param.valueText !== null && param.valueText !== undefined) {
       return (
-        <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-white">
+        <div className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-md text-slate-900">
           {param.valueText}
         </div>
       );
@@ -253,7 +253,7 @@ export default function BetParametersViewPage() {
       });
       return (
         <div className="space-y-2">
-          <div className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md text-white">
+          <div className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-md text-blue-600 font-medium">
             {formatted}
             {param.unit ? ` ${param.unit}` : ""}
           </div>
@@ -265,8 +265,8 @@ export default function BetParametersViewPage() {
         <div
           className={`px-4 py-2 rounded-md flex items-center space-x-2 ${
             param.valueBoolean === true
-              ? "bg-green-900/30 border border-green-700 text-green-300"
-              : "bg-red-900/30 border border-red-700 text-red-300"
+              ? "bg-green-50 border border-green-200 text-green-700"
+              : "bg-red-50 border border-red-200 text-red-700"
           }`}
         >
           {param.valueBoolean === true ? (
@@ -288,15 +288,15 @@ export default function BetParametersViewPage() {
                 key={i}
                 className={`w-4 h-4 ${
                   i < rating
-                    ? "text-yellow-400 fill-yellow-400"
-                    : "text-gray-500"
+                    ? "text-yellow-500 fill-yellow-500"
+                    : "text-slate-300"
                 }`}
               />
             ))}
           </div>
-          <div className="w-full bg-[#0f1f3a]/50 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
             <div
-              className="bg-white h-2.5 rounded-full transition-all duration-500 shadow-lg shadow-white/20"
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
               style={{ width: `${(rating / 5) * 100}%` }}
             />
           </div>
@@ -304,7 +304,7 @@ export default function BetParametersViewPage() {
       );
     }
     return (
-      <span className="text-gray-500 italic px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-md block">
+      <span className="text-slate-400 italic px-4 py-2 bg-slate-50 border border-slate-200 rounded-md block">
         Não preenchido
       </span>
     );
@@ -312,10 +312,10 @@ export default function BetParametersViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0f1f3a] to-[#1e3a5f] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-[#4a6a9a]/30 border-t-blue-300 mb-6"></div>
-          <p className="text-blue-200 font-semibold text-lg">Carregando parâmetros...</p>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-100 border-t-blue-600 mb-6"></div>
+          <p className="text-slate-700 font-semibold text-lg">Carregando parâmetros...</p>
         </div>
       </div>
     );
@@ -323,17 +323,17 @@ export default function BetParametersViewPage() {
 
   if (!bet || !stats) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0f1f3a] to-[#1e3a5f] text-white flex items-center justify-center">
-        <Card className="bg-gradient-to-br from-[#1e3a5f]/40 via-[#2d4a75]/30 to-[#3a5a8a]/20 border-[#4a6a9a]/30 backdrop-blur-2xl shadow-2xl rounded-2xl">
+      <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center">
+        <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl">
           <CardContent className="p-16 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <Building2 className="w-12 h-12 text-blue-200" />
+            <div className="w-20 h-20 rounded-2xl bg-blue-100 flex items-center justify-center mx-auto mb-6">
+              <Building2 className="w-12 h-12 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-bold text-blue-100 mb-3">
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">
               Casa de apostas não encontrada
             </h3>
             <Link href="/admin/bets">
-              <Button className="bg-gradient-to-r from-[#2d4a75] via-[#3a5a8a] to-[#4a6a9a] hover:from-[#3a5a8a] hover:via-[#4a6a9a] hover:to-[#5a7ba5] text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl px-6 py-6 h-auto font-semibold mt-4">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 py-6 h-auto font-semibold mt-4">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Voltar
               </Button>
@@ -358,35 +358,28 @@ export default function BetParametersViewPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0f1f3a] to-[#1e3a5f] text-white relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#2d4a75]/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#5a7ba5]/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#3a5a8a]/10 rounded-full blur-3xl"></div>
-      </div>
-      
-      <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-8 lg:p-10 space-y-8">
+    <div className="min-h-screen bg-white text-slate-900">
+      <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-10 space-y-8">
         {/* Header */}
         <div className="flex items-center space-x-4">
-          <Link href="/admin/bets">
+          <Link href="/dashboard">
             <Button
               variant="ghost"
               size="icon"
-              className="text-blue-300/80 hover:text-blue-100 hover:bg-[#1e3a5f]/40 rounded-xl transition-all duration-200 hover:scale-110"
+              className="border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center shadow-lg shadow-[#2d4a75]/30">
-              <Building2 className="w-7 h-7 text-blue-100" />
+            <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
+              <Building2 className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
                 {bet.name}
               </h1>
-              <p className="text-blue-200/70 mt-1.5 text-sm md:text-base">
+              <p className="text-slate-600 mt-1.5 text-sm md:text-base">
                 Visualize os parâmetros desta casa de apostas
               </p>
             </div>
@@ -396,44 +389,42 @@ export default function BetParametersViewPage() {
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1 - Taxa de Preenchimento */}
-          <Card className="relative bg-gradient-to-br from-[#0a1628]/90 via-[#0f1f3a]/80 to-[#152547]/70 border-[#1e3a5f]/40 backdrop-blur-2xl shadow-2xl shadow-[#0a1628]/30 hover:shadow-[#1e3a5f]/40 rounded-2xl overflow-hidden group hover:scale-[1.03] transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a5f]/0 to-[#1e3a5f]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <CardContent className="relative pt-8 pb-6 px-6">
+          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6 px-6">
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-100 transition-colors duration-300">
+                <div className="flex-1">
+                  <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
                     {stats.completionRate.toFixed(0)}%
                   </div>
-                  <div className="text-sm text-blue-200/70 font-medium uppercase tracking-wider mb-4">
+                  <div className="text-sm text-slate-600 font-medium uppercase tracking-wider mb-4">
                     Taxa de Preenchimento
                   </div>
-                  <div className="w-full bg-[#0f1f3a]/50 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                     <div
-                      className="bg-white h-2.5 rounded-full transition-all duration-500 shadow-lg shadow-white/20"
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
                       style={{ width: `${stats.completionRate}%` }}
                     />
                   </div>
-                  <p className="text-xs text-blue-200/80 mt-3">
+                  <p className="text-xs text-slate-500 mt-3">
                     {stats.filledParams} de {stats.totalParams} parâmetros
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1e3a5f] to-[#2d4a75] flex items-center justify-center shadow-lg shadow-[#1e3a5f]/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <Percent className="w-8 h-8 text-blue-200" />
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <Percent className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Card 2 - Avaliação Média */}
-          <Card className="relative bg-gradient-to-br from-[#1e3a5f]/90 via-[#2d4a75]/80 to-[#3a5a8a]/70 border-[#4a6a9a]/40 backdrop-blur-2xl shadow-2xl shadow-[#1e3a5f]/30 hover:shadow-[#3a5a8a]/40 rounded-2xl overflow-hidden group hover:scale-[1.03] transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#3a5a8a]/0 to-[#4a6a9a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <CardContent className="relative pt-8 pb-6 px-6">
+          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6 px-6">
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-50 transition-colors duration-300">
+                <div className="flex-1">
+                  <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
                     {stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "N/A"}
                   </div>
-                  <div className="text-sm text-blue-100/80 font-medium uppercase tracking-wider mb-3">
+                  <div className="text-sm text-slate-600 font-medium uppercase tracking-wider mb-3">
                     Avaliação Média
                   </div>
                   {stats.avgRating > 0 && (
@@ -443,62 +434,60 @@ export default function BetParametersViewPage() {
                           key={star}
                           className={`w-4 h-4 ${
                             star <= Math.round(stats.avgRating)
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-600"
+                              ? "text-yellow-500 fill-yellow-500"
+                              : "text-slate-300"
                           }`}
                         />
                       ))}
                     </div>
                   )}
                 </div>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#3a5a8a] to-[#4a6a9a] flex items-center justify-center shadow-lg shadow-[#3a5a8a]/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <Star className="w-8 h-8 text-blue-100 fill-blue-100" />
+                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <Star className="w-6 h-6 text-yellow-600 fill-yellow-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Card 3 - Parâmetros Numéricos */}
-          <Card className="relative bg-gradient-to-br from-[#5a7ba5]/90 via-[#6b8cb5]/80 to-[#7c9dc5]/70 border-[#8daed5]/40 backdrop-blur-2xl shadow-2xl shadow-[#5a7ba5]/30 hover:shadow-[#7c9dc5]/40 rounded-2xl overflow-hidden group hover:scale-[1.03] transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#7c9dc5]/0 to-[#8daed5]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <CardContent className="relative pt-8 pb-6 px-6">
+          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6 px-6">
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-50 transition-colors duration-300">
+                <div className="flex-1">
+                  <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
                     {stats.numericParams}
                   </div>
-                  <div className="text-sm text-blue-50/80 font-medium uppercase tracking-wider">
+                  <div className="text-sm text-slate-600 font-medium uppercase tracking-wider">
                     Parâmetros Numéricos
                   </div>
-                  <p className="text-xs text-blue-50/70 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     Valores monetários e percentuais
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6b8cb5] to-[#7c9dc5] flex items-center justify-center shadow-lg shadow-[#6b8cb5]/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <BarChart3 className="w-8 h-8 text-blue-50" />
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Card 4 - Características */}
-          <Card className="relative bg-gradient-to-br from-[#2d4a75]/90 via-[#3a5a8a]/80 to-[#4a6a9a]/70 border-[#5a7ba5]/40 backdrop-blur-2xl shadow-2xl shadow-[#2d4a75]/30 hover:shadow-[#4a6a9a]/40 rounded-2xl overflow-hidden group hover:scale-[1.03] transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#4a6a9a]/0 to-[#5a7ba5]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <CardContent className="relative pt-8 pb-6 px-6">
+          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6 px-6">
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-50 transition-colors duration-300">
+                <div className="flex-1">
+                  <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
                     {stats.booleanParams}
                   </div>
-                  <div className="text-sm text-blue-100/80 font-medium uppercase tracking-wider">
+                  <div className="text-sm text-slate-600 font-medium uppercase tracking-wider">
                     Características
                   </div>
-                  <p className="text-xs text-blue-100/70 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     {stats.yesCount} Sim • {stats.noCount} Não
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#3a5a8a] to-[#4a6a9a] flex items-center justify-center shadow-lg shadow-[#3a5a8a]/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <TrendingUp className="w-8 h-8 text-blue-100" />
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
                 </div>
               </div>
             </CardContent>
@@ -506,11 +495,11 @@ export default function BetParametersViewPage() {
         </div>
 
         {/* Charts Section - Always visible */}
-        <Card className="bg-gradient-to-br from-[#1e3a5f]/40 via-[#2d4a75]/30 to-[#3a5a8a]/20 border-[#4a6a9a]/30 backdrop-blur-2xl shadow-2xl shadow-[#1e3a5f]/20 rounded-2xl">
+        <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white text-xl font-bold flex items-center">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center mr-3 shadow-lg">
-                <BarChart3 className="w-5 h-5 text-blue-100" />
+            <CardTitle className="text-slate-900 text-xl font-bold flex items-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mr-3">
+                <BarChart3 className="w-5 h-5 text-blue-600" />
               </div>
               Parâmetros Numéricos
             </CardTitle>
@@ -520,34 +509,34 @@ export default function BetParametersViewPage() {
               <div className="h-64 sm:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis
                       dataKey="name"
-                      stroke="#9ca3af"
+                      stroke="#64748b"
                       fontSize={12}
                       angle={-45}
                       textAnchor="end"
                       height={80}
                     />
-                    <YAxis stroke="#9ca3af" fontSize={12} />
+                    <YAxis stroke="#64748b" fontSize={12} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#1f2937",
-                        border: "1px solid #374151",
+                        backgroundColor: "#ffffff",
+                        border: "1px solid #e2e8f0",
                         borderRadius: "8px",
-                        color: "#fff",
+                        color: "#1e293b",
                       }}
                     />
-                    <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="value" fill="#2563eb" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-64 sm:h-80 flex items-center justify-center border-2 border-dashed border-gray-700 rounded-lg">
+              <div className="h-64 sm:h-80 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-lg">
                 <div className="text-center">
-                  <BarChart3 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400 text-lg">Nenhum parâmetro numérico preenchido</p>
-                  <p className="text-gray-500 text-sm mt-2">
+                  <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-600 text-lg">Nenhum parâmetro numérico preenchido</p>
+                  <p className="text-slate-500 text-sm mt-2">
                     Preencha valores monetários ou percentuais para ver o gráfico
                   </p>
                 </div>
@@ -557,11 +546,11 @@ export default function BetParametersViewPage() {
         </Card>
 
         {/* Rating Chart - Always visible */}
-        <Card className="bg-gradient-to-br from-[#1e3a5f]/40 via-[#2d4a75]/30 to-[#3a5a8a]/20 border-[#4a6a9a]/30 backdrop-blur-2xl shadow-2xl shadow-[#1e3a5f]/20 rounded-2xl">
+        <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white text-xl font-bold flex items-center">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/30 to-yellow-600/30 flex items-center justify-center mr-3 shadow-lg">
-                <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+            <CardTitle className="text-slate-900 text-xl font-bold flex items-center">
+              <div className="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center mr-3">
+                <Star className="w-5 h-5 text-yellow-600 fill-yellow-600" />
               </div>
               Avaliações em Estrelas
             </CardTitle>
@@ -571,26 +560,26 @@ export default function BetParametersViewPage() {
               <div className="h-64 sm:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={ratingData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis
                       type="number"
                       domain={[0, 5]}
-                      stroke="#9ca3af"
+                      stroke="#64748b"
                       fontSize={12}
                     />
                     <YAxis
                       dataKey="name"
                       type="category"
-                      stroke="#9ca3af"
+                      stroke="#64748b"
                       fontSize={12}
                       width={120}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#1f2937",
-                        border: "1px solid #374151",
+                        backgroundColor: "#ffffff",
+                        border: "1px solid #e2e8f0",
                         borderRadius: "8px",
-                        color: "#fff",
+                        color: "#1e293b",
                       }}
                     />
                     <Bar
@@ -602,11 +591,11 @@ export default function BetParametersViewPage() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-64 sm:h-80 flex items-center justify-center border-2 border-dashed border-gray-700 rounded-lg">
+              <div className="h-64 sm:h-80 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-lg">
                 <div className="text-center">
-                  <Star className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400 text-lg">Nenhuma avaliação preenchida</p>
-                  <p className="text-gray-500 text-sm mt-2">
+                  <Star className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-600 text-lg">Nenhuma avaliação preenchida</p>
+                  <p className="text-slate-500 text-sm mt-2">
                     Preencha avaliações em estrelas para ver o gráfico
                   </p>
                 </div>
@@ -616,11 +605,11 @@ export default function BetParametersViewPage() {
         </Card>
 
         {/* Boolean Distribution - Always visible */}
-        <Card className="bg-gradient-to-br from-[#1e3a5f]/40 via-[#2d4a75]/30 to-[#3a5a8a]/20 border-[#4a6a9a]/30 backdrop-blur-2xl shadow-2xl shadow-[#1e3a5f]/20 rounded-2xl">
+        <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white text-xl font-bold flex items-center">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2d4a75] to-[#3a5a8a] flex items-center justify-center mr-3 shadow-lg">
-                <TrendingUp className="w-5 h-5 text-blue-100" />
+            <CardTitle className="text-slate-900 text-xl font-bold flex items-center">
+              <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center mr-3">
+                <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
               Distribuição de Características
             </CardTitle>
@@ -649,10 +638,10 @@ export default function BetParametersViewPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#1f2937",
-                        border: "1px solid #374151",
+                        backgroundColor: "#ffffff",
+                        border: "1px solid #e2e8f0",
                         borderRadius: "8px",
-                        color: "#fff",
+                        color: "#1e293b",
                       }}
                     />
                     <Legend />
@@ -660,11 +649,11 @@ export default function BetParametersViewPage() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-700 rounded-lg">
+              <div className="h-64 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-lg">
                 <div className="text-center">
-                  <TrendingUp className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400 text-lg">Nenhuma característica preenchida</p>
-                  <p className="text-gray-500 text-sm mt-2">
+                  <TrendingUp className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-600 text-lg">Nenhuma característica preenchida</p>
+                  <p className="text-slate-500 text-sm mt-2">
                     Preencha características (Sim/Não) para ver a distribuição
                   </p>
                 </div>
@@ -681,12 +670,12 @@ export default function BetParametersViewPage() {
           return (
             <Card
               key={category}
-              className="bg-gradient-to-br from-[#1e3a5f]/40 via-[#2d4a75]/30 to-[#3a5a8a]/20 border-[#4a6a9a]/30 backdrop-blur-2xl shadow-2xl shadow-[#1e3a5f]/20 rounded-2xl"
+              className="bg-white border border-slate-200 shadow-sm rounded-xl"
             >
               <CardHeader className="pb-4">
-                <CardTitle className="text-white text-xl font-bold flex items-center">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center mr-3 shadow-lg">
-                    <Eye className="w-5 h-5 text-purple-300" />
+                <CardTitle className="text-slate-900 text-xl font-bold flex items-center">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center mr-3">
+                    <Eye className="w-5 h-5 text-purple-600" />
                   </div>
                   {category}
                 </CardTitle>
@@ -696,19 +685,19 @@ export default function BetParametersViewPage() {
                   {categoryParams.map((param) => (
                       <div
                         key={param.id}
-                        className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50"
+                        className="p-4 bg-slate-50 rounded-lg border border-slate-200"
                       >
                         <div className="space-y-2">
                           <div className="flex items-start justify-between">
-                            <Label className="text-white text-sm font-medium">
+                            <Label className="text-slate-900 text-sm font-medium">
                               {param.name}
                             </Label>
                           </div>
-                          <div className="text-white text-base">
+                          <div className="text-slate-900 text-base">
                             {renderValue(param)}
                           </div>
                           {param.description && (
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-slate-500 mt-1">
                               {param.description}
                             </p>
                           )}
