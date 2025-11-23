@@ -32,6 +32,9 @@ interface Bet {
   region?: string | null;
   license?: string | null;
   url?: string | null;
+  cnpj?: string | null;
+  domain?: string | null;
+  betId?: string | null;
   parameters: Parameter[];
   user?: {
     id: string;
@@ -73,6 +76,7 @@ export default function ClientDashboard() {
   const [selectedBets, setSelectedBets] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
+  const [filterType, setFilterType] = useState<string>("name"); // Tipo de filtro: name, region, cnpj, etc.
   const [insights, setInsights] = useState<Insight | null>(null);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [isComparisonWidgetExpanded, setIsComparisonWidgetExpanded] = useState(true);
@@ -215,11 +219,26 @@ export default function ClientDashboard() {
     setInsights(null);
   };
 
-  const filteredBets = bets.filter((bet) =>
-    searchTerm
-      ? bet.name.toLowerCase().includes(searchTerm.toLowerCase())
-      : true
-  );
+  const filteredBets = bets.filter((bet) => {
+    if (!searchTerm) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    
+    switch (filterType) {
+      case "name":
+        return bet.name.toLowerCase().includes(searchLower);
+      case "region":
+        return bet.region?.toLowerCase().includes(searchLower) || false;
+      case "cnpj":
+        return bet.cnpj?.toLowerCase().includes(searchLower) || false;
+      case "domain":
+        return bet.domain?.toLowerCase().includes(searchLower) || false;
+      case "betId":
+        return bet.betId?.toLowerCase().includes(searchLower) || false;
+      default:
+        return bet.name.toLowerCase().includes(searchLower);
+    }
+  });
 
   // Separate user's bet from other bets
   const userBetId = linkStatus?.userBet?.bet?.id;
@@ -304,7 +323,7 @@ export default function ClientDashboard() {
             <Button
               onClick={refetchBets}
               variant="outline"
-              className="border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all rounded-xl"
+              className="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all rounded-xl shadow-sm"
             >
               <RefreshCw className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Atualizar</span>
@@ -312,7 +331,7 @@ export default function ClientDashboard() {
             <Button 
               onClick={handleLogout} 
               variant="outline"
-              className="border-blue-200 text-blue-700 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all rounded-xl"
+              className="bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all rounded-xl shadow-sm"
             >
               <LogOut className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Sair</span>
@@ -332,28 +351,39 @@ export default function ClientDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative group">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5 group-focus-within:text-blue-600 transition-colors" />
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Tipo de Filtro */}
+                <select
+                  value={filterType}
+                  onChange={(e) => {
+                    setFilterType(e.target.value);
+                    setSearchTerm(""); // Limpar busca ao mudar tipo de filtro
+                  }}
+                  className="px-4 py-6 bg-white border border-slate-200 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm sm:w-auto sm:min-w-[180px]"
+                >
+                  <option value="name">Nome</option>
+                  <option value="region">Região</option>
+                  <option value="cnpj">CNPJ</option>
+                  <option value="domain">Domínio</option>
+                  <option value="betId">ID da Casa</option>
+                </select>
+
+                {/* Campo de Busca */}
+                <div className="relative group flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5 group-focus-within:text-blue-600 transition-colors pointer-events-none" />
                   <Input
-                    placeholder="Buscar..."
+                    placeholder={
+                      filterType === "name" ? "Buscar por nome..." :
+                      filterType === "region" ? "Buscar por região..." :
+                      filterType === "cnpj" ? "Buscar por CNPJ..." :
+                      filterType === "domain" ? "Buscar por domínio..." :
+                      "Buscar por ID..."
+                    }
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 pr-4 py-6 bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:bg-white rounded-xl transition-all duration-200"
+                    className="pl-12 pr-4 py-6 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl transition-all duration-200 shadow-sm w-full"
                   />
                 </div>
-                <select
-                  value={selectedRegion}
-                  onChange={(e) => setSelectedRegion(e.target.value)}
-                  className="px-4 py-6 bg-slate-50 border-slate-200 text-slate-900 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all duration-200 cursor-pointer"
-                >
-                  <option value="all">Todas as Regiões</option>
-                  {regions.map((region) => (
-                    <option key={region} value={region || ""}>
-                      {region}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
           </CardContent>

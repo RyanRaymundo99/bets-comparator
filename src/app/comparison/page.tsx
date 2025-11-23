@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Building2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Building2, ExternalLink, Star } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
@@ -137,6 +137,31 @@ function ComparisonPageContent() {
     }
     
     return "-";
+  };
+
+  const renderStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center gap-1">
+        {Array.from({ length: fullStars }).map((_, i) => (
+          <Star key={`full-${i}`} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+        ))}
+        {hasHalfStar && (
+          <div className="relative w-4 h-4">
+            <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+            <div className="absolute inset-0 overflow-hidden w-1/2">
+              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+            </div>
+          </div>
+        )}
+        {Array.from({ length: emptyStars }).map((_, i) => (
+          <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300 fill-gray-300" />
+        ))}
+      </div>
+    );
   };
 
   if (loading) {
@@ -336,10 +361,19 @@ function ComparisonPageContent() {
                                       {paramValue?.valueBoolean ? '✔' : '✗'}
                                     </span>
                                   )}
-                                  <span className={`text-base font-medium ${isBoolean ? 'text-slate-700' : 'text-blue-600'}`}>
-                                    {displayValue}
-                                    {unit && !isBoolean && !isRating ? ` ${unit}` : ""}
-                                  </span>
+                                  {isRating && paramValue?.valueRating !== null && paramValue?.valueRating !== undefined ? (
+                                    <div className="flex items-center gap-2">
+                                      {renderStars(paramValue.valueRating)}
+                                      <span className="text-sm text-slate-600 font-medium">
+                                        ({displayValue})
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <span className={`text-base font-medium ${isBoolean ? 'text-slate-700' : 'text-blue-600'}`}>
+                                      {displayValue}
+                                      {unit && !isBoolean && !isRating ? ` ${unit}` : ""}
+                                    </span>
+                                  )}
                                 </div>
                               ) : (
                                 <span className="text-sm text-slate-400 italic">-</span>

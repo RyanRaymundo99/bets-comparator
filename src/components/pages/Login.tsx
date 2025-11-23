@@ -108,8 +108,8 @@ const Login = () => {
           localStorage.setItem("auth-user", JSON.stringify(result.user));
           localStorage.setItem("auth-session", "true");
 
-          console.log("Login successful, redirecting to dashboard");
-          router.push("/dashboard");
+          console.log("Login successful, redirecting to home");
+          router.push("/home");
         } else {
           toast({
             variant: "destructive",
