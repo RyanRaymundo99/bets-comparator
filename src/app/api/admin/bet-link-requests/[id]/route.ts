@@ -10,7 +10,7 @@ import {
 } from "@/lib/api-response";
 import { requireAdmin } from "@/lib/auth-helpers";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@/lib/prisma";
 
 // PATCH /api/admin/bet-link-requests/[id] - Approve or reject a request
 export const PATCH = withErrorHandling(async (

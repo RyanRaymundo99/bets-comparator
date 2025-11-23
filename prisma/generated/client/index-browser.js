@@ -180,6 +180,8 @@ exports.Prisma.BetScalarFieldEnum = {
   domain: 'domain',
   cnpj: 'cnpj',
   url: 'url',
+  logo: 'logo',
+  coverImage: 'coverImage',
   region: 'region',
   license: 'license',
   status: 'status',

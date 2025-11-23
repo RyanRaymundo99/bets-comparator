@@ -7,7 +7,7 @@ import {
   withErrorHandling,
 } from "@/lib/api-response";
 import { getSession } from "@/lib/auth-helpers";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@/lib/prisma";
 
 // POST /api/user/parameters - Create or update a user parameter
 export const POST = withErrorHandling(async (request: NextRequest) => {

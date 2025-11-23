@@ -10,7 +10,7 @@ import {
 } from "@/lib/api-response";
 import { requireAdmin } from "@/lib/auth-helpers";
 import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@/lib/prisma";
 
 // POST /api/admin/users/[id]/link-bet - Admin links a user to a bet
 export const POST = withErrorHandling(async (

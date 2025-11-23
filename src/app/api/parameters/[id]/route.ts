@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@/lib/prisma";
 import { getParameterDefinition } from "@/lib/parameter-definitions";
 
 // GET /api/parameters/[id] - Get a specific parameter with history

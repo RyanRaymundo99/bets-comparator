@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { Decimal } from "@prisma/client/runtime/library";
+import prisma, { Decimal } from "@/lib/prisma";
 
 // POST /api/parameters - Create or update a parameter
 export async function POST(request: NextRequest) {

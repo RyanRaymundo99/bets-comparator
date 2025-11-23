@@ -259,7 +259,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
       region: bet.region,
       license: bet.license,
       betId: bet.betId,
-      logo: null, // TODO: Add logo field to schema if needed
+      logo: bet.logo,
+      coverImage: bet.coverImage,
     },
     rating: {
       overall: overallRating,

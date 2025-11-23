@@ -22,6 +22,7 @@ import {
   FileText,
   Hash,
 } from "lucide-react";
+import Image from "next/image";
 import { useFetch } from "@/hooks/use-fetch";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -42,6 +43,7 @@ interface HomeData {
     license?: string | null;
     betId?: string | null;
     logo?: string | null;
+    coverImage?: string | null;
   };
   rating: {
     overall: number;
@@ -251,19 +253,47 @@ export default function HomePage() {
         </div>
         {/* Header Section */}
         <Card className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden">
-          <CardContent className="p-6 md:p-8">
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-              {/* Left Side - Logo, Name, Rating */}
-              <div className="flex-1 flex flex-col md:flex-row gap-6">
-                {/* Logo Placeholder */}
-                <div className="flex-shrink-0">
-                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-lg">
-                    <Building2 className="w-12 h-12 md:w-16 md:h-16 text-white" />
-                  </div>
-                </div>
+          {/* Cover Image with Logo Overlay */}
+          <div className="relative">
+            {/* Cover Image */}
+            {bet.coverImage ? (
+              <div className="relative w-full h-48 md:h-64 bg-gradient-to-br from-blue-600 to-blue-700">
+                <Image
+                  src={bet.coverImage}
+                  alt={`${bet.name} cover`}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            ) : (
+              <div className="relative w-full h-48 md:h-64 bg-gradient-to-br from-blue-600 to-blue-700" />
+            )}
 
-                {/* Name and Rating */}
-                <div className="flex-1 space-y-3">
+            {/* Logo Overlay (Facebook-style) */}
+            <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-10">
+              {bet.logo ? (
+                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-xl bg-white">
+                  <Image
+                    src={bet.logo}
+                    alt={`${bet.name} logo`}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              ) : (
+                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-xl border-4 border-white">
+                  <Building2 className="w-14 h-14 md:w-20 md:h-20 text-white" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <CardContent className="p-6 md:p-8 pt-24 md:pt-28">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+              {/* Left Side - Name, Rating */}
+              <div className="flex-1 space-y-3">
                   <div>
                     <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
                       {bet.name}
@@ -407,7 +437,6 @@ export default function HomePage() {
                     </Button>
                   </div>
                 </div>
-              </div>
 
               {/* Right Side - Ranking Panel */}
               <div className="lg:w-80 flex-shrink-0">

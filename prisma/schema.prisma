@@ -101,6 +101,8 @@ model Bet {
   domain       String?     @unique // Main domain (e.g., "pix.bet.br")
   cnpj         String? // CNPJ if available
   url          String? // Website URL
+  logo         String? // Logo image path (rounded)
+  coverImage  String? // Cover image path (like Facebook cover)
   region       String? // Region/scope (kept for compatibility)
   license      String? // License info (kept for compatibility)
   status       String?     @default("Funcionando") // Funcionando, Fora do ar, etc

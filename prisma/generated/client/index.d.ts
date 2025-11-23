@@ -6598,6 +6598,8 @@ export namespace Prisma {
     domain: string | null
     cnpj: string | null
     url: string | null
+    logo: string | null
+    coverImage: string | null
     region: string | null
     license: string | null
     status: string | null
@@ -6615,6 +6617,8 @@ export namespace Prisma {
     domain: string | null
     cnpj: string | null
     url: string | null
+    logo: string | null
+    coverImage: string | null
     region: string | null
     license: string | null
     status: string | null
@@ -6632,6 +6636,8 @@ export namespace Prisma {
     domain: number
     cnpj: number
     url: number
+    logo: number
+    coverImage: number
     region: number
     license: number
     status: number
@@ -6651,6 +6657,8 @@ export namespace Prisma {
     domain?: true
     cnpj?: true
     url?: true
+    logo?: true
+    coverImage?: true
     region?: true
     license?: true
     status?: true
@@ -6668,6 +6676,8 @@ export namespace Prisma {
     domain?: true
     cnpj?: true
     url?: true
+    logo?: true
+    coverImage?: true
     region?: true
     license?: true
     status?: true
@@ -6685,6 +6695,8 @@ export namespace Prisma {
     domain?: true
     cnpj?: true
     url?: true
+    logo?: true
+    coverImage?: true
     region?: true
     license?: true
     status?: true
@@ -6775,6 +6787,8 @@ export namespace Prisma {
     domain: string | null
     cnpj: string | null
     url: string | null
+    logo: string | null
+    coverImage: string | null
     region: string | null
     license: string | null
     status: string | null
@@ -6809,6 +6823,8 @@ export namespace Prisma {
     domain?: boolean
     cnpj?: boolean
     url?: boolean
+    logo?: boolean
+    coverImage?: boolean
     region?: boolean
     license?: boolean
     status?: boolean
@@ -6830,6 +6846,8 @@ export namespace Prisma {
     domain?: boolean
     cnpj?: boolean
     url?: boolean
+    logo?: boolean
+    coverImage?: boolean
     region?: boolean
     license?: boolean
     status?: boolean
@@ -6847,6 +6865,8 @@ export namespace Prisma {
     domain?: boolean
     cnpj?: boolean
     url?: boolean
+    logo?: boolean
+    coverImage?: boolean
     region?: boolean
     license?: boolean
     status?: boolean
@@ -6864,6 +6884,8 @@ export namespace Prisma {
     domain?: boolean
     cnpj?: boolean
     url?: boolean
+    logo?: boolean
+    coverImage?: boolean
     region?: boolean
     license?: boolean
     status?: boolean
@@ -6873,7 +6895,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "betId" | "name" | "company" | "domain" | "cnpj" | "url" | "region" | "license" | "status" | "scope" | "platformType" | "createdAt" | "updatedAt", ExtArgs["result"]["bet"]>
+  export type BetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "betId" | "name" | "company" | "domain" | "cnpj" | "url" | "logo" | "coverImage" | "region" | "license" | "status" | "scope" | "platformType" | "createdAt" | "updatedAt", ExtArgs["result"]["bet"]>
   export type BetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     parameters?: boolean | Bet$parametersArgs<ExtArgs>
     userBets?: boolean | Bet$userBetsArgs<ExtArgs>
@@ -6898,6 +6920,8 @@ export namespace Prisma {
       domain: string | null
       cnpj: string | null
       url: string | null
+      logo: string | null
+      coverImage: string | null
       region: string | null
       license: string | null
       status: string | null
@@ -7338,6 +7362,8 @@ export namespace Prisma {
     readonly domain: FieldRef<"Bet", 'String'>
     readonly cnpj: FieldRef<"Bet", 'String'>
     readonly url: FieldRef<"Bet", 'String'>
+    readonly logo: FieldRef<"Bet", 'String'>
+    readonly coverImage: FieldRef<"Bet", 'String'>
     readonly region: FieldRef<"Bet", 'String'>
     readonly license: FieldRef<"Bet", 'String'>
     readonly status: FieldRef<"Bet", 'String'>
@@ -14782,6 +14808,8 @@ export namespace Prisma {
     domain: 'domain',
     cnpj: 'cnpj',
     url: 'url',
+    logo: 'logo',
+    coverImage: 'coverImage',
     region: 'region',
     license: 'license',
     status: 'status',
@@ -15411,6 +15439,8 @@ export namespace Prisma {
     domain?: StringNullableFilter<"Bet"> | string | null
     cnpj?: StringNullableFilter<"Bet"> | string | null
     url?: StringNullableFilter<"Bet"> | string | null
+    logo?: StringNullableFilter<"Bet"> | string | null
+    coverImage?: StringNullableFilter<"Bet"> | string | null
     region?: StringNullableFilter<"Bet"> | string | null
     license?: StringNullableFilter<"Bet"> | string | null
     status?: StringNullableFilter<"Bet"> | string | null
@@ -15431,6 +15461,8 @@ export namespace Prisma {
     domain?: SortOrderInput | SortOrder
     cnpj?: SortOrderInput | SortOrder
     url?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    coverImage?: SortOrderInput | SortOrder
     region?: SortOrderInput | SortOrder
     license?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
@@ -15454,6 +15486,8 @@ export namespace Prisma {
     company?: StringNullableFilter<"Bet"> | string | null
     cnpj?: StringNullableFilter<"Bet"> | string | null
     url?: StringNullableFilter<"Bet"> | string | null
+    logo?: StringNullableFilter<"Bet"> | string | null
+    coverImage?: StringNullableFilter<"Bet"> | string | null
     region?: StringNullableFilter<"Bet"> | string | null
     license?: StringNullableFilter<"Bet"> | string | null
     status?: StringNullableFilter<"Bet"> | string | null
@@ -15474,6 +15508,8 @@ export namespace Prisma {
     domain?: SortOrderInput | SortOrder
     cnpj?: SortOrderInput | SortOrder
     url?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    coverImage?: SortOrderInput | SortOrder
     region?: SortOrderInput | SortOrder
     license?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
@@ -15497,6 +15533,8 @@ export namespace Prisma {
     domain?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     cnpj?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     url?: StringNullableWithAggregatesFilter<"Bet"> | string | null
+    logo?: StringNullableWithAggregatesFilter<"Bet"> | string | null
+    coverImage?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     region?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     license?: StringNullableWithAggregatesFilter<"Bet"> | string | null
     status?: StringNullableWithAggregatesFilter<"Bet"> | string | null
@@ -16383,6 +16421,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -16403,6 +16443,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -16423,6 +16465,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16443,6 +16487,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16463,6 +16509,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -16480,6 +16528,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16497,6 +16547,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17465,6 +17517,8 @@ export namespace Prisma {
     domain?: SortOrder
     cnpj?: SortOrder
     url?: SortOrder
+    logo?: SortOrder
+    coverImage?: SortOrder
     region?: SortOrder
     license?: SortOrder
     status?: SortOrder
@@ -17482,6 +17536,8 @@ export namespace Prisma {
     domain?: SortOrder
     cnpj?: SortOrder
     url?: SortOrder
+    logo?: SortOrder
+    coverImage?: SortOrder
     region?: SortOrder
     license?: SortOrder
     status?: SortOrder
@@ -17499,6 +17555,8 @@ export namespace Prisma {
     domain?: SortOrder
     cnpj?: SortOrder
     url?: SortOrder
+    logo?: SortOrder
+    coverImage?: SortOrder
     region?: SortOrder
     license?: SortOrder
     status?: SortOrder
@@ -19557,6 +19615,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -19576,6 +19636,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -19641,6 +19703,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19660,6 +19724,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19793,6 +19859,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -19812,6 +19880,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -19926,6 +19996,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19945,6 +20017,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20208,6 +20282,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -20227,6 +20303,8 @@ export namespace Prisma {
     domain?: string | null
     cnpj?: string | null
     url?: string | null
+    logo?: string | null
+    coverImage?: string | null
     region?: string | null
     license?: string | null
     status?: string | null
@@ -20305,6 +20383,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20324,6 +20404,8 @@ export namespace Prisma {
     domain?: NullableStringFieldUpdateOperationsInput | string | null
     cnpj?: NullableStringFieldUpdateOperationsInput | string | null
     url?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     region?: NullableStringFieldUpdateOperationsInput | string | null
     license?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
