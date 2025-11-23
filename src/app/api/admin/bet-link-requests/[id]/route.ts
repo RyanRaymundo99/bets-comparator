@@ -92,7 +92,7 @@ export const PATCH = withErrorHandling(async (
           description?: string;
           options?: string[];
           valueText?: string | null;
-          valueNumber?: Decimal | null;
+          valueNumber?: InstanceType<typeof Decimal> | null;
           valueBoolean?: boolean | null;
           valueRating?: number | null;
         } = {

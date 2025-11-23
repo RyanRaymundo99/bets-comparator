@@ -1,20 +1,21 @@
 import { PrismaClient } from '../../prisma/generated/client'
+import type { Decimal as DecimalType } from '../../prisma/generated/client/runtime/library'
 
-// Import Decimal - using require to avoid module resolution issues
-let Decimal: any;
+// Import Decimal dynamically to avoid module resolution issues
+let Decimal: typeof DecimalType;
 try {
-  const DecimalModule = require('../../prisma/generated/client/runtime/library.js');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const DecimalModule = require('../../prisma/generated/client/runtime/library.js') as { Decimal: typeof DecimalType };
   Decimal = DecimalModule.Decimal;
-} catch (e) {
+} catch {
   // Fallback: try importing from the default export
-  const DecimalModule = require('../../prisma/generated/client/runtime/library');
-  Decimal = DecimalModule.Decimal || DecimalModule;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const DecimalModule = require('../../prisma/generated/client/runtime/library') as { Decimal: typeof DecimalType } | typeof DecimalType;
+  Decimal = (DecimalModule as { Decimal: typeof DecimalType }).Decimal || (DecimalModule as typeof DecimalType);
 }
 
 const prismaClientSingleton = () => {
-  return new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL,
-  });
+  return new PrismaClient();
 };
 
 declare const globalThis: {

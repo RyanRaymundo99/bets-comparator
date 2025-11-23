@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       type?: string;
       options?: string[];
       valueText?: string | null;
-      valueNumber?: Decimal | null;
+      valueNumber?: InstanceType<typeof Decimal> | null;
       valueBoolean?: boolean | null;
       valueRating?: number | null;
     } = {

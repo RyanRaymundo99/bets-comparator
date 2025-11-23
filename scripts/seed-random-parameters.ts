@@ -1,20 +1,22 @@
 import { PrismaClient } from "../prisma/generated/client";
 import { PARAMETER_DEFINITIONS } from "../src/lib/parameter-definitions";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "../src/lib/prisma";
 
 const prisma = new PrismaClient();
+
+type DecimalType = ReturnType<typeof Decimal>;
 
 // Função para gerar valor aleatório baseado no tipo do parâmetro
 function generateRandomValue(paramDef: typeof PARAMETER_DEFINITIONS[0]): {
   valueText?: string | null;
-  valueNumber?: Decimal | null;
+  valueNumber?: DecimalType | null;
   valueBoolean?: boolean | null;
   valueRating?: number | null;
 } {
   const type = paramDef.type;
   const result: {
     valueText?: string | null;
-    valueNumber?: Decimal | null;
+    valueNumber?: DecimalType | null;
     valueBoolean?: boolean | null;
     valueRating?: number | null;
   } = {};
@@ -128,7 +130,7 @@ async function main() {
           description: string | null;
           options: string[];
           valueText?: string | null;
-          valueNumber?: Decimal | number | null;
+          valueNumber?: DecimalType | number | null;
           valueBoolean?: boolean | null;
           valueRating?: number | null;
         }> = [];
@@ -154,7 +156,7 @@ async function main() {
                 description: string | null;
                 options: string[];
                 valueText?: string | null;
-                valueNumber?: Decimal | null;
+                valueNumber?: DecimalType | null;
                 valueBoolean?: boolean | null;
                 valueRating?: number | null;
               } = {
