@@ -35,15 +35,20 @@ vercel --prod
 
 ### 3. Variáveis de Ambiente Obrigatórias
 
-Configure estas variáveis no painel do Vercel:
+Configure estas variáveis no painel do Vercel (Settings > Environment Variables):
 
-#### 🔑 Essenciais
+#### 🔑 Essenciais (Obrigatórias)
 ```env
 DATABASE_URL="postgresql://user:pass@host:port/db"
-BETTER_AUTH_SECRET="seu-secret-minimo-32-caracteres"
+BETTER_AUTH_SECRET="seu-secret-minimo-32-caracteres-aleatorios"
 BETTER_AUTH_URL="https://seu-dominio.vercel.app"
 NEXT_PUBLIC_BASE_URL="https://seu-dominio.vercel.app"
 ```
+
+**⚠️ IMPORTANTE**: 
+- `BETTER_AUTH_SECRET` deve ter no mínimo 32 caracteres
+- Gere um secret seguro: `openssl rand -base64 32`
+- `BETTER_AUTH_URL` e `NEXT_PUBLIC_BASE_URL` devem ser a URL final de produção
 
 #### 📧 Email (Recomendado: Resend)
 ```env

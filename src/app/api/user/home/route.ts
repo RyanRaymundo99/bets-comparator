@@ -7,6 +7,7 @@ import {
   withErrorHandling,
 } from "@/lib/api-response";
 import { getSession } from "@/lib/auth-helpers";
+import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
 
 // Helper function to calculate overall score for a bet
 function calculateOverallScore(bet: {
@@ -170,79 +171,128 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   const currentPosition = betsWithScores.findIndex((b) => b.bet.id === bet.id) + 1;
   const totalBets = betsWithScores.length;
 
-  // Get top 5
-  const top5 = betsWithScores.slice(0, 5).map((b, index) => ({
+  // Get top 10
+  const top10 = betsWithScores.slice(0, 10).map((b, index) => ({
     id: b.bet.id,
     name: b.bet.name,
     score: b.score,
     position: index + 1,
   }));
 
-  // Get 5 positions below current (if available)
+  // Get 3 positions above current (if available and not in top 3)
+  const aboveCurrent = currentPosition > 3
+    ? betsWithScores
+        .slice(Math.max(0, currentPosition - 4), currentPosition - 1) // Get positions before current
+        .filter((b) => b.bet.id !== bet.id) // Exclude current bet
+        .slice(-3) // Take only last 3
+        .map((b) => {
+          const actualIndex = betsWithScores.findIndex((item) => item.bet.id === b.bet.id);
+          return {
+            id: b.bet.id,
+            name: b.bet.name,
+            score: b.score,
+            position: actualIndex + 1,
+          };
+        })
+    : [];
+
+  // Get 3 positions below current (if available)
   const belowCurrent = betsWithScores
-    .slice(currentPosition, currentPosition + 6) // +6 to get 5 below (excluding current)
+    .slice(currentPosition, currentPosition + 4) // +4 to get 3 below (excluding current)
     .filter((b) => b.bet.id !== bet.id) // Exclude current bet
-    .slice(0, 5) // Take only 5
-    .map((b, index) => ({
-      id: b.bet.id,
-      name: b.bet.name,
-      score: b.score,
-      position: currentPosition + index + 1, // +1 because we're excluding current
-    }));
+    .slice(0, 3) // Take only 3
+    .map((b, index) => {
+      const actualIndex = betsWithScores.findIndex((item) => item.bet.id === b.bet.id);
+      return {
+        id: b.bet.id,
+        name: b.bet.name,
+        score: b.score,
+        position: actualIndex + 1,
+      };
+    });
 
-  // Process parameters with trends
-  const parametersWithTrends = bet.parameters.map((param) => {
-    const previousHistory = param.history[0];
-    let currentValue: number | string | boolean | null = null;
-    let previousValue: number | string | boolean | null = null;
+  // Get all bets for expansion (full ranking)
+  const allRanking = betsWithScores.map((b, index) => ({
+    id: b.bet.id,
+    name: b.bet.name,
+    score: b.score,
+    position: index + 1,
+  }));
 
-    // Get current value
-    if (param.valueNumber !== null && param.valueNumber !== undefined) {
-      currentValue = Number(param.valueNumber);
-    } else if (param.valueText !== null && param.valueText !== undefined) {
-      currentValue = param.valueText;
-    } else if (param.valueBoolean !== null && param.valueBoolean !== undefined) {
-      currentValue = param.valueBoolean;
-    } else if (param.valueRating !== null && param.valueRating !== undefined) {
-      currentValue = param.valueRating;
-    }
+  // Create a map of existing parameters by name
+  const existingParamsMap = new Map(
+    bet.parameters.map((param) => [param.name, param])
+  );
 
-    // Get previous value from history
-    if (previousHistory) {
-      if (previousHistory.valueNumber !== null && previousHistory.valueNumber !== undefined) {
-        previousValue = Number(previousHistory.valueNumber);
-      } else if (previousHistory.valueText !== null && previousHistory.valueText !== undefined) {
-        previousValue = previousHistory.valueText;
-      } else if (previousHistory.valueBoolean !== null && previousHistory.valueBoolean !== undefined) {
-        previousValue = previousHistory.valueBoolean;
-      } else if (previousHistory.valueRating !== null && previousHistory.valueRating !== undefined) {
-        previousValue = previousHistory.valueRating;
+  // Process all defined parameters, filling in missing ones
+  const parametersWithTrends = PARAMETER_DEFINITIONS.map((paramDef) => {
+    const existingParam = existingParamsMap.get(paramDef.name);
+    
+    if (existingParam) {
+      // Parameter exists in database
+      const previousHistory = existingParam.history[0];
+      let currentValue: number | string | boolean | null = null;
+      let previousValue: number | string | boolean | null = null;
+
+      // Get current value
+      if (existingParam.valueNumber !== null && existingParam.valueNumber !== undefined) {
+        currentValue = Number(existingParam.valueNumber);
+      } else if (existingParam.valueText !== null && existingParam.valueText !== undefined) {
+        currentValue = existingParam.valueText;
+      } else if (existingParam.valueBoolean !== null && existingParam.valueBoolean !== undefined) {
+        currentValue = existingParam.valueBoolean;
+      } else if (existingParam.valueRating !== null && existingParam.valueRating !== undefined) {
+        currentValue = existingParam.valueRating;
       }
+
+      // Get previous value from history
+      if (previousHistory) {
+        if (previousHistory.valueNumber !== null && previousHistory.valueNumber !== undefined) {
+          previousValue = Number(previousHistory.valueNumber);
+        } else if (previousHistory.valueText !== null && previousHistory.valueText !== undefined) {
+          previousValue = previousHistory.valueText;
+        } else if (previousHistory.valueBoolean !== null && previousHistory.valueBoolean !== undefined) {
+          previousValue = previousHistory.valueBoolean;
+        } else if (previousHistory.valueRating !== null && previousHistory.valueRating !== undefined) {
+          previousValue = previousHistory.valueRating;
+        }
+      }
+
+      const trend = getParameterTrend(currentValue, previousValue);
+
+      // Format display value
+      let displayValue = "-";
+      if (existingParam.valueText !== null && existingParam.valueText !== undefined) {
+        displayValue = existingParam.valueText;
+      } else if (existingParam.valueNumber !== null && existingParam.valueNumber !== undefined) {
+        displayValue = Number(existingParam.valueNumber).toLocaleString("pt-BR");
+      } else if (existingParam.valueBoolean !== null && existingParam.valueBoolean !== undefined) {
+        displayValue = existingParam.valueBoolean ? "Sim" : "Não";
+      } else if (existingParam.valueRating !== null && existingParam.valueRating !== undefined) {
+        displayValue = `${existingParam.valueRating}/5`;
+      }
+
+      return {
+        id: existingParam.id,
+        name: existingParam.name,
+        category: existingParam.category || paramDef.category,
+        value: displayValue,
+        unit: existingParam.unit || paramDef.unit,
+        trend,
+        type: existingParam.type || paramDef.type,
+      };
+    } else {
+      // Parameter doesn't exist in database - return empty
+      return {
+        id: null, // No ID for non-existent parameters
+        name: paramDef.name,
+        category: paramDef.category,
+        value: "-",
+        unit: paramDef.unit,
+        trend: "stable" as const,
+        type: paramDef.type,
+      };
     }
-
-    const trend = getParameterTrend(currentValue, previousValue);
-
-    // Format display value
-    let displayValue = "-";
-    if (param.valueText !== null && param.valueText !== undefined) {
-      displayValue = param.valueText;
-    } else if (param.valueNumber !== null && param.valueNumber !== undefined) {
-      displayValue = Number(param.valueNumber).toLocaleString("pt-BR");
-    } else if (param.valueBoolean !== null && param.valueBoolean !== undefined) {
-      displayValue = param.valueBoolean ? "Sim" : "Não";
-    } else if (param.valueRating !== null && param.valueRating !== undefined) {
-      displayValue = `${param.valueRating}/5`;
-    }
-
-    return {
-      id: param.id,
-      name: param.name,
-      category: param.category,
-      value: displayValue,
-      unit: param.unit,
-      trend,
-      type: param.type,
-    };
   });
 
   return successResponse({
@@ -270,8 +320,10 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     ranking: {
       position: currentPosition,
       total: totalBets,
-      top5,
+      top10,
+      aboveCurrent,
       belowCurrent,
+      allRanking, // Full ranking for expansion
     },
     parameters: parametersWithTrends,
   });

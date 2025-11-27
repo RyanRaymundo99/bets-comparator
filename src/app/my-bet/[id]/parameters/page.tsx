@@ -5,6 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   ArrowLeft,
   Building2,
   Star,
@@ -730,7 +738,7 @@ export default function MyBetParametersPage() {
           </Card>
         )}
 
-        {/* Parameters by Category */}
+        {/* Parameters by Category - Table Format */}
         <div className="space-y-6">
           {PARAMETER_CATEGORIES.map((category) => {
             const categoryDefs = getParametersByCategory(category);
@@ -739,37 +747,52 @@ export default function MyBetParametersPage() {
             return (
               <Card
                 key={category}
-                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl"
+                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl overflow-hidden"
               >
-                <CardHeader>
+                <CardHeader className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border-b border-gray-700/50">
                   <CardTitle className="text-white flex items-center text-lg sm:text-xl">
-                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-400" />
+                    <div className="w-1 h-8 bg-gradient-to-b from-purple-400 to-blue-400 rounded-full mr-3" />
                     {category}
                     <span className="ml-3 text-sm text-gray-400 font-normal">
                       ({categoryDefs.length} parâmetros)
                     </span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                    {categoryDefs.map((def) => {
-                      return (
-                        <div key={def.name} className="space-y-2">
-                          <Label className="text-white text-sm sm:text-base">
-                            {def.name}
-                            {def.unit && (
-                              <span className="text-gray-400 ml-1 text-xs sm:text-sm">
-                                ({def.unit})
-                              </span>
-                            )}
-                          </Label>
-                          {def.description && (
-                            <p className="text-xs text-gray-400">{def.description}</p>
-                          )}
-                          {renderValue(def)}
-                        </div>
-                      );
-                    })}
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-800/50 border-gray-700">
+                          <TableHead className="w-[300px] font-semibold text-white">
+                            Parâmetro
+                          </TableHead>
+                          <TableHead className="font-semibold text-white">
+                            Valor
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {categoryDefs.map((def) => {
+                          return (
+                            <TableRow key={def.name} className="hover:bg-gray-800/30 border-gray-700">
+                              <TableCell className="font-medium text-white">
+                                <div>
+                                  <div>{def.name}</div>
+                                  {def.description && (
+                                    <div className="text-xs text-gray-400 mt-1">
+                                      {def.description}
+                                    </div>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {renderValue(def)}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
                   </div>
                 </CardContent>
               </Card>

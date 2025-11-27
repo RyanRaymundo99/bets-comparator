@@ -15,12 +15,21 @@ import {
   XCircle,
   Percent,
 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
   PARAMETER_CATEGORIES,
   PARAMETER_DEFINITIONS,
+  getParametersByCategory,
 } from "@/lib/parameter-definitions";
 import dynamic from "next/dynamic";
 import { Legend } from "recharts";
@@ -69,9 +78,9 @@ interface Bet {
 }
 
 interface Parameter {
-  id: string;
+  id: string | null;
   name: string;
-  category?: string;
+  category?: string | null;
   valueText?: string | null;
   valueNumber?: number | null;
   valueBoolean?: boolean | null;
@@ -662,48 +671,77 @@ export default function BetParametersViewPage() {
           </CardContent>
         </Card>
 
-        {/* Parameters by Category */}
+        {/* Parameters by Category - Table Format */}
         {PARAMETER_CATEGORIES.map((category) => {
-          const categoryParams = parametersByCategory[category] || [];
-          if (categoryParams.length === 0) return null;
+          // Get all defined parameters in this category
+          const categoryDefs = getParametersByCategory(category);
+          const existingParams = parametersByCategory[category] || [];
+          
+          if (categoryDefs.length === 0) return null;
 
           return (
             <Card
               key={category}
-              className="bg-white border border-slate-200 shadow-sm rounded-xl"
+              className="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden"
             >
-              <CardHeader className="pb-4">
+              <CardHeader className="pb-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-slate-200">
                 <CardTitle className="text-slate-900 text-xl font-bold flex items-center">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center mr-3">
-                    <Eye className="w-5 h-5 text-purple-600" />
-                  </div>
+                  <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full mr-3" />
                   {category}
+                  <span className="ml-3 text-sm text-slate-500 font-normal">
+                    ({categoryDefs.length} parâmetros)
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categoryParams.map((param) => (
-                      <div
-                        key={param.id}
-                        className="p-4 bg-slate-50 rounded-lg border border-slate-200"
-                      >
-                        <div className="space-y-2">
-                          <div className="flex items-start justify-between">
-                            <Label className="text-slate-900 text-sm font-medium">
-                              {param.name}
-                            </Label>
-                          </div>
-                          <div className="text-slate-900 text-base">
-                            {renderValue(param)}
-                          </div>
-                          {param.description && (
-                            <p className="text-xs text-slate-500 mt-1">
-                              {param.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50">
+                        <TableHead className="w-[300px] font-semibold text-slate-900">
+                          Parâmetro
+                        </TableHead>
+                        <TableHead className="font-semibold text-slate-900">
+                          Valor
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {categoryDefs.map((paramDef) => {
+                        const existingParam = existingParams.find((p) => p.name === paramDef.name);
+                        const param = existingParam || {
+                          id: null,
+                          name: paramDef.name,
+                          category: paramDef.category,
+                          valueText: null,
+                          valueNumber: null,
+                          valueBoolean: null,
+                          valueRating: null,
+                          unit: paramDef.unit,
+                          description: paramDef.description,
+                          type: paramDef.type,
+                        };
+
+                        return (
+                          <TableRow key={paramDef.name} className="hover:bg-slate-50">
+                            <TableCell className="font-medium text-slate-900">
+                              <div>
+                                <div>{param.name}</div>
+                                {paramDef.description && (
+                                  <div className="text-xs text-slate-500 mt-1">
+                                    {paramDef.description}
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {renderValue(param)}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
                 </div>
               </CardContent>
             </Card>

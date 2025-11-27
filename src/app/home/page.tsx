@@ -13,6 +13,7 @@ import {
   ArrowRight,
   ExternalLink,
   ChevronRight,
+  ChevronDown,
   LogOut,
   BarChart3,
   CheckCircle2,
@@ -27,6 +28,15 @@ import { useFetch } from "@/hooks/use-fetch";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Link from "next/link";
+import { PARAMETER_CATEGORIES, PARAMETER_DEFINITIONS, getParametersByCategory } from "@/lib/parameter-definitions";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface HomeData {
   bet: {
@@ -53,13 +63,25 @@ interface HomeData {
   ranking: {
     position: number;
     total: number;
-    top5: Array<{
+    top10: Array<{
+      id: string;
+      name: string;
+      score: number;
+      position: number;
+    }>;
+    aboveCurrent: Array<{
       id: string;
       name: string;
       score: number;
       position: number;
     }>;
     belowCurrent: Array<{
+      id: string;
+      name: string;
+      score: number;
+      position: number;
+    }>;
+    allRanking?: Array<{
       id: string;
       name: string;
       score: number;
@@ -129,6 +151,7 @@ export default function HomePage() {
   const { toast } = useToast();
   const [selectedParameter, setSelectedParameter] = useState<HomeData["parameters"][0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRankingExpanded, setIsRankingExpanded] = useState(false);
 
   const { data, loading, error } = useFetch<HomeData>("/api/user/home", {
     immediate: true,
@@ -445,82 +468,158 @@ export default function HomePage() {
                     <CardTitle className="text-lg font-bold text-slate-900">Ranking</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Top 5 */}
-                    <div>
-                      <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                        Top 5
-                      </div>
-                      <div className="space-y-2">
-                        {ranking.top5.map((item) => (
-                          <div
-                            key={item.id}
-                            className={`flex items-center justify-between p-2 rounded-lg ${
-                              item.id === bet.id
-                                ? "bg-blue-100 border-2 border-blue-500"
-                                : "bg-white border border-slate-200"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-bold text-slate-700">#{item.position}</span>
-                              <span className="text-sm text-slate-900 truncate">{item.name}</span>
-                            </div>
-                            <span className="text-xs font-semibold text-slate-600">{item.score}</span>
+                    {!isRankingExpanded ? (
+                      <>
+                        {/* Top 10 */}
+                        <div>
+                          <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                            Top 10
                           </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Current Position (if not in top 5) */}
-                    {ranking.position > 5 && (
-                      <div>
-                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                          Sua Posição
-                        </div>
-                        <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-bold text-blue-700">#{ranking.position}</span>
-                              <span className="text-sm font-semibold text-blue-900 truncate">{bet.name}</span>
-                            </div>
-                            <span className="text-xs font-semibold text-blue-700">{rating.score}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Current Position Highlight (if in top 5) */}
-                    {ranking.position <= 5 && (
-                      <div className="mt-2 pt-2 border-t border-slate-200">
-                        <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
-                          Sua Posição
-                        </div>
-                        <div className="text-xs text-slate-600">
-                          Você está na posição <span className="font-bold text-blue-700">#{ranking.position}</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 5 Below Current */}
-                    {ranking.belowCurrent.length > 0 && (
-                      <div>
-                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                          Próximas Posições
-                        </div>
-                        <div className="space-y-2">
-                          {ranking.belowCurrent.map((item) => (
-                            <div
-                              key={item.id}
-                              className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-slate-700">#{item.position}</span>
-                                <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                          <div className="space-y-2">
+                            {ranking.top10.map((item) => (
+                              <div
+                                key={item.id}
+                                className={`flex items-center justify-between p-2 rounded-lg ${
+                                  item.id === bet.id
+                                    ? "bg-blue-100 border-2 border-blue-500"
+                                    : "bg-white border border-slate-200"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-bold text-slate-700">#{item.position}</span>
+                                  <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                                </div>
+                                <span className="text-xs font-semibold text-slate-600">{item.score}</span>
                               </div>
-                              <span className="text-xs font-semibold text-slate-600">{item.score}</span>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
+
+                        {/* 3 Above Current (if position > 3) */}
+                        {ranking.position > 3 && ranking.aboveCurrent.length > 0 && (
+                          <div>
+                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                              3 Acima de Você
+                            </div>
+                            <div className="space-y-2">
+                              {ranking.aboveCurrent.map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-slate-700">#{item.position}</span>
+                                    <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                                  </div>
+                                  <span className="text-xs font-semibold text-slate-600">{item.score}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Current Position Highlight */}
+                        <div className={`${ranking.position > 3 ? 'mt-2' : ''} pt-2 border-t border-slate-200`}>
+                          <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
+                            Sua Posição
+                          </div>
+                          <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-blue-700">#{ranking.position}</span>
+                                <span className="text-sm font-semibold text-blue-900 truncate">{bet.name}</span>
+                              </div>
+                              <span className="text-xs font-semibold text-blue-700">{rating.score}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 3 Below Current */}
+                        {ranking.belowCurrent.length > 0 && (
+                          <div>
+                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                              3 Abaixo de Você
+                            </div>
+                            <div className="space-y-2">
+                              {ranking.belowCurrent.map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-slate-700">#{item.position}</span>
+                                    <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                                  </div>
+                                  <span className="text-xs font-semibold text-slate-600">{item.score}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Expand Button */}
+                        {ranking.allRanking && ranking.allRanking.length > 0 && (
+                          <div className="pt-2 border-t border-slate-200">
+                            <Button
+                              onClick={() => setIsRankingExpanded(true)}
+                              variant="outline"
+                              className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-sm"
+                            >
+                              Ver Ranking Completo ({ranking.total} casas)
+                              <ChevronDown className="w-4 h-4 ml-2" />
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {/* Full Ranking */}
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                              Ranking Completo
+                            </div>
+                            <Button
+                              onClick={() => setIsRankingExpanded(false)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-2 text-xs text-slate-600 hover:text-slate-900"
+                            >
+                              Fechar
+                            </Button>
+                          </div>
+                          <div className="space-y-2 max-h-96 overflow-y-auto">
+                            {ranking.allRanking?.map((item) => (
+                              <div
+                                key={item.id}
+                                className={`flex items-center justify-between p-2 rounded-lg ${
+                                  item.id === bet.id
+                                    ? "bg-blue-100 border-2 border-blue-500"
+                                    : "bg-white border border-slate-200"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-sm font-bold ${
+                                    item.id === bet.id ? "text-blue-700" : "text-slate-700"
+                                  }`}>
+                                    #{item.position}
+                                  </span>
+                                  <span className={`text-sm truncate ${
+                                    item.id === bet.id ? "font-semibold text-blue-900" : "text-slate-900"
+                                  }`}>
+                                    {item.name}
+                                  </span>
+                                </div>
+                                <span className={`text-xs font-semibold ${
+                                  item.id === bet.id ? "text-blue-700" : "text-slate-600"
+                                }`}>
+                                  {item.score}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
                     )}
                   </CardContent>
                 </Card>
@@ -529,47 +628,99 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        {/* Parameters Grid */}
+        {/* Parameters Table - Organized by Category */}
         {parameters.length > 0 ? (
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Parâmetros</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {parameters.map((param) => (
-              <Card
-                key={param.id}
-                className="bg-white border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 rounded-2xl cursor-pointer"
-                onClick={() => handleParameterClick(param)}
-              >
-                <CardHeader className="pb-3 pt-6 px-6">
-                  <CardTitle className="text-lg font-bold text-slate-900">
-                    {param.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 px-6 pb-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-2xl font-bold text-slate-900">
-                        {param.value}
-                        {param.unit && <span className="text-base font-normal text-slate-600 ml-1">{param.unit}</span>}
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-slate-900">Parâmetros</h2>
+            {PARAMETER_CATEGORIES.map((category) => {
+              // Get all defined parameters in this category
+              const categoryDefs = getParametersByCategory(category);
+              
+              if (categoryDefs.length === 0) return null;
+
+              return (
+                <Card
+                  key={category}
+                  className="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden"
+                >
+                  <CardContent className="p-0">
+                    {/* Category Header */}
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-slate-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
+                        <h3 className="text-xl font-bold text-slate-900">{category}</h3>
+                        <span className="text-sm text-slate-500 font-normal">
+                          ({categoryDefs.length} parâmetros)
+                        </span>
                       </div>
                     </div>
-                    <div className="flex-shrink-0">{getTrendIcon(param.trend)}</div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-between text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleParameterClick(param);
-                    }}
-                  >
-                    <span className="text-sm font-medium">Ver histórico</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-              ))}
-            </div>
+
+                    {/* Table */}
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-slate-50">
+                            <TableHead className="w-[300px] font-semibold text-slate-900">
+                              Parâmetro
+                            </TableHead>
+                            <TableHead className="font-semibold text-slate-900">
+                              Valor
+                            </TableHead>
+                            <TableHead className="w-[100px] font-semibold text-slate-900 text-center">
+                              Tendência
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {categoryDefs.map((paramDef) => {
+                            const existingParam = parameters.find((p) => p.name === paramDef.name);
+                            const param = existingParam || {
+                              id: null,
+                              name: paramDef.name,
+                              category: paramDef.category,
+                              value: "-",
+                              unit: paramDef.unit,
+                              trend: "stable" as const,
+                              type: paramDef.type,
+                            };
+
+                            return (
+                              <TableRow 
+                                key={paramDef.name} 
+                                className="hover:bg-slate-50 cursor-pointer"
+                                onClick={() => param.id && handleParameterClick(param)}
+                              >
+                                <TableCell className="font-medium text-slate-900">
+                                  <div>
+                                    <div>{param.name}</div>
+                                    {paramDef.description && (
+                                      <div className="text-xs text-slate-500 mt-1">
+                                        {paramDef.description}
+                                      </div>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-base font-medium text-slate-900">
+                                      {param.value}
+                                      {param.unit && ` ${param.unit}`}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  {getTrendIcon(param.trend)}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         ) : (
           <Card className="bg-white border border-slate-200 rounded-2xl shadow-sm">

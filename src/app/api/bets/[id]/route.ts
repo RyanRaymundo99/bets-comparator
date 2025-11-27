@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
 
 // GET /api/bets/[id] - Get a specific bet
 export async function GET(
@@ -31,7 +32,53 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, bet });
+    // Create a map of existing parameters by name
+    const existingParamsMap = new Map(
+      bet.parameters.map((param) => [param.name, param])
+    );
+
+    // Merge all defined parameters with existing ones
+    const allParameters = PARAMETER_DEFINITIONS.map((paramDef) => {
+      const existingParam = existingParamsMap.get(paramDef.name);
+      
+      if (existingParam) {
+        // Return existing parameter with history
+        return {
+          ...existingParam,
+          category: existingParam.category || paramDef.category,
+          type: existingParam.type || paramDef.type,
+          unit: existingParam.unit || paramDef.unit,
+        };
+      } else {
+        // Return empty parameter structure (without ID since it doesn't exist in DB)
+        return {
+          id: null, // No ID for non-existent parameters
+          betId: bet.id,
+          name: paramDef.name,
+          category: paramDef.category,
+          valueText: null,
+          valueNumber: null,
+          valueBoolean: null,
+          valueRating: null,
+          unit: paramDef.unit || null,
+          description: paramDef.description || null,
+          type: paramDef.type,
+          options: paramDef.options || [],
+          createdAt: null,
+          updatedAt: null,
+          history: [],
+        };
+      }
+    });
+
+    // Return bet with all parameters (existing + missing)
+    return NextResponse.json({
+      success: true,
+      bet: {
+        ...bet,
+        parameters: allParameters,
+      },
+    });
   } catch (error) {
     console.error("Error fetching bet:", error);
     return NextResponse.json(

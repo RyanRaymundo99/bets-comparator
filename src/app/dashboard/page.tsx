@@ -19,6 +19,7 @@ import {
   Plus,
   X,
   ChevronUp as ChevronUpIcon,
+  CheckCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -155,7 +156,19 @@ export default function ClientDashboard() {
 
   const bets = betsData?.bets || [];
 
-  // Removed auto-select - user must manually select houses for comparison
+  // Auto-select user's bet when available
+  useEffect(() => {
+    const userBetId = linkStatus?.userBet?.bet?.id;
+    if (userBetId && !selectedBets.includes(userBetId)) {
+      setSelectedBets((prev) => {
+        // Always include user's bet, add it if not present
+        if (!prev.includes(userBetId)) {
+          return [userBetId, ...prev];
+        }
+        return prev;
+      });
+    }
+  }, [linkStatus?.userBet?.bet?.id, selectedBets]);
 
   // Generate insights using reusable hook
   const generateInsightsApi = useCallback(async () => {
@@ -184,7 +197,13 @@ export default function ClientDashboard() {
     });
 
   const handleCompare = () => {
-    if (selectedBets.length === 0) {
+    // Ensure user's bet is always included
+    const userBetId = linkStatus?.userBet?.bet?.id;
+    const betsToCompare = userBetId && !selectedBets.includes(userBetId)
+      ? [userBetId, ...selectedBets]
+      : selectedBets;
+
+    if (betsToCompare.length === 0) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -193,7 +212,7 @@ export default function ClientDashboard() {
       return;
     }
     // Navegar para página de comparação com os IDs das casas selecionadas
-    const queryParams = selectedBets.map((id) => `ids=${id}`).join("&");
+    const queryParams = betsToCompare.map((id) => `ids=${id}`).join("&");
     router.push(`/comparison?${queryParams}`);
   };
 
@@ -210,6 +229,17 @@ export default function ClientDashboard() {
   };
 
   const handleToggleBet = (betId: string) => {
+    // Prevent deselecting user's own bet
+    const userBetId = linkStatus?.userBet?.bet?.id;
+    if (betId === userBetId) {
+      toast({
+        variant: "default",
+        title: "Não é possível desmarcar",
+        description: "Sua casa de apostas sempre estará incluída na comparação",
+      });
+      return;
+    }
+
     setSelectedBets((prev) =>
       prev.includes(betId)
         ? prev.filter((id) => id !== betId)
@@ -547,24 +577,13 @@ export default function ClientDashboard() {
                         isSelected ? "ring-2 ring-blue-500" : ""
                       }`}
                     >
-                      {/* Botão + no canto superior direito */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleBet(userBet.id);
-                        }}
-                        className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-                          isSelected
-                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                            : "bg-blue-100 text-blue-600 hover:bg-blue-200"
-                        }`}
-                      >
-                        {isSelected ? (
-                          <X className="w-5 h-5" />
-                        ) : (
-                          <Plus className="w-5 h-5" />
-                        )}
-                      </button>
+                      {/* Badge indicando que está sempre selecionada */}
+                      <div className="absolute top-4 right-4 z-10">
+                        <div className="bg-green-600 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-semibold shadow-lg">
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          Sempre incluída
+                        </div>
+                      </div>
                       
                       <CardHeader className="relative pb-4 pt-6 px-6">
                         <div className="flex items-start justify-between gap-3">

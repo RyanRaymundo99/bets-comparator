@@ -1,17 +1,15 @@
-// Parameter definitions extracted from Excel spreadsheet
+// Parameter definitions with new 8-category structure
 // This file contains all parameter categories, types, and options
 
 export const PARAMETER_CATEGORIES = [
-  "Informações Básicas",
-  "Plataforma",
-  "Cashback",
-  "Pagamentos",
-  "Torneios",
-  "Fidelidade e Gamificação",
-  "Marketing e Tráfego",
-  "Social Media",
-  "Reputação",
-  "CRM e Promoções",
+  "Mercado e Acesso",
+  "Pagamentos & Financeiro",
+  "Plataforma & Experiência do Usuário",
+  "Produtos & Entretenimento",
+  "Gamificação & Fidelização",
+  "Marketing & Comunidade",
+  "Tráfego & Performance",
+  "CRM",
 ] as const;
 
 export type ParameterCategory = (typeof PARAMETER_CATEGORIES)[number];
@@ -35,499 +33,374 @@ export interface ParameterDefinition {
 }
 
 export const PARAMETER_DEFINITIONS: ParameterDefinition[] = [
-  // ===== INFORMAÇÕES BÁSICAS =====
+  // ===== 1. MERCADO E ACESSO =====
   {
-    name: "Status",
-    category: "Informações Básicas",
-    type: "select",
-    options: [
-      "Funcionando",
-      "Fora do ar",
-      "Redirect Pro Principal",
-      "Anunciado pra entrar no Ar",
-      "A definir",
-    ],
-  },
-  {
-    name: "Abrangência",
-    category: "Informações Básicas",
+    name: "Só Brasil ou + países",
+    category: "Mercado e Acesso",
     type: "select",
     options: ["Brasil", "Mundial"],
-    description: "Só Brasil ou + Países",
   },
-  {
-    name: "Tipo de Plataforma",
-    category: "Informações Básicas",
-    type: "select",
-    options: ["Casino", "Sports", "Ambos"],
-    description: "Capa Principal",
-  },
-
-  // ===== PLATAFORMA =====
   {
     name: "KYC",
-    category: "Plataforma",
+    category: "Mercado e Acesso",
     type: "select",
-    options: ["Single", "Registro", "Depósito", "Não"],
+    options: ["Registro", "Depósito", "Na hora de jogar", "Não"],
+    description: "KYC (Registro, Deposito ou na hora de jogar)",
   },
   {
     name: "Login pelo Google",
-    category: "Plataforma",
+    category: "Mercado e Acesso",
     type: "boolean",
   },
   {
-    name: "Afiliação pelo Site",
-    category: "Plataforma",
+    name: "Tem aplicativo",
+    category: "Mercado e Acesso",
     type: "boolean",
   },
+
+  // ===== 2. PAGAMENTOS & FINANCEIRO =====
   {
-    name: "Modelo Afiliação",
-    category: "Plataforma",
-    type: "text",
-  },
-  {
-    name: "Depósito Mínimo",
-    category: "Plataforma",
+    name: "Saque mínimo",
+    category: "Pagamentos & Financeiro",
     type: "currency",
     unit: "R$",
   },
   {
-    name: "Saque Máximo",
-    category: "Plataforma",
+    name: "Depósito mínimo",
+    category: "Pagamentos & Financeiro",
+    type: "currency",
+    unit: "R$",
+  },
+  {
+    name: "Saque máximo",
+    category: "Pagamentos & Financeiro",
     type: "currency",
     unit: "R$",
   },
   {
     name: "Aceita Crypto",
-    category: "Plataforma",
+    category: "Pagamentos & Financeiro",
     type: "boolean",
   },
   {
-    name: "Usabilidade Plataforma",
-    category: "Plataforma",
-    type: "rating",
-    min: 0,
-    max: 5,
-    description: "Avaliação em estrelas",
-  },
-  {
-    name: "Melhorias Usabilidade",
-    category: "Plataforma",
-    type: "text",
-  },
-  {
-    name: "Layout Plataforma",
-    category: "Plataforma",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Layout",
-    category: "Plataforma",
-    type: "text",
-  },
-  {
-    name: "Tem Aplicativo",
-    category: "Plataforma",
-    type: "boolean",
-  },
-  {
-    name: "Multi Slots Simultâneos",
-    category: "Plataforma",
+    name: "Pagamento instantâneo",
+    category: "Pagamentos & Financeiro",
     type: "boolean",
   },
 
-  // ===== CASHBACK =====
+  // ===== 3. PLATAFORMA & EXPERIÊNCIA DO USUÁRIO =====
   {
-    name: "Cashback Casino",
-    category: "Cashback",
-    type: "boolean",
+    name: "Plataforma",
+    category: "Plataforma & Experiência do Usuário",
+    type: "text",
+    description: "Fornecedor",
   },
   {
-    name: "Nota Cashback Casino",
-    category: "Cashback",
+    name: "Usabilidade",
+    category: "Plataforma & Experiência do Usuário",
     type: "rating",
     min: 0,
     max: 5,
+    description: "Nota",
   },
   {
-    name: "Melhorias Cashback Casino",
-    category: "Cashback",
-    type: "text",
-  },
-  {
-    name: "Cashback Sports",
-    category: "Cashback",
-    type: "boolean",
-  },
-  {
-    name: "Nota Cashback Sports",
-    category: "Cashback",
+    name: "Layout",
+    category: "Plataforma & Experiência do Usuário",
     type: "rating",
     min: 0,
     max: 5,
+    description: "Nota",
   },
   {
-    name: "Melhorias Cashback Sports",
-    category: "Cashback",
-    type: "text",
-  },
-
-  // ===== PAGAMENTOS =====
-  {
-    name: "Pagamento Antecipado Esportes",
-    category: "Pagamentos",
+    name: "Multi Slots simultâneos",
+    category: "Plataforma & Experiência do Usuário",
     type: "boolean",
   },
   {
-    name: "Descrição Pagamento Antecipado",
-    category: "Pagamentos",
-    type: "text",
-  },
-  {
-    name: "Cashout",
-    category: "Pagamentos",
-    type: "boolean",
-  },
-
-  // ===== TORNEIOS =====
-  {
-    name: "Torneios Casino",
-    category: "Torneios",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Torneios Casino",
-    category: "Torneios",
-    type: "text",
-  },
-  {
-    name: "Nota Torneios Casino",
-    category: "Torneios",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Torneios Casino",
-    category: "Torneios",
-    type: "text",
-  },
-  {
-    name: "Torneio Casino ao Vivo",
-    category: "Torneios",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Torneio Casino Vivo",
-    category: "Torneios",
-    type: "text",
-  },
-  {
-    name: "Nota Torneio Casino Vivo",
-    category: "Torneios",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Torneio Casino Vivo",
-    category: "Torneios",
-    type: "text",
-  },
-  {
-    name: "Torneio Esportes",
-    category: "Torneios",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Torneio Esportes",
-    category: "Torneios",
-    type: "text",
-  },
-  {
-    name: "Nota Torneio Esportes",
-    category: "Torneios",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Torneio Esportes",
-    category: "Torneios",
-    type: "text",
-  },
-
-  // ===== FIDELIDADE E GAMIFICAÇÃO =====
-  {
-    name: "Programa Fidelidade",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Vantagens Fidelidade",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Nota Fidelidade",
-    category: "Fidelidade e Gamificação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Fidelidade",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Loja",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Descrição Loja",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Nota Loja",
-    category: "Fidelidade e Gamificação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Loja",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Missões",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Missões",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Nota Missões",
-    category: "Fidelidade e Gamificação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Missões",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Indique um Amigo",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Indique Amigo",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Promoções",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Bolão",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Bolão",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Nota Bolão",
-    category: "Fidelidade e Gamificação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Bolão",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Gamificação",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Raspadinha",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Raspadinha",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Nota Raspadinha",
-    category: "Fidelidade e Gamificação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Raspadinha",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Roleta Premiada",
-    category: "Fidelidade e Gamificação",
-    type: "boolean",
-  },
-  {
-    name: "Descrição Roleta Premiada",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-  {
-    name: "Nota Roleta Premiada",
-    category: "Fidelidade e Gamificação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Roleta Premiada",
-    category: "Fidelidade e Gamificação",
-    type: "text",
-  },
-
-  // ===== MARKETING E TRÁFEGO =====
-  {
-    name: "Acessos Mês",
-    category: "Marketing e Tráfego",
-    type: "number",
-  },
-  {
-    name: "Usuários Únicos Mês",
-    category: "Marketing e Tráfego",
-    type: "number",
-  },
-  {
-    name: "Tempo Médio no Site",
-    category: "Marketing e Tráfego",
+    name: "Tempo médio no site",
+    category: "Plataforma & Experiência do Usuário",
     type: "text",
     description: "Formato: mm'ss",
   },
   {
-    name: "Ranking Acessos",
-    category: "Marketing e Tráfego",
+    name: "Melhorias necessárias (UX/UI)",
+    category: "Plataforma & Experiência do Usuário",
     type: "text",
-    description: "Posição no ranking (ex: 30°)",
   },
   {
-    name: "Tráfego Mês",
-    category: "Marketing e Tráfego",
+    name: "Melhorias necessárias (Performance)",
+    category: "Plataforma & Experiência do Usuário",
+    type: "text",
+  },
+
+  // ===== 4. PRODUTOS & ENTRETENIMENTO =====
+  {
+    name: "Torneio de cassino",
+    category: "Produtos & Entretenimento",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Torneio de cassino",
+    category: "Produtos & Entretenimento",
+    type: "text",
+  },
+  {
+    name: "Torneio ao vivo",
+    category: "Produtos & Entretenimento",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Torneio ao vivo",
+    category: "Produtos & Entretenimento",
+    type: "text",
+  },
+  {
+    name: "Torneio esportivo",
+    category: "Produtos & Entretenimento",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Torneio esportivo",
+    category: "Produtos & Entretenimento",
+    type: "text",
+  },
+  {
+    name: "Cashback",
+    category: "Produtos & Entretenimento",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Cashback",
+    category: "Produtos & Entretenimento",
+    type: "text",
+  },
+  {
+    name: "Pagamento antecipado",
+    category: "Produtos & Entretenimento",
+    type: "boolean",
+  },
+  {
+    name: "Indique um amigo",
+    category: "Produtos & Entretenimento",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Indique um amigo",
+    category: "Produtos & Entretenimento",
+    type: "text",
+  },
+  {
+    name: "Afiliação pelo site",
+    category: "Produtos & Entretenimento",
+    type: "boolean",
+  },
+  {
+    name: "Modelo de afiliação",
+    category: "Produtos & Entretenimento",
+    type: "text",
+  },
+
+  // ===== 5. GAMIFICAÇÃO & FIDELIZAÇÃO =====
+  {
+    name: "Programa de fidelidade",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Vantagens Programa de fidelidade",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+  {
+    name: "Missões",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Missões",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+  {
+    name: "Raspadinha",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Raspadinha",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+  {
+    name: "Bolão",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Bolão",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+  {
+    name: "Quiz",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Quiz",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+  {
+    name: "Roleta premiada",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Roleta premiada",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+  {
+    name: "Loja / Store",
+    category: "Gamificação & Fidelização",
+    type: "rating",
+    min: 0,
+    max: 5,
+    description: "Nota",
+  },
+  {
+    name: "Descrição Loja / Store",
+    category: "Gamificação & Fidelização",
+    type: "text",
+  },
+
+  // ===== 6. MARKETING & COMUNIDADE =====
+  {
+    name: "Instagram",
+    category: "Marketing & Comunidade",
+    type: "text",
+    description: "N° Seguidores",
+  },
+  {
+    name: "Canal Telegram",
+    category: "Marketing & Comunidade",
+    type: "text",
+    description: "N° Seguidores",
+  },
+  {
+    name: "Canal WhatsApp",
+    category: "Marketing & Comunidade",
+    type: "text",
+    description: "N° Seguidores",
+  },
+  {
+    name: "Garoto(a) propaganda",
+    category: "Marketing & Comunidade",
+    type: "text",
+  },
+  {
+    name: "Patrocínio de times",
+    category: "Marketing & Comunidade",
+    type: "text",
+  },
+  {
+    name: "Promoções Macros",
+    category: "Marketing & Comunidade",
+    type: "text",
+  },
+  {
+    name: "Campanha da semana",
+    category: "Marketing & Comunidade",
+    type: "text",
+  },
+  {
+    name: "Nota Reclame Aqui",
+    category: "Marketing & Comunidade",
+    type: "text",
+    description: "Ex: 8.9/10",
+  },
+
+  // ===== 7. TRÁFEGO & PERFORMANCE =====
+  {
+    name: "Acessos por mês",
+    category: "Tráfego & Performance",
+    type: "number",
+  },
+  {
+    name: "Tráfego mensal",
+    category: "Tráfego & Performance",
     type: "currency",
     unit: "R$",
   },
   {
-    name: "Principais Canais",
-    category: "Marketing e Tráfego",
+    name: "Principais canais de aquisição",
+    category: "Tráfego & Performance",
     type: "text",
     description: "Ex: Google/Meta",
   },
   {
-    name: "Bounce Rate",
-    category: "Marketing e Tráfego",
+    name: "Bounce rate",
+    category: "Tráfego & Performance",
     type: "percentage",
     unit: "%",
   },
   {
-    name: "Garoto(a) Propaganda",
-    category: "Marketing e Tráfego",
+    name: "Tempo médio no site",
+    category: "Tráfego & Performance",
     type: "text",
-  },
-  {
-    name: "Patrocínio de Times",
-    category: "Marketing e Tráfego",
-    type: "text",
+    description: "Formato: mm'ss",
   },
 
-  // ===== SOCIAL MEDIA =====
-  {
-    name: "Seguidores Instagram",
-    category: "Social Media",
-    type: "text",
-    description: "Ex: 120 mil Seguidores",
-  },
-  {
-    name: "Canal Telegram",
-    category: "Social Media",
-    type: "boolean",
-  },
-  {
-    name: "Canal WhatsApp",
-    category: "Social Media",
-    type: "boolean",
-  },
-
-  // ===== REPUTAÇÃO =====
-  {
-    name: "Nota Reclame Aqui",
-    category: "Reputação",
-    type: "text",
-    description: "Ex: 8.9/10",
-  },
-  {
-    name: "Nota Final",
-    category: "Reputação",
-    type: "rating",
-    min: 0,
-    max: 5,
-  },
-  {
-    name: "Melhorias Gerais",
-    category: "Reputação",
-    type: "text",
-  },
-
-  // ===== CRM E PROMOÇÕES =====
+  // ===== 8. CRM =====
   {
     name: "CRM Canais",
-    category: "CRM e Promoções",
+    category: "CRM",
     type: "text",
   },
   {
     name: "CRM Frequência",
-    category: "CRM e Promoções",
+    category: "CRM",
     type: "text",
   },
   {
-    name: "Principais Ofertas",
-    category: "CRM e Promoções",
+    name: "Principais ofertas",
+    category: "CRM",
     type: "text",
-  },
-  {
-    name: "Campanha Semana",
-    category: "CRM e Promoções",
-    type: "text",
-  },
-  {
-    name: "Diferenciais",
-    category: "CRM e Promoções",
-    type: "text",
+    description: "Conectar com Produtos & Entretenimento",
   },
 ];
 
@@ -541,7 +414,7 @@ export function getParameterDefinition(name: string) {
   return PARAMETER_DEFINITIONS.find((p) => p.name === name);
 }
 
-// All status options
+// All status options (kept for backward compatibility)
 export const STATUS_OPTIONS = [
   "Funcionando",
   "Fora do ar",
@@ -550,11 +423,11 @@ export const STATUS_OPTIONS = [
   "A definir",
 ] as const;
 
-// All platform type options
+// All platform type options (kept for backward compatibility)
 export const PLATFORM_TYPE_OPTIONS = ["Casino", "Sports", "Ambos"] as const;
 
 // All KYC options
-export const KYC_OPTIONS = ["Single", "Registro", "Depósito", "Não"] as const;
+export const KYC_OPTIONS = ["Registro", "Depósito", "Na hora de jogar", "Não"] as const;
 
 // All scope options
 export const SCOPE_OPTIONS = ["Brasil", "Mundial"] as const;
