@@ -1,5 +1,7 @@
 import { PrismaClient } from '../../prisma/generated/client'
 import type { Decimal as DecimalType } from '../../prisma/generated/client/runtime/library'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
 // Import Decimal dynamically to avoid module resolution issues
 let Decimal: typeof DecimalType;
@@ -15,7 +17,21 @@ try {
 }
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  // Ensure DATABASE_URL is available
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL environment variable is not set');
+  }
+  
+  // Create a connection pool for PostgreSQL
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+  
+  // Create the adapter
+  const adapter = new PrismaPg(pool);
+  
+  // Initialize PrismaClient with the adapter
+  return new PrismaClient({ adapter });
 };
 
 declare const globalThis: {

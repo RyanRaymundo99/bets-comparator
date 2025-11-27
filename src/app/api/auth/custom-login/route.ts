@@ -90,8 +90,18 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("Custom login error:", error);
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
-      { success: false, error: "Erro interno do servidor" },
+      { 
+        success: false, 
+        error: "Erro interno do servidor",
+        details: process.env.NODE_ENV === "development" 
+          ? (error instanceof Error ? error.message : String(error))
+          : undefined
+      },
       { status: 500 }
     );
   }
