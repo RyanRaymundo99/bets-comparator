@@ -2,28 +2,28 @@
 
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { PARAMETER_CATEGORIES } from "@/lib/parameter-definitions";
-import { Legend } from "recharts";
+import { TrendingUp } from "lucide-react";
 
-// Lazy load radar chart components
-const RadarChart = dynamic(
-  () => import("recharts").then((mod) => mod.RadarChart),
+// Lazy load line chart components
+const LineChart = dynamic(
+  () => import("recharts").then((mod) => mod.LineChart),
   { ssr: false }
 );
-const Radar = dynamic(() => import("recharts").then((mod) => mod.Radar), {
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line), {
   ssr: false,
 });
-const PolarGrid = dynamic(
-  () => import("recharts").then((mod) => mod.PolarGrid),
+const CartesianGrid = dynamic(
+  () => import("recharts").then((mod) => mod.CartesianGrid),
   { ssr: false }
 );
-const PolarAngleAxis = dynamic(
-  () => import("recharts").then((mod) => mod.PolarAngleAxis),
+const XAxis = dynamic(
+  () => import("recharts").then((mod) => mod.XAxis),
   { ssr: false }
 );
-const PolarRadiusAxis = dynamic(
-  () => import("recharts").then((mod) => mod.PolarRadiusAxis),
+const YAxis = dynamic(
+  () => import("recharts").then((mod) => mod.YAxis),
   { ssr: false }
 );
 const ResponsiveContainer = dynamic(
@@ -31,6 +31,9 @@ const ResponsiveContainer = dynamic(
   { ssr: false }
 );
 const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
+  ssr: false,
+});
+const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), {
   ssr: false,
 });
 
@@ -164,7 +167,7 @@ function calculateCategoryScore(
 
 export function ComparisonRadarChart({ bets }: ComparisonRadarChartProps) {
   const chartData = useMemo(() => {
-    // Criar dados para o gráfico radar
+    // Criar dados para o gráfico de linhas
     const data = PARAMETER_CATEGORIES.map((category) => {
       const categoryData: Record<string, string | number> = {
         category: category,
@@ -182,30 +185,24 @@ export function ComparisonRadarChart({ bets }: ComparisonRadarChartProps) {
     return data;
   }, [bets]);
 
-  const chartConfig = useMemo(() => {
-    const config: Record<string, { label: string; color: string }> = {};
-    bets.forEach((bet, index) => {
-      config[bet.id] = {
-        label: bet.name,
-        color: COLORS[index % COLORS.length].stroke,
-      };
-    });
-    return config;
-  }, [bets]);
-
   if (bets.length === 0) {
     return null;
   }
 
-  // Calcular pontuação geral (média de todas as categorias)
-  const overallScores = bets.map((bet) => {
-    const categoryScores = PARAMETER_CATEGORIES.map((cat) =>
-      calculateCategoryScore(bet, cat, bets)
-    );
-    const avgScore =
-      categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length;
-    return Math.round(avgScore);
-  });
+  // Função para abreviar nomes de categorias para o eixo X
+  const abbreviateCategory = (category: string): string => {
+    const abbreviations: Record<string, string> = {
+      "Mercado e Acesso": "Mercado",
+      "Pagamentos & Financeiro": "Pagamentos",
+      "Plataforma & Experiência do Usuário": "Plataforma",
+      "Produtos & Entretenimento": "Produtos",
+      "Gamificação & Fidelização": "Gamificação",
+      "Marketing & Comunidade": "Marketing",
+      "Tráfego & Performance": "Tráfego",
+      "CRM": "CRM",
+    };
+    return abbreviations[category] || category.slice(0, 8);
+  };
 
   return (
     <Card className="bg-white border border-slate-200 shadow-sm rounded-xl">
@@ -215,81 +212,77 @@ export function ComparisonRadarChart({ bets }: ComparisonRadarChartProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
-          {/* Gráfico Radar */}
-          <div className="h-[400px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={chartData}>
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis
-                  dataKey="category"
-                  tick={{ fill: "#64748b", fontSize: 12 }}
-                  className="text-xs"
-                  reversed={false}
-                  scale="auto"
-                />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, 100]}
-                  tick={{ fill: "#94a3b8", fontSize: 10 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "8px",
-                    color: "#1e293b",
-                  }}
-                  formatter={(value: unknown) => `${value} pontos`}
-                />
-                <Legend />
-                {bets.map((bet, index) => {
-                  const color = COLORS[index % COLORS.length];
-                  return (
-                    <Radar
-                      key={bet.id}
-                      name={bet.name}
-                      dataKey={bet.id}
-                      stroke={color.stroke}
-                      fill={color.fill}
-                      strokeWidth={2}
-                    />
-                  );
-                })}
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Pontuações Gerais */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
-            {bets.map((bet, index) => {
-              const score = overallScores[index];
-              const color = COLORS[index % COLORS.length];
-              return (
-                <div
-                  key={bet.id}
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200"
-                >
-                  <div>
-                    <p className="text-sm text-slate-600 font-medium">
-                      {bet.name}
-                    </p>
-                    <p className="text-2xl font-bold text-slate-900 mt-1">
-                      {score} Pontos
-                    </p>
-                  </div>
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: color.stroke }}
-                  >
-                    {score}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        <div className="h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{
+                left: 12,
+                right: 12,
+                top: 12,
+                bottom: 12,
+              }}
+            >
+              <CartesianGrid vertical={false} stroke="#e2e8f0" />
+              <XAxis
+                dataKey="category"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tick={{ fill: "#64748b", fontSize: 12 }}
+                tickFormatter={(value) => abbreviateCategory(value)}
+                angle={-45}
+                textAnchor="end"
+                height={80}
+              />
+              <YAxis
+                domain={[0, 100]}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "#64748b", fontSize: 12 }}
+                tickMargin={8}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "8px",
+                  color: "#1e293b",
+                }}
+                formatter={(value: unknown) => `${value} pontos`}
+              />
+              <Legend />
+              {bets.map((bet, index) => {
+                const color = COLORS[index % COLORS.length];
+                return (
+                  <Line
+                    key={bet.id}
+                    type="monotone"
+                    dataKey={bet.id}
+                    name={bet.name}
+                    stroke={color.stroke}
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                );
+              })}
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
+      <CardFooter>
+        <div className="flex w-full items-start gap-2 text-sm">
+          <div className="grid gap-2">
+            <div className="flex items-center gap-2 leading-none font-medium">
+              Comparação de {bets.length} {bets.length === 1 ? "casa" : "casas"} de apostas{" "}
+              <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="text-muted-foreground flex items-center gap-2 leading-none">
+              Mostrando pontuação por categoria (0-100 pontos)
+            </div>
+          </div>
+        </div>
+      </CardFooter>
     </Card>
   );
 }
