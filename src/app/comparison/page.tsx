@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, Suspense } from "react";
+import React, { useState, useEffect, useMemo, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Building2, ExternalLink, Star, CheckCircle, XCircle, ChevronRight } from "lucide-react";
+import { ArrowLeft, Building2, ExternalLink, Star, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
@@ -50,6 +50,33 @@ function ComparisonPageContent() {
   const { toast } = useToast();
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isHeaderShrunk, setIsHeaderShrunk] = useState(false);
+  
+  // Ref para o elemento que marca o fim do gráfico (trigger point)
+  const chartEndRef = useRef<HTMLDivElement>(null);
+
+  // Detectar quando chegar na seção "Comparação Detalhada" para ativar o shrinking header
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Só ativa quando o elemento saiu para CIMA da tela (não quando está abaixo)
+        // boundingClientRect.top < 0 significa que o elemento está acima da viewport
+        const isAboveViewport = entry.boundingClientRect.top < 0;
+        setIsHeaderShrunk(!entry.isIntersecting && isAboveViewport);
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px 0px 0px",
+        threshold: 0,
+      }
+    );
+
+    if (chartEndRef.current) {
+      observer.observe(chartEndRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [bets]);
 
   // Pegar IDs dos query params
   const betIds = useMemo(() => {
@@ -243,8 +270,98 @@ function ComparisonPageContent() {
     );
   }
 
+  // Componente para renderizar o mini card no header shrunk
+  const renderShrunkCard = (bet: Bet) => {
+    const score = calculateBetScore(bet);
+    
+    return (
+      <div className="flex items-center gap-3 px-4 py-2">
+        {/* Logo pequeno */}
+        <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 border border-slate-200 shadow-sm flex-shrink-0">
+          {bet.coverImage ? (
+            <Image src={bet.coverImage} alt={bet.name} fill className="object-cover" sizes="48px" />
+          ) : bet.logo ? (
+            <Image src={bet.logo} alt={bet.name} fill className="object-cover" sizes="48px" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-blue-400" />
+            </div>
+          )}
+        </div>
+        
+        {/* Nome e score */}
+        <div className="flex-1 min-w-0">
+          <span className="text-sm font-semibold text-slate-900 truncate block">
+            {bet.name}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500">{score} pts</span>
+            {bet.url && (
+              <a
+                href={bet.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
+              >
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+        </div>
+        
+        {/* Score badge */}
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base font-bold shadow-sm flex-shrink-0">
+          {score}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
+      {/* Shrinking Header - Aparece quando passar do gráfico */}
+      <div 
+        className={`fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-lg transition-all duration-300 ${
+          isHeaderShrunk ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header com botão voltar */}
+          <div className="flex items-center gap-3 py-2 border-b border-slate-100">
+            <Link href="/dashboard">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg h-8 px-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            </Link>
+            <span className="text-sm font-medium text-slate-600 truncate">
+              Comparação
+            </span>
+          </div>
+          
+          {/* Mini cards das bets */}
+          <div className={`flex items-center ${bets.length === 2 ? "justify-center" : "justify-start"} py-2 gap-2`}>
+            {bets.map((bet, index) => (
+              <React.Fragment key={bet.id}>
+                <div className={`${bets.length === 2 ? "flex-1 max-w-[280px]" : ""} bg-slate-50 rounded-xl`}>
+                  {renderShrunkCard(bet)}
+                </div>
+                
+                {/* VS Separator */}
+                {index < bets.length - 1 && bets.length === 2 && (
+                  <div className="flex-shrink-0 bg-blue-100 px-3 py-1 rounded-full">
+                    <span className="text-sm font-bold text-blue-600">VS</span>
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -442,6 +559,9 @@ function ComparisonPageContent() {
 
         {/* Detailed Parameters Section */}
         <div className="mt-12 pt-8 border-t border-slate-200">
+          {/* Trigger point para o shrinking header - ativa ao chegar na Comparação Detalhada */}
+          <div ref={chartEndRef} className="h-0" aria-hidden="true" />
+          
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
               Comparação Detalhada
