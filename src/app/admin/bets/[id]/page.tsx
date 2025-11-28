@@ -58,11 +58,7 @@ export default function EditBetPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(null);
-  const [coverPosition, setCoverPosition] = useState(50); // Position percentage (0-100)
-  const [isDraggingCover, setIsDraggingCover] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -118,9 +114,6 @@ export default function EditBetPage() {
         // Set image previews
         if (data.bet.logo) {
           setLogoPreview(data.bet.logo);
-        }
-        if (data.bet.coverImage) {
-          setCoverPreview(data.bet.coverImage);
         }
       } else {
         throw new Error(data.error);
@@ -186,8 +179,8 @@ export default function EditBetPage() {
 
   const handleImageUpload = async (type: "logo" | "cover", file: File) => {
     const isLogo = type === "logo";
-    const setUploading = isLogo ? setUploadingLogo : setUploadingCover;
-    const setPreview = isLogo ? setLogoPreview : setCoverPreview;
+    const setUploading = setUploadingLogo;
+    const setPreview = setLogoPreview;
 
     // Validate file
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -229,18 +222,14 @@ export default function EditBetPage() {
       if (response.ok && data.success) {
         toast({
           title: "Sucesso",
-          description: `${isLogo ? "Logo" : "Cover"} enviado com sucesso`,
+          description: "Logo enviado com sucesso",
         });
         setPreview(data.path);
-        // Reset cover position when new cover is uploaded
-        if (!isLogo) {
-          setCoverPosition(50);
-        }
         // Update bet state
         if (bet) {
           setBet({
             ...bet,
-            [isLogo ? "logo" : "coverImage"]: data.path,
+            logo: data.path,
           });
         }
       } else {
@@ -279,9 +268,8 @@ export default function EditBetPage() {
   };
 
   const handleImageRemove = async (type: "logo" | "cover") => {
-    const isLogo = type === "logo";
-    const setUploading = isLogo ? setUploadingLogo : setUploadingCover;
-    const setPreview = isLogo ? setLogoPreview : setCoverPreview;
+    const setUploading = setUploadingLogo;
+    const setPreview = setLogoPreview;
 
     try {
       setUploading(true);
@@ -299,14 +287,14 @@ export default function EditBetPage() {
       if (response.ok && data.success) {
         toast({
           title: "Sucesso",
-          description: `${isLogo ? "Logo" : "Cover"} removido com sucesso`,
+          description: "Logo removido com sucesso",
         });
         setPreview(null);
         // Update bet state
         if (bet) {
           setBet({
             ...bet,
-            [isLogo ? "logo" : "coverImage"]: null,
+            logo: null,
           });
         }
       } else {
@@ -334,6 +322,18 @@ export default function EditBetPage() {
     e.target.value = "";
   };
 
+  // Format URL for iframe (ensure it has protocol)
+  const getIframeUrl = (url: string | undefined): string | null => {
+    if (!url) return null;
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) return null;
+    // If URL doesn't start with http:// or https://, add https://
+    if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
+      return `https://${trimmedUrl}`;
+    }
+    return trimmedUrl;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 flex items-center justify-center">
@@ -343,8 +343,8 @@ export default function EditBetPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
@@ -371,151 +371,91 @@ export default function EditBetPage() {
           </Link>
         </div>
 
-        {/* Images Section - Cover and Logo (Facebook-style) */}
-        <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden mb-6">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-slate-900 text-xl">Imagens</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {/* Cover Image with Logo Overlay */}
-            <div className="relative w-full">
-              {/* Cover Image */}
-              <div className="relative w-full h-64 md:h-80 bg-slate-100 overflow-hidden">
-                {coverPreview ? (
-                  <>
-                    <div className="relative w-full h-full overflow-hidden">
-                      <Image
-                        src={coverPreview}
-                        alt="Cover"
-                        fill
-                        className="object-cover transition-transform duration-200"
-                        style={{
-                          objectPosition: `center ${coverPosition}%`,
-                        }}
-                      />
-                    </div>
-                    {/* Position Adjuster */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/40">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="text-white text-sm font-medium bg-black/80 px-4 py-2 rounded-lg shadow-lg">
-                          Arraste para ajustar a posição
-                        </div>
-                        <div className="flex gap-2">
-                          <label className="cursor-pointer">
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/jpg,image/png,image/webp"
-                              onChange={(e) => handleFileSelect("cover", e)}
-                              className="hidden"
-                              disabled={uploadingCover}
-                            />
-                            <Button
-                              type="button"
-                              size="sm"
-                              className="bg-blue-600 hover:bg-blue-700"
-                              disabled={uploadingCover}
-                            >
-                              <Upload className="w-4 h-4 mr-2" />
-                              {uploadingCover ? "Enviando..." : "Alterar Capa"}
-                            </Button>
-                          </label>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleImageRemove("cover")}
-                            disabled={uploadingCover}
-                          >
-                            <X className="w-4 h-4 mr-2" />
-                            Remover
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Drag Handle */}
-                    <div
-                      className="absolute inset-0 cursor-move"
-                      onMouseDown={(e) => {
-                        setIsDraggingCover(true);
-                        e.preventDefault();
-                      }}
-                      onMouseMove={(e) => {
-                        if (isDraggingCover) {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const y = e.clientY - rect.top;
-                          const percentage = Math.max(0, Math.min(100, (y / rect.height) * 100));
-                          setCoverPosition(percentage);
-                        }
-                      }}
-                      onMouseUp={() => setIsDraggingCover(false)}
-                      onMouseLeave={() => setIsDraggingCover(false)}
-                    />
-                  </>
+        {/* Images Section - Iframe and Logo */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Iframe Section - Takes 2/3 on large screens */}
+          <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden lg:col-span-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-slate-900 text-xl">Visualização do Website</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-slate-100 overflow-hidden rounded-b-2xl">
+                {getIframeUrl(formData.url) ? (
+                  <iframe
+                    src={getIframeUrl(formData.url) || ""}
+                    className="w-full h-full border-0"
+                    title="Casa de Apostas Website"
+                    allow="fullscreen"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                  />
                 ) : (
-                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200/50 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      onChange={(e) => handleFileSelect("cover", e)}
-                      className="hidden"
-                      disabled={uploadingCover}
-                    />
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100">
                     <ImageIcon className="w-12 h-12 text-slate-400 mb-2" />
-                    <span className="text-slate-600 text-sm">
-                      {uploadingCover ? "Enviando..." : "Clique para fazer upload da capa"}
+                    <span className="text-slate-600 text-sm text-center px-4">
+                      Adicione uma URL no campo "Website" para visualizar o site aqui
                     </span>
-                    <span className="text-slate-500 text-xs mt-1">
-                      Recomendado: 1200x400px
-                    </span>
-                  </label>
+                  </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Logo Overlay (Facebook-style) */}
-              <div className="absolute -bottom-16 md:-bottom-20 left-6 md:left-8">
-                <div className="relative w-32 h-32 md:w-40 md:h-40 bg-white rounded-full overflow-hidden border-4 border-white shadow-xl">
-                  {logoPreview ? (
-                    <>
-                      <Image
-                        src={logoPreview}
-                        alt="Logo"
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                        <div className="flex gap-2">
-                          <label className="cursor-pointer">
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/jpg,image/png,image/webp"
-                              onChange={(e) => handleFileSelect("logo", e)}
-                              className="hidden"
-                              disabled={uploadingLogo}
-                            />
-                            <Button
-                              type="button"
-                              size="sm"
-                              className="bg-blue-600 hover:bg-blue-700 h-8 px-3"
-                              disabled={uploadingLogo}
-                            >
-                              <Upload className="w-3 h-3" />
-                            </Button>
-                          </label>
+          {/* Logo Section - Takes 1/3 on large screens */}
+          <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl">
+            <CardHeader>
+              <CardTitle className="text-slate-900 text-xl">Logo</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {logoPreview ? (
+                <>
+                  <div className="relative w-full aspect-square max-w-xs mx-auto bg-slate-100 rounded-full overflow-hidden border-4 border-slate-200 shadow-lg">
+                    <Image
+                      src={logoPreview}
+                      alt="Logo"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full">
+                      <div className="flex gap-2">
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/jpg,image/png,image/webp"
+                            onChange={(e) => handleFileSelect("logo", e)}
+                            className="hidden"
+                            disabled={uploadingLogo}
+                          />
                           <Button
                             type="button"
                             size="sm"
-                            variant="destructive"
-                            onClick={() => handleImageRemove("logo")}
+                            className="bg-blue-600 hover:bg-blue-700"
                             disabled={uploadingLogo}
-                            className="h-8 px-3"
                           >
-                            <X className="w-3 h-3" />
+                            <Upload className="w-4 h-4 mr-2" />
+                            Alterar
                           </Button>
-                        </div>
+                        </label>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleImageRemove("logo")}
+                          disabled={uploadingLogo}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Remover
+                        </Button>
                       </div>
-                    </>
-                  ) : (
-                    <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors">
+                    </div>
+                  </div>
+                  <p className="text-slate-500 text-xs text-center">
+                    Logo será exibido em formato circular. Recomendado: 400x400px
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="relative w-full aspect-square max-w-xs mx-auto bg-slate-100 rounded-full overflow-hidden border-4 border-dashed border-slate-300 flex items-center justify-center">
+                    <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200/50 transition-colors">
                       <input
                         type="file"
                         accept="image/jpeg,image/jpg,image/png,image/webp"
@@ -523,46 +463,45 @@ export default function EditBetPage() {
                         className="hidden"
                         disabled={uploadingLogo}
                       />
-                      <ImageIcon className="w-8 h-8 text-slate-400" />
+                      <ImageIcon className="w-12 h-12 text-slate-400 mb-2" />
+                      <span className="text-slate-600 text-sm text-center px-4">
+                        {uploadingLogo ? "Enviando..." : "Clique para fazer upload"}
+                      </span>
                     </label>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Logo Upload Button (if no logo) */}
-            {!logoPreview && (
-              <div className="pt-20 md:pt-24 px-6 pb-6">
-                <Label className="text-slate-700 mb-2 block">Logo (Arredondado)</Label>
-                <label className="cursor-pointer inline-block">
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={(e) => handleFileSelect("logo", e)}
-                    className="hidden"
-                    disabled={uploadingLogo}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl"
-                    disabled={uploadingLogo}
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    {uploadingLogo ? "Enviando..." : "Fazer upload do logo"}
-                  </Button>
-                </label>
-                <p className="text-slate-500 text-xs mt-2">
-                  Logo será exibido em formato circular sobreposto à capa. Recomendado: 400x400px
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </div>
+                  <div className="text-center">
+                    <Label className="text-slate-700 mb-2 block">Logo (Arredondado)</Label>
+                    <label className="cursor-pointer inline-block">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={(e) => handleFileSelect("logo", e)}
+                        className="hidden"
+                        disabled={uploadingLogo}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl w-full"
+                        disabled={uploadingLogo}
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {uploadingLogo ? "Enviando..." : "Fazer upload do logo"}
+                      </Button>
+                    </label>
+                    <p className="text-slate-500 text-xs mt-2">
+                      Recomendado: 400x400px
+                    </p>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
             {/* Basic Info Card */}
             <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl">
               <CardHeader>
