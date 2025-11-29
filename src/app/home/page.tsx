@@ -26,9 +26,20 @@ import {
 import Image from "next/image";
 import { useFetch } from "@/hooks/use-fetch";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Link from "next/link";
-import { PARAMETER_CATEGORIES, PARAMETER_DEFINITIONS, getParametersByCategory } from "@/lib/parameter-definitions";
+import {
+  PARAMETER_CATEGORIES,
+  PARAMETER_DEFINITIONS,
+  getParametersByCategory,
+} from "@/lib/parameter-definitions";
+// import ChatInterface from "@/components/ui/chat-interface";
+// import AIInsights from "@/components/ui/ai-insights";
 import {
   Table,
   TableBody,
@@ -105,7 +116,11 @@ interface ParameterDetailModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-function ParameterDetailModal({ parameter, open, onOpenChange }: ParameterDetailModalProps) {
+function ParameterDetailModal({
+  parameter,
+  open,
+  onOpenChange,
+}: ParameterDetailModalProps) {
   if (!parameter) return null;
 
   return (
@@ -118,21 +133,31 @@ function ParameterDetailModal({ parameter, open, onOpenChange }: ParameterDetail
         </DialogHeader>
         <div className="space-y-4">
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
-            <div className="text-sm text-slate-600 mb-2 font-medium">Valor Atual</div>
+            <div className="text-sm text-slate-600 mb-2 font-medium">
+              Valor Atual
+            </div>
             <div className="text-2xl font-bold text-slate-900">
               {parameter.value} {parameter.unit || ""}
             </div>
           </div>
           {parameter.category && (
             <div className="p-4 bg-white rounded-xl border border-slate-200">
-              <div className="text-sm text-slate-600 mb-1 font-medium">Categoria</div>
-              <div className="text-base font-semibold text-slate-900">{parameter.category}</div>
+              <div className="text-sm text-slate-600 mb-1 font-medium">
+                Categoria
+              </div>
+              <div className="text-base font-semibold text-slate-900">
+                {parameter.category}
+              </div>
             </div>
           )}
           {parameter.type && (
             <div className="p-4 bg-white rounded-xl border border-slate-200">
-              <div className="text-sm text-slate-600 mb-1 font-medium">Tipo</div>
-              <div className="text-base font-semibold text-slate-900 capitalize">{parameter.type}</div>
+              <div className="text-sm text-slate-600 mb-1 font-medium">
+                Tipo
+              </div>
+              <div className="text-base font-semibold text-slate-900 capitalize">
+                {parameter.type}
+              </div>
             </div>
           )}
           <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
@@ -149,7 +174,9 @@ function ParameterDetailModal({ parameter, open, onOpenChange }: ParameterDetail
 export default function HomePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [selectedParameter, setSelectedParameter] = useState<HomeData["parameters"][0] | null>(null);
+  const [selectedParameter, setSelectedParameter] = useState<
+    HomeData["parameters"][0] | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRankingExpanded, setIsRankingExpanded] = useState(false);
 
@@ -180,7 +207,10 @@ export default function HomePage() {
     return (
       <div className="flex items-center gap-1">
         {Array.from({ length: fullStars }).map((_, i) => (
-          <Star key={`full-${i}`} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+          <Star
+            key={`full-${i}`}
+            className="w-5 h-5 text-yellow-500 fill-yellow-500"
+          />
         ))}
         {hasHalfStar && (
           <div className="relative w-5 h-5">
@@ -191,7 +221,10 @@ export default function HomePage() {
           </div>
         )}
         {Array.from({ length: emptyStars }).map((_, i) => (
-          <Star key={`empty-${i}`} className="w-5 h-5 text-gray-300 fill-gray-300" />
+          <Star
+            key={`empty-${i}`}
+            className="w-5 h-5 text-gray-300 fill-gray-300"
+          />
         ))}
       </div>
     );
@@ -231,7 +264,10 @@ export default function HomePage() {
             <p className="text-slate-600 mb-6">
               Não foi possível carregar os dados da sua casa de apostas.
             </p>
-            <Button onClick={() => router.push("/setup")} className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button
+              onClick={() => router.push("/setup")}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
               Configurar Casa
             </Button>
           </CardContent>
@@ -243,7 +279,8 @@ export default function HomePage() {
   const { bet, rating, ranking, parameters } = data;
 
   const handleLogout = () => {
-    document.cookie = "better-auth.session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "better-auth.session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.removeItem("auth-user");
     localStorage.removeItem("auth-session");
     router.push("/login");
@@ -278,20 +315,39 @@ export default function HomePage() {
         <Card className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden">
           {/* Cover Image with Logo Overlay */}
           <div className="relative">
-            {/* Cover Image */}
-            {bet.coverImage ? (
-              <div className="relative w-full h-48 md:h-64 bg-gradient-to-br from-blue-600 to-blue-700">
+            {/* Cover/Iframe Area - Always show the blue cover, iframe if URL available */}
+            <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700">
+              {bet.url ? (
+                <iframe
+                  src={
+                    bet.url.startsWith("http://") ||
+                    bet.url.startsWith("https://")
+                      ? bet.url
+                      : `https://${bet.url}`
+                  }
+                  className="w-full h-full border-0"
+                  title={`${bet.name} Website`}
+                  allow="fullscreen"
+                  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                />
+              ) : bet.coverImage ? (
                 <Image
                   src={bet.coverImage}
                   alt={`${bet.name} cover`}
                   fill
                   className="object-cover"
                   priority
+                  sizes="100vw"
                 />
-              </div>
-            ) : (
-              <div className="relative w-full h-48 md:h-64 bg-gradient-to-br from-blue-600 to-blue-700" />
-            )}
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center text-white/80">
+                    <Building2 className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Cover Area</p>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Logo Overlay (Facebook-style) */}
             <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-10">
@@ -315,221 +371,343 @@ export default function HomePage() {
 
           <CardContent className="p-6 md:p-8 pt-24 md:pt-28">
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-              {/* Left Side - Name, Rating */}
-              <div className="flex-1 space-y-3">
-                  <div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-                      {bet.name}
-                    </h1>
-                    {bet.company && (
-                      <p className="text-slate-600 text-base md:text-lg">{bet.company}</p>
-                    )}
-                    {bet.url && (
-                      <a
-                        href={bet.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors text-sm mt-2"
-                      >
-                        <span className="truncate max-w-xs">{bet.url}</span>
-                        <ExternalLink className="w-4 h-4 flex-shrink-0" />
-                      </a>
-                    )}
-
-                    {/* Additional Info Badges */}
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {/* Status */}
-                      {bet.status && (
-                        <div
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                            bet.status === "Funcionando"
-                              ? "bg-green-100 text-green-700 border border-green-200"
-                              : "bg-red-100 text-red-700 border border-red-200"
-                          }`}
-                        >
-                          {bet.status === "Funcionando" ? (
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                          ) : (
-                            <XCircle className="w-3.5 h-3.5" />
-                          )}
-                          {bet.status}
-                        </div>
-                      )}
-
-                      {/* Platform Type */}
-                      {bet.platformType && (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold">
-                          <Building2 className="w-3.5 h-3.5" />
-                          {bet.platformType}
-                        </div>
-                      )}
-
-                      {/* Scope */}
-                      {bet.scope && (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold">
-                          <Globe className="w-3.5 h-3.5" />
-                          {bet.scope}
-                        </div>
-                      )}
-
-                      {/* Region */}
-                      {bet.region && (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold">
-                          <MapPin className="w-3.5 h-3.5" />
-                          {bet.region}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Additional Details */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-200">
-                      {/* CNPJ */}
-                      {bet.cnpj && (
-                        <div className="flex items-start gap-2">
-                          <FileText className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <div className="text-xs text-slate-500 font-medium">CNPJ</div>
-                            <div className="text-sm text-slate-900 font-semibold">{bet.cnpj}</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* License */}
-                      {bet.license && (
-                        <div className="flex items-start gap-2">
-                          <FileText className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <div className="text-xs text-slate-500 font-medium">Licença</div>
-                            <div className="text-sm text-slate-900 font-semibold">{bet.license}</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Bet ID */}
-                      {bet.betId && (
-                        <div className="flex items-start gap-2">
-                          <Hash className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <div className="text-xs text-slate-500 font-medium">ID da Casa</div>
-                            <div className="text-sm text-slate-900 font-semibold font-mono">{bet.betId}</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Domain */}
-                      {bet.domain && (
-                        <div className="flex items-start gap-2">
-                          <Globe className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <div className="text-xs text-slate-500 font-medium">Domínio</div>
-                            <div className="text-sm text-slate-900 font-semibold">{bet.domain}</div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-4">
-                    {/* Overall Rating */}
-                    <div className="flex items-center gap-3">
-                      <div className="text-3xl font-bold text-slate-900">
-                        {rating.overall.toFixed(1)}
-                      </div>
-                      <div className="text-slate-600">/ 5</div>
-                    </div>
-
-                    {/* Stars */}
-                    {renderStars(rating.stars)}
-
-                    {/* Ranking */}
-                    <div className="text-slate-600">
-                      <span className="font-semibold text-slate-900">{ranking.position}°</span> lugar entre{" "}
-                      <span className="font-semibold text-slate-900">{ranking.total}</span> casas avaliadas
-                    </div>
-                  </div>
-
-                  {/* Compare Button - Inside the card */}
-                  <div className="pt-4 mt-4 border-t border-slate-200">
-                    <Button
-                      onClick={handleCompare}
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-base md:text-lg px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              {/* Left Side - Name, Rating, AI Insights & Chat */}
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+                    {bet.name}
+                  </h1>
+                  {bet.company && (
+                    <p className="text-slate-600 text-base md:text-lg">
+                      {bet.company}
+                    </p>
+                  )}
+                  {bet.url && (
+                    <a
+                      href={bet.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors text-sm mt-2"
                     >
-                      <span>COMPARAR COM OUTRAS CASAS</span>
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
+                      <span className="truncate max-w-xs">{bet.url}</span>
+                      <ExternalLink className="w-4 h-4 flex-shrink-0" />
+                    </a>
+                  )}
+
+                  {/* Additional Info Badges */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {/* Status */}
+                    {bet.status && (
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                          bet.status === "Funcionando"
+                            ? "bg-green-100 text-green-700 border border-green-200"
+                            : "bg-red-100 text-red-700 border border-red-200"
+                        }`}
+                      >
+                        {bet.status === "Funcionando" ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5" />
+                        )}
+                        {bet.status}
+                      </div>
+                    )}
+
+                    {/* Platform Type */}
+                    {bet.platformType && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold">
+                        <Building2 className="w-3.5 h-3.5" />
+                        {bet.platformType}
+                      </div>
+                    )}
+
+                    {/* Scope */}
+                    {bet.scope && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold">
+                        <Globe className="w-3.5 h-3.5" />
+                        {bet.scope}
+                      </div>
+                    )}
+
+                    {/* Region */}
+                    {bet.region && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {bet.region}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Additional Details */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-200">
+                    {/* CNPJ */}
+                    {bet.cnpj && (
+                      <div className="flex items-start gap-2">
+                        <FileText className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs text-slate-500 font-medium">
+                            CNPJ
+                          </div>
+                          <div className="text-sm text-slate-900 font-semibold">
+                            {bet.cnpj}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* License */}
+                    {bet.license && (
+                      <div className="flex items-start gap-2">
+                        <FileText className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs text-slate-500 font-medium">
+                            Licença
+                          </div>
+                          <div className="text-sm text-slate-900 font-semibold">
+                            {bet.license}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bet ID */}
+                    {bet.betId && (
+                      <div className="flex items-start gap-2">
+                        <Hash className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs text-slate-500 font-medium">
+                            ID da Casa
+                          </div>
+                          <div className="text-sm text-slate-900 font-semibold font-mono">
+                            {bet.betId}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Domain */}
+                    {bet.domain && (
+                      <div className="flex items-start gap-2">
+                        <Globe className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs text-slate-500 font-medium">
+                            Domínio
+                          </div>
+                          <div className="text-sm text-slate-900 font-semibold">
+                            {bet.domain}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                <div className="flex flex-wrap items-center gap-4">
+                  {/* Overall Rating */}
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl font-bold text-slate-900">
+                      {rating.overall.toFixed(1)}
+                    </div>
+                    <div className="text-slate-600">/ 5</div>
+                  </div>
+
+                  {/* Stars */}
+                  {renderStars(rating.stars)}
+
+                  {/* Ranking */}
+                  <div className="text-slate-600">
+                    <span className="font-semibold text-slate-900">
+                      {ranking.position}°
+                    </span>{" "}
+                    lugar entre{" "}
+                    <span className="font-semibold text-slate-900">
+                      {ranking.total}
+                    </span>{" "}
+                    casas avaliadas
+                  </div>
+                </div>
+
+                {/* Compare Button - Inside the card */}
+                <div className="pt-4 mt-4 border-t border-slate-200">
+                  <Button
+                    onClick={handleCompare}
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-base md:text-lg px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <span>COMPARAR COM OUTRAS CASAS</span>
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </div>
+
+                {/* AI Insights and Chat Section - Below the button, inside the card */}
+                {/* 
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 pt-6 border-t border-slate-200">
+                    <div>
+                      <AIInsights betId={bet.id} betName={bet.name} />
+                    </div>
+                    <div>
+                      <ChatInterface
+                        context={{
+                          betName: bet.name,
+                          position: ranking.position,
+                          total: ranking.total,
+                          score: rating.score,
+                          rating: rating.overall,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  */}
+              </div>
 
               {/* Right Side - Ranking Panel */}
               <div className="lg:w-80 flex-shrink-0">
                 <Card className="bg-slate-50 border border-slate-200 rounded-xl">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg font-bold text-slate-900">Ranking</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg font-bold text-slate-900">
+                        Ranking
+                      </CardTitle>
+                      <div className="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded">
+                        TOP 10
+                      </div>
+                    </div>
+                    {/* Quick Stats */}
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="bg-white rounded-lg p-2 border border-slate-200">
+                        <div className="text-xs text-slate-500">
+                          Sua Posição
+                        </div>
+                        <div className="text-lg font-bold text-blue-600">
+                          #{ranking.position}
+                        </div>
+                      </div>
+                      <div className="bg-white rounded-lg p-2 border border-slate-200">
+                        <div className="text-xs text-slate-500">Pontuação</div>
+                        <div className="text-lg font-bold text-slate-900">
+                          {rating.score}
+                        </div>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {!isRankingExpanded ? (
                       <>
                         {/* Top 10 */}
                         <div>
-                          <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                            Top 10
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                              Top 10
+                            </div>
+                            <div className="text-xs text-slate-500">
+                              {ranking.total} casas
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            {ranking.top10.map((item) => (
+                          <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                            {ranking.top10.map((item, index) => (
                               <div
                                 key={item.id}
-                                className={`flex items-center justify-between p-2 rounded-lg ${
+                                className={`flex items-center justify-between p-2.5 rounded-lg transition-all ${
                                   item.id === bet.id
-                                    ? "bg-blue-100 border-2 border-blue-500"
-                                    : "bg-white border border-slate-200"
+                                    ? "bg-blue-100 border-2 border-blue-500 shadow-sm"
+                                    : index < 3
+                                    ? "bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 hover:shadow-sm"
+                                    : "bg-white border border-slate-200 hover:bg-slate-50"
                                 }`}
                               >
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-bold text-slate-700">#{item.position}</span>
-                                  <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                                <div className="flex items-center gap-2 flex-1 min-w-0">
+                                  <span
+                                    className={`text-sm font-bold flex-shrink-0 ${
+                                      item.id === bet.id
+                                        ? "text-blue-700"
+                                        : index < 3
+                                        ? "text-yellow-600"
+                                        : "text-slate-700"
+                                    }`}
+                                  >
+                                    #{item.position}
+                                  </span>
+                                  <span
+                                    className={`text-sm truncate ${
+                                      item.id === bet.id
+                                        ? "font-semibold text-blue-900"
+                                        : index < 3
+                                        ? "font-medium text-slate-900"
+                                        : "text-slate-900"
+                                    }`}
+                                  >
+                                    {item.name}
+                                  </span>
                                 </div>
-                                <span className="text-xs font-semibold text-slate-600">{item.score}</span>
+                                <span
+                                  className={`text-xs font-semibold flex-shrink-0 ml-2 ${
+                                    item.id === bet.id
+                                      ? "text-blue-700"
+                                      : index < 3
+                                      ? "text-yellow-600"
+                                      : "text-slate-600"
+                                  }`}
+                                >
+                                  {item.score}
+                                </span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         {/* 3 Above Current (if position > 3) */}
-                        {ranking.position > 3 && ranking.aboveCurrent.length > 0 && (
-                          <div>
-                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                              3 Acima de Você
-                            </div>
-                            <div className="space-y-2">
-                              {ranking.aboveCurrent.map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-slate-700">#{item.position}</span>
-                                    <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                        {ranking.position > 3 &&
+                          ranking.aboveCurrent.length > 0 && (
+                            <div>
+                              <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                                3 Acima de Você
+                              </div>
+                              <div className="space-y-2">
+                                {ranking.aboveCurrent.map((item) => (
+                                  <div
+                                    key={item.id}
+                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-bold text-slate-700">
+                                        #{item.position}
+                                      </span>
+                                      <span className="text-sm text-slate-900 truncate">
+                                        {item.name}
+                                      </span>
+                                    </div>
+                                    <span className="text-xs font-semibold text-slate-600">
+                                      {item.score}
+                                    </span>
                                   </div>
-                                  <span className="text-xs font-semibold text-slate-600">{item.score}</span>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         {/* Current Position Highlight */}
-                        <div className={`${ranking.position > 3 ? 'mt-2' : ''} pt-2 border-t border-slate-200`}>
+                        <div
+                          className={`${
+                            ranking.position > 3 ? "mt-2" : ""
+                          } pt-2 border-t border-slate-200`}
+                        >
                           <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
                             Sua Posição
                           </div>
                           <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-blue-700">#{ranking.position}</span>
-                                <span className="text-sm font-semibold text-blue-900 truncate">{bet.name}</span>
+                                <span className="text-sm font-bold text-blue-700">
+                                  #{ranking.position}
+                                </span>
+                                <span className="text-sm font-semibold text-blue-900 truncate">
+                                  {bet.name}
+                                </span>
                               </div>
-                              <span className="text-xs font-semibold text-blue-700">{rating.score}</span>
+                              <span className="text-xs font-semibold text-blue-700">
+                                {rating.score}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -547,29 +725,65 @@ export default function HomePage() {
                                   className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
                                 >
                                   <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-slate-700">#{item.position}</span>
-                                    <span className="text-sm text-slate-900 truncate">{item.name}</span>
+                                    <span className="text-sm font-bold text-slate-700">
+                                      #{item.position}
+                                    </span>
+                                    <span className="text-sm text-slate-900 truncate">
+                                      {item.name}
+                                    </span>
                                   </div>
-                                  <span className="text-xs font-semibold text-slate-600">{item.score}</span>
+                                  <span className="text-xs font-semibold text-slate-600">
+                                    {item.score}
+                                  </span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        {/* Expand Button */}
-                        {ranking.allRanking && ranking.allRanking.length > 0 && (
+                        {/* Quick Insights */}
+                        {ranking.position > 10 && (
                           <div className="pt-2 border-t border-slate-200">
-                            <Button
-                              onClick={() => setIsRankingExpanded(true)}
-                              variant="outline"
-                              className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-sm"
-                            >
-                              Ver Ranking Completo ({ranking.total} casas)
-                              <ChevronDown className="w-4 h-4 ml-2" />
-                            </Button>
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                              <div className="text-xs font-semibold text-blue-900 mb-1">
+                                💡 Insights
+                              </div>
+                              <div className="text-xs text-blue-700 space-y-1">
+                                <div>
+                                  Você está{" "}
+                                  <span className="font-semibold">
+                                    {ranking.position - 1}
+                                  </span>{" "}
+                                  posições atrás do Top 10
+                                </div>
+                                {ranking.aboveCurrent.length > 0 && (
+                                  <div>
+                                    Próximo alvo:{" "}
+                                    <span className="font-semibold">
+                                      {ranking.aboveCurrent[0].name}
+                                    </span>{" "}
+                                    ({ranking.aboveCurrent[0].score} pts)
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
+
+                        {/* Expand Button */}
+                        {ranking.allRanking &&
+                          ranking.allRanking.length > 0 && (
+                            <div className="pt-2 border-t border-slate-200">
+                              <Button
+                                onClick={() => setIsRankingExpanded(true)}
+                                variant="outline"
+                                className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-sm"
+                              >
+                                Ver Ranking Completo ({ranking.total} casas)
+                                <ChevronDown className="w-4 h-4 ml-2" />
+                              </Button>
+                            </div>
+                          )}
                       </>
                     ) : (
                       <>
@@ -599,20 +813,32 @@ export default function HomePage() {
                                 }`}
                               >
                                 <div className="flex items-center gap-2">
-                                  <span className={`text-sm font-bold ${
-                                    item.id === bet.id ? "text-blue-700" : "text-slate-700"
-                                  }`}>
+                                  <span
+                                    className={`text-sm font-bold ${
+                                      item.id === bet.id
+                                        ? "text-blue-700"
+                                        : "text-slate-700"
+                                    }`}
+                                  >
                                     #{item.position}
                                   </span>
-                                  <span className={`text-sm truncate ${
-                                    item.id === bet.id ? "font-semibold text-blue-900" : "text-slate-900"
-                                  }`}>
+                                  <span
+                                    className={`text-sm truncate ${
+                                      item.id === bet.id
+                                        ? "font-semibold text-blue-900"
+                                        : "text-slate-900"
+                                    }`}
+                                  >
                                     {item.name}
                                   </span>
                                 </div>
-                                <span className={`text-xs font-semibold ${
-                                  item.id === bet.id ? "text-blue-700" : "text-slate-600"
-                                }`}>
+                                <span
+                                  className={`text-xs font-semibold ${
+                                    item.id === bet.id
+                                      ? "text-blue-700"
+                                      : "text-slate-600"
+                                  }`}
+                                >
                                   {item.score}
                                 </span>
                               </div>
@@ -635,7 +861,7 @@ export default function HomePage() {
             {PARAMETER_CATEGORIES.map((category) => {
               // Get all defined parameters in this category
               const categoryDefs = getParametersByCategory(category);
-              
+
               if (categoryDefs.length === 0) return null;
 
               return (
@@ -648,7 +874,9 @@ export default function HomePage() {
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-slate-200">
                       <div className="flex items-center gap-3">
                         <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
-                        <h3 className="text-xl font-bold text-slate-900">{category}</h3>
+                        <h3 className="text-xl font-bold text-slate-900">
+                          {category}
+                        </h3>
                         <span className="text-sm text-slate-500 font-normal">
                           ({categoryDefs.length} parâmetros)
                         </span>
@@ -659,7 +887,7 @@ export default function HomePage() {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className="bg-slate-50">
+                          <TableRow className="bg-slate-50 border-b border-slate-200">
                             <TableHead className="w-[300px] font-semibold text-slate-900">
                               Parâmetro
                             </TableHead>
@@ -673,7 +901,9 @@ export default function HomePage() {
                         </TableHeader>
                         <TableBody>
                           {categoryDefs.map((paramDef) => {
-                            const existingParam = parameters.find((p) => p.name === paramDef.name);
+                            const existingParam = parameters.find(
+                              (p) => p.name === paramDef.name
+                            );
                             const param = existingParam || {
                               id: null,
                               name: paramDef.name,
@@ -685,10 +915,12 @@ export default function HomePage() {
                             };
 
                             return (
-                              <TableRow 
-                                key={paramDef.name} 
-                                className="hover:bg-slate-50 cursor-pointer"
-                                onClick={() => param.id && handleParameterClick(param)}
+                              <TableRow
+                                key={paramDef.name}
+                                className="hover:bg-slate-50 cursor-pointer border-b border-slate-200"
+                                onClick={() =>
+                                  param.id && handleParameterClick(param)
+                                }
                               >
                                 <TableCell className="font-medium text-slate-900">
                                   <div>
@@ -702,10 +934,116 @@ export default function HomePage() {
                                 </TableCell>
                                 <TableCell>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-base font-medium text-slate-900">
-                                      {param.value}
-                                      {param.unit && ` ${param.unit}`}
-                                    </span>
+                                    {(() => {
+                                      // Check if it's a rating type
+                                      const isRating =
+                                        param.type === "rating" ||
+                                        paramDef?.type === "rating";
+                                      if (isRating) {
+                                        const ratingValue =
+                                          typeof param.value === "string"
+                                            ? parseFloat(param.value)
+                                            : Number(param.value);
+                                        if (
+                                          !isNaN(ratingValue) &&
+                                          ratingValue >= 0 &&
+                                          ratingValue <= 5
+                                        ) {
+                                          const fullStars =
+                                            Math.floor(ratingValue);
+                                          const hasHalfStar =
+                                            ratingValue % 1 >= 0.5;
+                                          return (
+                                            <div className="flex items-center gap-1.5">
+                                              {Array.from({
+                                                length: fullStars,
+                                              }).map((_, i) => (
+                                                <Star
+                                                  key={`full-${i}`}
+                                                  className="w-4 h-4 text-yellow-500 fill-yellow-500"
+                                                />
+                                              ))}
+                                              {hasHalfStar && (
+                                                <div className="relative w-4 h-4">
+                                                  <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+                                                  <div className="absolute inset-0 overflow-hidden w-1/2">
+                                                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                                  </div>
+                                                </div>
+                                              )}
+                                              {Array.from({
+                                                length:
+                                                  5 -
+                                                  fullStars -
+                                                  (hasHalfStar ? 1 : 0),
+                                              }).map((_, i) => (
+                                                <Star
+                                                  key={`empty-${i}`}
+                                                  className="w-4 h-4 text-gray-300 fill-gray-300"
+                                                />
+                                              ))}
+                                              <span className="ml-1 text-sm font-medium text-slate-700">
+                                                {ratingValue.toFixed(1)}
+                                              </span>
+                                            </div>
+                                          );
+                                        }
+                                      }
+
+                                      // Check for "Sim" (Yes)
+                                      const valueStr = String(param.value || "")
+                                        .toLowerCase()
+                                        .trim();
+                                      if (
+                                        valueStr === "sim" ||
+                                        valueStr === "yes" ||
+                                        valueStr === "true"
+                                      ) {
+                                        return (
+                                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700 border border-green-200">
+                                            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                                            Sim
+                                          </span>
+                                        );
+                                      }
+
+                                      // Check for "Não" (No)
+                                      if (
+                                        valueStr === "não" ||
+                                        valueStr === "nao" ||
+                                        valueStr === "no" ||
+                                        valueStr === "false"
+                                      ) {
+                                        return (
+                                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-700 border border-red-200">
+                                            <XCircle className="w-3.5 h-3.5 mr-1" />
+                                            Não
+                                          </span>
+                                        );
+                                      }
+
+                                      // Empty/missing values
+                                      if (
+                                        param.value === "-" ||
+                                        !param.value ||
+                                        param.value === "null" ||
+                                        param.value === "undefined"
+                                      ) {
+                                        return (
+                                          <span className="text-slate-400 italic text-sm">
+                                            -
+                                          </span>
+                                        );
+                                      }
+
+                                      // Default display
+                                      return (
+                                        <span className="text-base font-medium text-slate-900">
+                                          {param.value}
+                                          {param.unit && ` ${param.unit}`}
+                                        </span>
+                                      );
+                                    })()}
                                   </div>
                                 </TableCell>
                                 <TableCell className="text-center">
@@ -730,7 +1068,8 @@ export default function HomePage() {
                 Nenhum parâmetro cadastrado
               </h3>
               <p className="text-slate-600">
-                Os parâmetros da sua casa de apostas ainda não foram configurados.
+                Os parâmetros da sua casa de apostas ainda não foram
+                configurados.
               </p>
             </CardContent>
           </Card>
@@ -746,4 +1085,3 @@ export default function HomePage() {
     </div>
   );
 }
-

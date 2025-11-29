@@ -51,6 +51,7 @@ function ComparisonPageContent() {
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState(true);
   const [isHeaderShrunk, setIsHeaderShrunk] = useState(false);
+  const [hoveredBetId, setHoveredBetId] = useState<string | null>(null);
   
   // Ref para o elemento que marca o fim do gráfico (trigger point)
   const chartEndRef = useRef<HTMLDivElement>(null);
@@ -198,6 +199,16 @@ function ComparisonPageContent() {
     return "-";
   };
 
+  const getIframeUrl = (url: string | null | undefined): string | null => {
+    if (!url) return null;
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) return null;
+    if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
+      return `https://${trimmedUrl}`;
+    }
+    return trimmedUrl;
+  };
+
   // Calculate overall score for a bet
   const calculateBetScore = (bet: Bet): number => {
     const ratingParams = bet.parameters.filter(
@@ -270,48 +281,22 @@ function ComparisonPageContent() {
     );
   }
 
-  // Componente para renderizar o mini card no header shrunk
+  // Componente para renderizar apenas o logo no header shrunk
   const renderShrunkCard = (bet: Bet) => {
-    const score = calculateBetScore(bet);
-    
+    const isHovered = hoveredBetId === bet.id;
     return (
-      <div className="flex items-center gap-3 px-4 py-2">
-        {/* Logo pequeno */}
-        <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 border border-slate-200 shadow-sm flex-shrink-0">
-          {bet.coverImage ? (
-            <Image src={bet.coverImage} alt={bet.name} fill className="object-cover" sizes="48px" />
-          ) : bet.logo ? (
+      <div className="flex items-center justify-center px-2 py-2">
+        {/* Logo circular */}
+        <div className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white shadow-md flex-shrink-0 bg-white transition-all duration-300 ${
+          isHovered ? 'ring-4 ring-blue-400 ring-opacity-75 shadow-xl scale-110' : ''
+        }`}>
+          {bet.logo ? (
             <Image src={bet.logo} alt={bet.name} fill className="object-cover" sizes="48px" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-blue-400" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-700">
+              <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
           )}
-        </div>
-        
-        {/* Nome e score */}
-        <div className="flex-1 min-w-0">
-          <span className="text-sm font-semibold text-slate-900 truncate block">
-            {bet.name}
-          </span>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">{score} pts</span>
-            {bet.url && (
-              <a
-                href={bet.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
-              >
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
-          </div>
-        </div>
-        
-        {/* Score badge */}
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-base font-bold shadow-sm flex-shrink-0">
-          {score}
         </div>
       </div>
     );
@@ -342,22 +327,20 @@ function ComparisonPageContent() {
             </span>
           </div>
           
-          {/* Mini cards das bets */}
-          <div className={`flex items-center ${bets.length === 2 ? "justify-center" : "justify-start"} py-2 gap-2`}>
-            {bets.map((bet, index) => (
-              <React.Fragment key={bet.id}>
-                <div className={`${bets.length === 2 ? "flex-1 max-w-[280px]" : ""} bg-slate-50 rounded-xl`}>
-                  {renderShrunkCard(bet)}
-                </div>
-                
-                {/* VS Separator */}
-                {index < bets.length - 1 && bets.length === 2 && (
-                  <div className="flex-shrink-0 bg-blue-100 px-3 py-1 rounded-full">
-                    <span className="text-sm font-bold text-blue-600">VS</span>
+          {/* Logos das bets - Aligned with table columns */}
+          <div className="py-2">
+            <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(150px,1fr))] sm:grid-cols-[250px_repeat(auto-fit,minmax(200px,1fr))] gap-4 items-center">
+              {/* Empty cell for parameter column */}
+              <div></div>
+              {/* Icons aligned with bet columns */}
+              {bets.map((bet, index) => (
+                <React.Fragment key={bet.id}>
+                  <div className="flex items-center justify-center">
+                    {renderShrunkCard(bet)}
                   </div>
-                )}
-              </React.Fragment>
-            ))}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -410,126 +393,133 @@ function ComparisonPageContent() {
               return (
                 <Card
                   key={bet.id}
-                  className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow"
+                  className="bg-white border border-slate-200 shadow-xl rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 relative group"
                 >
-                  <CardContent className="p-0">
-                    {/* Cover Image / Preview - Show first */}
-                    <div className="relative w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
-                      {bet.coverImage ? (
-                        <>
-                          <Image
-                            src={bet.coverImage}
-                            alt={`${bet.name} preview`}
-                            fill
-                            className="object-cover"
-                            priority
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-                          {/* Rating Badge - Overlay on cover image */}
-                          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center shadow-lg border-2 sm:border-4 border-white">
-                              <div className="text-xl sm:text-2xl font-bold">{score}</div>
-                              <div className="text-[10px] sm:text-xs font-medium">Pontos</div>
-                            </div>
-                          </div>
-                        </>
-                      ) : bet.logo ? (
-                        <>
-                          <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-                            {/* Logo - Rounded and prominent */}
-                            <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-xl z-10">
-                              <Image
-                                src={bet.logo}
-                                alt={`${bet.name} logo`}
-                                fill
-                                className="object-cover"
-                                priority
-                                sizes="(max-width: 640px) 128px, (max-width: 1024px) 160px, 192px"
-                              />
-                            </div>
-                          </div>
-                          {/* Rating Badge - Positioned to not overlap logo */}
-                          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center shadow-lg border-2 sm:border-4 border-white">
-                              <div className="text-xl sm:text-2xl font-bold">{score}</div>
-                              <div className="text-[10px] sm:text-xs font-medium">Pontos</div>
-                            </div>
-                          </div>
-                        </>
-                      ) : bet.url ? (
-                        <>
-                          <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-                            <div className="text-center p-4 sm:p-8">
-                              <Building2 className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-2 sm:mb-4" />
-                              <p className="text-xs sm:text-sm text-slate-600 font-medium truncate px-2">{bet.domain || bet.url}</p>
-                            </div>
-                          </div>
-                          {/* Rating Badge */}
-                          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center shadow-lg border-2 sm:border-4 border-white">
-                              <div className="text-xl sm:text-2xl font-bold">{score}</div>
-                              <div className="text-[10px] sm:text-xs font-medium">Pontos</div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-                            <Building2 className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400" />
-                          </div>
-                          {/* Rating Badge */}
-                          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center shadow-lg border-2 sm:border-4 border-white">
-                              <div className="text-xl sm:text-2xl font-bold">{score}</div>
-                              <div className="text-[10px] sm:text-xs font-medium">Pontos</div>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Bet Info */}
-                    <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-                      {/* Bet Name */}
-                      <h2 className="text-xl sm:text-2xl font-bold text-slate-900 line-clamp-2">
-                        {bet.name}
-                      </h2>
-
-                      {/* Key Parameters Preview */}
-                      <div className="space-y-1.5 sm:space-y-2">
-                        {bet.parameters.slice(0, 3).map((param) => {
-                          const paramDef = PARAMETER_DEFINITIONS.find((d) => d.name === param.name);
-                          if (!paramDef) return null;
-
-                          const displayValue = getParameterDisplayValue(param);
-                          if (displayValue === "-") return null;
-
-                          return (
-                            <div key={param.id || param.name} className="flex items-center justify-between text-xs sm:text-sm">
-                              <span className="text-slate-600 truncate pr-2">{param.name}:</span>
-                              <span className="font-semibold text-slate-900 text-right flex-shrink-0">
-                                {displayValue}
-                                {param.unit && ` ${param.unit}`}
-                              </span>
-                            </div>
-                          );
-                        })}
+                  <CardContent className="p-0 relative min-h-[600px] sm:min-h-[700px] flex flex-col">
+                    {/* Iframe Background - Covers the whole card */}
+                    {bet.url && getIframeUrl(bet.url) ? (
+                      <iframe
+                        src={getIframeUrl(bet.url) || ""}
+                        className="absolute inset-0 w-full h-full border-0 rounded-3xl"
+                        title={`${bet.name} Website Preview`}
+                        allow="fullscreen"
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                      />
+                    ) : bet.coverImage ? (
+                      <div className="absolute inset-0 w-full h-full">
+                        <Image
+                          src={bet.coverImage}
+                          alt={`${bet.name} cover`}
+                          fill
+                          className="object-cover rounded-3xl"
+                          priority
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
                       </div>
+                    ) : (
+                      <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 rounded-3xl flex items-center justify-center">
+                        <div className="text-center text-white/90">
+                          <Building2 className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 opacity-80" />
+                          <p className="text-sm sm:text-base font-medium">Cover Area</p>
+                        </div>
+                      </div>
+                    )}
 
-                      {/* Visit Website Button */}
-                      {bet.url && (
-                        <a
-                          href={bet.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block w-full"
-                        >
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm sm:text-base py-2 sm:py-2.5">
-                            <span className="truncate">{bet.domain || "Visitar Site"}</span>
-                            <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 ml-2 flex-shrink-0" />
-                          </Button>
-                        </a>
-                      )}
+                    {/* Bottom Content Section with Enhanced Fade Effect */}
+                    <div className="relative z-30 mt-auto">
+                      {/* Enhanced backdrop blur fade overlay */}
+                      <div 
+                        className="absolute inset-0 h-80 pointer-events-none"
+                        style={{
+                          background: 'linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 15%, rgba(255,255,255,0.5) 40%, rgba(255,255,255,0.2) 65%, transparent 100%)',
+                          backdropFilter: 'blur(16px)',
+                          WebkitBackdropFilter: 'blur(16px)'
+                        }}
+                      />
+                      
+                      {/* Content Container with better spacing */}
+                      <div className="relative p-5 sm:p-6 md:p-8 pb-6 sm:pb-8 md:pb-10 space-y-5 sm:space-y-6">
+                        {/* Logo, Bet Name, and Rating Badge - All on same line */}
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          {/* Logo - Smaller */}
+                          <div className="flex-shrink-0">
+                            {bet.logo ? (
+                              <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border-2 border-white/90 shadow-md bg-white ring-1 ring-white/50 transition-all duration-300 ${
+                                hoveredBetId === bet.id ? 'ring-4 ring-blue-400 ring-opacity-75 shadow-xl scale-110' : ''
+                              }`}>
+                                <Image
+                                  src={bet.logo}
+                                  alt={`${bet.name} logo`}
+                                  fill
+                                  className="object-cover"
+                                  priority
+                                  sizes="(max-width: 640px) 48px, 56px"
+                                />
+                              </div>
+                            ) : (
+                              <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600 flex items-center justify-center shadow-md border-2 border-white/90 ring-1 ring-white/50 transition-all duration-300 ${
+                                hoveredBetId === bet.id ? 'ring-4 ring-blue-400 ring-opacity-75 shadow-xl scale-110' : ''
+                              }`}>
+                                <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Bet Name - Takes available space */}
+                          <div className="flex-1 min-w-0">
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 line-clamp-2 leading-tight tracking-tight">
+                              {bet.name}
+                            </h2>
+                          </div>
+
+                          {/* Rating Badge - Smaller */}
+                          <div className="flex-shrink-0">
+                            <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white rounded-lg w-12 h-12 sm:w-14 sm:h-14 flex flex-col items-center justify-center shadow-md border-2 border-white/90 ring-1 ring-white/50 backdrop-blur-sm">
+                              <div className="text-sm sm:text-base md:text-lg font-black leading-none">{score}</div>
+                              <div className="text-[7px] sm:text-[8px] font-semibold mt-0.5 uppercase tracking-wide">Pontos</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Key Parameters Preview with card-like styling */}
+                        <div className="space-y-2.5 sm:space-y-3">
+                          {bet.parameters.slice(0, 3).map((param) => {
+                            const paramDef = PARAMETER_DEFINITIONS.find((d) => d.name === param.name);
+                            if (!paramDef) return null;
+
+                            const displayValue = getParameterDisplayValue(param);
+                            if (displayValue === "-") return null;
+
+                            return (
+                              <div 
+                                key={param.id || param.name} 
+                                className="flex items-center justify-between text-sm sm:text-base md:text-lg py-2 px-3 rounded-xl bg-white/60 backdrop-blur-sm border border-white/80"
+                              >
+                                <span className="text-slate-700 font-semibold truncate pr-3">{param.name}:</span>
+                                <span className="font-black text-slate-900 text-right flex-shrink-0">
+                                  {displayValue}
+                                  {param.unit && ` ${param.unit}`}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Visit Website Button with enhanced styling */}
+                        {bet.url && (
+                          <a
+                            href={bet.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block w-full mt-6"
+                          >
+                            <Button className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-700 text-white rounded-xl text-base sm:text-lg md:text-xl py-4 sm:py-5 font-bold shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-[1.02] border-2 border-white/20">
+                              <span className="truncate">{bet.domain || "Visitar Site"}</span>
+                              <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 ml-3 flex-shrink-0" />
+                            </Button>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -603,7 +593,7 @@ function ComparisonPageContent() {
                         <div className="overflow-hidden">
                           <Table>
                             <TableHeader>
-                              <TableRow className="bg-slate-50">
+                              <TableRow className="bg-slate-50 border-b border-slate-200">
                                 <TableHead className="w-[200px] sm:w-[250px] font-semibold text-slate-900 text-xs sm:text-sm">
                                   Parâmetro
                                 </TableHead>
@@ -611,6 +601,8 @@ function ComparisonPageContent() {
                                   <TableHead
                                     key={bet.id}
                                     className="text-center font-semibold text-slate-900 min-w-[150px] sm:min-w-[200px] text-xs sm:text-sm"
+                                    onMouseEnter={() => setHoveredBetId(bet.id)}
+                                    onMouseLeave={() => setHoveredBetId(null)}
                                   >
                                     <span className="line-clamp-2">{bet.name}</span>
                                   </TableHead>
@@ -620,7 +612,7 @@ function ComparisonPageContent() {
                         <TableBody>
                           {categoryDefs.map((paramDef) => {
                             return (
-                              <TableRow key={paramDef.name} className="hover:bg-slate-50">
+                              <TableRow key={paramDef.name} className="hover:bg-slate-50 border-b border-slate-200">
                                 <TableCell className="font-medium text-slate-900 text-xs sm:text-sm py-3 sm:py-4">
                                   <div>
                                     <div className="font-semibold">{paramDef.name}</div>
@@ -642,7 +634,12 @@ function ComparisonPageContent() {
                                   const hasValue = displayValue !== "-";
                                   
                                   return (
-                                    <TableCell key={bet.id} className="text-center py-3 sm:py-4">
+                                    <TableCell 
+                                      key={bet.id} 
+                                      className="text-center py-3 sm:py-4"
+                                      onMouseEnter={() => setHoveredBetId(bet.id)}
+                                      onMouseLeave={() => setHoveredBetId(null)}
+                                    >
                                       {hasValue ? (
                                         <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                                           {isBoolean ? (

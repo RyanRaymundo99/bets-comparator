@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useFetch } from "@/hooks/use-fetch";
 import { useApi } from "@/hooks/use-api";
 import Link from "next/link";
+import { PARAMETER_CATEGORIES } from "@/lib/parameter-definitions";
 
 interface Bet {
   id: string;
@@ -78,6 +79,7 @@ export default function ClientDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("name"); // Tipo de filtro: name, region, cnpj, etc.
+  const [quickFilter, setQuickFilter] = useState<string | null>(null); // Quick filter: "top10", "above", or category name
   const [insights, setInsights] = useState<Insight | null>(null);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [isComparisonWidgetExpanded, setIsComparisonWidgetExpanded] = useState(true);
@@ -140,16 +142,22 @@ export default function ClientDashboard() {
     refetch: refetchBets,
   } = useFetch<{ bets: Bet[] }>(
     () => {
-      const params = new URLSearchParams();
-      if (selectedRegion !== "all") {
-        params.append("region", selectedRegion);
+      if (quickFilter) {
+        // Use filtered endpoint for quick filters
+        return `/api/bets/filtered?filter=${encodeURIComponent(quickFilter)}`;
+      } else {
+        // Use regular endpoint with region filter
+        const params = new URLSearchParams();
+        if (selectedRegion !== "all") {
+          params.append("region", selectedRegion);
+        }
+        return `/api/bets?${params.toString()}`;
       }
-      return `/api/bets?${params.toString()}`;
     },
     {
       showToast: true,
       errorMessage: "Falha ao carregar casas de apostas",
-      dependencies: [selectedRegion],
+      dependencies: [selectedRegion, quickFilter],
       immediate: !!linkStatus?.hasLinkedBet, // Only fetch if user has linked bet
     }
   );
@@ -254,6 +262,12 @@ export default function ClientDashboard() {
     
     const searchLower = searchTerm.toLowerCase();
     
+    // When quick filter is active, always search by name
+    if (quickFilter) {
+      return bet.name.toLowerCase().includes(searchLower);
+    }
+    
+    // Otherwise use the selected filter type
     switch (filterType) {
       case "name":
         return bet.name.toLowerCase().includes(searchLower);
@@ -381,40 +395,100 @@ export default function ClientDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Tipo de Filtro */}
-                <select
-                  value={filterType}
-                  onChange={(e) => {
-                    setFilterType(e.target.value);
-                    setSearchTerm(""); // Limpar busca ao mudar tipo de filtro
-                  }}
-                  className="px-4 py-6 bg-white border border-slate-200 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm sm:w-auto sm:min-w-[180px]"
-                >
-                  <option value="name">Nome</option>
-                  <option value="region">Região</option>
-                  <option value="cnpj">CNPJ</option>
-                  <option value="domain">Domínio</option>
-                  <option value="betId">ID da Casa</option>
-                </select>
+              {/* Quick Action Filters */}
+              <div>
+                <div className="text-sm font-semibold text-slate-700 mb-3">Filtros Rápidos</div>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setQuickFilter(quickFilter === "top10" ? null : "top10");
+                      setSearchTerm("");
+                    }}
+                    className={quickFilter === "top10" 
+                      ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600" 
+                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+                    }
+                  >
+                    TOP 10 Geral
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setQuickFilter(quickFilter === "above" ? null : "above");
+                      setSearchTerm("");
+                    }}
+                    className={quickFilter === "above" 
+                      ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600" 
+                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+                    }
+                  >
+                    Ranking Acima
+                  </Button>
+                  {PARAMETER_CATEGORIES.map((category) => (
+                    <Button
+                      key={category}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setQuickFilter(quickFilter === category ? null : category);
+                        setSearchTerm("");
+                      }}
+                      className={quickFilter === category 
+                        ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600" 
+                        : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+                      }
+                    >
+                      Top 10 {category}
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
-                {/* Campo de Busca */}
-                <div className="relative group flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5 group-focus-within:text-blue-600 transition-colors pointer-events-none" />
-                  <Input
-                    placeholder={
-                      filterType === "name" ? "Buscar por nome..." :
+              {/* Search Field - Always visible */}
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5 group-focus-within:text-blue-600 transition-colors pointer-events-none" />
+                <Input
+                  placeholder={
+                    quickFilter 
+                      ? "Buscar por nome nas casas filtradas..." 
+                      : filterType === "name" ? "Buscar por nome..." :
                       filterType === "region" ? "Buscar por região..." :
                       filterType === "cnpj" ? "Buscar por CNPJ..." :
                       filterType === "domain" ? "Buscar por domínio..." :
                       "Buscar por ID..."
-                    }
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 pr-4 py-6 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl transition-all duration-200 shadow-sm w-full"
-                  />
-                </div>
+                  }
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 pr-4 py-6 bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl transition-all duration-200 shadow-sm w-full"
+                />
               </div>
+
+              {/* Regular Search Filters - Only when no quick filter */}
+              {!quickFilter && (
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Tipo de Filtro */}
+                  <select
+                    value={filterType}
+                    onChange={(e) => {
+                      setFilterType(e.target.value);
+                      setSearchTerm(""); // Limpar busca ao mudar tipo de filtro
+                    }}
+                    className="px-4 py-6 bg-white border border-slate-200 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm sm:w-auto sm:min-w-[180px]"
+                  >
+                    <option value="name">Nome</option>
+                    <option value="region">Região</option>
+                    <option value="cnpj">CNPJ</option>
+                    <option value="domain">Domínio</option>
+                    <option value="betId">ID da Casa</option>
+                  </select>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

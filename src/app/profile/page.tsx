@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import NavbarNew from "@/components/ui/navbar-new";
 import Breadcrumb from "@/components/ui/breadcrumb";
+import Image from "next/image";
 import {
   User,
   Mail,
@@ -23,6 +24,7 @@ import {
   Edit,
   Save,
   X,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface UserProfile {
@@ -61,45 +63,116 @@ export default function ProfilePage() {
     file: File;
   } | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
   const { toast } = useToast();
 
+  // Track all async operations to ensure loading state is accurate
   useEffect(() => {
-    fetchUserProfile();
+    let isMounted = true;
+    let completedOperations = 0;
+    const totalOperations = 3;
+
+    const markOperationComplete = () => {
+      completedOperations++;
+      if (completedOperations === totalOperations && isMounted) {
+        setLoading(false);
+      }
+    };
+
+    // Execute all operations in parallel
+    fetchUserProfile(markOperationComplete, isMounted);
+    fetchKycDocuments(markOperationComplete, isMounted);
+    fetchLinkedBet(markOperationComplete, isMounted);
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = async (
+    onComplete?: () => void,
+    isMounted?: boolean
+  ) => {
     try {
       const response = await fetch("/api/user/status");
-      if (response.ok) {
+      if (response.ok && isMounted !== false) {
         const data = await response.json();
         setUserProfile(data.user);
         setFormData({
           name: data.user.name || "",
           phone: data.user.phone || "",
         });
+        if (data.user.image) {
+          setProfileImage(data.user.image);
+        }
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load profile information",
-      });
+      if (isMounted !== false) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load profile information",
+        });
+      }
     } finally {
-      setLoading(false);
+      if (onComplete) onComplete();
+      else setLoading(false); // Fallback if called outside useEffect
     }
   };
 
-  const fetchKycDocuments = async () => {
+  const fetchLinkedBet = async (
+    onComplete?: () => void,
+    isMounted?: boolean
+  ) => {
+    try {
+      const response = await fetch("/api/user/link-bet");
+      if (response.ok && isMounted !== false) {
+        const data = await response.json();
+        if (data.userBet?.bet) {
+          if (data.userBet.bet.url) {
+            setIframeUrl(data.userBet.bet.url);
+          }
+          if (data.userBet.bet.coverImage) {
+            setCoverImage(data.userBet.bet.coverImage);
+          }
+          // Use a callback to check profileImage state after user profile loads
+          setProfileImage((current) => {
+            if (!current && data.userBet.bet.logo) {
+              return data.userBet.bet.logo;
+            }
+            return current;
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching linked bet:", error);
+    } finally {
+      if (onComplete) onComplete();
+    }
+  };
+
+  const fetchKycDocuments = async (
+    onComplete?: () => void,
+    isMounted?: boolean
+  ) => {
     try {
       const response = await fetch("/api/user/kyc-documents");
-      if (response.ok) {
+      if (response.ok && isMounted !== false) {
         const data = await response.json();
-        setKycDocuments(data.documents);
+        setKycDocuments({
+          documentFront: data.documentFront || null,
+          documentBack: data.documentBack || null,
+          documentSelfie: data.documentSelfie || null,
+        });
       }
     } catch (error) {
       console.error("Error fetching KYC documents:", error);
+    } finally {
+      if (onComplete) onComplete();
     }
   };
 
@@ -230,10 +303,25 @@ export default function ProfilePage() {
     );
   }
 
+  // Format URL for iframe (ensure it has protocol)
+  const getIframeUrl = (url: string | null | undefined): string | null => {
+    if (!url) return null;
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) return null;
+    // If URL doesn't start with http:// or https://, add https://
+    if (
+      !trimmedUrl.startsWith("http://") &&
+      !trimmedUrl.startsWith("https://")
+    ) {
+      return `https://${trimmedUrl}`;
+    }
+    return trimmedUrl;
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <NavbarNew isLoggingOut={false} handleLogout={() => {}} />
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 md:p-8">
         <Breadcrumb
           items={[
             { label: "Dashboard", href: "/dashboard" },
@@ -241,12 +329,77 @@ export default function ProfilePage() {
           ]}
         />
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Profile Management</h1>
-          <p className="text-muted-foreground">
-            Manage your personal information and KYC documents
-          </p>
-        </div>
+        {/* Cover Section with Iframe and Profile Picture Overlay */}
+        <Card className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden mb-6">
+          <div className="relative">
+            {/* Cover/Iframe Area - Always show the blue cover, iframe if available */}
+            <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700">
+              {iframeUrl && getIframeUrl(iframeUrl) ? (
+                <iframe
+                  src={getIframeUrl(iframeUrl) || ""}
+                  className="w-full h-full border-0"
+                  title="Website Preview"
+                  allow="fullscreen"
+                  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                />
+              ) : coverImage ? (
+                <Image
+                  src={coverImage}
+                  alt="Profile cover"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="100vw"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center text-white/80">
+                    <User className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Profile Cover Area</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Profile Picture Overlay (Facebook-style) */}
+            <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-10">
+              {profileImage ? (
+                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-xl bg-white">
+                  <Image
+                    src={profileImage}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 768px) 112px, 144px"
+                  />
+                </div>
+              ) : (
+                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-xl border-4 border-white">
+                  <User className="w-14 h-14 md:w-20 md:h-20 text-white" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <CardContent className="p-6 md:p-8 pt-24 md:pt-28">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+              {/* Left Side - User Info */}
+              <div className="flex-1 space-y-3">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+                    {userProfile?.name || "User Profile"}
+                  </h1>
+                  {userProfile?.email && (
+                    <p className="text-slate-600 text-base md:text-lg">
+                      {userProfile.email}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Personal Information */}

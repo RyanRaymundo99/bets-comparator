@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +58,11 @@ export default function EditBetPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -114,6 +118,9 @@ export default function EditBetPage() {
         // Set image previews
         if (data.bet.logo) {
           setLogoPreview(data.bet.logo);
+        }
+        if (data.bet.coverImage) {
+          setCoverPreview(data.bet.coverImage);
         }
       } else {
         throw new Error(data.error);
@@ -179,8 +186,8 @@ export default function EditBetPage() {
 
   const handleImageUpload = async (type: "logo" | "cover", file: File) => {
     const isLogo = type === "logo";
-    const setUploading = setUploadingLogo;
-    const setPreview = setLogoPreview;
+    const setUploading = isLogo ? setUploadingLogo : setUploadingCover;
+    const setPreview = isLogo ? setLogoPreview : setCoverPreview;
 
     // Validate file
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -222,14 +229,14 @@ export default function EditBetPage() {
       if (response.ok && data.success) {
         toast({
           title: "Sucesso",
-          description: "Logo enviado com sucesso",
+          description: `${isLogo ? "Logo" : "Imagem de capa"} enviado com sucesso`,
         });
         setPreview(data.path);
         // Update bet state
         if (bet) {
           setBet({
             ...bet,
-            logo: data.path,
+            [isLogo ? "logo" : "coverImage"]: data.path,
           });
         }
       } else {
@@ -268,8 +275,9 @@ export default function EditBetPage() {
   };
 
   const handleImageRemove = async (type: "logo" | "cover") => {
-    const setUploading = setUploadingLogo;
-    const setPreview = setLogoPreview;
+    const isLogo = type === "logo";
+    const setUploading = isLogo ? setUploadingLogo : setUploadingCover;
+    const setPreview = isLogo ? setLogoPreview : setCoverPreview;
 
     try {
       setUploading(true);
@@ -287,14 +295,14 @@ export default function EditBetPage() {
       if (response.ok && data.success) {
         toast({
           title: "Sucesso",
-          description: "Logo removido com sucesso",
+          description: `${isLogo ? "Logo" : "Imagem de capa"} removido com sucesso`,
         });
         setPreview(null);
         // Update bet state
         if (bet) {
           setBet({
             ...bet,
-            logo: null,
+            [isLogo ? "logo" : "coverImage"]: null,
           });
         }
       } else {
@@ -373,13 +381,48 @@ export default function EditBetPage() {
 
         {/* Images Section - Iframe and Logo */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Iframe Section - Takes 2/3 on large screens */}
+          {/* Iframe/Cover Section - Takes 2/3 on large screens */}
           <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden lg:col-span-2">
             <CardHeader className="pb-3">
-              <CardTitle className="text-slate-900 text-xl">Visualização do Website</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-slate-900 text-xl">Visualização do Website / Imagem de Capa</CardTitle>
+                {coverPreview && (
+                  <div className="flex gap-2">
+                    <input
+                      ref={coverInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={(e) => handleFileSelect("cover", e)}
+                      className="hidden"
+                      disabled={uploadingCover}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="border-slate-200 text-slate-700 hover:bg-slate-50"
+                      disabled={uploadingCover}
+                      onClick={() => coverInputRef.current?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {uploadingCover ? "Enviando..." : "Alterar Capa"}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleImageRemove("cover")}
+                      disabled={uploadingCover}
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Remover
+                    </Button>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-slate-100 overflow-hidden rounded-b-2xl">
+              <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700 overflow-hidden rounded-b-2xl">
                 {getIframeUrl(formData.url) ? (
                   <iframe
                     src={getIframeUrl(formData.url) || ""}
@@ -388,12 +431,32 @@ export default function EditBetPage() {
                     allow="fullscreen"
                     sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
                   />
+                ) : coverPreview ? (
+                  <Image
+                    src={coverPreview}
+                    alt="Cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                  />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100">
-                    <ImageIcon className="w-12 h-12 text-slate-400 mb-2" />
-                    <span className="text-slate-600 text-sm text-center px-4">
-                      Adicione uma URL no campo "Website" para visualizar o site aqui
-                    </span>
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-blue-700">
+                    <label className="cursor-pointer flex flex-col items-center justify-center text-white/80 hover:text-white transition-colors">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={(e) => handleFileSelect("cover", e)}
+                        className="hidden"
+                        disabled={uploadingCover}
+                      />
+                      <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
+                      <span className="text-sm text-center px-4">
+                        {uploadingCover ? "Enviando..." : "Clique para fazer upload da imagem de capa"}
+                      </span>
+                      <span className="text-xs mt-2 opacity-70">
+                        Ou adicione uma URL no campo "Website" para visualizar o site
+                      </span>
+                    </label>
                   </div>
                 )}
               </div>
@@ -417,24 +480,24 @@ export default function EditBetPage() {
                     />
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full">
                       <div className="flex gap-2">
-                        <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/jpg,image/png,image/webp"
-                            onChange={(e) => handleFileSelect("logo", e)}
-                            className="hidden"
-                            disabled={uploadingLogo}
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700"
-                            disabled={uploadingLogo}
-                          >
-                            <Upload className="w-4 h-4 mr-2" />
-                            Alterar
-                          </Button>
-                        </label>
+                        <input
+                          ref={logoInputRef}
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          onChange={(e) => handleFileSelect("logo", e)}
+                          className="hidden"
+                          disabled={uploadingLogo}
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                          disabled={uploadingLogo}
+                          onClick={() => logoInputRef.current?.click()}
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          Alterar
+                        </Button>
                         <Button
                           type="button"
                           size="sm"
