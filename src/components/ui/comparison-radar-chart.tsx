@@ -33,9 +33,11 @@ const ResponsiveContainer = dynamic(
 const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
   ssr: false,
 });
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), {
-  ssr: false,
-});
+const Legend = dynamic(
+  // @ts-expect-error - recharts Legend has incompatible types with Next.js dynamic
+  () => import("recharts").then((mod) => mod.Legend),
+  { ssr: false }
+);
 
 interface Parameter {
   id: string;

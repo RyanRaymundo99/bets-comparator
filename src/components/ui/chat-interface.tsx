@@ -13,7 +13,7 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-  context?: any;
+  context?: Record<string, unknown>;
 }
 
 export default function ChatInterface({ context }: ChatInterfaceProps) {
@@ -99,7 +99,7 @@ export default function ChatInterface({ context }: ChatInterfaceProps) {
                 Faça uma pergunta sobre sua casa de apostas
               </p>
               <p className="text-xs mt-2 text-slate-400">
-                Ex: "Como posso melhorar minha posição no ranking?"
+                Ex: &quot;Como posso melhorar minha posição no ranking?&quot;
               </p>
             </div>
           ) : (

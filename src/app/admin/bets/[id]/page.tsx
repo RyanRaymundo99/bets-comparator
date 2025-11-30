@@ -454,7 +454,7 @@ export default function EditBetPage() {
                         {uploadingCover ? "Enviando..." : "Clique para fazer upload da imagem de capa"}
                       </span>
                       <span className="text-xs mt-2 opacity-70">
-                        Ou adicione uma URL no campo "Website" para visualizar o site
+                        Ou adicione uma URL no campo &quot;Website&quot; para visualizar o site
                       </span>
                     </label>
                   </div>

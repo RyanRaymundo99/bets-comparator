@@ -4,10 +4,14 @@ import {
   successResponse,
   unauthorizedResponse,
   badRequestResponse,
+  notFoundResponse,
   withErrorHandling,
 } from "@/lib/api-response";
 import { getSession } from "@/lib/auth-helpers";
-import { PARAMETER_CATEGORIES } from "@/lib/parameter-definitions";
+import {
+  PARAMETER_CATEGORIES,
+  ParameterCategory,
+} from "@/lib/parameter-definitions";
 
 // Helper function to calculate overall score for a bet
 function calculateOverallScore(bet: {
@@ -236,9 +240,9 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
           position: startIndex + index + 1,
         }));
     }
-  } else if (PARAMETER_CATEGORIES.includes(filterType as any)) {
+  } else if (PARAMETER_CATEGORIES.includes(filterType as ParameterCategory)) {
     // Top 10 by category
-    const category = filterType;
+    const category = filterType as ParameterCategory;
     const betsWithScores = allBets.map((b) => ({
       bet: b,
       score: calculateCategoryScore(

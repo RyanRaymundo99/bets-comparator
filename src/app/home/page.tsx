@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -179,6 +179,10 @@ export default function HomePage() {
   >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRankingExpanded, setIsRankingExpanded] = useState(false);
+  const [dominantColor, setDominantColor] = useState<string>("rgb(0, 0, 0)"); // Default to black, will be detected from iframe
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true); // Track if we need dark theme
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const { data, loading, error } = useFetch<HomeData>("/api/user/home", {
     immediate: true,
@@ -240,6 +244,92 @@ export default function HomePage() {
         return <Minus className="w-5 h-5 text-gray-400" />;
     }
   };
+
+  // Helper to convert RGB to RGBA
+  const rgbToRgba = (rgb: string, alpha: number): string => {
+    const match = rgb.match(/\d+/g);
+    if (match && match.length >= 3) {
+      return `rgba(${match[0]}, ${match[1]}, ${match[2]}, ${alpha})`;
+    }
+    return rgb;
+  };
+
+  // Extract dominant color using server-side API (works for cross-origin iframes)
+  useEffect(() => {
+    if (!data?.bet?.url) return;
+
+    const extractColor = async () => {
+      try {
+        // First, try client-side detection for same-origin iframes
+        if (iframeRef.current) {
+          try {
+            const iframe = iframeRef.current;
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            if (iframeDoc) {
+              const body = iframeDoc.body;
+              const computedStyle = window.getComputedStyle(body);
+              const bgColor = computedStyle.backgroundColor;
+              
+              if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+                const rgbMatch = bgColor.match(/\d+/g);
+                if (rgbMatch && rgbMatch.length >= 3) {
+                  const r = parseInt(rgbMatch[0]);
+                  const g = parseInt(rgbMatch[1]);
+                  const b = parseInt(rgbMatch[2]);
+                  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                  
+                  let finalColor: string;
+                  if (brightness > 200) {
+                    finalColor = `rgb(255, 255, 255)`;
+                    setIsDarkTheme(false);
+                  } else if (brightness > 128) {
+                    const lightR = Math.min(255, Math.floor(r * 1.1));
+                    const lightG = Math.min(255, Math.floor(g * 1.1));
+                    const lightB = Math.min(255, Math.floor(b * 1.1));
+                    finalColor = `rgb(${lightR}, ${lightG}, ${lightB})`;
+                    setIsDarkTheme(false);
+                  } else if (brightness < 50) {
+                    finalColor = `rgb(0, 0, 0)`;
+                    setIsDarkTheme(true);
+                  } else {
+                    const darkR = Math.max(0, Math.floor(r * 0.9));
+                    const darkG = Math.max(0, Math.floor(g * 0.9));
+                    const darkB = Math.max(0, Math.floor(b * 0.9));
+                    finalColor = `rgb(${darkR}, ${darkG}, ${darkB})`;
+                    setIsDarkTheme(true);
+                  }
+                  setDominantColor(finalColor);
+                  return;
+                }
+              }
+            }
+          } catch (e) {
+            // Same-origin detection failed, continue to server-side
+          }
+        }
+
+        // Use server-side API for cross-origin iframes
+        const response = await fetch(`/api/analyze-website-color?url=${encodeURIComponent(data.bet.url)}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            setDominantColor(result.data.color);
+            setIsDarkTheme(result.data.isDark);
+            return;
+          }
+        }
+      } catch (error) {
+        console.debug("Color extraction failed:", error);
+      }
+      
+      // Final fallback: Default to black
+      setDominantColor(`rgb(0, 0, 0)`);
+      setIsDarkTheme(true);
+    };
+
+    // Extract color when URL is available
+    extractColor();
+  }, [data?.bet?.url]);
 
   if (loading) {
     return (
@@ -314,24 +404,65 @@ export default function HomePage() {
         {/* Main Content Section - Card and Ranking Side by Side */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Main Card */}
-          <Card className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden flex-1">
+          <Card 
+            className={`border shadow-lg rounded-2xl overflow-hidden flex-1 transition-colors duration-1000 ${isDarkTheme ? 'border-slate-700' : 'border-slate-200'}`}
+            style={{ backgroundColor: dominantColor }}
+          >
           {/* Cover Image with Logo Overlay */}
           <div className="relative">
             {/* Cover/Iframe Area - Always show the blue cover, iframe if URL available */}
-            <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700">
+            <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700 overflow-hidden">
+              {/* Hidden canvas for color extraction */}
+              <canvas ref={canvasRef} className="hidden" />
+              
               {bet.url ? (
-                <iframe
-                  src={
-                    bet.url.startsWith("http://") ||
-                    bet.url.startsWith("https://")
-                      ? bet.url
-                      : `https://${bet.url}`
-                  }
-                  className="w-full h-full border-0"
-                  title={`${bet.name} Website`}
-                  allow="fullscreen"
-                  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-                />
+                <>
+                  <iframe
+                    ref={iframeRef}
+                    src={
+                      bet.url.startsWith("http://") ||
+                      bet.url.startsWith("https://")
+                        ? bet.url
+                        : `https://${bet.url}`
+                    }
+                    className="w-full h-full border-0"
+                    title={`${bet.name} Website`}
+                    allow="fullscreen"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                  />
+                  {/* Color extraction overlay - uses CSS filters to sample iframe colors */}
+                  <div 
+                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-32 pointer-events-none opacity-0"
+                    style={{
+                      filter: 'blur(60px) saturate(2)',
+                      mixBlendMode: 'multiply',
+                      background: 'inherit',
+                    }}
+                    id="color-extractor"
+                  />
+                  {/* Gradient fade overlay that transitions from iframe to extracted color */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(to bottom, transparent 0%, transparent 35%, ${rgbToRgba(dominantColor, 0.2)} 60%, ${rgbToRgba(dominantColor, 0.5)} 75%, ${rgbToRgba(dominantColor, 0.85)} 90%, ${dominantColor} 100%)`,
+                      backdropFilter: 'blur(0.5px)',
+                    }}
+                  />
+                  {/* Subtle vignette effect for depth */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(ellipse 80% 50% at center, transparent 0%, ${rgbToRgba(dominantColor, 0.15)} 100%)`,
+                    }}
+                  />
+                  {/* Edge fade for seamless transition */}
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(to bottom, transparent, ${dominantColor})`,
+                    }}
+                  />
+                </>
               ) : bet.coverImage ? (
                 <Image
                   src={bet.coverImage}
@@ -352,9 +483,9 @@ export default function HomePage() {
             </div>
 
             {/* Logo Overlay (Facebook-style) */}
-            <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-10">
+            <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-20">
               {bet.logo ? (
-                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-white shadow-xl bg-white">
+                <div className={`relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 shadow-2xl ring-4 ${isDarkTheme ? 'border-slate-900 bg-slate-900 ring-slate-800/50' : 'border-white bg-white ring-slate-200/50'}`}>
                   <Image
                     src={bet.logo}
                     alt={`${bet.name} logo`}
@@ -364,22 +495,29 @@ export default function HomePage() {
                   />
                 </div>
               ) : (
-                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-xl border-4 border-white">
+                <div className={`relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-2xl border-4 ring-4 ${isDarkTheme ? 'border-slate-900 ring-slate-800/50' : 'border-white ring-slate-200/50'}`}>
                   <Building2 className="w-14 h-14 md:w-20 md:h-20 text-white" />
                 </div>
               )}
             </div>
           </div>
 
-          <CardContent className="p-6 md:p-8 pt-24 md:pt-28">
+          <CardContent className="p-6 md:p-8 pt-24 md:pt-28 relative">
+            {/* Subtle gradient overlay at the top of content to blend with iframe */}
+            <div 
+              className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-0"
+              style={{
+                background: `linear-gradient(to bottom, ${rgbToRgba(dominantColor, 0.95)} 0%, ${rgbToRgba(dominantColor, 0.98)} 50%, transparent 100%)`,
+              }}
+            />
             {/* Left Side - Name, Rating, AI Insights & Chat */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-4 relative z-10">
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+                  <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                     {bet.name}
                   </h1>
                   {bet.company && (
-                    <p className="text-slate-600 text-base md:text-lg">
+                    <p className={`text-base md:text-lg ${isDarkTheme ? 'text-slate-300' : 'text-slate-600'}`}>
                       {bet.company}
                     </p>
                   )}
@@ -388,7 +526,7 @@ export default function HomePage() {
                       href={bet.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors text-sm mt-2"
+                      className={`inline-flex items-center gap-2 transition-colors text-sm mt-2 ${isDarkTheme ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
                     >
                       <span className="truncate max-w-xs">{bet.url}</span>
                       <ExternalLink className="w-4 h-4 flex-shrink-0" />
@@ -433,7 +571,7 @@ export default function HomePage() {
 
                     {/* Region */}
                     {bet.region && (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold">
+                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${isDarkTheme ? 'bg-slate-800 text-slate-200 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'}`}>
                         <MapPin className="w-3.5 h-3.5" />
                         {bet.region}
                       </div>
@@ -441,16 +579,16 @@ export default function HomePage() {
                   </div>
 
                   {/* Additional Details */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-200">
+                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t ${isDarkTheme ? 'border-slate-700' : 'border-slate-200'}`}>
                     {/* CNPJ */}
                     {bet.cnpj && (
                       <div className="flex items-start gap-2">
-                        <FileText className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <FileText className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
                         <div>
-                          <div className="text-xs text-slate-500 font-medium">
+                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
                             CNPJ
                           </div>
-                          <div className="text-sm text-slate-900 font-semibold">
+                          <div className={`text-sm font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                             {bet.cnpj}
                           </div>
                         </div>
@@ -460,12 +598,12 @@ export default function HomePage() {
                     {/* License */}
                     {bet.license && (
                       <div className="flex items-start gap-2">
-                        <FileText className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <FileText className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
                         <div>
-                          <div className="text-xs text-slate-500 font-medium">
+                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
                             Licença
                           </div>
-                          <div className="text-sm text-slate-900 font-semibold">
+                          <div className={`text-sm font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                             {bet.license}
                           </div>
                         </div>
@@ -475,12 +613,12 @@ export default function HomePage() {
                     {/* Bet ID */}
                     {bet.betId && (
                       <div className="flex items-start gap-2">
-                        <Hash className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <Hash className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
                         <div>
-                          <div className="text-xs text-slate-500 font-medium">
+                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
                             ID da Casa
                           </div>
-                          <div className="text-sm text-slate-900 font-semibold font-mono">
+                          <div className={`text-sm font-semibold font-mono ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                             {bet.betId}
                           </div>
                         </div>
@@ -490,12 +628,12 @@ export default function HomePage() {
                     {/* Domain */}
                     {bet.domain && (
                       <div className="flex items-start gap-2">
-                        <Globe className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                        <Globe className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
                         <div>
-                          <div className="text-xs text-slate-500 font-medium">
+                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
                             Domínio
                           </div>
-                          <div className="text-sm text-slate-900 font-semibold">
+                          <div className={`text-sm font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                             {bet.domain}
                           </div>
                         </div>
@@ -507,22 +645,22 @@ export default function HomePage() {
                 <div className="flex flex-wrap items-center gap-4">
                   {/* Overall Rating */}
                   <div className="flex items-center gap-3">
-                    <div className="text-3xl font-bold text-slate-900">
+                    <div className={`text-3xl font-bold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                       {rating.overall.toFixed(1)}
                     </div>
-                    <div className="text-slate-600">/ 5</div>
+                    <div className={isDarkTheme ? 'text-slate-300' : 'text-slate-600'}>/ 5</div>
                   </div>
 
                   {/* Stars */}
                   {renderStars(rating.stars)}
 
                   {/* Ranking */}
-                  <div className="text-slate-600">
-                    <span className="font-semibold text-slate-900">
+                  <div className={isDarkTheme ? 'text-slate-300' : 'text-slate-600'}>
+                    <span className={`font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                       {ranking.position}°
                     </span>{" "}
                     lugar entre{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className={`font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
                       {ranking.total}
                     </span>{" "}
                     casas avaliadas
@@ -530,7 +668,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Compare Button - Inside the card */}
-                <div className="pt-4 mt-4 border-t border-slate-200">
+                <div className={`pt-4 mt-4 border-t ${isDarkTheme ? 'border-slate-700' : 'border-slate-200'}`}>
                   <Button
                     onClick={handleCompare}
                     size="lg"
