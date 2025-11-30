@@ -58,10 +58,9 @@ export const POST = withErrorHandling(async (
   }
 
   try {
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      return badRequestResponse("Invalid file type. Only JPEG, PNG, and WebP are allowed");
+    // Validate file type - accept all image types
+    if (!file.type.startsWith("image/")) {
+      return badRequestResponse("Invalid file type. Only image files are allowed");
     }
 
     // Validate file size (max 5MB)

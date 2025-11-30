@@ -189,13 +189,12 @@ export default function EditBetPage() {
     const setUploading = isLogo ? setUploadingLogo : setUploadingCover;
     const setPreview = isLogo ? setLogoPreview : setCoverPreview;
 
-    // Validate file
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
+    // Validate file - accept all image types
+    if (!file.type.startsWith("image/")) {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Tipo de arquivo inválido. Use JPEG, PNG ou WebP",
+        description: "Tipo de arquivo inválido. Apenas imagens são permitidas",
       });
       return;
     }
@@ -391,7 +390,7 @@ export default function EditBetPage() {
                     <input
                       ref={coverInputRef}
                       type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      accept="image/*"
                       onChange={(e) => handleFileSelect("cover", e)}
                       className="hidden"
                       disabled={uploadingCover}
@@ -444,7 +443,7 @@ export default function EditBetPage() {
                     <label className="cursor-pointer flex flex-col items-center justify-center text-white/80 hover:text-white transition-colors">
                       <input
                         type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        accept="image/*"
                         onChange={(e) => handleFileSelect("cover", e)}
                         className="hidden"
                         disabled={uploadingCover}
@@ -483,7 +482,7 @@ export default function EditBetPage() {
                         <input
                           ref={logoInputRef}
                           type="file"
-                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          accept="image/*"
                           onChange={(e) => handleFileSelect("logo", e)}
                           className="hidden"
                           disabled={uploadingLogo}
@@ -521,7 +520,7 @@ export default function EditBetPage() {
                     <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200/50 transition-colors">
                       <input
                         type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        accept="image/*"
                         onChange={(e) => handleFileSelect("logo", e)}
                         className="hidden"
                         disabled={uploadingLogo}
@@ -537,7 +536,7 @@ export default function EditBetPage() {
                     <label className="cursor-pointer inline-block">
                       <input
                         type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        accept="image/*"
                         onChange={(e) => handleFileSelect("logo", e)}
                         className="hidden"
                         disabled={uploadingLogo}
