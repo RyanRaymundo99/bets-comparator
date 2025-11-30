@@ -16,6 +16,7 @@ import {
   ChevronUp,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,6 +28,8 @@ interface Bet {
   url?: string | null;
   region?: string | null;
   license?: string | null;
+  betId?: string | null;
+  logo?: string | null;
   createdAt: string;
   updatedAt: string;
   parameters: Parameter[];
@@ -322,9 +325,16 @@ export default function BetsManagementPage() {
                   <CardHeader className="pb-4 pt-6 px-6">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-slate-900 font-bold text-xl group-hover:text-blue-600 transition-colors duration-200 mb-1">
-                          {bet.name}
-                        </CardTitle>
+                        <div className="flex items-center gap-2 mb-1">
+                          <CardTitle className="text-slate-900 font-bold text-xl group-hover:text-blue-600 transition-colors duration-200">
+                            {bet.name}
+                          </CardTitle>
+                          {bet.betId && (
+                            <span className="text-sm font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300">
+                              {bet.betId}
+                            </span>
+                          )}
+                        </div>
                         {bet.url && (
                           <a
                             href={bet.url}
@@ -339,9 +349,22 @@ export default function BetsManagementPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-all duration-200 shadow-sm">
-                          <Building2 className="w-6 h-6 text-blue-600" />
-                        </div>
+                        {bet.logo ? (
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm group-hover:scale-110 transition-all duration-200">
+                            <Image
+                              src={bet.logo}
+                              alt={bet.name}
+                              fill
+                              className="object-cover"
+                              sizes="48px"
+                              unoptimized
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-all duration-200 shadow-sm">
+                            <Building2 className="w-6 h-6 text-blue-600" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardHeader>
