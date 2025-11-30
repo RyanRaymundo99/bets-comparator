@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
+import { put } from "@vercel/blob";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth-helpers";
 import {
@@ -11,6 +12,9 @@ import {
   notFoundResponse,
   withErrorHandling,
 } from "@/lib/api-response";
+
+// Check if we're on Vercel
+const isVercel = process.env.VERCEL === "1" || process.env.VERCEL_ENV;
 
 // POST /api/admin/bets/[id]/upload - Upload logo or cover image
 export const POST = withErrorHandling(async (
@@ -74,25 +78,64 @@ export const POST = withErrorHandling(async (
       return badRequestResponse("File size exceeds 5MB limit");
     }
 
-    // Create uploads directory structure
-    const uploadsDir = join(process.cwd(), "public", "uploads", "bets", id);
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
-    }
-
     // Generate unique filename
     const timestamp = Date.now();
     const extension = file.name.split(".").pop() || "jpg";
     const filename = `${type}_${timestamp}.${extension}`;
-    const filepath = join(uploadsDir, filename);
 
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filepath, buffer);
+    let publicPath: string;
 
-    // Create public URL path
-    const publicPath = `/uploads/bets/${id}/${filename}`;
+    if (isVercel) {
+      // On Vercel, use Vercel Blob Storage
+      try {
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        
+        const blob = await put(`bets/${id}/${filename}`, buffer, {
+          access: "public",
+          contentType: file.type || "image/jpeg",
+        });
+
+        publicPath = blob.url;
+      } catch (error) {
+        console.error("Error uploading to Vercel Blob:", error);
+        // Fallback: try /tmp directory (temporary, will be deleted)
+        const tmpDir = "/tmp";
+        const uploadsDir = join(tmpDir, "uploads", "bets", id);
+        
+        try {
+          if (!existsSync(uploadsDir)) {
+            await mkdir(uploadsDir, { recursive: true });
+          }
+          
+          const filepath = join(uploadsDir, filename);
+          const bytes = await file.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          await writeFile(filepath, buffer);
+          
+          // Note: /tmp files are ephemeral and won't persist
+          // This is a fallback only
+          publicPath = `/api/admin/bets/${id}/image?type=${type}&file=${filename}`;
+        } catch (tmpError) {
+          console.error("Error with /tmp fallback:", tmpError);
+          throw new Error("Failed to upload file. Please ensure VERCEL_BLOB_READ_WRITE_TOKEN is set in your environment variables.");
+        }
+      }
+    } else {
+      // Local development: use public/uploads directory
+      const uploadsDir = join(process.cwd(), "public", "uploads", "bets", id);
+      if (!existsSync(uploadsDir)) {
+        await mkdir(uploadsDir, { recursive: true });
+      }
+
+      const filepath = join(uploadsDir, filename);
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      await writeFile(filepath, buffer);
+
+      // Create public URL path
+      publicPath = `/uploads/bets/${id}/${filename}`;
+    }
 
     // Update bet with image path
     const updateData = type === "logo" 
