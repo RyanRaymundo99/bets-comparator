@@ -79,24 +79,32 @@ interface HomeData {
       name: string;
       score: number;
       position: number;
+      logo?: string | null;
+      betId?: string | null;
     }>;
     aboveCurrent: Array<{
       id: string;
       name: string;
       score: number;
       position: number;
+      logo?: string | null;
+      betId?: string | null;
     }>;
     belowCurrent: Array<{
       id: string;
       name: string;
       score: number;
       position: number;
+      logo?: string | null;
+      betId?: string | null;
     }>;
     allRanking?: Array<{
       id: string;
       name: string;
       score: number;
       position: number;
+      logo?: string | null;
+      betId?: string | null;
     }>;
   };
   parameters: Array<{
@@ -542,9 +550,16 @@ export default function HomePage() {
             {/* Left Side - Name, Rating, AI Insights & Chat */}
             <div className="flex-1 space-y-4 relative z-10">
                 <div>
-                  <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
-                    {bet.name}
-                  </h1>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h1 className={`text-3xl md:text-4xl font-bold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                      {bet.name}
+                    </h1>
+                    {bet.betId && (
+                      <span className={`text-lg md:text-xl font-mono font-semibold px-3 py-1 rounded-lg ${isDarkTheme ? 'bg-slate-800 text-slate-200 border border-slate-700' : 'bg-slate-100 text-slate-700 border border-slate-300'}`}>
+                        {bet.betId}
+                      </span>
+                    )}
+                  </div>
                   {bet.company && (
                     <p className={`text-base md:text-lg ${isDarkTheme ? 'text-slate-300' : 'text-slate-600'}`}>
                       {bet.company}
@@ -798,6 +813,18 @@ export default function HomePage() {
                                   >
                                     #{item.position}
                                   </span>
+                                  {item.logo ? (
+                                    <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                      <Image
+                                        src={item.logo}
+                                        alt={item.name}
+                                        fill
+                                        className="object-cover"
+                                        sizes="24px"
+                                        unoptimized
+                                      />
+                                    </div>
+                                  ) : null}
                                   <span
                                     className={`text-sm truncate ${
                                       item.id === bet.id
@@ -809,6 +836,11 @@ export default function HomePage() {
                                   >
                                     {item.name}
                                   </span>
+                                  {item.betId && (
+                                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${isDarkTheme ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                                      {item.betId}
+                                    </span>
+                                  )}
                                 </div>
                                 <span
                                   className={`text-xs font-semibold flex-shrink-0 ml-2 ${
@@ -839,15 +871,32 @@ export default function HomePage() {
                                     key={item.id}
                                     className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
                                   >
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm font-bold text-slate-700">
+                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                      <span className="text-sm font-bold text-slate-700 flex-shrink-0">
                                         #{item.position}
                                       </span>
+                                      {item.logo ? (
+                                        <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                          <Image
+                                            src={item.logo}
+                                            alt={item.name}
+                                            fill
+                                            className="object-cover"
+                                            sizes="24px"
+                                            unoptimized
+                                          />
+                                        </div>
+                                      ) : null}
                                       <span className="text-sm text-slate-900 truncate">
                                         {item.name}
                                       </span>
+                                      {item.betId && (
+                                        <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 flex-shrink-0">
+                                          {item.betId}
+                                        </span>
+                                      )}
                                     </div>
-                                    <span className="text-xs font-semibold text-slate-600">
+                                    <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
                                       {item.score}
                                     </span>
                                   </div>
@@ -889,24 +938,41 @@ export default function HomePage() {
                               3 Abaixo de Você
                             </div>
                             <div className="space-y-2">
-                              {ranking.belowCurrent.map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-slate-700">
-                                      #{item.position}
-                                    </span>
-                                    <span className="text-sm text-slate-900 truncate">
-                                      {item.name}
+                                {ranking.belowCurrent.map((item) => (
+                                  <div
+                                    key={item.id}
+                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                                  >
+                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                      <span className="text-sm font-bold text-slate-700 flex-shrink-0">
+                                        #{item.position}
+                                      </span>
+                                      {item.logo ? (
+                                        <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                          <Image
+                                            src={item.logo}
+                                            alt={item.name}
+                                            fill
+                                            className="object-cover"
+                                            sizes="24px"
+                                            unoptimized
+                                          />
+                                        </div>
+                                      ) : null}
+                                      <span className="text-sm text-slate-900 truncate">
+                                        {item.name}
+                                      </span>
+                                      {item.betId && (
+                                        <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 flex-shrink-0">
+                                          {item.betId}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
+                                      {item.score}
                                     </span>
                                   </div>
-                                  <span className="text-xs font-semibold text-slate-600">
-                                    {item.score}
-                                  </span>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </div>
                         )}

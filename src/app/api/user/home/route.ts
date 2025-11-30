@@ -177,6 +177,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     name: b.bet.name,
     score: b.score,
     position: index + 1,
+    logo: b.bet.logo,
+    betId: b.bet.betId,
   }));
 
   // Get 3 positions above current (if available and not in top 3)
@@ -192,6 +194,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
             name: b.bet.name,
             score: b.score,
             position: actualIndex + 1,
+            logo: b.bet.logo,
+            betId: b.bet.betId,
           };
         })
     : [];
@@ -208,6 +212,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         name: b.bet.name,
         score: b.score,
         position: actualIndex + 1,
+        logo: b.bet.logo,
+        betId: b.bet.betId,
       };
     });
 
@@ -217,6 +223,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     name: b.bet.name,
     score: b.score,
     position: index + 1,
+    logo: b.bet.logo,
+    betId: b.bet.betId,
   }));
 
   // Create a map of existing parameters by name
