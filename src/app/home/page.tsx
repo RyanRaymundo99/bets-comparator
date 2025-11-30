@@ -258,14 +258,20 @@ export default function HomePage() {
   useEffect(() => {
     if (!data?.bet?.url) return;
 
-    const extractColor = async () => {
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    const extractColor = async (attempt: number = 0) => {
       try {
-        // First, try client-side detection for same-origin iframes
-        if (iframeRef.current) {
+        // First, try client-side detection for same-origin iframes (wait a bit for iframe to load)
+        if (iframeRef.current && attempt > 0) {
           try {
             const iframe = iframeRef.current;
+            // Wait a bit for iframe to fully load
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
             const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-            if (iframeDoc) {
+            if (iframeDoc && iframeDoc.body) {
               const body = iframeDoc.body;
               const computedStyle = window.getComputedStyle(body);
               const bgColor = computedStyle.backgroundColor;
@@ -313,22 +319,45 @@ export default function HomePage() {
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
+            console.log("Color detected:", result.data);
             setDominantColor(result.data.color);
             setIsDarkTheme(result.data.isDark);
             return;
           }
+        } else {
+          console.debug("API response not OK:", response.status);
         }
       } catch (error) {
         console.debug("Color extraction failed:", error);
       }
       
-      // Final fallback: Default to black
+      // Retry if we haven't exceeded max retries
+      if (attempt < maxRetries) {
+        setTimeout(() => extractColor(attempt + 1), 2000 * (attempt + 1));
+        return;
+      }
+      
+      // Final fallback: Default to black (user indicated iframe is black)
+      console.debug("Color extraction: Using default black");
       setDominantColor(`rgb(0, 0, 0)`);
       setIsDarkTheme(true);
     };
 
-    // Extract color when URL is available
-    extractColor();
+    // Extract color when URL is available - try immediately and also after iframe loads
+    extractColor(0);
+    
+    // Also try after iframe loads
+    if (iframeRef.current) {
+      const iframe = iframeRef.current;
+      const handleLoad = () => {
+        setTimeout(() => extractColor(1), 1000);
+      };
+      iframe.addEventListener("load", handleLoad);
+      
+      return () => {
+        iframe.removeEventListener("load", handleLoad);
+      };
+    }
   }, [data?.bet?.url]);
 
   if (loading) {

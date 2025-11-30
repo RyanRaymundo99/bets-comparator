@@ -36,23 +36,51 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 
     const html = await response.text();
 
-    // Extract background color from inline styles and meta tags
+    // Extract background color from inline styles, CSS, and meta tags
     // Look for common background color patterns
     const bgColorPatterns = [
+      // Inline styles
       /background-color:\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)/gi,
       /background-color:\s*#([0-9a-fA-F]{6})/gi,
       /background:\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)/gi,
       /background:\s*#([0-9a-fA-F]{6})/gi,
-      /bg-color["']?\s*[:=]\s*["']?#([0-9a-fA-F]{6})/gi,
+      // CSS variables
+      /--bg-color["']?\s*[:=]\s*["']?#([0-9a-fA-F]{6})/gi,
+      /--background-color["']?\s*[:=]\s*["']?#([0-9a-fA-F]{3,6})/gi,
+      // Body tag styles
+      /<body[^>]*style=["'][^"']*background[^"']*:?\s*#([0-9a-fA-F]{6})/gi,
+      /<body[^>]*style=["'][^"']*background[^"']*:?\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)/gi,
+      // Common CSS classes that indicate dark/light themes
+      /class=["'][^"']*\b(dark|black|night|dark-mode|dark-theme)\b/gi,
+      /class=["'][^"']*\b(light|white|bright|light-mode|light-theme)\b/gi,
+      // Meta theme-color
+      /<meta[^>]*name=["']theme-color["'][^>]*content=["']#([0-9a-fA-F]{6})/gi,
+      // Common dark background colors
+      /#000000|#000|rgb\(0,\s*0,\s*0\)|black/gi,
+      // Common light background colors
+      /#ffffff|#fff|rgb\(255,\s*255,\s*255\)|white/gi,
     ];
 
     let detectedColor: { r: number; g: number; b: number } | null = null;
+    let foundDarkKeyword = false;
+    let foundLightKeyword = false;
 
     // Try to find background color in HTML
     for (const pattern of bgColorPatterns) {
       const matches = Array.from(html.matchAll(pattern));
       if (matches.length > 0) {
         const match = matches[0];
+        
+        // Check for dark/light keywords
+        if (pattern.source.includes('dark|black|night')) {
+          foundDarkKeyword = true;
+          continue;
+        }
+        if (pattern.source.includes('light|white|bright')) {
+          foundLightKeyword = true;
+          continue;
+        }
+        
         if (match[1] && match[2] && match[3]) {
           // RGB format
           detectedColor = {
@@ -62,31 +90,46 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
           };
           break;
         } else if (match[1]) {
-          // Hex format
+          // Hex format (3 or 6 digits)
           const hex = match[1];
-          detectedColor = {
-            r: parseInt(hex.substring(0, 2), 16),
-            g: parseInt(hex.substring(2, 4), 16),
-            b: parseInt(hex.substring(4, 6), 16),
-          };
-          break;
+          if (hex.length === 3) {
+            // Expand 3-digit hex to 6-digit
+            detectedColor = {
+              r: parseInt(hex[0] + hex[0], 16),
+              g: parseInt(hex[1] + hex[1], 16),
+              b: parseInt(hex[2] + hex[2], 16),
+            };
+          } else if (hex.length === 6) {
+            detectedColor = {
+              r: parseInt(hex.substring(0, 2), 16),
+              g: parseInt(hex.substring(2, 4), 16),
+              b: parseInt(hex.substring(4, 6), 16),
+            };
+          }
+          if (detectedColor) break;
         }
       }
     }
 
-    // Check for common dark/light keywords
-    const darkKeywords = /dark|black|night|darker/i;
-    const lightKeywords = /light|white|bright|lighter/i;
+    // Check for common dark/light keywords in HTML content
+    const darkKeywords = /dark|black|night|darker|dark-mode|dark-theme/i;
+    const lightKeywords = /light|white|bright|lighter|light-mode|light-theme/i;
+    
+    // Count occurrences of dark/light keywords
+    const darkMatches = html.match(darkKeywords);
+    const lightMatches = html.match(lightKeywords);
+    const darkCount = darkMatches ? darkMatches.length : 0;
+    const lightCount = lightMatches ? lightMatches.length : 0;
 
     if (!detectedColor) {
-      // If no color found, check for keywords
-      if (darkKeywords.test(html)) {
+      // If no color found, check for keywords (prefer class-based detection)
+      if (foundDarkKeyword || darkCount > lightCount) {
         return successResponse({
           color: "rgb(0, 0, 0)",
           brightness: 0,
           isDark: true,
         });
-      } else if (lightKeywords.test(html)) {
+      } else if (foundLightKeyword || lightCount > darkCount) {
         return successResponse({
           color: "rgb(255, 255, 255)",
           brightness: 255,
@@ -133,7 +176,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 
     // Default fallback - check if URL suggests dark theme
     const urlLower = normalizedUrl.toLowerCase();
-    if (urlLower.includes("dark") || urlLower.includes("night")) {
+    if (urlLower.includes("dark") || urlLower.includes("night") || urlLower.includes("black")) {
       return successResponse({
         color: "rgb(0, 0, 0)",
         brightness: 0,
@@ -141,11 +184,70 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
       });
     }
 
-    // Default to white for most websites
+    // Check for common website patterns
+    // Wikipedia and many sites use white backgrounds
+    const isWikipedia = normalizedUrl.includes('wikipedia.org');
+    const isCommonLightSite = 
+      normalizedUrl.includes('wikipedia') ||
+      normalizedUrl.includes('google') ||
+      normalizedUrl.includes('github.com') ||
+      html.includes('wikipedia') ||
+      html.includes('Wikimedia');
+    
+    if (isWikipedia || isCommonLightSite) {
+      return successResponse({
+        color: "rgb(255, 255, 255)",
+        brightness: 255,
+        isDark: false,
+      });
+    }
+
+    // Check for common dark website patterns in HTML
+    const hasDarkIndicators = 
+      html.includes('dark') || 
+      html.includes('black') ||
+      html.includes('bg-dark') ||
+      html.includes('theme-dark') ||
+      html.includes('dark-mode');
+    
+    const hasLightIndicators = 
+      html.includes('light') || 
+      html.includes('white') ||
+      html.includes('bg-light') ||
+      html.includes('theme-light') ||
+      html.includes('light-mode');
+
+    // If we have strong dark indicators and no light indicators, use black
+    if (hasDarkIndicators && !hasLightIndicators) {
+      return successResponse({
+        color: "rgb(0, 0, 0)",
+        brightness: 0,
+        isDark: true,
+      });
+    }
+
+    // Check if HTML suggests a light background (most websites are light)
+    // Look for common light background indicators
+    const hasLightBackground = 
+      html.includes('background') && html.includes('fff') ||
+      html.includes('background') && html.includes('white') ||
+      html.includes('bg-white') ||
+      html.includes('background-color: white') ||
+      html.includes('background-color: #fff');
+
+    if (hasLightBackground || hasLightIndicators) {
+      return successResponse({
+        color: "rgb(255, 255, 255)",
+        brightness: 255,
+        isDark: false,
+      });
+    }
+
+    // Default to black for unknown sites (user indicated iframe is often black)
     return successResponse({
-      color: "rgb(255, 255, 255)",
-      brightness: 255,
-      isDark: false,
+      color: "rgb(0, 0, 0)",
+      brightness: 0,
+      isDark: true,
     });
   } catch (error) {
     // On error, return default black
@@ -156,4 +258,3 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     });
   }
 });
-
