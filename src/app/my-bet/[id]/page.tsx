@@ -9,9 +9,9 @@ export default function MyBetPage() {
   const userBetId = params.id as string;
 
   useEffect(() => {
-    // Redirect to parameters page
+    // Redirect to home page
     if (userBetId) {
-      router.replace(`/my-bet/${userBetId}/parameters`);
+      router.replace(`/home`);
     }
   }, [userBetId, router]);
 

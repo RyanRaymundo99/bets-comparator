@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useFetch } from "@/hooks/use-fetch";
 import { useApi } from "@/hooks/use-api";
 import Link from "next/link";
+import Image from "next/image";
 import { PARAMETER_CATEGORIES } from "@/lib/parameter-definitions";
 
 interface Bet {
@@ -37,6 +38,7 @@ interface Bet {
   cnpj?: string | null;
   domain?: string | null;
   betId?: string | null;
+  logo?: string | null;
   parameters: Parameter[];
   user?: {
     id: string;
@@ -642,7 +644,7 @@ export default function ClientDashboard() {
                 {userBet && (() => {
                   const isSelected = selectedBets.includes(userBet.id);
                   const isExpanded = expandedCards.has(userBet.id);
-                  const hasDetails = userBet.region || userBet.license;
+                  const hasDetails = userBet.region || userBet.license || userBet.betId;
                   
                   return (
                     <Card
@@ -661,10 +663,17 @@ export default function ClientDashboard() {
                       
                       <CardHeader className="relative pb-4 pt-6 px-6">
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1 min-w-0 pr-12">
-                            <CardTitle className="text-slate-900 font-bold text-xl mb-1">
-                              {userBet.name}
-                            </CardTitle>
+                          <div className="flex-1 min-w-0 pr-20">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <CardTitle className="text-slate-900 font-bold text-xl">
+                                {userBet.name}
+                              </CardTitle>
+                              {userBet.betId && (
+                                <span className="text-sm font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap">
+                                  {userBet.betId}
+                                </span>
+                              )}
+                            </div>
                             {userBet.url && (
                               <a
                                 href={userBet.url}
@@ -676,6 +685,32 @@ export default function ClientDashboard() {
                                 <span className="truncate">{userBet.url}</span>
                                 <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 group-hover/link:scale-110 transition-transform" />
                               </a>
+                            )}
+                          </div>
+                          <div className="absolute top-6 right-16 z-0">
+                            {userBet.logo ? (
+                              <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm">
+                                {userBet.logo.startsWith("http") || userBet.logo.startsWith("data:") ? (
+                                  <img
+                                    src={userBet.logo}
+                                    alt={userBet.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <Image
+                                    src={userBet.logo}
+                                    alt={userBet.name}
+                                    fill
+                                    className="object-cover"
+                                    sizes="48px"
+                                    unoptimized
+                                  />
+                                )}
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center border-2 border-slate-200 shadow-sm">
+                                <Building2 className="w-6 h-6 text-blue-600" />
+                              </div>
                             )}
                           </div>
                         </div>
@@ -712,6 +747,12 @@ export default function ClientDashboard() {
                         {/* Conteúdo expandível */}
                         {isExpanded && hasDetails && (
                           <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+                            {userBet.betId && (
+                              <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 transition-colors">
+                                <span className="text-slate-600 font-semibold text-xs uppercase tracking-wider min-w-[70px]">ID</span>
+                                <span className="text-slate-900 font-medium text-sm font-mono flex-1">{userBet.betId}</span>
+                              </div>
+                            )}
                             {userBet.region && (
                               <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 transition-colors">
                                 <span className="text-slate-600 font-semibold text-xs uppercase tracking-wider min-w-[70px]">Região</span>
@@ -736,23 +777,17 @@ export default function ClientDashboard() {
                 {otherBets.map((bet, index) => {
                       const isSelected = selectedBets.includes(bet.id);
                       const isExpanded = expandedCards.has(bet.id);
-                      const hasDetails = bet.region || bet.license;
+                      const hasDetails = bet.region || bet.license || bet.betId;
                       
                       return (
-                        <Card
-                          key={bet.id}
-                          className={`relative bg-white border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden group ${
-                            isSelected ? "ring-2 ring-blue-500" : ""
-                          }`}
-                          style={{ animationDelay: `${index * 50}ms` }}
-                        >
-                          {/* Botão + no canto superior direito */}
+                        <div className="relative" key={bet.id}>
+                          {/* Botão + acima do card - canto direito */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleToggleBet(bet.id);
                             }}
-                            className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            className={`absolute -top-5 -right-2 z-20 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg ${
                               isSelected
                                 ? "bg-blue-600 text-white hover:bg-blue-700"
                                 : "bg-blue-100 text-blue-600 hover:bg-blue-200"
@@ -764,13 +799,26 @@ export default function ClientDashboard() {
                               <Plus className="w-5 h-5" />
                             )}
                           </button>
+                          <Card
+                            className={`relative bg-white border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden group ${
+                              isSelected ? "ring-2 ring-blue-500" : ""
+                            }`}
+                            style={{ animationDelay: `${index * 50}ms` }}
+                          >
                           
                           <CardHeader className="relative pb-4 pt-6 px-6">
                             <div className="flex items-start justify-between gap-3">
-                              <div className="flex-1 min-w-0 pr-12">
-                                <CardTitle className="text-slate-900 font-bold text-xl mb-1">
-                                  {bet.name}
-                                </CardTitle>
+                              <div className="flex-1 min-w-0 pr-20">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                  <CardTitle className="text-slate-900 font-bold text-xl">
+                                    {bet.name}
+                                  </CardTitle>
+                                  {bet.betId && (
+                                    <span className="text-sm font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap">
+                                      {bet.betId}
+                                    </span>
+                                  )}
+                                </div>
                                 {bet.url && (
                                   <a
                                     href={bet.url}
@@ -782,6 +830,35 @@ export default function ClientDashboard() {
                                     <span className="truncate">{bet.url}</span>
                                     <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 group-hover/link:scale-110 transition-transform" />
                                   </a>
+                                )}
+                              </div>
+                              {/* Logo positioned to avoid add button */}
+                              <div className="absolute top-6 right-4 z-0">
+                                {bet.logo ? (
+                                  <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm">
+                                    {bet.logo.startsWith("http") || bet.logo.startsWith("data:") ? (
+                                      <img
+                                        src={bet.logo}
+                                        alt={bet.name}
+                                        className="w-full h-full object-cover"
+                                        style={{ aspectRatio: '1/1' }}
+                                      />
+                                    ) : (
+                                      <Image
+                                        src={bet.logo}
+                                        alt={bet.name}
+                                        fill
+                                        className="object-cover"
+                                        sizes="48px"
+                                        unoptimized
+                                        style={{ objectFit: 'cover' }}
+                                      />
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center border-2 border-slate-200 shadow-sm">
+                                    <Building2 className="w-6 h-6 text-blue-600" />
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -818,6 +895,12 @@ export default function ClientDashboard() {
                             {/* Conteúdo expandível */}
                             {isExpanded && hasDetails && (
                               <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+                                {bet.betId && (
+                                  <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 transition-colors">
+                                    <span className="text-slate-600 font-semibold text-xs uppercase tracking-wider min-w-[70px]">ID</span>
+                                    <span className="text-slate-900 font-medium text-sm font-mono flex-1">{bet.betId}</span>
+                                  </div>
+                                )}
                                 {bet.region && (
                                   <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 transition-colors">
                                     <span className="text-slate-600 font-semibold text-xs uppercase tracking-wider min-w-[70px]">Região</span>
@@ -835,6 +918,7 @@ export default function ClientDashboard() {
 
                           </CardContent>
                         </Card>
+                        </div>
                       );
                     })}
               </div>
@@ -874,13 +958,41 @@ export default function ClientDashboard() {
                         className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-200 relative"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <Building2 className="w-5 h-5 text-blue-600" />
-                        </div>
+                        {bet.logo ? (
+                          <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-200 flex-shrink-0">
+                            {bet.logo.startsWith("http") || bet.logo.startsWith("data:") ? (
+                              <img
+                                src={bet.logo}
+                                alt={bet.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Image
+                                src={bet.logo}
+                                alt={bet.name}
+                                fill
+                                className="object-cover"
+                                sizes="40px"
+                                unoptimized
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <Building2 className="w-5 h-5 text-blue-600" />
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-900 truncate">
-                            {bet.name}
-                          </p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-sm font-semibold text-slate-900 truncate">
+                              {bet.name}
+                            </p>
+                            {bet.betId && (
+                              <span className="text-xs font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 border border-slate-300 whitespace-nowrap">
+                                {bet.betId}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-slate-500">
                             {bet.parameters.length} parâmetros
                           </p>
