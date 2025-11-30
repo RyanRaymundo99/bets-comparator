@@ -36,6 +36,16 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 
     const html = await response.text();
 
+    // Early detection for well-known sites
+    const urlLower = normalizedUrl.toLowerCase();
+    if (urlLower.includes('wikipedia.org') || urlLower.includes('wikipedia')) {
+      return successResponse({
+        color: "rgb(255, 255, 255)",
+        brightness: 255,
+        isDark: false,
+      });
+    }
+
     // Extract background color from inline styles, CSS, and meta tags
     // Look for common background color patterns
     const bgColorPatterns = [
@@ -184,17 +194,15 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
       });
     }
 
-    // Check for common website patterns
+    // Check for common website patterns in HTML content
     // Wikipedia and many sites use white backgrounds
-    const isWikipedia = normalizedUrl.includes('wikipedia.org');
     const isCommonLightSite = 
-      normalizedUrl.includes('wikipedia') ||
-      normalizedUrl.includes('google') ||
-      normalizedUrl.includes('github.com') ||
       html.includes('wikipedia') ||
-      html.includes('Wikimedia');
+      html.includes('Wikimedia') ||
+      html.includes('mw-body') ||
+      html.includes('mw-page-container');
     
-    if (isWikipedia || isCommonLightSite) {
+    if (isCommonLightSite) {
       return successResponse({
         color: "rgb(255, 255, 255)",
         brightness: 255,
