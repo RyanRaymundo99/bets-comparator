@@ -311,8 +311,10 @@ export default function HomePage() {
             Sair
           </Button>
         </div>
-        {/* Header Section */}
-        <Card className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden">
+        {/* Main Content Section - Card and Ranking Side by Side */}
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Main Card */}
+          <Card className="bg-white border border-slate-200 shadow-lg rounded-2xl overflow-hidden flex-1">
           {/* Cover Image with Logo Overlay */}
           <div className="relative">
             {/* Cover/Iframe Area - Always show the blue cover, iframe if URL available */}
@@ -370,9 +372,8 @@ export default function HomePage() {
           </div>
 
           <CardContent className="p-6 md:p-8 pt-24 md:pt-28">
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-              {/* Left Side - Name, Rating, AI Insights & Chat */}
-              <div className="flex-1 space-y-4">
+            {/* Left Side - Name, Rating, AI Insights & Chat */}
+            <div className="flex-1 space-y-4">
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
                     {bet.name}
@@ -559,39 +560,41 @@ export default function HomePage() {
                     </div>
                   </div>
                   */}
-              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-              {/* Right Side - Ranking Panel */}
-              <div className="lg:w-80 flex-shrink-0">
-                <Card className="bg-slate-50 border border-slate-200 rounded-xl">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-bold text-slate-900">
-                        Ranking
-                      </CardTitle>
-                      <div className="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded">
-                        TOP 10
-                      </div>
-                    </div>
-                    {/* Quick Stats */}
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <div className="bg-white rounded-lg p-2 border border-slate-200">
-                        <div className="text-xs text-slate-500">
-                          Sua Posição
-                        </div>
-                        <div className="text-lg font-bold text-blue-600">
-                          #{ranking.position}
-                        </div>
-                      </div>
-                      <div className="bg-white rounded-lg p-2 border border-slate-200">
-                        <div className="text-xs text-slate-500">Pontuação</div>
-                        <div className="text-lg font-bold text-slate-900">
-                          {rating.score}
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+        {/* Right Side - Ranking Panel - Outside main card */}
+        <div className="lg:w-80 flex-shrink-0">
+          <Card className="bg-slate-50 border border-slate-200 rounded-xl">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-bold text-slate-900">
+                  Ranking
+                </CardTitle>
+                <div className="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded">
+                  TOP 10
+                </div>
+              </div>
+              {/* Quick Stats */}
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <div className="bg-white rounded-lg p-2 border border-slate-200">
+                  <div className="text-xs text-slate-500">
+                    Sua Posição
+                  </div>
+                  <div className="text-lg font-bold text-blue-600">
+                    #{ranking.position}
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg p-2 border border-slate-200">
+                  <div className="text-xs text-slate-500">Pontuação</div>
+                  <div className="text-lg font-bold text-slate-900">
+                    {rating.score}
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
                     {!isRankingExpanded ? (
                       <>
                         {/* Top 10 */}
@@ -849,10 +852,8 @@ export default function HomePage() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Parameters Table - Organized by Category */}
         {parameters.length > 0 ? (
