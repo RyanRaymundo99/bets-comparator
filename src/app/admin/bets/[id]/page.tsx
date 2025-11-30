@@ -471,7 +471,7 @@ export default function EditBetPage() {
                     sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
                   />
                 ) : coverPreview ? (
-                  coverPreview.startsWith("blob:") || coverPreview.startsWith("data:") ? (
+                  coverPreview.startsWith("blob:") || coverPreview.startsWith("data:") || coverPreview.startsWith("http") ? (
                     <img
                       src={coverPreview}
                       alt="Cover"
@@ -533,9 +533,15 @@ export default function EditBetPage() {
                         alt="Logo"
                         className="w-full h-full object-cover rounded-full"
                       />
+                    ) : logoPreview && logoPreview.startsWith("http") ? (
+                      <img
+                        src={logoPreview}
+                        alt="Logo"
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     ) : logoPreview && logoPreview.startsWith("/") ? (
                       <Image
-                        key={`logo-${logoPreview}-${Date.now()}`}
+                        key={`logo-${logoPreview}`}
                         src={logoPreview.split("?")[0]}
                         alt="Logo"
                         fill

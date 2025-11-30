@@ -85,41 +85,40 @@ export const POST = withErrorHandling(async (
 
     let publicPath: string;
 
-    if (isVercel) {
-      // On Vercel, use Vercel Blob Storage
-      try {
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        
-        const blob = await put(`bets/${id}/${filename}`, buffer, {
-          access: "public",
-          contentType: file.type || "image/jpeg",
-        });
+    // Check if we have Vercel Blob token
+    const hasBlobToken = !!process.env.BLOB_READ_WRITE_TOKEN || !!process.env.VERCEL_BLOB_READ_WRITE_TOKEN;
 
-        publicPath = blob.url;
-      } catch (error) {
-        console.error("Error uploading to Vercel Blob:", error);
-        // Fallback: try /tmp directory (temporary, will be deleted)
-        const tmpDir = "/tmp";
-        const uploadsDir = join(tmpDir, "uploads", "bets", id);
-        
+    if (isVercel) {
+      // On Vercel, try Vercel Blob Storage first
+      if (hasBlobToken) {
         try {
-          if (!existsSync(uploadsDir)) {
-            await mkdir(uploadsDir, { recursive: true });
-          }
-          
-          const filepath = join(uploadsDir, filename);
           const bytes = await file.arrayBuffer();
           const buffer = Buffer.from(bytes);
-          await writeFile(filepath, buffer);
           
-          // Note: /tmp files are ephemeral and won't persist
-          // This is a fallback only
-          publicPath = `/api/admin/bets/${id}/image?type=${type}&file=${filename}`;
-        } catch (tmpError) {
-          console.error("Error with /tmp fallback:", tmpError);
-          throw new Error("Failed to upload file. Please ensure VERCEL_BLOB_READ_WRITE_TOKEN is set in your environment variables.");
+          const blob = await put(`bets/${id}/${filename}`, buffer, {
+            access: "public",
+            contentType: file.type || "image/jpeg",
+          });
+
+          console.log("Uploaded to Vercel Blob:", blob.url);
+          publicPath = blob.url;
+        } catch (error) {
+          console.error("Error uploading to Vercel Blob:", error);
+          // Fallback to base64 if blob fails
+          console.warn("Falling back to base64 storage");
+          const bytes = await file.arrayBuffer();
+          const base64 = Buffer.from(bytes).toString("base64");
+          const dataUrl = `data:${file.type || "image/jpeg"};base64,${base64}`;
+          publicPath = dataUrl;
         }
+      } else {
+        // On Vercel without Blob token, convert to base64 and store in database
+        // This is a workaround for Vercel's read-only filesystem
+        console.warn("Vercel Blob token not found, storing image as base64 in database");
+        const bytes = await file.arrayBuffer();
+        const base64 = Buffer.from(bytes).toString("base64");
+        const dataUrl = `data:${file.type || "image/jpeg"};base64,${base64}`;
+        publicPath = dataUrl;
       }
     } else {
       // Local development: use public/uploads directory
@@ -154,8 +153,13 @@ export const POST = withErrorHandling(async (
     });
   } catch (error) {
     console.error("Error uploading file:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to upload file";
     return NextResponse.json(
-      { success: false, error: "Failed to upload file" },
+      { 
+        success: false, 
+        error: errorMessage,
+        details: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
