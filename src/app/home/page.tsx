@@ -258,7 +258,6 @@ export default function HomePage() {
   useEffect(() => {
     if (!data?.bet?.url) return;
 
-    let retryCount = 0;
     const maxRetries = 3;
 
     const extractColor = async (attempt: number = 0) => {
@@ -315,6 +314,7 @@ export default function HomePage() {
         }
 
         // Use server-side API for cross-origin iframes
+        if (!data.bet.url) return;
         const response = await fetch(`/api/analyze-website-color?url=${encodeURIComponent(data.bet.url)}`);
         if (response.ok) {
           const result = await response.json();

@@ -185,7 +185,6 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     }
 
     // Default fallback - check if URL suggests dark theme
-    const urlLower = normalizedUrl.toLowerCase();
     if (urlLower.includes("dark") || urlLower.includes("night") || urlLower.includes("black")) {
       return successResponse({
         color: "rgb(0, 0, 0)",
