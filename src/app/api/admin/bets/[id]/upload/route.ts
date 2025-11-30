@@ -59,7 +59,12 @@ export const POST = withErrorHandling(async (
 
   try {
     // Validate file type - accept all image types
-    if (!file.type.startsWith("image/")) {
+    // Some browsers may not set file.type, so check by extension as fallback
+    const isValidImage = file.type 
+      ? file.type.startsWith("image/")
+      : /\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff|ico)$/i.test(file.name);
+    
+    if (!isValidImage) {
       return badRequestResponse("Invalid file type. Only image files are allowed");
     }
 

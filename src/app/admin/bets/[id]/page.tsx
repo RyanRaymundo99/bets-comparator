@@ -63,6 +63,7 @@ export default function EditBetPage() {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const objectUrlRef = useRef<string | null>(null); // Track object URLs for cleanup
   const { toast } = useToast();
   const router = useRouter();
 
@@ -184,13 +185,18 @@ export default function EditBetPage() {
     }
   };
 
-  const handleImageUpload = async (type: "logo" | "cover", file: File) => {
+  const handleImageUpload = async (type: "logo" | "cover", file: File, previewUrl?: string) => {
     const isLogo = type === "logo";
     const setUploading = isLogo ? setUploadingLogo : setUploadingCover;
     const setPreview = isLogo ? setLogoPreview : setCoverPreview;
 
     // Validate file - accept all image types
-    if (!file.type.startsWith("image/")) {
+    // Some browsers may not set file.type, so check by extension as fallback
+    const isValidImage = file.type 
+      ? file.type.startsWith("image/")
+      : /\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff|ico)$/i.test(file.name);
+    
+    if (!isValidImage) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -217,6 +223,8 @@ export default function EditBetPage() {
       formData.append("file", file);
       formData.append("type", type);
 
+      console.log("Uploading file:", { type, fileName: file.name, fileSize: file.size, fileType: file.type });
+      
       const response = await fetch(`/api/admin/bets/${betId}/upload`, {
         method: "POST",
         credentials: "include",
@@ -224,13 +232,27 @@ export default function EditBetPage() {
       });
 
       const data = await response.json();
+      console.log("Upload response:", { status: response.status, ok: response.ok, data });
 
       if (response.ok && data.success) {
+        // Clean up the object URL if we created one
+        if (previewUrl && previewUrl.startsWith("blob:")) {
+          URL.revokeObjectURL(previewUrl);
+          if (objectUrlRef.current === previewUrl) {
+            objectUrlRef.current = null;
+          }
+        }
+        
+        // Update preview with server path
+        const serverPath = data.path;
+        console.log("Setting preview to server path:", serverPath);
+        setPreview(serverPath);
+        
         toast({
           title: "Sucesso",
           description: `${isLogo ? "Logo" : "Imagem de capa"} enviado com sucesso`,
         });
-        setPreview(data.path);
+        
         // Update bet state
         if (bet) {
           setBet({
@@ -239,6 +261,8 @@ export default function EditBetPage() {
           });
         }
       } else {
+        // If upload fails, keep the preview URL but show error
+        // Don't revoke the object URL yet so user can see what they selected
         const errorMsg = data.error || "Falha ao enviar imagem";
         if (errorMsg.includes("Admin access required")) {
           toast({
@@ -323,7 +347,23 @@ export default function EditBetPage() {
   const handleFileSelect = (type: "logo" | "cover", e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      handleImageUpload(type, file);
+      console.log("File selected:", { name: file.name, type: file.type, size: file.size });
+      
+      // Create immediate preview using object URL for real-time display
+      const isLogo = type === "logo";
+      const setPreview = isLogo ? setLogoPreview : setCoverPreview;
+      
+      // Clean up previous object URL if exists
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+      }
+      
+      const objectUrl = URL.createObjectURL(file);
+      objectUrlRef.current = objectUrl;
+      setPreview(objectUrl);
+      
+      // Upload the file
+      handleImageUpload(type, file, objectUrl);
     }
     // Reset input
     e.target.value = "";
@@ -431,13 +471,29 @@ export default function EditBetPage() {
                     sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
                   />
                 ) : coverPreview ? (
-                  <Image
-                    src={coverPreview}
-                    alt="Cover"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 66vw"
-                  />
+                  coverPreview.startsWith("blob:") || coverPreview.startsWith("data:") ? (
+                    <img
+                      src={coverPreview}
+                      alt="Cover"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : coverPreview.startsWith("/") ? (
+                    <Image
+                      key={`cover-${coverPreview}`}
+                      src={coverPreview.split("?")[0]}
+                      alt="Cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 66vw"
+                      unoptimized
+                    />
+                  ) : (
+                    <img
+                      src={coverPreview}
+                      alt="Cover"
+                      className="w-full h-full object-cover"
+                    />
+                  )
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-blue-700">
                     <label className="cursor-pointer flex flex-col items-center justify-center text-white/80 hover:text-white transition-colors">
@@ -471,12 +527,22 @@ export default function EditBetPage() {
               {logoPreview ? (
                 <>
                   <div className="relative w-full aspect-square max-w-xs mx-auto bg-slate-100 rounded-full overflow-hidden border-4 border-slate-200 shadow-lg">
-                    <Image
-                      src={logoPreview}
-                      alt="Logo"
-                      fill
-                      className="object-cover"
-                    />
+                    {logoPreview && (logoPreview.startsWith("blob:") || logoPreview.startsWith("data:")) ? (
+                      <img
+                        src={logoPreview}
+                        alt="Logo"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : logoPreview && logoPreview.startsWith("/") ? (
+                      <Image
+                        key={`logo-${logoPreview}-${Date.now()}`}
+                        src={logoPreview.split("?")[0]}
+                        alt="Logo"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    ) : null}
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full">
                       <div className="flex gap-2">
                         <input
