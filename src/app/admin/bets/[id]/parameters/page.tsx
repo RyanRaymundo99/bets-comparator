@@ -446,7 +446,7 @@ export default function BetParametersPage() {
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 value === true
                   ? "bg-green-600 text-white"
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
               Sim
@@ -459,7 +459,7 @@ export default function BetParametersPage() {
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 value === false
                   ? "bg-red-600 text-white"
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
               Não
@@ -471,7 +471,7 @@ export default function BetParametersPage() {
                 delete newValues[def.name];
                 setParameterValues(newValues);
               }}
-              className="px-4 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-400 hover:bg-gray-700"
+              className="px-4 py-2 rounded-md text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200"
             >
               Limpar
             </button>
@@ -493,13 +493,13 @@ export default function BetParametersPage() {
                 <Star
                   className={`w-6 h-6 ${
                     (value !== null && value !== undefined && Number(value) >= rating)
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-gray-600"
+                      ? "text-yellow-500 fill-yellow-500"
+                      : "text-slate-300"
                   }`}
                 />
               </button>
             ))}
-            <span className="text-gray-400 ml-2">{(value !== null && value !== undefined ? Number(value) : 0)}/5</span>
+            <span className="text-slate-600 ml-2">{(value !== null && value !== undefined ? Number(value) : 0)}/5</span>
           </div>
         );
 
@@ -510,7 +510,7 @@ export default function BetParametersPage() {
             onChange={(e) =>
               setParameterValues({ ...parameterValues, [def.name]: e.target.value })
             }
-            className="w-full px-4 py-2 bg-gray-800 border-gray-700 text-white rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Selecione...</option>
             {def.options?.map((option: string) => (
@@ -524,7 +524,7 @@ export default function BetParametersPage() {
       case "currency":
         return (
           <div className="relative">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">
               R$
             </span>
             <Input
@@ -535,7 +535,7 @@ export default function BetParametersPage() {
                 setParameterValues({ ...parameterValues, [def.name]: e.target.value })
               }
               placeholder="0.00"
-              className="pl-10 bg-gray-800 border-gray-700 text-white"
+              className="pl-10 bg-white border-slate-300 text-slate-900"
             />
           </div>
         );
@@ -553,9 +553,9 @@ export default function BetParametersPage() {
                 setParameterValues({ ...parameterValues, [def.name]: e.target.value })
               }
               placeholder="0.0"
-              className="pr-8 bg-gray-800 border-gray-700 text-white"
+              className="pr-8 bg-white border-slate-300 text-slate-900"
             />
-            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500">
               %
             </span>
           </div>
@@ -585,7 +585,7 @@ export default function BetParametersPage() {
                 setParameterValues({ ...parameterValues, [def.name]: e.target.value })
               }
               placeholder={def.description || "Digite o texto"}
-              className="bg-gray-800 border-gray-700 text-white min-h-[80px]"
+              className="bg-white border-slate-300 text-slate-900 min-h-[80px]"
             />
           );
         }
@@ -605,10 +605,10 @@ export default function BetParametersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
-          <div className="text-gray-300">Carregando...</div>
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <div className="text-slate-600">Carregando...</div>
         </div>
       </div>
     );
@@ -616,10 +616,10 @@ export default function BetParametersPage() {
 
   if (!bet) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 flex items-center justify-center">
         <div className="text-center">
-          <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-300 mb-2">
+          <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-slate-700 mb-2">
             Casa de apostas não encontrada
           </h3>
           <Link href="/admin/bets">
@@ -631,31 +631,35 @@ export default function BetParametersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Link href="/admin/bets">
-              <Button variant="ghost" className="text-gray-400 hover:text-white">
+              <Button variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-white flex items-center">
-                <Sliders className="w-8 h-8 mr-3 text-purple-400" />
-                Parâmetros: {bet.name}
-              </h1>
-              <p className="text-gray-300 mt-1">
-                {bet.company && `${bet.company} • `}
-                {bet.domain}
-              </p>
+            <div className="flex items-center space-x-4">
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center shadow-sm">
+                <Sliders className="w-7 h-7 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900 flex items-center">
+                  Parâmetros: {bet.name}
+                </h1>
+                <p className="text-slate-600 mt-1">
+                  {bet.company && `${bet.company} • `}
+                  {bet.domain}
+                </p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Button
               onClick={handleViewAllHistory}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <History className="w-4 h-4 mr-2" />
               Histórico de Alterações
@@ -663,7 +667,7 @@ export default function BetParametersPage() {
             <Button
               onClick={handleSaveAll}
               disabled={saving}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               {saving ? (
                 <>
@@ -681,22 +685,22 @@ export default function BetParametersPage() {
         </div>
 
         {/* Info Card */}
-        <Card className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-700/50 backdrop-blur-xl">
+        <Card className="bg-white border border-slate-200 shadow-sm">
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg font-semibold text-slate-900">
                   📊 {PARAMETER_DEFINITIONS.length} Parâmetros Disponíveis
                 </h3>
-                <p className="text-gray-300 text-sm mt-1">
+                <p className="text-slate-600 text-sm mt-1">
                   Preencha os parâmetros que desejar. Campos vazios não serão salvos.
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-blue-400">
+                <div className="text-2xl font-bold text-blue-600">
                   {bet.parameters?.length || 0}
                 </div>
-                <div className="text-sm text-gray-400">Já preenchidos</div>
+                <div className="text-sm text-slate-500">Já preenchidos</div>
               </div>
             </div>
           </CardContent>
@@ -711,13 +715,13 @@ export default function BetParametersPage() {
             return (
               <Card
                 key={category}
-                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-gray-700/50 backdrop-blur-xl overflow-hidden"
+                className="bg-white border border-slate-200 shadow-sm overflow-hidden"
               >
-                <CardHeader className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 border-b border-gray-700/50">
-                  <CardTitle className="text-white text-xl flex items-center">
-                    <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-purple-400 rounded-full mr-3" />
+                <CardHeader className="bg-slate-50 border-b border-slate-200">
+                  <CardTitle className="text-slate-900 text-xl flex items-center">
+                    <div className="w-1 h-8 bg-blue-600 rounded-full mr-3" />
                     {category}
-                    <span className="ml-3 text-sm text-gray-400 font-normal">
+                    <span className="ml-3 text-sm text-slate-500 font-normal">
                       ({params.length} parâmetros)
                     </span>
                   </CardTitle>
@@ -726,14 +730,14 @@ export default function BetParametersPage() {
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-gray-800/50 border-gray-700">
-                          <TableHead className="w-[300px] font-semibold text-white">
+                        <TableRow className="bg-slate-50 border-slate-200">
+                          <TableHead className="w-[300px] font-semibold text-slate-900">
                             Parâmetro
                           </TableHead>
-                          <TableHead className="font-semibold text-white">
+                          <TableHead className="font-semibold text-slate-900">
                             Valor
                           </TableHead>
-                          <TableHead className="w-[150px] font-semibold text-white text-center">
+                          <TableHead className="w-[150px] font-semibold text-slate-900 text-center">
                             Ações
                           </TableHead>
                         </TableRow>
@@ -747,15 +751,15 @@ export default function BetParametersPage() {
                                          parameterValues[def.name] !== "";
 
                           return (
-                            <TableRow key={def.name} className="hover:bg-gray-800/30 border-gray-700">
-                              <TableCell className="font-medium text-white">
+                            <TableRow key={def.name} className="hover:bg-slate-50 border-slate-200">
+                              <TableCell className="font-medium text-slate-900">
                                 <div>
                                   <div className="flex items-center gap-2">
                                     <div>{def.name}</div>
                                     {existingParam && (
                                       <button
                                         onClick={() => handleViewHistory(def)}
-                                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                                        className="text-blue-600 hover:text-blue-700 transition-colors"
                                         title="Ver histórico"
                                       >
                                         <History className="w-4 h-4" />
@@ -763,7 +767,7 @@ export default function BetParametersPage() {
                                     )}
                                   </div>
                                   {def.description && (
-                                    <div className="text-xs text-gray-400 mt-1">
+                                    <div className="text-xs text-slate-500 mt-1">
                                       {def.description}
                                     </div>
                                   )}
@@ -807,21 +811,21 @@ export default function BetParametersPage() {
         <Dialog open={historyDialog.open} onOpenChange={(open) => 
           setHistoryDialog({ ...historyDialog, open })
         }>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-white border-slate-200">
             <DialogHeader>
-              <DialogTitle className="text-white text-xl">
+              <DialogTitle className="text-slate-900 text-xl">
                 Histórico: {historyDialog.parameterName}
               </DialogTitle>
-              <DialogDescription className="text-gray-400">
+              <DialogDescription className="text-slate-600">
                 Histórico de alterações deste parâmetro
               </DialogDescription>
             </DialogHeader>
             {loadingHistory ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
               </div>
             ) : parameterHistory.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
+              <div className="text-center py-8 text-slate-500">
                 Nenhum histórico disponível
               </div>
             ) : (
@@ -839,19 +843,19 @@ export default function BetParametersPage() {
                   }
 
                   return (
-                    <Card key={item.id} className="bg-gray-800/50 border-gray-700">
+                    <Card key={item.id} className="bg-slate-50 border-slate-200">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="text-white font-semibold mb-1">
+                            <div className="text-slate-900 font-semibold mb-1">
                               {displayValue}
                             </div>
                             {item.notes && (
-                              <div className="text-sm text-gray-400 mb-2">
+                              <div className="text-sm text-slate-600 mb-2">
                                 {item.notes}
                               </div>
                             )}
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-slate-500">
                               {new Date(item.createdAt).toLocaleString("pt-BR")}
                             </div>
                           </div>
@@ -869,21 +873,21 @@ export default function BetParametersPage() {
         <Dialog open={allHistoryDialog} onOpenChange={(open) => 
           setAllHistoryDialog(open)
         }>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white border-slate-200">
             <DialogHeader>
-              <DialogTitle className="text-white text-xl">
+              <DialogTitle className="text-slate-900 text-xl">
                 Histórico de Alterações: {bet.name}
               </DialogTitle>
-              <DialogDescription className="text-gray-400">
+              <DialogDescription className="text-slate-600">
                 Histórico completo de todas as alterações dos parâmetros
               </DialogDescription>
             </DialogHeader>
             {loadingAllHistory ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
               </div>
             ) : allParametersHistory.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
+              <div className="text-center py-8 text-slate-500">
                 Nenhum histórico disponível
               </div>
             ) : (
@@ -904,16 +908,16 @@ export default function BetParametersPage() {
                   }
 
                   return (
-                    <Card key={item.id} className="bg-gray-800/50 border-gray-700">
+                    <Card key={item.id} className="bg-slate-50 border-slate-200">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <div className="text-white font-semibold">
+                              <div className="text-slate-900 font-semibold">
                                 {item.parameter.name}
                               </div>
                               {item.parameter.category && (
-                                <span className="text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded">
+                                <span className="text-xs text-slate-600 bg-slate-200 px-2 py-1 rounded">
                                   {item.parameter.category}
                                 </span>
                               )}
@@ -921,18 +925,18 @@ export default function BetParametersPage() {
                             <div className={`inline-block px-3 py-1 rounded-md text-sm font-medium mb-2 ${
                               item.valueBoolean !== null && item.valueBoolean !== undefined
                                 ? item.valueBoolean
-                                  ? "bg-green-900/50 text-green-300 border border-green-700"
-                                  : "bg-red-900/50 text-red-300 border border-red-700"
-                                : "bg-blue-900/50 text-blue-300 border border-blue-700"
+                                  ? "bg-green-100 text-green-700 border border-green-300"
+                                  : "bg-red-100 text-red-700 border border-red-300"
+                                : "bg-blue-100 text-blue-700 border border-blue-300"
                             }`}>
                               {displayValue}
                             </div>
                             {item.notes && (
-                              <div className="text-sm text-gray-400 mb-2">
+                              <div className="text-sm text-slate-600 mb-2">
                                 {item.notes}
                               </div>
                             )}
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-slate-500">
                               {new Date(item.createdAt).toLocaleString("pt-BR")}
                             </div>
                           </div>
@@ -951,7 +955,7 @@ export default function BetParametersPage() {
           <Button
             onClick={handleViewAllHistory}
             size="lg"
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
           >
             <History className="w-5 h-5 mr-2" />
             Histórico de Alterações
@@ -960,7 +964,7 @@ export default function BetParametersPage() {
             onClick={handleSaveAll}
             disabled={saving}
             size="lg"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-2xl"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
           >
             {saving ? (
               <>
