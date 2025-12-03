@@ -29,7 +29,6 @@ import {
   Star,
   Loader2,
   History,
-  Check,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
@@ -70,6 +69,21 @@ interface ParameterHistoryItem {
   createdAt: string;
 }
 
+interface AllParametersHistoryItem {
+  id: string;
+  valueText?: string | null;
+  valueNumber?: number | null;
+  valueBoolean?: boolean | null;
+  valueRating?: number | null;
+  notes?: string | null;
+  createdAt: string;
+  parameter: {
+    id: string;
+    name: string;
+    category?: string | null;
+  };
+}
+
 export default function BetParametersPage() {
   const params = useParams();
   const betId = params.id as string;
@@ -85,6 +99,9 @@ export default function BetParametersPage() {
   });
   const [parameterHistory, setParameterHistory] = useState<ParameterHistoryItem[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [allHistoryDialog, setAllHistoryDialog] = useState<boolean>(false);
+  const [allParametersHistory, setAllParametersHistory] = useState<AllParametersHistoryItem[]>([]);
+  const [loadingAllHistory, setLoadingAllHistory] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -291,6 +308,32 @@ export default function BetParametersPage() {
       setParameterHistory([]);
     } finally {
       setLoadingHistory(false);
+    }
+  };
+
+  const handleViewAllHistory = async () => {
+    setAllHistoryDialog(true);
+    setLoadingAllHistory(true);
+
+    try {
+      const response = await fetch(`/api/bets/${betId}/parameters/history`);
+      const data = await response.json();
+
+      if (data.success) {
+        setAllParametersHistory(data.history || []);
+      } else {
+        throw new Error(data.error || "Falha ao carregar histórico");
+      }
+    } catch (error) {
+      console.error("Error fetching all history:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Falha ao carregar histórico de alterações",
+      });
+      setAllParametersHistory([]);
+    } finally {
+      setLoadingAllHistory(false);
     }
   };
 
@@ -609,23 +652,32 @@ export default function BetParametersPage() {
               </p>
             </div>
           </div>
-          <Button
-            onClick={handleSaveAll}
-            disabled={saving}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-          >
-            {saving ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Salvar Todos os Parâmetros
-              </>
-            )}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={handleViewAllHistory}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+            >
+              <History className="w-4 h-4 mr-2" />
+              Histórico de Alterações
+            </Button>
+            <Button
+              onClick={handleSaveAll}
+              disabled={saving}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Salvar Todos os Parâmetros
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* Info Card */}
@@ -729,9 +781,12 @@ export default function BetParametersPage() {
                                     className="bg-green-600 hover:bg-green-700 text-white"
                                   >
                                     {isSaving ? (
-                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                      <>
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        Salvando...
+                                      </>
                                     ) : (
-                                      <Check className="w-4 h-4" />
+                                      "Salvar"
                                     )}
                                   </Button>
                                 </div>
@@ -810,8 +865,97 @@ export default function BetParametersPage() {
           </DialogContent>
         </Dialog>
 
+        {/* All Parameters History Dialog */}
+        <Dialog open={allHistoryDialog} onOpenChange={(open) => 
+          setAllHistoryDialog(open)
+        }>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
+            <DialogHeader>
+              <DialogTitle className="text-white text-xl">
+                Histórico de Alterações: {bet.name}
+              </DialogTitle>
+              <DialogDescription className="text-gray-400">
+                Histórico completo de todas as alterações dos parâmetros
+              </DialogDescription>
+            </DialogHeader>
+            {loadingAllHistory ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+              </div>
+            ) : allParametersHistory.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                Nenhum histórico disponível
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {allParametersHistory.map((item: AllParametersHistoryItem) => {
+                  let displayValue = "-";
+                  if (item.valueText !== null && item.valueText !== undefined) {
+                    displayValue = item.valueText;
+                  } else if (item.valueNumber !== null && item.valueNumber !== undefined) {
+                    displayValue = Number(item.valueNumber).toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    });
+                  } else if (item.valueBoolean !== null && item.valueBoolean !== undefined) {
+                    displayValue = item.valueBoolean ? "Sim" : "Não";
+                  } else if (item.valueRating !== null && item.valueRating !== undefined) {
+                    displayValue = `${item.valueRating}/5`;
+                  }
+
+                  return (
+                    <Card key={item.id} className="bg-gray-800/50 border-gray-700">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="text-white font-semibold">
+                                {item.parameter.name}
+                              </div>
+                              {item.parameter.category && (
+                                <span className="text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded">
+                                  {item.parameter.category}
+                                </span>
+                              )}
+                            </div>
+                            <div className={`inline-block px-3 py-1 rounded-md text-sm font-medium mb-2 ${
+                              item.valueBoolean !== null && item.valueBoolean !== undefined
+                                ? item.valueBoolean
+                                  ? "bg-green-900/50 text-green-300 border border-green-700"
+                                  : "bg-red-900/50 text-red-300 border border-red-700"
+                                : "bg-blue-900/50 text-blue-300 border border-blue-700"
+                            }`}>
+                              {displayValue}
+                            </div>
+                            {item.notes && (
+                              <div className="text-sm text-gray-400 mb-2">
+                                {item.notes}
+                              </div>
+                            )}
+                            <div className="text-xs text-gray-500">
+                              {new Date(item.createdAt).toLocaleString("pt-BR")}
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* Bottom Save Button */}
-        <div className="sticky bottom-8 flex justify-center">
+        <div className="sticky bottom-8 flex justify-center gap-4">
+          <Button
+            onClick={handleViewAllHistory}
+            size="lg"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl"
+          >
+            <History className="w-5 h-5 mr-2" />
+            Histórico de Alterações
+          </Button>
           <Button
             onClick={handleSaveAll}
             disabled={saving}
