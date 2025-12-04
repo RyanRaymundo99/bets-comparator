@@ -836,11 +836,6 @@ export default function HomePage() {
                                   >
                                     {item.name}
                                   </span>
-                                  {item.betId && (
-                                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${isDarkTheme ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
-                                      {item.betId}
-                                    </span>
-                                  )}
                                 </div>
                                 <span
                                   className={`text-xs font-semibold flex-shrink-0 ml-2 ${
@@ -890,11 +885,6 @@ export default function HomePage() {
                                       <span className="text-sm text-slate-900 truncate">
                                         {item.name}
                                       </span>
-                                      {item.betId && (
-                                        <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 flex-shrink-0">
-                                          {item.betId}
-                                        </span>
-                                      )}
                                     </div>
                                     <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
                                       {item.score}
@@ -962,11 +952,6 @@ export default function HomePage() {
                                       <span className="text-sm text-slate-900 truncate">
                                         {item.name}
                                       </span>
-                                      {item.betId && (
-                                        <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 flex-shrink-0">
-                                          {item.betId}
-                                        </span>
-                                      )}
                                     </div>
                                     <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
                                       {item.score}
