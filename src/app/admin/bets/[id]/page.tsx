@@ -425,27 +425,27 @@ export default function EditBetPage() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-slate-900 text-xl">Visualização do Website / Imagem de Capa</CardTitle>
-                {coverPreview && (
-                  <div className="flex gap-2">
-                    <input
-                      ref={coverInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileSelect("cover", e)}
-                      className="hidden"
-                      disabled={uploadingCover}
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="border-slate-200 text-slate-700 hover:bg-slate-50"
-                      disabled={uploadingCover}
-                      onClick={() => coverInputRef.current?.click()}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      {uploadingCover ? "Enviando..." : "Alterar Capa"}
-                    </Button>
+                <div className="flex gap-2">
+                  <input
+                    ref={coverInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileSelect("cover", e)}
+                    className="hidden"
+                    disabled={uploadingCover}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="border-slate-200 text-slate-700 hover:bg-slate-50"
+                    disabled={uploadingCover}
+                    onClick={() => coverInputRef.current?.click()}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {uploadingCover ? "Enviando..." : coverPreview ? "Alterar Capa" : "Adicionar Capa"}
+                  </Button>
+                  {coverPreview && (
                     <Button
                       type="button"
                       size="sm"
@@ -456,8 +456,8 @@ export default function EditBetPage() {
                       <X className="w-4 h-4 mr-2" />
                       Remover
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-0">
