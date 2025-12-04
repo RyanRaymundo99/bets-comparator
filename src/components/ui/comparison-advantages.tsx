@@ -55,7 +55,9 @@ function formatValue(param: Parameter | null): string {
   }
 
   if (param.valueRating !== null && param.valueRating !== undefined) {
-    return `${param.valueRating}/5`;
+    // Rating é armazenado como inteiro * 10, então dividimos por 10 (45 → 4.5)
+    const rating = Number(param.valueRating) / 10;
+    return rating % 1 === 0 ? `${rating}/5` : `${rating.toFixed(1)}/5`;
   }
 
   return "-";

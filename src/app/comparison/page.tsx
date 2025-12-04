@@ -193,7 +193,9 @@ function ComparisonPageContent() {
     }
     
     if (param.valueRating !== null && param.valueRating !== undefined) {
-      return `${param.valueRating}/5`;
+      // Rating é armazenado como inteiro * 10, então dividimos por 10 (45 → 4.5)
+      const rating = Number(param.valueRating) / 10;
+      return rating % 1 === 0 ? `${rating}/5` : `${rating.toFixed(1)}/5`;
     }
     
     return "-";
@@ -217,28 +219,36 @@ function ComparisonPageContent() {
     
     if (ratingParams.length === 0) return 0;
     
-    const avgRating = ratingParams.reduce((sum, p) => sum + (p.valueRating || 0), 0) / ratingParams.length;
+    // Rating é armazenado como inteiro * 10, então dividimos por 10
+    const avgRating = ratingParams.reduce((sum, p) => sum + ((p.valueRating || 0) / 10), 0) / ratingParams.length;
     return Math.round(avgRating * 20); // Convert 0-5 rating to 0-100 score
   };
 
   const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const clampedRating = Math.max(0, Math.min(Number(rating), 5));
+    const fullStars = Math.floor(clampedRating);
+    const partialFill = clampedRating - fullStars; // Decimal exato (ex: 0.1, 0.2, 0.5)
+    const emptyStars = 5 - fullStars - (partialFill > 0 ? 1 : 0);
 
     return (
       <div className="flex items-center gap-0.5">
+        {/* Estrelas completas */}
         {Array.from({ length: fullStars }).map((_, i) => (
           <Star key={`full-${i}`} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
         ))}
-        {hasHalfStar && (
+        {/* Estrela parcial com preenchimento proporcional */}
+        {partialFill > 0 && (
           <div className="relative w-5 h-5">
             <Star className="w-5 h-5 text-gray-300 fill-gray-300" />
-            <div className="absolute inset-0 overflow-hidden w-1/2">
+            <div 
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${partialFill * 100}%` }}
+            >
               <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             </div>
           </div>
         )}
+        {/* Estrelas vazias */}
         {Array.from({ length: emptyStars }).map((_, i) => (
           <Star key={`empty-${i}`} className="w-5 h-5 text-gray-300 fill-gray-300" />
         ))}
@@ -659,7 +669,7 @@ function ComparisonPageContent() {
                                             </div>
                                           ) : isRating && paramValue?.valueRating !== null && paramValue?.valueRating !== undefined ? (
                                             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-                                              {renderStars(paramValue.valueRating)}
+                                              {renderStars(Number(paramValue.valueRating) / 10)}
                                               <span className="text-xs sm:text-sm text-slate-600 font-medium">
                                                 {displayValue}
                                               </span>

@@ -122,9 +122,10 @@ export default function BetParametersPage() {
         const values: Record<string, string | number | boolean | null> = {};
         data.bet.parameters.forEach((param: Parameter) => {
           if (param.valueText !== null && param.valueText !== undefined) values[param.name] = param.valueText;
-          else if (param.valueNumber !== null && param.valueNumber !== undefined) values[param.name] = param.valueNumber;
+          else if (param.valueNumber !== null && param.valueNumber !== undefined) values[param.name] = Number(param.valueNumber);
           else if (param.valueBoolean !== null && param.valueBoolean !== undefined) values[param.name] = param.valueBoolean;
-          else if (param.valueRating !== null && param.valueRating !== undefined) values[param.name] = param.valueRating;
+          // Rating é armazenado como inteiro * 10, então dividimos por 10 (45 → 4.5)
+          else if (param.valueRating !== null && param.valueRating !== undefined) values[param.name] = Number(param.valueRating) / 10;
         });
         setParameterValues(values);
       } else {
@@ -188,7 +189,7 @@ export default function BetParametersPage() {
           paramData.valueBoolean = typeof value === "boolean" ? value : Boolean(value);
           break;
         case "rating":
-          paramData.valueRating = typeof value === "number" ? value : parseInt(String(value), 10);
+          paramData.valueRating = typeof value === "number" ? value : parseFloat(String(value));
           break;
         case "number":
         case "currency":
@@ -379,7 +380,7 @@ export default function BetParametersPage() {
             paramData.valueBoolean = typeof value === "boolean" ? value : Boolean(value);
             break;
           case "rating":
-            paramData.valueRating = typeof value === "number" ? value : parseInt(String(value), 10);
+            paramData.valueRating = typeof value === "number" ? value : parseFloat(String(value));
             break;
           case "number":
           case "currency":
@@ -479,27 +480,146 @@ export default function BetParametersPage() {
         );
 
       case "rating":
+        const ratingValue = value !== null && value !== undefined ? Number(value) : 0;
+        const clampedRating = Math.max(0, Math.min(ratingValue, 5));
+        
+        // Função para lidar com clique nas estrelas
+        const handleStarClick = (starIndex: number, event: React.MouseEvent<HTMLDivElement>) => {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const clickX = event.clientX - rect.left;
+          const starWidth = rect.width;
+          
+          // Calcular a posição do clique dentro da estrela (0 a 1)
+          const clickPosition = Math.max(0, Math.min(1, clickX / starWidth));
+          
+          // Calcular o valor decimal baseado na posição do clique
+          // Dividir cada estrela em 10 partes (0.1, 0.2, 0.3, ..., 1.0)
+          const decimalPart = Math.round(clickPosition * 10) / 10;
+          
+          // Se clicou em uma estrela já preenchida e na mesma posição, não muda
+          const newRating = starIndex + decimalPart;
+          
+          // Garantir que está entre 0 e 5
+          const finalRating = Math.max(0.1, Math.min(5, newRating));
+          
+          setParameterValues({ ...parameterValues, [def.name]: finalRating });
+        };
+        
+        // Função para renderizar estrelas clicáveis
+        const renderClickableStars = () => {
+          return (
+            <div className="flex items-center gap-1">
+              {[0, 1, 2, 3, 4].map((starIndex) => {
+                const fullStars = Math.floor(clampedRating);
+                const partialFill = clampedRating - fullStars;
+                
+                // Determinar se esta estrela está cheia, parcial ou vazia
+                const isFull = starIndex < fullStars;
+                const isPartial = starIndex === fullStars && partialFill > 0;
+                const isEmpty = starIndex > fullStars;
+                
+                return (
+                  <div
+                    key={starIndex}
+                    className="relative w-8 h-8 cursor-pointer transition-transform hover:scale-110"
+                    onClick={(e) => handleStarClick(starIndex, e)}
+                    title={`Clique para avaliar (${starIndex + 0.1} - ${starIndex + 1})`}
+                  >
+                    {/* Estrela de fundo (vazia) */}
+                    <Star className="w-8 h-8 text-gray-300 fill-gray-300 absolute inset-0" />
+                    
+                    {/* Estrela preenchida */}
+                    {isFull && (
+                      <Star className="w-8 h-8 text-yellow-500 fill-yellow-500 absolute inset-0" />
+                    )}
+                    
+                    {/* Estrela parcialmente preenchida */}
+                    {isPartial && (
+                      <div
+                        className="absolute inset-0 overflow-hidden"
+                        style={{ width: `${partialFill * 100}%` }}
+                      >
+                        <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+                      </div>
+                    )}
+                    
+                    {/* Indicadores de clique (linhas verticais sutis) */}
+                    <div className="absolute inset-0 flex opacity-0 hover:opacity-30 transition-opacity pointer-events-none">
+                      {[0.2, 0.4, 0.6, 0.8].map((pos) => (
+                        <div
+                          key={pos}
+                          className="h-full border-l border-slate-400"
+                          style={{ marginLeft: `${pos * 100}%` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        };
+        
         return (
-          <div className="flex items-center space-x-2">
-            {[0, 1, 2, 3, 4, 5].map((rating) => (
-              <button
-                key={rating}
-                type="button"
-                onClick={() =>
-                  setParameterValues({ ...parameterValues, [def.name]: rating })
-                }
-                className="transition-transform hover:scale-110"
-              >
-                <Star
-                  className={`w-6 h-6 ${
-                    (value !== null && value !== undefined && Number(value) >= rating)
-                      ? "text-yellow-500 fill-yellow-500"
-                      : "text-slate-300"
+          <div className="flex flex-col gap-4">
+            {/* Estrelas clicáveis com visualização do valor */}
+            <div className="flex items-center gap-4">
+              {renderClickableStars()}
+              <span className="text-slate-600 font-bold text-xl">
+                {clampedRating.toFixed(1)}/5
+              </span>
+            </div>
+            
+            {/* Botões de seleção rápida (valores inteiros) */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm text-slate-600 font-medium">Atalhos:</span>
+              {[1, 2, 3, 4, 5].map((quickRating) => (
+                <button
+                  key={quickRating}
+                  type="button"
+                  onClick={() =>
+                    setParameterValues({ ...parameterValues, [def.name]: quickRating })
+                  }
+                  className={`px-3 py-1.5 rounded-lg border-2 transition-all ${
+                    clampedRating === quickRating
+                      ? "border-yellow-500 bg-yellow-50 text-yellow-700 font-bold"
+                      : "border-slate-300 bg-white text-slate-700 hover:border-yellow-400"
                   }`}
-                />
+                >
+                  {quickRating}.0
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setParameterValues({ ...parameterValues, [def.name]: 0 })}
+                className="px-3 py-1.5 rounded-lg border-2 border-red-300 bg-white text-red-600 hover:border-red-400 transition-all"
+              >
+                Limpar
               </button>
-            ))}
-            <span className="text-slate-600 ml-2">{(value !== null && value !== undefined ? Number(value) : 0)}/5</span>
+            </div>
+            
+            {/* Input numérico como alternativa */}
+            <details className="text-sm">
+              <summary className="cursor-pointer text-slate-600 hover:text-slate-900 font-medium">
+                ⚙️ Opção avançada: Digitar valor manualmente
+              </summary>
+              <div className="flex items-center gap-3 mt-2">
+                <Input
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={ratingValue}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) || 0;
+                    const clamped = Math.max(0, Math.min(newValue, 5));
+                    setParameterValues({ ...parameterValues, [def.name]: clamped });
+                  }}
+                  className="w-32 px-3 py-2 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  placeholder="0.0"
+                />
+              </div>
+            </details>
           </div>
         );
 

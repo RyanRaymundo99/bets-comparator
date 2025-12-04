@@ -288,20 +288,44 @@ export default function BetParametersViewPage() {
       );
     }
     if (param.valueRating !== null && param.valueRating !== undefined) {
-      const rating = param.valueRating;
+      // Rating é armazenado como inteiro * 10, então dividimos por 10 (45 → 4.5)
+      const rating = Number(param.valueRating) / 10;
+      const fullStars = Math.floor(rating);
+      const partialFill = rating - fullStars;
+      const emptyStars = 5 - fullStars - (partialFill > 0 ? 1 : 0);
+      
       return (
         <div className="space-y-2">
           <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {/* Estrelas completas */}
+            {Array.from({ length: fullStars }).map((_, i) => (
               <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < rating
-                    ? "text-yellow-500 fill-yellow-500"
-                    : "text-slate-300"
-                }`}
+                key={`full-${i}`}
+                className="w-4 h-4 text-yellow-500 fill-yellow-500"
               />
             ))}
+            {/* Estrela parcial */}
+            {partialFill > 0 && (
+              <div className="relative w-4 h-4">
+                <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+                <div 
+                  className="absolute inset-0 overflow-hidden"
+                  style={{ width: `${partialFill * 100}%` }}
+                >
+                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                </div>
+              </div>
+            )}
+            {/* Estrelas vazias */}
+            {Array.from({ length: emptyStars }).map((_, i) => (
+              <Star
+                key={`empty-${i}`}
+                className="w-4 h-4 text-gray-300 fill-gray-300"
+              />
+            ))}
+            <span className="ml-2 text-sm font-medium text-slate-600">
+              {rating.toFixed(1)}/5
+            </span>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
             <div

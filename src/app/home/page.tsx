@@ -212,26 +212,33 @@ export default function HomePage() {
   };
 
   const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const clampedRating = Math.max(0, Math.min(Number(rating), 5));
+    const fullStars = Math.floor(clampedRating);
+    const partialFill = clampedRating - fullStars; // Decimal exato (ex: 0.1, 0.2, 0.5)
+    const emptyStars = 5 - fullStars - (partialFill > 0 ? 1 : 0);
 
     return (
       <div className="flex items-center gap-1">
+        {/* Estrelas completas */}
         {Array.from({ length: fullStars }).map((_, i) => (
           <Star
             key={`full-${i}`}
             className="w-5 h-5 text-yellow-500 fill-yellow-500"
           />
         ))}
-        {hasHalfStar && (
+        {/* Estrela parcial com preenchimento proporcional */}
+        {partialFill > 0 && (
           <div className="relative w-5 h-5">
             <Star className="w-5 h-5 text-gray-300 fill-gray-300" />
-            <div className="absolute inset-0 overflow-hidden w-1/2">
+            <div 
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${partialFill * 100}%` }}
+            >
               <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             </div>
           </div>
         )}
+        {/* Estrelas vazias */}
         {Array.from({ length: emptyStars }).map((_, i) => (
           <Star
             key={`empty-${i}`}
@@ -1174,41 +1181,41 @@ export default function HomePage() {
                                           ratingValue >= 0 &&
                                           ratingValue <= 5
                                         ) {
-                                          const fullStars =
-                                            Math.floor(ratingValue);
-                                          const hasHalfStar =
-                                            ratingValue % 1 >= 0.5;
+                                          const clampedRating = Math.max(0, Math.min(ratingValue, 5));
+                                          const fullStars = Math.floor(clampedRating);
+                                          const partialFill = clampedRating - fullStars;
+                                          const emptyStars = 5 - fullStars - (partialFill > 0 ? 1 : 0);
+                                          
                                           return (
                                             <div className="flex items-center gap-1.5">
-                                              {Array.from({
-                                                length: fullStars,
-                                              }).map((_, i) => (
+                                              {/* Estrelas completas */}
+                                              {Array.from({ length: fullStars }).map((_, i) => (
                                                 <Star
                                                   key={`full-${i}`}
                                                   className="w-4 h-4 text-yellow-500 fill-yellow-500"
                                                 />
                                               ))}
-                                              {hasHalfStar && (
+                                              {/* Estrela parcial com preenchimento proporcional */}
+                                              {partialFill > 0 && (
                                                 <div className="relative w-4 h-4">
                                                   <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
-                                                  <div className="absolute inset-0 overflow-hidden w-1/2">
+                                                  <div 
+                                                    className="absolute inset-0 overflow-hidden"
+                                                    style={{ width: `${partialFill * 100}%` }}
+                                                  >
                                                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                                                   </div>
                                                 </div>
                                               )}
-                                              {Array.from({
-                                                length:
-                                                  5 -
-                                                  fullStars -
-                                                  (hasHalfStar ? 1 : 0),
-                                              }).map((_, i) => (
+                                              {/* Estrelas vazias */}
+                                              {Array.from({ length: emptyStars }).map((_, i) => (
                                                 <Star
                                                   key={`empty-${i}`}
                                                   className="w-4 h-4 text-gray-300 fill-gray-300"
                                                 />
                                               ))}
                                               <span className="ml-1 text-sm font-medium text-slate-700">
-                                                {ratingValue.toFixed(1)}
+                                                {clampedRating.toFixed(1)}
                                               </span>
                                             </div>
                                           );

@@ -35,9 +35,9 @@ function calculateOverallScore(bet: {
       paramScore = param.valueBoolean ? 100 : 30;
       hasValue = true;
     }
-    // Rating: multiplica por 20 para ficar de 0-100
+    // Rating: divide por 10 (armazenado como *10) e multiplica por 20 para ficar de 0-100
     else if (param.valueRating !== null && param.valueRating !== undefined) {
-      paramScore = param.valueRating * 20; // 5 stars = 100
+      paramScore = (Number(param.valueRating) / 10) * 20; // 5 stars = 100
       hasValue = true;
     }
     // Number: normalização simples
@@ -100,9 +100,9 @@ function calculateCategoryScore(
       paramScore = param.valueBoolean ? 100 : 30;
       hasValue = true;
     }
-    // Rating: multiplica por 20 para ficar de 0-100
+    // Rating: divide por 10 (armazenado como *10) e multiplica por 20 para ficar de 0-100
     else if (param.valueRating !== null && param.valueRating !== undefined) {
-      paramScore = param.valueRating * 20;
+      paramScore = (Number(param.valueRating) / 10) * 20;
       hasValue = true;
     }
     // Number: normalização simples

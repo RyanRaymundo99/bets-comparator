@@ -94,8 +94,11 @@ export async function PATCH(
         historyValue.valueBoolean = Boolean(value);
         break;
       case "rating":
-        dataToUpdate.valueRating = parseInt(value, 10);
-        historyValue.valueRating = parseInt(value, 10);
+        // Armazena como inteiro multiplicado por 10 (4.5 → 45) para suportar decimais
+        const ratingValue = Math.max(0, Math.min(parseFloat(value), 5));
+        const ratingInt = Math.round(ratingValue * 10);
+        dataToUpdate.valueRating = ratingInt;
+        historyValue.valueRating = ratingInt;
         break;
       default:
         return NextResponse.json(
