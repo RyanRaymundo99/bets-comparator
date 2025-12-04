@@ -588,12 +588,56 @@ function ComparisonPageContent() {
                   <CardContent className="p-0">
                     {/* Category Header */}
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200">
-                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                        <div className="w-1 h-6 sm:h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full flex-shrink-0" />
-                        <h2 className="text-lg sm:text-xl font-bold text-slate-900">{category}</h2>
-                        <span className="text-xs sm:text-sm text-slate-500 font-normal">
-                          ({categoryDefs.length} parâmetros)
-                        </span>
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                          <div className="w-1 h-6 sm:h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full flex-shrink-0" />
+                          <h2 className="text-lg sm:text-xl font-bold text-slate-900">{category}</h2>
+                          <span className="text-xs sm:text-sm text-slate-500 font-normal">
+                            ({categoryDefs.length} parâmetros)
+                          </span>
+                        </div>
+                        
+                        {/* Notas Gerais por Bet */}
+                        <div className="flex items-center gap-3 flex-wrap">
+                          {bets.map((bet) => {
+                            const categoryRatingParam = bet.parameters?.find(
+                              (p: Parameter) => p.name === `__category_rating_${category}`
+                            );
+                            const categoryRating = categoryRatingParam?.valueRating
+                              ? Number(categoryRatingParam.valueRating) / 10
+                              : null;
+                            
+                            if (categoryRating === null) return null;
+                            
+                            return (
+                              <div key={bet.id} className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200 shadow-sm">
+                                <span className="text-xs font-medium text-slate-600 truncate max-w-[80px]">{bet.name}:</span>
+                                <div className="flex items-center gap-0.5">
+                                  {Array.from({ length: 5 }).map((_, i) => {
+                                    const fullStars = Math.floor(categoryRating);
+                                    const partialFill = categoryRating - fullStars;
+                                    
+                                    if (i < fullStars) {
+                                      return <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />;
+                                    } else if (i === fullStars && partialFill > 0) {
+                                      return (
+                                        <div key={i} className="relative w-3 h-3">
+                                          <Star className="w-3 h-3 text-gray-300 fill-gray-300" />
+                                          <div className="absolute inset-0 overflow-hidden" style={{ width: `${partialFill * 100}%` }}>
+                                            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                          </div>
+                                        </div>
+                                      );
+                                    } else {
+                                      return <Star key={i} className="w-3 h-3 text-gray-300 fill-gray-300" />;
+                                    }
+                                  })}
+                                </div>
+                                <span className="text-xs font-bold text-slate-900">{categoryRating.toFixed(1)}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
 

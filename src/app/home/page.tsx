@@ -1104,14 +1104,56 @@ export default function HomePage() {
                   <CardContent className="p-0">
                     {/* Category Header */}
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-slate-200">
-                      <div className="flex items-center gap-3">
-                        <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
-                        <h3 className="text-xl font-bold text-slate-900">
-                          {category}
-                        </h3>
-                        <span className="text-sm text-slate-500 font-normal">
-                          ({categoryDefs.length} parâmetros)
-                        </span>
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
+                          <h3 className="text-xl font-bold text-slate-900">
+                            {category}
+                          </h3>
+                          <span className="text-sm text-slate-500 font-normal">
+                            ({categoryDefs.length} parâmetros)
+                          </span>
+                        </div>
+                        
+                        {/* Nota Geral da Categoria */}
+                        {(() => {
+                          const categoryRatingParam = parameters.find(
+                            (p) => p.name === `__category_rating_${category}`
+                          );
+                          const categoryRating = categoryRatingParam?.valueRating
+                            ? Number(categoryRatingParam.valueRating) / 10
+                            : null;
+                          
+                          if (categoryRating === null) return null;
+                          
+                          return (
+                            <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200 shadow-sm">
+                              <span className="text-sm font-medium text-slate-600">Nota Geral:</span>
+                              <div className="flex items-center gap-0.5">
+                                {Array.from({ length: 5 }).map((_, i) => {
+                                  const fullStars = Math.floor(categoryRating);
+                                  const partialFill = categoryRating - fullStars;
+                                  
+                                  if (i < fullStars) {
+                                    return <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />;
+                                  } else if (i === fullStars && partialFill > 0) {
+                                    return (
+                                      <div key={i} className="relative w-4 h-4">
+                                        <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+                                        <div className="absolute inset-0 overflow-hidden" style={{ width: `${partialFill * 100}%` }}>
+                                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                        </div>
+                                      </div>
+                                    );
+                                  } else {
+                                    return <Star key={i} className="w-4 h-4 text-gray-300 fill-gray-300" />;
+                                  }
+                                })}
+                              </div>
+                              <span className="text-sm font-bold text-slate-900">{categoryRating.toFixed(1)}/5</span>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
 

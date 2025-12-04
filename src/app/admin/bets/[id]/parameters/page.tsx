@@ -189,12 +189,16 @@ export default function BetParametersPage() {
           paramData.valueBoolean = typeof value === "boolean" ? value : Boolean(value);
           break;
         case "rating":
-          paramData.valueRating = typeof value === "number" ? value : parseFloat(String(value));
+          // Aceita vírgula ou ponto como separador decimal
+          const ratingStr = String(value).replace(',', '.');
+          paramData.valueRating = typeof value === "number" ? value : parseFloat(ratingStr);
           break;
         case "number":
         case "currency":
         case "percentage":
-          paramData.valueNumber = typeof value === "number" ? value : parseFloat(String(value));
+          // Aceita vírgula ou ponto como separador decimal
+          const numStr = String(value).replace(',', '.');
+          paramData.valueNumber = typeof value === "number" ? value : parseFloat(numStr);
           break;
         case "text":
         case "select":
@@ -266,6 +270,84 @@ export default function BetParametersPage() {
       setSavingParams((prev) => {
         const newSet = new Set(prev);
         newSet.delete(def.name);
+        return newSet;
+      });
+    }
+  };
+
+  // Função para salvar a nota geral de uma categoria
+  const handleSaveCategoryRating = async (category: string) => {
+    const categoryRatingKey = `__category_rating_${category}`;
+    const value = parameterValues[categoryRatingKey];
+    
+    if (value === undefined || value === null || value === 0) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Selecione uma nota antes de salvar",
+      });
+      return;
+    }
+
+    setSavingParams((prev) => new Set(prev).add(categoryRatingKey));
+
+    try {
+      // Find existing parameter
+      const existingParam = bet?.parameters.find((p) => p.name === categoryRatingKey);
+      
+      // Aceita vírgula ou ponto como separador decimal
+      const ratingStr = String(value).replace(',', '.');
+      const paramData = {
+        betId,
+        name: categoryRatingKey,
+        category: category,
+        type: "rating",
+        valueRating: typeof value === "number" ? value : parseFloat(ratingStr),
+      };
+
+      let response;
+      if (existingParam?.id) {
+        response = await fetch(`/api/parameters/${existingParam.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            value: paramData.valueRating,
+            notes: null,
+          }),
+        });
+      } else {
+        response = await fetch("/api/parameters", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paramData),
+        });
+      }
+
+      if (response.ok) {
+        toast({
+          title: "Nota geral salva!",
+          description: `Nota da categoria "${category}" foi salva com sucesso`,
+        });
+        await fetchBet();
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Falha ao salvar nota geral");
+      }
+    } catch (error) {
+      console.error("Error saving category rating:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao salvar nota geral",
+      });
+    } finally {
+      setSavingParams((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(categoryRatingKey);
         return newSet;
       });
     }
@@ -480,28 +562,19 @@ export default function BetParametersPage() {
         );
 
       case "rating":
-        const ratingValue = value !== null && value !== undefined ? Number(value) : 0;
-        const clampedRating = Math.max(0, Math.min(ratingValue, 5));
+        // Valor numérico para as estrelas
+        const numericRating = value !== null && value !== undefined && value !== '' ? Number(value) : 0;
+        const clampedRating = Math.max(0, Math.min(isNaN(numericRating) ? 0 : numericRating, 5));
         
         // Função para lidar com clique nas estrelas
         const handleStarClick = (starIndex: number, event: React.MouseEvent<HTMLDivElement>) => {
           const rect = event.currentTarget.getBoundingClientRect();
           const clickX = event.clientX - rect.left;
           const starWidth = rect.width;
-          
-          // Calcular a posição do clique dentro da estrela (0 a 1)
           const clickPosition = Math.max(0, Math.min(1, clickX / starWidth));
-          
-          // Calcular o valor decimal baseado na posição do clique
-          // Dividir cada estrela em 10 partes (0.1, 0.2, 0.3, ..., 1.0)
           const decimalPart = Math.round(clickPosition * 10) / 10;
-          
-          // Se clicou em uma estrela já preenchida e na mesma posição, não muda
           const newRating = starIndex + decimalPart;
-          
-          // Garantir que está entre 0 e 5
           const finalRating = Math.max(0.1, Math.min(5, newRating));
-          
           setParameterValues({ ...parameterValues, [def.name]: finalRating });
         };
         
@@ -561,65 +634,42 @@ export default function BetParametersPage() {
         };
         
         return (
-          <div className="flex flex-col gap-4">
-            {/* Estrelas clicáveis com visualização do valor */}
-            <div className="flex items-center gap-4">
-              {renderClickableStars()}
-              <span className="text-slate-600 font-bold text-xl">
-                {clampedRating.toFixed(1)}/5
-              </span>
-            </div>
+          <div className="flex items-center gap-4 flex-wrap">
+            {renderClickableStars()}
             
-            {/* Botões de seleção rápida (valores inteiros) */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm text-slate-600 font-medium">Atalhos:</span>
-              {[1, 2, 3, 4, 5].map((quickRating) => (
-                <button
-                  key={quickRating}
-                  type="button"
-                  onClick={() =>
-                    setParameterValues({ ...parameterValues, [def.name]: quickRating })
+            {/* Input manual livre */}
+            <div className="flex items-center gap-2">
+              <Input
+                type="text"
+                value={value !== null && value !== undefined ? String(value) : ''}
+                onChange={(e) => {
+                  const text = e.target.value;
+                  // Se vazio, limpa o valor
+                  if (text === '') {
+                    const newValues = { ...parameterValues };
+                    delete newValues[def.name];
+                    setParameterValues(newValues);
+                    return;
                   }
-                  className={`px-3 py-1.5 rounded-lg border-2 transition-all ${
-                    clampedRating === quickRating
-                      ? "border-yellow-500 bg-yellow-50 text-yellow-700 font-bold"
-                      : "border-slate-300 bg-white text-slate-700 hover:border-yellow-400"
-                  }`}
-                >
-                  {quickRating}.0
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setParameterValues({ ...parameterValues, [def.name]: 0 })}
-                className="px-3 py-1.5 rounded-lg border-2 border-red-300 bg-white text-red-600 hover:border-red-400 transition-all"
-              >
-                Limpar
-              </button>
-            </div>
-            
-            {/* Input numérico como alternativa */}
-            <details className="text-sm">
-              <summary className="cursor-pointer text-slate-600 hover:text-slate-900 font-medium">
-                ⚙️ Opção avançada: Digitar valor manualmente
-              </summary>
-              <div className="flex items-center gap-3 mt-2">
-                <Input
-                  type="number"
-                  min="0"
-                  max="5"
-                  step="0.1"
-                  value={ratingValue}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) || 0;
-                    const clamped = Math.max(0, Math.min(newValue, 5));
+                  // Guarda o texto como está (permite digitar livremente)
+                  setParameterValues({ ...parameterValues, [def.name]: text });
+                }}
+                onBlur={(e) => {
+                  // Ao sair do campo, converte para número se possível
+                  const text = e.target.value;
+                  if (text === '') return;
+                  const normalized = text.replace(',', '.');
+                  const num = parseFloat(normalized);
+                  if (!isNaN(num)) {
+                    const clamped = Math.max(0, Math.min(num, 5));
                     setParameterValues({ ...parameterValues, [def.name]: clamped });
-                  }}
-                  className="w-32 px-3 py-2 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  placeholder="0.0"
-                />
-              </div>
-            </details>
+                  }
+                }}
+                className="w-20 px-3 py-2 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-500 text-center font-bold"
+                placeholder="4,5"
+              />
+              <span className="text-slate-500 font-medium">/5</span>
+            </div>
           </div>
         );
 
@@ -832,18 +882,118 @@ export default function BetParametersPage() {
             const params = getParametersByCategory(category);
             if (params.length === 0) return null;
 
+            // Pegar a nota geral manual do grupo
+            const categoryRatingKey = `__category_rating_${category}`;
+            const categoryRating = parameterValues[categoryRatingKey];
+            const categoryRatingValue = categoryRating !== null && categoryRating !== undefined 
+              ? Number(categoryRating) 
+              : 0;
+
+            // Handler para clique nas estrelas da categoria
+            const handleCategoryStarClick = (starIndex: number, event: React.MouseEvent<HTMLDivElement>) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              const clickX = event.clientX - rect.left;
+              const starWidth = rect.width;
+              const clickPosition = Math.max(0, Math.min(1, clickX / starWidth));
+              const decimalPart = Math.round(clickPosition * 10) / 10;
+              const newRating = Math.max(0.1, Math.min(5, starIndex + decimalPart));
+              setParameterValues({ ...parameterValues, [categoryRatingKey]: newRating });
+            };
+
             return (
               <Card
                 key={category}
                 className="bg-white border border-slate-200 shadow-sm overflow-hidden"
               >
                 <CardHeader className="bg-slate-50 border-b border-slate-200">
-                  <CardTitle className="text-slate-900 text-xl flex items-center">
-                    <div className="w-1 h-8 bg-blue-600 rounded-full mr-3" />
-                    {category}
-                    <span className="ml-3 text-sm text-slate-500 font-normal">
-                      ({params.length} parâmetros)
-                    </span>
+                  <CardTitle className="text-slate-900 text-xl flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center">
+                      <div className="w-1 h-8 bg-blue-600 rounded-full mr-3" />
+                      {category}
+                      <span className="ml-3 text-sm text-slate-500 font-normal">
+                        ({params.length} parâmetros)
+                      </span>
+                    </div>
+                    
+                    {/* Nota Geral do Grupo - Manual */}
+                    <div className="flex items-center gap-3 bg-white rounded-xl px-4 py-2 border border-slate-200 shadow-sm flex-wrap">
+                      <span className="text-sm font-medium text-slate-600">Nota Geral:</span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {/* Estrelas clicáveis */}
+                        <div className="flex items-center gap-0.5">
+                          {[0, 1, 2, 3, 4].map((starIndex) => {
+                            const fullStars = Math.floor(categoryRatingValue);
+                            const partialFill = categoryRatingValue - fullStars;
+                            const isFull = starIndex < fullStars;
+                            const isPartial = starIndex === fullStars && partialFill > 0;
+                            
+                            return (
+                              <div
+                                key={starIndex}
+                                className="relative w-5 h-5 cursor-pointer transition-transform hover:scale-110"
+                                onClick={(e) => handleCategoryStarClick(starIndex, e)}
+                                title={`Clique para avaliar`}
+                              >
+                                <Star className="w-5 h-5 text-gray-300 fill-gray-300 absolute inset-0" />
+                                {isFull && (
+                                  <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 absolute inset-0" />
+                                )}
+                                {isPartial && (
+                                  <div className="absolute inset-0 overflow-hidden" style={{ width: `${partialFill * 100}%` }}>
+                                    <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        
+                        {/* Input manual para nota da categoria */}
+                        <Input
+                          type="text"
+                          value={categoryRating !== null && categoryRating !== undefined ? String(categoryRating) : ''}
+                          onChange={(e) => {
+                            const text = e.target.value;
+                            if (text === '') {
+                              const newValues = { ...parameterValues };
+                              delete newValues[categoryRatingKey];
+                              setParameterValues(newValues);
+                              return;
+                            }
+                            // Guarda o texto como está (permite digitar livremente)
+                            setParameterValues({ ...parameterValues, [categoryRatingKey]: text });
+                          }}
+                          onBlur={(e) => {
+                            // Ao sair do campo, converte para número se possível
+                            const text = e.target.value;
+                            if (text === '') return;
+                            const normalized = text.replace(',', '.');
+                            const num = parseFloat(normalized);
+                            if (!isNaN(num)) {
+                              const clamped = Math.max(0, Math.min(num, 5));
+                              setParameterValues({ ...parameterValues, [categoryRatingKey]: clamped });
+                            }
+                          }}
+                          className="w-16 px-2 py-1 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-500 text-center font-bold text-sm"
+                          placeholder="4,5"
+                        />
+                        <span className="text-sm text-slate-500">/5</span>
+                        {/* Botão Salvar Nota do Grupo */}
+                        <Button
+                          size="sm"
+                          onClick={() => handleSaveCategoryRating(category)}
+                          disabled={savingParams.has(categoryRatingKey) || categoryRatingValue === 0}
+                          className="ml-2 h-7 px-3 bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          {savingParams.has(categoryRatingKey) ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Save className="h-3 w-3" />
+                          )}
+                          <span className="ml-1 text-xs">Salvar</span>
+                        </Button>
+                      </div>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
