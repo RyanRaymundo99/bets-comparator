@@ -39,7 +39,7 @@ const AuthLayout = ({
                   <div className="h-24 ml-8 overflow-hidden flex items-center">
                     <Image
                       src="/shortname-logo.svg"
-                      alt="Build Strategy"
+                      alt="Bets Comparator"
                       width={200}
                       height={200}
                     />

@@ -90,7 +90,7 @@ export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
           >
             <Image
               src="/shortname-logo.svg"
-              alt="Build Strategy"
+              alt="Bets Comparator"
               width={100}
               height={50}
               priority
@@ -171,7 +171,7 @@ export default function Navbar({ isLoggingOut, handleLogout }: NavbarProps) {
           <div className="flex items-center gap-2">
             <Image
               src="/shortname-logo.svg"
-              alt="Build Strategy"
+              alt="Bets Comparator"
               width={32}
               height={32}
               className="h-8 w-auto"
