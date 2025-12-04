@@ -853,111 +853,117 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        {/* 3 Above Current (if position > 3) */}
-                        {ranking.position > 3 &&
-                          ranking.aboveCurrent.length > 0 && (
-                            <div>
-                              <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                                3 Acima de Você
-                              </div>
-                              <div className="space-y-2">
-                                {ranking.aboveCurrent.map((item) => (
-                                  <div
-                                    key={item.id}
-                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                                  >
-                                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                                      <span className="text-sm font-bold text-slate-700 flex-shrink-0">
-                                        #{item.position}
-                                      </span>
-                                      {item.logo ? (
-                                        <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
-                                          <Image
-                                            src={item.logo}
-                                            alt={item.name}
-                                            fill
-                                            className="object-cover"
-                                            sizes="24px"
-                                            unoptimized
-                                          />
-                                        </div>
-                                      ) : null}
-                                      <span className="text-sm text-slate-900 truncate">
-                                        {item.name}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
-                                      {item.score}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                        {/* Current Position Highlight */}
-                        <div
-                          className={`${
-                            ranking.position > 3 ? "mt-2" : ""
-                          } pt-2 border-t border-slate-200`}
-                        >
-                          <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
-                            Sua Posição
-                          </div>
-                          <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-blue-700">
-                                  #{ranking.position}
-                                </span>
-                                <span className="text-sm font-semibold text-blue-900 truncate">
-                                  {bet.name}
-                                </span>
-                              </div>
-                              <span className="text-xs font-semibold text-blue-700">
-                                {rating.score}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* 3 Below Current */}
-                        {ranking.belowCurrent.length > 0 && (
+                        {/* Principais Concorrentes */}
+                        {(ranking.aboveCurrent.length > 0 || ranking.belowCurrent.length > 0) && (
                           <div>
                             <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                              3 Abaixo de Você
+                              PRINCIPAIS CONCORRENTES
                             </div>
                             <div className="space-y-2">
-                                {ranking.belowCurrent.map((item) => (
-                                  <div
-                                    key={item.id}
-                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                                  >
-                                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                                      <span className="text-sm font-bold text-slate-700 flex-shrink-0">
-                                        #{item.position}
-                                      </span>
-                                      {item.logo ? (
-                                        <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
-                                          <Image
-                                            src={item.logo}
-                                            alt={item.name}
-                                            fill
-                                            className="object-cover"
-                                            sizes="24px"
-                                            unoptimized
-                                          />
-                                        </div>
-                                      ) : null}
-                                      <span className="text-sm text-slate-900 truncate">
-                                        {item.name}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
-                                      {item.score}
+                              {/* Above Current */}
+                              {ranking.aboveCurrent.map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                                >
+                                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                                    <span className="text-sm font-bold text-slate-700 flex-shrink-0">
+                                      #{item.position}
+                                    </span>
+                                    {item.logo ? (
+                                      <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                        <Image
+                                          src={item.logo}
+                                          alt={item.name}
+                                          fill
+                                          className="object-cover"
+                                          sizes="24px"
+                                          unoptimized
+                                        />
+                                      </div>
+                                    ) : null}
+                                    <span className="text-sm text-slate-900 truncate">
+                                      {item.name}
                                     </span>
                                   </div>
-                                ))}
+                                  <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
+                                    {item.score}
+                                  </span>
+                                </div>
+                              ))}
+
+                              {/* Current Position Highlight */}
+                              <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-blue-700">
+                                      #{ranking.position}
+                                    </span>
+                                    <span className="text-sm font-semibold text-blue-900 truncate">
+                                      {bet.name}
+                                    </span>
+                                  </div>
+                                  <span className="text-xs font-semibold text-blue-700">
+                                    {rating.score}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Below Current */}
+                              {ranking.belowCurrent.map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                                >
+                                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                                    <span className="text-sm font-bold text-slate-700 flex-shrink-0">
+                                      #{item.position}
+                                    </span>
+                                    {item.logo ? (
+                                      <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                        <Image
+                                          src={item.logo}
+                                          alt={item.name}
+                                          fill
+                                          className="object-cover"
+                                          sizes="24px"
+                                          unoptimized
+                                        />
+                                      </div>
+                                    ) : null}
+                                    <span className="text-sm text-slate-900 truncate">
+                                      {item.name}
+                                    </span>
+                                  </div>
+                                  <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
+                                    {item.score}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Current Position Highlight (only if no above/below) */}
+                        {ranking.aboveCurrent.length === 0 && ranking.belowCurrent.length === 0 && (
+                          <div className="pt-2 border-t border-slate-200">
+                            <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
+                              Sua Posição
+                            </div>
+                            <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-bold text-blue-700">
+                                    #{ranking.position}
+                                  </span>
+                                  <span className="text-sm font-semibold text-blue-900 truncate">
+                                    {bet.name}
+                                  </span>
+                                </div>
+                                <span className="text-xs font-semibold text-blue-700">
+                                  {rating.score}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         )}
