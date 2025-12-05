@@ -280,7 +280,7 @@ export default function BetParametersPage() {
     const categoryRatingKey = `__category_rating_${category}`;
     const value = parameterValues[categoryRatingKey];
     
-    if (value === undefined || value === null || value === 0) {
+    if (value === undefined || value === null || value === "" || (typeof value === "number" && value === 0 && String(value) === "0")) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -295,47 +295,135 @@ export default function BetParametersPage() {
       // Find existing parameter
       const existingParam = bet?.parameters.find((p) => p.name === categoryRatingKey);
       
-      // Aceita vírgula ou ponto como separador decimal
+      // Aceita vírgula ou ponto como separador decimal e garante que é um número válido
       const ratingStr = String(value).replace(',', '.');
+      const ratingValue = typeof value === "number" ? value : parseFloat(ratingStr);
+      
+      // Valida e limita o valor entre 0 e 5
+      if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "A nota deve ser um número entre 0 e 5",
+        });
+        setSavingParams((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(categoryRatingKey);
+          return newSet;
+        });
+        return;
+      }
+      
+      const clampedRating = Number(Math.max(0, Math.min(ratingValue, 5)).toFixed(1));
+      
+      console.log("Saving category rating:", {
+        category,
+        categoryRatingKey,
+        originalValue: value,
+        ratingValue,
+        clampedRating,
+        clampedRatingType: typeof clampedRating,
+        existingParam: existingParam?.id,
+      });
+      
       const paramData = {
         betId,
         name: categoryRatingKey,
         category: category,
         type: "rating",
-        valueRating: typeof value === "number" ? value : parseFloat(ratingStr),
+        valueRating: clampedRating,
       };
 
       let response;
+      let responseData;
+      
       if (existingParam?.id) {
+        // Ensure value is a number, not a string
+        const requestBody = {
+          value: Number(clampedRating),
+          notes: null,
+        };
+        console.log("PATCH request:", { id: existingParam.id, body: requestBody, bodyString: JSON.stringify(requestBody) });
+        
         response = await fetch(`/api/parameters/${existingParam.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            value: paramData.valueRating,
-            notes: null,
-          }),
+          body: JSON.stringify(requestBody),
         });
+        responseData = await response.json();
+        console.log("PATCH response:", { status: response.status, ok: response.ok, data: responseData });
       } else {
+        // Ensure valueRating is a number
+        const postData = {
+          ...paramData,
+          valueRating: Number(clampedRating),
+        };
+        console.log("POST request:", postData, "Stringified:", JSON.stringify(postData));
+        
         response = await fetch("/api/parameters", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(paramData),
+          body: JSON.stringify(postData),
         });
+        responseData = await response.json();
+        console.log("POST response:", { status: response.status, ok: response.ok, data: responseData });
       }
 
-      if (response.ok) {
+      // Check both response.ok and response.success
+      if (response.ok && responseData.success) {
+        // Verify the parameter was actually saved with the correct value
+        const savedParameter = responseData.parameter;
+        if (savedParameter) {
+          const savedRating = savedParameter.valueRating !== null && savedParameter.valueRating !== undefined 
+            ? Number(savedParameter.valueRating) / 10 
+            : null;
+          console.log("Save successful! Saved parameter:", {
+            id: savedParameter.id,
+            name: savedParameter.name,
+            type: savedParameter.type,
+            valueRating: savedParameter.valueRating,
+            savedRating,
+            expectedRating: clampedRating,
+            match: Math.abs((savedRating || 0) - clampedRating) < 0.1, // Allow small floating point differences
+          });
+          
+          if (Math.abs((savedRating || 0) - clampedRating) >= 0.1) {
+            console.warn("Warning: Saved rating doesn't match expected value!", {
+              expected: clampedRating,
+              saved: savedRating,
+              rawValue: savedParameter.valueRating,
+            });
+          }
+          
+          // Update the local state immediately to reflect the saved value
+          setParameterValues((prev) => ({
+            ...prev,
+            [categoryRatingKey]: savedRating,
+          }));
+        } else {
+          console.warn("Warning: Response success but no parameter in response:", responseData);
+        }
+        
         toast({
           title: "Nota geral salva!",
           description: `Nota da categoria "${category}" foi salva com sucesso`,
         });
+        // Refresh the data to show the updated value
         await fetchBet();
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Falha ao salvar nota geral");
+        const errorMsg = responseData.error || "Falha ao salvar nota geral";
+        console.error("Error saving category rating:", {
+          status: response.status,
+          ok: response.ok,
+          success: responseData.success,
+          error: errorMsg,
+          fullResponse: responseData,
+        });
+        throw new Error(errorMsg);
       }
     } catch (error) {
       console.error("Error saving category rating:", error);

@@ -37,6 +37,11 @@ export async function GET(
       bet.parameters.map((param) => [param.name, param])
     );
 
+    // Create a map of defined parameters by name
+    const definedParamsMap = new Map(
+      PARAMETER_DEFINITIONS.map((paramDef) => [paramDef.name, paramDef])
+    );
+
     // Merge all defined parameters with existing ones
     const allParameters = PARAMETER_DEFINITIONS.map((paramDef) => {
       const existingParam = existingParamsMap.get(paramDef.name);
@@ -71,7 +76,24 @@ export async function GET(
       }
     });
 
-    // Return bet with all parameters (existing + missing)
+    // Add any existing parameters that are NOT in PARAMETER_DEFINITIONS
+    // This includes category rating parameters (__category_rating_*)
+    bet.parameters.forEach((param) => {
+      if (!definedParamsMap.has(param.name)) {
+        // This is a parameter that exists in DB but not in definitions (e.g., category ratings)
+        allParameters.push({
+          ...param,
+          // Ensure it has all required fields
+          category: param.category || null,
+          type: param.type || null,
+          unit: param.unit || null,
+          description: param.description || null,
+          options: param.options || [],
+        });
+      }
+    });
+
+    // Return bet with all parameters (existing + missing + category ratings)
     return NextResponse.json({
       success: true,
       bet: {

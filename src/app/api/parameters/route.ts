@@ -63,6 +63,12 @@ export async function POST(request: NextRequest) {
     });
 
     let parameter;
+    // Determine which value type to use and clear others
+    const isRating = type === "rating" || name.startsWith('__category_rating_');
+    const isBoolean = type === "boolean";
+    const isNumber = type === "number" || type === "currency" || type === "percentage";
+    const isText = type === "text" || type === "select" || !type;
+    
     const paramData: {
       category?: string;
       unit?: string;
@@ -77,42 +83,82 @@ export async function POST(request: NextRequest) {
       category,
       unit,
       description,
-      type,
+      type: type || (isRating ? "rating" : undefined),
       options: options || [],
-      valueText: valueText !== undefined ? valueText : null,
-      valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
-      valueBoolean: valueBoolean !== undefined ? valueBoolean : null,
-      valueRating: valueRating !== undefined ? Math.round(Math.max(0, Math.min(parseFloat(valueRating.toString()), 5)) * 10) : null,
+      // Only set the value for the correct type, clear others
+      valueText: isText && valueText !== undefined ? valueText : null,
+      valueNumber: isNumber && valueNumber !== undefined ? new Decimal(valueNumber) : null,
+      valueBoolean: isBoolean && valueBoolean !== undefined ? valueBoolean : null,
+      valueRating: isRating && valueRating !== undefined ? Math.round(Math.max(0, Math.min(parseFloat(String(valueRating)), 5)) * 10) : null,
     };
+    
+    console.log("POST parameter data:", {
+      name,
+      type,
+      isRating,
+      valueRating: paramData.valueRating,
+      paramData,
+    });
 
     if (existingParameter) {
       // Update existing parameter
+      console.log("POST: Updating existing parameter:", {
+        id: existingParameter.id,
+        name,
+        type,
+        isRating,
+        currentValueRating: existingParameter.valueRating,
+        newValueRating: paramData.valueRating,
+        paramData,
+      });
+      
       parameter = await prisma.parameter.update({
         where: { id: existingParameter.id },
         data: paramData,
       });
+      
+      console.log("POST: Parameter updated:", {
+        id: parameter.id,
+        name: parameter.name,
+        type: parameter.type,
+        valueRating: parameter.valueRating,
+      });
 
       // Create history entry if value changed
+      // For rating, compare the integer values (stored format)
+      const existingRatingInt = existingParameter.valueRating;
+      const newRatingInt = isRating && valueRating !== undefined 
+        ? Math.round(Math.max(0, Math.min(parseFloat(String(valueRating)), 5)) * 10)
+        : null;
+      
       const hasChanged =
-        existingParameter.valueText !== valueText ||
-        existingParameter.valueNumber?.toString() !== valueNumber?.toString() ||
-        existingParameter.valueBoolean !== valueBoolean ||
-        existingParameter.valueRating !== valueRating;
+        existingParameter.valueText !== (isText ? valueText : null) ||
+        existingParameter.valueNumber?.toString() !== (isNumber && valueNumber !== undefined ? new Decimal(valueNumber).toString() : null) ||
+        existingParameter.valueBoolean !== (isBoolean ? valueBoolean : null) ||
+        existingRatingInt !== newRatingInt;
 
       if (hasChanged) {
         await prisma.parameterHistory.create({
           data: {
             parameterId: parameter.id,
-            valueText: valueText || null,
-            valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
-            valueBoolean: valueBoolean || null,
-            valueRating: valueRating !== undefined ? Math.round(Math.max(0, Math.min(parseFloat(valueRating.toString()), 5)) * 10) : null,
+            valueText: isText && valueText !== undefined ? valueText : null,
+            valueNumber: isNumber && valueNumber !== undefined ? new Decimal(valueNumber) : null,
+            valueBoolean: isBoolean && valueBoolean !== undefined ? valueBoolean : null,
+            valueRating: isRating && valueRating !== undefined ? Math.round(Math.max(0, Math.min(parseFloat(String(valueRating)), 5)) * 10) : null,
             notes: notes || "Atualização via admin",
           },
         });
       }
     } else {
       // Create new parameter
+      console.log("POST: Creating new parameter:", {
+        name,
+        type,
+        isRating,
+        valueRating: paramData.valueRating,
+        paramData,
+      });
+      
       parameter = await prisma.parameter.create({
         data: {
           betId,
@@ -120,15 +166,22 @@ export async function POST(request: NextRequest) {
           ...paramData,
         },
       });
+      
+      console.log("POST: Parameter created:", {
+        id: parameter.id,
+        name: parameter.name,
+        type: parameter.type,
+        valueRating: parameter.valueRating,
+      });
 
       // Create initial history entry
       await prisma.parameterHistory.create({
         data: {
           parameterId: parameter.id,
-          valueText: valueText || null,
-          valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
-          valueBoolean: valueBoolean || null,
-          valueRating: valueRating !== undefined ? Math.round(Math.max(0, Math.min(parseFloat(valueRating.toString()), 5)) * 10) : null,
+          valueText: isText && valueText !== undefined ? valueText : null,
+          valueNumber: isNumber && valueNumber !== undefined ? new Decimal(valueNumber) : null,
+          valueBoolean: isBoolean && valueBoolean !== undefined ? valueBoolean : null,
+          valueRating: isRating && valueRating !== undefined ? Math.round(Math.max(0, Math.min(parseFloat(String(valueRating)), 5)) * 10) : null,
           notes: notes || "Valor inicial",
         },
       });
