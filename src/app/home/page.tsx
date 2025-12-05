@@ -115,6 +115,7 @@ interface HomeData {
     unit?: string | null;
     trend: "up" | "down" | "stable";
     type?: string | null;
+    valueRating?: number | null;
   }>;
 }
 

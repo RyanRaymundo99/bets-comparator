@@ -14,6 +14,19 @@ export const PARAMETER_CATEGORIES = [
 
 export type ParameterCategory = (typeof PARAMETER_CATEGORIES)[number];
 
+// Pesos para cálculo da média ponderada do ranking geral
+// O ranking geral será calculado como média ponderada das notas gerais de cada categoria
+export const CATEGORY_WEIGHTS: Record<ParameterCategory, number> = {
+  "Mercado e Acesso": 3,
+  "Pagamentos & Financeiro": 3,
+  "Plataforma & Experiência do Usuário": 5,
+  "Produtos & Entretenimento": 4,
+  "Gamificação & Fidelização": 4,
+  "Marketing & Comunidade": 4.5,
+  "Tráfego & Performance": 5,
+  "CRM": 3,
+};
+
 export interface ParameterDefinition {
   name: string;
   category: ParameterCategory;

@@ -583,6 +583,77 @@ export default function BetParametersPage() {
         }
       }
 
+      // Save category ratings (star ratings for each category)
+      for (const category of PARAMETER_CATEGORIES) {
+        const categoryRatingKey = `__category_rating_${category}`;
+        const value = parameterValues[categoryRatingKey];
+        
+        // Skip empty or zero values
+        if (value === undefined || value === null || value === "" || (typeof value === "number" && value === 0 && String(value) === "0")) {
+          continue;
+        }
+
+        try {
+          // Find existing parameter
+          const existingParam = bet?.parameters.find((p) => p.name === categoryRatingKey);
+          
+          // Aceita vírgula ou ponto como separador decimal e garante que é um número válido
+          const ratingStr = String(value).replace(',', '.');
+          const ratingValue = typeof value === "number" ? value : parseFloat(ratingStr);
+          
+          // Valida e limita o valor entre 0 e 5
+          if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
+            continue; // Skip invalid ratings
+          }
+          
+          const clampedRating = Number(Math.max(0, Math.min(ratingValue, 5)).toFixed(1));
+          
+          const paramData = {
+            betId,
+            name: categoryRatingKey,
+            category: category,
+            type: "rating",
+            valueRating: Number(clampedRating),
+          };
+
+          let response;
+          if (existingParam?.id) {
+            response = await fetch(`/api/parameters/${existingParam.id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                value: Number(clampedRating),
+                notes: null,
+              }),
+            });
+          } else {
+            response = await fetch("/api/parameters", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(paramData),
+            });
+          }
+
+          if (response.ok) {
+            const responseData = await response.json();
+            if (responseData.success) {
+              successCount++;
+            } else {
+              errorCount++;
+            }
+          } else {
+            errorCount++;
+          }
+        } catch (error) {
+          console.error(`Error saving category rating for ${category}:`, error);
+          errorCount++;
+        }
+      }
+
       toast({
         title: "Parâmetros salvos!",
         description: `✅ ${successCount} salvos${errorCount > 0 ? `, ❌ ${errorCount} com erro` : ""}`,

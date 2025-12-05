@@ -45,7 +45,7 @@ export async function GET(
     // Merge all defined parameters with existing ones
     const allParameters = PARAMETER_DEFINITIONS.map((paramDef) => {
       const existingParam = existingParamsMap.get(paramDef.name);
-      
+
       if (existingParam) {
         // Return existing parameter with history
         return {
@@ -83,13 +83,13 @@ export async function GET(
         // This is a parameter that exists in DB but not in definitions (e.g., category ratings)
         allParameters.push({
           ...param,
-          // Ensure it has all required fields
-          category: param.category || null,
-          type: param.type || null,
-          unit: param.unit || null,
-          description: param.description || null,
-          options: param.options || [],
-        });
+          // Ensure it has all required fields - use existing values or defaults
+          category: param.category ?? null,
+          type: param.type ?? null,
+          unit: param.unit ?? null,
+          description: param.description ?? null,
+          options: param.options ?? [],
+        } as (typeof allParameters)[0]);
       }
     });
 
@@ -216,7 +216,10 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ success: true, message: "Bet deleted successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Bet deleted successfully",
+    });
   } catch (error) {
     console.error("Error deleting bet:", error);
     return NextResponse.json(
@@ -225,4 +228,3 @@ export async function DELETE(
     );
   }
 }
-

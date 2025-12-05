@@ -7,11 +7,13 @@ import {
   withErrorHandling,
 } from "@/lib/api-response";
 import { getSession } from "@/lib/auth-helpers";
-import { PARAMETER_DEFINITIONS } from "@/lib/parameter-definitions";
+import { PARAMETER_DEFINITIONS, PARAMETER_CATEGORIES, CATEGORY_WEIGHTS } from "@/lib/parameter-definitions";
 
 // Helper function to calculate overall score for a bet
+// Agora usa média ponderada das notas gerais de cada categoria
 function calculateOverallScore(bet: {
   parameters: Array<{
+    name?: string;
     valueText?: string | null;
     valueNumber?: number | null;
     valueBoolean?: boolean | null;
@@ -19,49 +21,40 @@ function calculateOverallScore(bet: {
     category?: string | null;
   }>;
 }): number {
-  let totalScore = 0;
-  let validParams = 0;
-
+  // Buscar as notas gerais de cada categoria (parâmetros __category_rating_*)
+  const categoryRatings: Record<string, number> = {};
+  
   bet.parameters.forEach((param) => {
-    let paramScore = 0;
-    let hasValue = false;
-
-    // Boolean: true = 100, false = 30
-    if (param.valueBoolean !== null && param.valueBoolean !== undefined) {
-      paramScore = param.valueBoolean ? 100 : 30;
-      hasValue = true;
-    }
-    // Rating: divide por 10 (armazenado como *10) e multiplica por 20 para ficar de 0-100
-    else if (param.valueRating !== null && param.valueRating !== undefined) {
-      paramScore = (Number(param.valueRating) / 10) * 20; // 5 stars = 100
-      hasValue = true;
-    }
-    // Number: normalização simples
-    else if (param.valueNumber !== null && param.valueNumber !== undefined) {
-      const numValue = Number(param.valueNumber);
-      if (numValue > 1000) {
-        paramScore = Math.min(100, 50 + (numValue / 10000) * 50);
-      } else if (numValue > 100) {
-        paramScore = Math.min(100, numValue);
-      } else {
-        paramScore = Math.min(100, numValue * 2);
+    // Verificar se é um parâmetro de nota geral de categoria
+    if (param.name && param.name.startsWith('__category_rating_')) {
+      const category = param.name.replace('__category_rating_', '');
+      // valueRating é armazenado como inteiro * 10 (4.5 → 45), então dividimos por 10
+      if (param.valueRating !== null && param.valueRating !== undefined) {
+        categoryRatings[category] = Number(param.valueRating) / 10;
       }
-      hasValue = true;
-    }
-    // Text: considera como preenchido (70 pontos)
-    else if (param.valueText !== null && param.valueText !== undefined && param.valueText.trim() !== "") {
-      paramScore = 70;
-      hasValue = true;
-    }
-
-    if (hasValue) {
-      totalScore += paramScore;
-      validParams++;
     }
   });
 
-  if (validParams === 0) return 0;
-  return Math.round(totalScore / validParams);
+  // Calcular média ponderada usando os pesos das categorias
+  let weightedSum = 0;
+  let totalWeight = 0;
+
+  PARAMETER_CATEGORIES.forEach((category) => {
+    const rating = categoryRatings[category];
+    const weight = CATEGORY_WEIGHTS[category];
+
+    if (rating !== undefined && rating !== null && rating > 0) {
+      // Converter nota de 0-5 para 0-100 para manter compatibilidade
+      const ratingIn100 = (rating / 5) * 100;
+      weightedSum += ratingIn100 * weight;
+      totalWeight += weight;
+    }
+  });
+
+  if (totalWeight === 0) return 0;
+  
+  // Retornar a média ponderada
+  return Math.round(weightedSum / totalWeight);
 }
 
 // Helper function to get parameter trend
@@ -130,6 +123,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   // Convert bet parameters to format expected by calculateOverallScore
   const betForScoring = {
     parameters: bet.parameters.map((p) => ({
+      name: p.name,
       valueText: p.valueText,
       valueNumber: p.valueNumber !== null && p.valueNumber !== undefined ? Number(p.valueNumber) : null,
       valueBoolean: p.valueBoolean,
@@ -155,6 +149,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     bet: b,
     score: calculateOverallScore({
       parameters: b.parameters.map((p) => ({
+        name: p.name,
         valueText: p.valueText,
         valueNumber: p.valueNumber !== null && p.valueNumber !== undefined ? Number(p.valueNumber) : null,
         valueBoolean: p.valueBoolean,
