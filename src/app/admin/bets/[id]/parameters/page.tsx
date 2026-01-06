@@ -188,7 +188,8 @@ export default function BetParametersPage() {
           paramData.valueBoolean = typeof value === "boolean" ? value : Boolean(value);
           break;
         case "rating":
-          paramData.valueRating = typeof value === "number" ? value : parseInt(String(value), 10);
+          const ratingValue = typeof value === "number" ? value : parseInt(String(value), 10);
+          paramData.valueRating = Math.min(5, Math.max(0, ratingValue));
           break;
         case "number":
         case "currency":
@@ -379,7 +380,8 @@ export default function BetParametersPage() {
             paramData.valueBoolean = typeof value === "boolean" ? value : Boolean(value);
             break;
           case "rating":
-            paramData.valueRating = typeof value === "number" ? value : parseInt(String(value), 10);
+            const ratingValue = typeof value === "number" ? value : parseInt(String(value), 10);
+            paramData.valueRating = Math.min(5, Math.max(0, ratingValue));
             break;
           case "number":
           case "currency":

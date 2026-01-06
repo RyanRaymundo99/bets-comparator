@@ -288,7 +288,8 @@ export default function BetParametersViewPage() {
       );
     }
     if (param.valueRating !== null && param.valueRating !== undefined) {
-      const rating = param.valueRating;
+      // Cap rating at 5
+      const rating = Math.min(5, Math.max(0, param.valueRating));
       return (
         <div className="space-y-2">
           <div className="flex items-center gap-1">

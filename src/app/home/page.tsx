@@ -212,8 +212,10 @@ export default function HomePage() {
   };
 
   const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
+    // Cap rating at 5
+    const cappedRating = Math.min(5, Math.max(0, rating));
+    const fullStars = Math.floor(cappedRating);
+    const hasHalfStar = cappedRating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
     return (
@@ -275,22 +277,27 @@ export default function HomePage() {
           try {
             const iframe = iframeRef.current;
             // Wait a bit for iframe to fully load
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            const iframeDoc =
+              iframe.contentDocument || iframe.contentWindow?.document;
             if (iframeDoc && iframeDoc.body) {
               const body = iframeDoc.body;
               const computedStyle = window.getComputedStyle(body);
               const bgColor = computedStyle.backgroundColor;
-              
-              if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+
+              if (
+                bgColor &&
+                bgColor !== "rgba(0, 0, 0, 0)" &&
+                bgColor !== "transparent"
+              ) {
                 const rgbMatch = bgColor.match(/\d+/g);
                 if (rgbMatch && rgbMatch.length >= 3) {
                   const r = parseInt(rgbMatch[0]);
                   const g = parseInt(rgbMatch[1]);
                   const b = parseInt(rgbMatch[2]);
                   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-                  
+
                   let finalColor: string;
                   if (brightness > 200) {
                     finalColor = `rgb(255, 255, 255)`;
@@ -323,7 +330,9 @@ export default function HomePage() {
 
         // Use server-side API for cross-origin iframes
         if (!data.bet.url) return;
-        const response = await fetch(`/api/analyze-website-color?url=${encodeURIComponent(data.bet.url)}`);
+        const response = await fetch(
+          `/api/analyze-website-color?url=${encodeURIComponent(data.bet.url)}`
+        );
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
@@ -338,13 +347,13 @@ export default function HomePage() {
       } catch (error) {
         console.debug("Color extraction failed:", error);
       }
-      
+
       // Retry if we haven't exceeded max retries
       if (attempt < maxRetries) {
         setTimeout(() => extractColor(attempt + 1), 2000 * (attempt + 1));
         return;
       }
-      
+
       // Final fallback: Default to black (user indicated iframe is black)
       console.debug("Color extraction: Using default black");
       setDominantColor(`rgb(0, 0, 0)`);
@@ -353,7 +362,7 @@ export default function HomePage() {
 
     // Extract color when URL is available - try immediately and also after iframe loads
     extractColor(0);
-    
+
     // Also try after iframe loads
     if (iframeRef.current) {
       const iframe = iframeRef.current;
@@ -361,7 +370,7 @@ export default function HomePage() {
         setTimeout(() => extractColor(1), 1000);
       };
       iframe.addEventListener("load", handleLoad);
-      
+
       return () => {
         iframe.removeEventListener("load", handleLoad);
       };
@@ -441,127 +450,173 @@ export default function HomePage() {
         {/* Main Content Section - Card and Ranking Side by Side */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Main Card */}
-          <Card 
-            className={`border shadow-lg rounded-2xl overflow-hidden flex-1 transition-colors duration-1000 ${isDarkTheme ? 'border-slate-700' : 'border-slate-200'}`}
+          <Card
+            className={`border shadow-lg rounded-2xl overflow-hidden flex-1 transition-colors duration-1000 ${
+              isDarkTheme ? "border-slate-700" : "border-slate-200"
+            }`}
             style={{ backgroundColor: dominantColor }}
           >
-          {/* Cover Image with Logo Overlay */}
-          <div className="relative">
-            {/* Cover/Iframe Area - Always show the blue cover, iframe if URL available */}
-            <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700 overflow-hidden">
-              {/* Hidden canvas for color extraction */}
-              <canvas ref={canvasRef} className="hidden" />
-              
-              {bet.url ? (
-                <>
-                  <iframe
-                    ref={iframeRef}
-                    src={
-                      bet.url.startsWith("http://") ||
-                      bet.url.startsWith("https://")
-                        ? bet.url
-                        : `https://${bet.url}`
-                    }
-                    className="w-full h-full border-0"
-                    title={`${bet.name} Website`}
-                    allow="fullscreen"
-                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-                  />
-                  {/* Color extraction overlay - uses CSS filters to sample iframe colors */}
-                  <div 
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-32 pointer-events-none opacity-0"
-                    style={{
-                      filter: 'blur(60px) saturate(2)',
-                      mixBlendMode: 'multiply',
-                      background: 'inherit',
-                    }}
-                    id="color-extractor"
-                  />
-                  {/* Gradient fade overlay that transitions from iframe to extracted color */}
-                  <div 
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: `linear-gradient(to bottom, transparent 0%, transparent 35%, ${rgbToRgba(dominantColor, 0.2)} 60%, ${rgbToRgba(dominantColor, 0.5)} 75%, ${rgbToRgba(dominantColor, 0.85)} 90%, ${dominantColor} 100%)`,
-                      backdropFilter: 'blur(0.5px)',
-                    }}
-                  />
-                  {/* Subtle vignette effect for depth */}
-                  <div 
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: `radial-gradient(ellipse 80% 50% at center, transparent 0%, ${rgbToRgba(dominantColor, 0.15)} 100%)`,
-                    }}
-                  />
-                  {/* Edge fade for seamless transition */}
-                  <div 
-                    className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
-                    style={{
-                      background: `linear-gradient(to bottom, transparent, ${dominantColor})`,
-                    }}
-                  />
-                </>
-              ) : bet.coverImage ? (
-                <Image
-                  src={bet.coverImage}
-                  alt={`${bet.name} cover`}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="100vw"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center text-white/80">
-                    <Building2 className="w-16 h-16 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Cover Area</p>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Cover Image with Logo Overlay */}
+            <div className="relative">
+              {/* Cover/Iframe Area - Always show the blue cover, iframe if URL available */}
+              <div className="relative w-full h-64 md:h-80 lg:h-96 xl:h-[500px] bg-gradient-to-br from-blue-600 to-blue-700 overflow-hidden">
+                {/* Hidden canvas for color extraction */}
+                <canvas ref={canvasRef} className="hidden" />
 
-            {/* Logo Overlay (Facebook-style) */}
-            <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-20">
-              {bet.logo ? (
-                <div className={`relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 shadow-2xl ring-4 ${isDarkTheme ? 'border-slate-900 bg-slate-900 ring-slate-800/50' : 'border-white bg-white ring-slate-200/50'}`}>
+                {bet.url ? (
+                  <>
+                    <iframe
+                      ref={iframeRef}
+                      src={
+                        bet.url.startsWith("http://") ||
+                        bet.url.startsWith("https://")
+                          ? bet.url
+                          : `https://${bet.url}`
+                      }
+                      className="w-full h-full border-0"
+                      title={`${bet.name} Website`}
+                      allow="fullscreen"
+                      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                    />
+                    {/* Color extraction overlay - uses CSS filters to sample iframe colors */}
+                    <div
+                      className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-32 pointer-events-none opacity-0"
+                      style={{
+                        filter: "blur(60px) saturate(2)",
+                        mixBlendMode: "multiply",
+                        background: "inherit",
+                      }}
+                      id="color-extractor"
+                    />
+                    {/* Gradient fade overlay that transitions from iframe to extracted color */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: `linear-gradient(to bottom, transparent 0%, transparent 35%, ${rgbToRgba(
+                          dominantColor,
+                          0.2
+                        )} 60%, ${rgbToRgba(
+                          dominantColor,
+                          0.5
+                        )} 75%, ${rgbToRgba(
+                          dominantColor,
+                          0.85
+                        )} 90%, ${dominantColor} 100%)`,
+                        backdropFilter: "blur(0.5px)",
+                      }}
+                    />
+                    {/* Subtle vignette effect for depth */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(ellipse 80% 50% at center, transparent 0%, ${rgbToRgba(
+                          dominantColor,
+                          0.15
+                        )} 100%)`,
+                      }}
+                    />
+                    {/* Edge fade for seamless transition */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+                      style={{
+                        background: `linear-gradient(to bottom, transparent, ${dominantColor})`,
+                      }}
+                    />
+                  </>
+                ) : bet.coverImage ? (
                   <Image
-                    src={bet.logo}
-                    alt={`${bet.name} logo`}
+                    src={bet.coverImage}
+                    alt={`${bet.name} cover`}
                     fill
                     className="object-cover"
                     priority
+                    sizes="100vw"
                   />
-                </div>
-              ) : (
-                <div className={`relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-2xl border-4 ring-4 ${isDarkTheme ? 'border-slate-900 ring-slate-800/50' : 'border-white ring-slate-200/50'}`}>
-                  <Building2 className="w-14 h-14 md:w-20 md:h-20 text-white" />
-                </div>
-              )}
-            </div>
-          </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-center text-white/80">
+                      <Building2 className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">Cover Area</p>
+                    </div>
+                  </div>
+                )}
+              </div>
 
-          <CardContent className="p-6 md:p-8 pt-24 md:pt-28 relative">
-            {/* Subtle gradient overlay at the top of content to blend with iframe */}
-            <div 
-              className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-0"
-              style={{
-                background: `linear-gradient(to bottom, ${rgbToRgba(dominantColor, 0.95)} 0%, ${rgbToRgba(dominantColor, 0.98)} 50%, transparent 100%)`,
-              }}
-            />
-            {/* Left Side - Name, Rating, AI Insights & Chat */}
-            <div className="flex-1 space-y-4 relative z-10">
+              {/* Logo Overlay (Facebook-style) */}
+              <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-8 z-20">
+                {bet.logo ? (
+                  <div
+                    className={`relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 shadow-2xl ring-4 ${
+                      isDarkTheme
+                        ? "border-slate-900 bg-slate-900 ring-slate-800/50"
+                        : "border-white bg-white ring-slate-200/50"
+                    }`}
+                  >
+                    <Image
+                      src={bet.logo}
+                      alt={`${bet.name} logo`}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className={`relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-2xl border-4 ring-4 ${
+                      isDarkTheme
+                        ? "border-slate-900 ring-slate-800/50"
+                        : "border-white ring-slate-200/50"
+                    }`}
+                  >
+                    <Building2 className="w-14 h-14 md:w-20 md:h-20 text-white" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <CardContent className="p-6 md:p-8 pt-24 md:pt-28 relative">
+              {/* Subtle gradient overlay at the top of content to blend with iframe */}
+              <div
+                className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-0"
+                style={{
+                  background: `linear-gradient(to bottom, ${rgbToRgba(
+                    dominantColor,
+                    0.95
+                  )} 0%, ${rgbToRgba(
+                    dominantColor,
+                    0.98
+                  )} 50%, transparent 100%)`,
+                }}
+              />
+              {/* Left Side - Name, Rating, AI Insights & Chat */}
+              <div className="flex-1 space-y-4 relative z-10">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <h1 className={`text-3xl md:text-4xl font-bold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                    <h1
+                      className={`text-3xl md:text-4xl font-bold ${
+                        isDarkTheme ? "text-white" : "text-slate-900"
+                      }`}
+                    >
                       {bet.name}
                     </h1>
                     {bet.betId && (
-                      <span className={`text-lg md:text-xl font-mono font-semibold px-3 py-1 rounded-lg ${isDarkTheme ? 'bg-slate-800 text-slate-200 border border-slate-700' : 'bg-slate-100 text-slate-700 border border-slate-300'}`}>
+                      <span
+                        className={`text-lg md:text-xl font-mono font-semibold px-3 py-1 rounded-lg ${
+                          isDarkTheme
+                            ? "bg-slate-800 text-slate-200 border border-slate-700"
+                            : "bg-slate-100 text-slate-700 border border-slate-300"
+                        }`}
+                      >
                         {bet.betId}
                       </span>
                     )}
                   </div>
                   {bet.company && (
-                    <p className={`text-base md:text-lg ${isDarkTheme ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <p
+                      className={`text-base md:text-lg ${
+                        isDarkTheme ? "text-slate-300" : "text-slate-600"
+                      }`}
+                    >
                       {bet.company}
                     </p>
                   )}
@@ -570,7 +625,11 @@ export default function HomePage() {
                       href={bet.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 transition-colors text-sm mt-2 ${isDarkTheme ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+                      className={`inline-flex items-center gap-2 transition-colors text-sm mt-2 ${
+                        isDarkTheme
+                          ? "text-blue-400 hover:text-blue-300"
+                          : "text-blue-600 hover:text-blue-700"
+                      }`}
                     >
                       <span className="truncate max-w-xs">{bet.url}</span>
                       <ExternalLink className="w-4 h-4 flex-shrink-0" />
@@ -615,7 +674,13 @@ export default function HomePage() {
 
                     {/* Region */}
                     {bet.region && (
-                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${isDarkTheme ? 'bg-slate-800 text-slate-200 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'}`}>
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                          isDarkTheme
+                            ? "bg-slate-800 text-slate-200 border-slate-700"
+                            : "bg-slate-100 text-slate-700 border-slate-200"
+                        }`}
+                      >
                         <MapPin className="w-3.5 h-3.5" />
                         {bet.region}
                       </div>
@@ -623,16 +688,32 @@ export default function HomePage() {
                   </div>
 
                   {/* Additional Details */}
-                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t ${isDarkTheme ? 'border-slate-700' : 'border-slate-200'}`}>
+                  <div
+                    className={`grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t ${
+                      isDarkTheme ? "border-slate-700" : "border-slate-200"
+                    }`}
+                  >
                     {/* CNPJ */}
                     {bet.cnpj && (
                       <div className="flex items-start gap-2">
-                        <FileText className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
+                        <FileText
+                          className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                            isDarkTheme ? "text-slate-500" : "text-slate-400"
+                          }`}
+                        />
                         <div>
-                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <div
+                            className={`text-xs font-medium ${
+                              isDarkTheme ? "text-slate-400" : "text-slate-500"
+                            }`}
+                          >
                             CNPJ
                           </div>
-                          <div className={`text-sm font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                          <div
+                            className={`text-sm font-semibold ${
+                              isDarkTheme ? "text-white" : "text-slate-900"
+                            }`}
+                          >
                             {bet.cnpj}
                           </div>
                         </div>
@@ -642,12 +723,24 @@ export default function HomePage() {
                     {/* License */}
                     {bet.license && (
                       <div className="flex items-start gap-2">
-                        <FileText className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
+                        <FileText
+                          className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                            isDarkTheme ? "text-slate-500" : "text-slate-400"
+                          }`}
+                        />
                         <div>
-                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <div
+                            className={`text-xs font-medium ${
+                              isDarkTheme ? "text-slate-400" : "text-slate-500"
+                            }`}
+                          >
                             Licença
                           </div>
-                          <div className={`text-sm font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                          <div
+                            className={`text-sm font-semibold ${
+                              isDarkTheme ? "text-white" : "text-slate-900"
+                            }`}
+                          >
                             {bet.license}
                           </div>
                         </div>
@@ -657,12 +750,24 @@ export default function HomePage() {
                     {/* Bet ID */}
                     {bet.betId && (
                       <div className="flex items-start gap-2">
-                        <Hash className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
+                        <Hash
+                          className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                            isDarkTheme ? "text-slate-500" : "text-slate-400"
+                          }`}
+                        />
                         <div>
-                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <div
+                            className={`text-xs font-medium ${
+                              isDarkTheme ? "text-slate-400" : "text-slate-500"
+                            }`}
+                          >
                             ID da Casa
                           </div>
-                          <div className={`text-sm font-semibold font-mono ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                          <div
+                            className={`text-sm font-semibold font-mono ${
+                              isDarkTheme ? "text-white" : "text-slate-900"
+                            }`}
+                          >
                             {bet.betId}
                           </div>
                         </div>
@@ -672,12 +777,24 @@ export default function HomePage() {
                     {/* Domain */}
                     {bet.domain && (
                       <div className="flex items-start gap-2">
-                        <Globe className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkTheme ? 'text-slate-500' : 'text-slate-400'}`} />
+                        <Globe
+                          className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                            isDarkTheme ? "text-slate-500" : "text-slate-400"
+                          }`}
+                        />
                         <div>
-                          <div className={`text-xs font-medium ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <div
+                            className={`text-xs font-medium ${
+                              isDarkTheme ? "text-slate-400" : "text-slate-500"
+                            }`}
+                          >
                             Domínio
                           </div>
-                          <div className={`text-sm font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                          <div
+                            className={`text-sm font-semibold ${
+                              isDarkTheme ? "text-white" : "text-slate-900"
+                            }`}
+                          >
                             {bet.domain}
                           </div>
                         </div>
@@ -689,22 +806,44 @@ export default function HomePage() {
                 <div className="flex flex-wrap items-center gap-4">
                   {/* Overall Rating */}
                   <div className="flex items-center gap-3">
-                    <div className={`text-3xl font-bold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                    <div
+                      className={`text-3xl font-bold ${
+                        isDarkTheme ? "text-white" : "text-slate-900"
+                      }`}
+                    >
                       {rating.overall.toFixed(1)}
                     </div>
-                    <div className={isDarkTheme ? 'text-slate-300' : 'text-slate-600'}>/ 5</div>
+                    <div
+                      className={
+                        isDarkTheme ? "text-slate-300" : "text-slate-600"
+                      }
+                    >
+                      / 5
+                    </div>
                   </div>
 
                   {/* Stars */}
                   {renderStars(rating.stars)}
 
                   {/* Ranking */}
-                  <div className={isDarkTheme ? 'text-slate-300' : 'text-slate-600'}>
-                    <span className={`font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                  <div
+                    className={
+                      isDarkTheme ? "text-slate-300" : "text-slate-600"
+                    }
+                  >
+                    <span
+                      className={`font-semibold ${
+                        isDarkTheme ? "text-white" : "text-slate-900"
+                      }`}
+                    >
                       {ranking.position}°
                     </span>{" "}
                     lugar entre{" "}
-                    <span className={`font-semibold ${isDarkTheme ? 'text-white' : 'text-slate-900'}`}>
+                    <span
+                      className={`font-semibold ${
+                        isDarkTheme ? "text-white" : "text-slate-900"
+                      }`}
+                    >
                       {ranking.total}
                     </span>{" "}
                     casas avaliadas
@@ -712,7 +851,11 @@ export default function HomePage() {
                 </div>
 
                 {/* Compare Button - Inside the card */}
-                <div className={`pt-4 mt-4 border-t ${isDarkTheme ? 'border-slate-700' : 'border-slate-200'}`}>
+                <div
+                  className={`pt-4 mt-4 border-t ${
+                    isDarkTheme ? "border-slate-700" : "border-slate-200"
+                  }`}
+                >
                   <Button
                     onClick={handleCompare}
                     size="lg"
@@ -742,75 +885,130 @@ export default function HomePage() {
                     </div>
                   </div>
                   */}
-            </div>
-          </CardContent>
-        </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Right Side - Ranking Panel - Outside main card */}
-        <div className="lg:w-80 flex-shrink-0">
-          <Card className="bg-slate-50 border border-slate-200 rounded-xl">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-bold text-slate-900">
-                  Ranking
-                </CardTitle>
-                <div className="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded">
-                  TOP 10
-                </div>
-              </div>
-              {/* Quick Stats */}
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className="bg-white rounded-lg p-2 border border-slate-200">
-                  <div className="text-xs text-slate-500">
-                    Sua Posição
-                  </div>
-                  <div className="text-lg font-bold text-blue-600">
-                    #{ranking.position}
+          {/* Right Side - Ranking Panel - Outside main card */}
+          <div className="lg:w-80 flex-shrink-0">
+            <Card className="bg-slate-50 border border-slate-200 rounded-xl">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg font-bold text-slate-900">
+                    Ranking
+                  </CardTitle>
+                  <div className="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded">
+                    TOP 10
                   </div>
                 </div>
-                <div className="bg-white rounded-lg p-2 border border-slate-200">
-                  <div className="text-xs text-slate-500">Pontuação</div>
-                  <div className="text-lg font-bold text-slate-900">
-                    {rating.score}
+                {/* Quick Stats */}
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <div className="bg-white rounded-lg p-2 border border-slate-200">
+                    <div className="text-xs text-slate-500">Sua Posição</div>
+                    <div className="text-lg font-bold text-blue-600">
+                      #{ranking.position}
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg p-2 border border-slate-200">
+                    <div className="text-xs text-slate-500">Pontuação</div>
+                    <div className="text-lg font-bold text-slate-900">
+                      {rating.score}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                    {!isRankingExpanded ? (
-                      <>
-                        {/* Top 10 */}
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                              Top 10
-                            </div>
-                            <div className="text-xs text-slate-500">
-                              {ranking.total} casas
-                            </div>
-                          </div>
-                          <div className="space-y-1.5 max-h-64 overflow-y-auto">
-                            {ranking.top10.map((item, index) => (
-                              <div
-                                key={item.id}
-                                className={`flex items-center justify-between p-2.5 rounded-lg transition-all ${
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {!isRankingExpanded ? (
+                  <>
+                    {/* Top 10 */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                          Top 10
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {ranking.total} casas
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                        {ranking.top10.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className={`flex items-center justify-between p-2.5 rounded-lg transition-all ${
+                              item.id === bet.id
+                                ? "bg-blue-100 border-2 border-blue-500 shadow-sm"
+                                : index < 3
+                                ? "bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 hover:shadow-sm"
+                                : "bg-white border border-slate-200 hover:bg-slate-50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <span
+                                className={`text-sm font-bold flex-shrink-0 ${
                                   item.id === bet.id
-                                    ? "bg-blue-100 border-2 border-blue-500 shadow-sm"
+                                    ? "text-blue-700"
                                     : index < 3
-                                    ? "bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 hover:shadow-sm"
-                                    : "bg-white border border-slate-200 hover:bg-slate-50"
+                                    ? "text-yellow-600"
+                                    : "text-slate-700"
                                 }`}
                               >
+                                #{item.position}
+                              </span>
+                              {item.logo ? (
+                                <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                  <Image
+                                    src={item.logo}
+                                    alt={item.name}
+                                    fill
+                                    className="object-cover"
+                                    sizes="24px"
+                                    unoptimized
+                                  />
+                                </div>
+                              ) : null}
+                              <span
+                                className={`text-sm truncate ${
+                                  item.id === bet.id
+                                    ? "font-semibold text-blue-900"
+                                    : index < 3
+                                    ? "font-medium text-slate-900"
+                                    : "text-slate-900"
+                                }`}
+                              >
+                                {item.name}
+                              </span>
+                            </div>
+                            <span
+                              className={`text-xs font-semibold flex-shrink-0 ml-2 ${
+                                item.id === bet.id
+                                  ? "text-blue-700"
+                                  : index < 3
+                                  ? "text-yellow-600"
+                                  : "text-slate-600"
+                              }`}
+                            >
+                              {item.score}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 3 Above Current (if position > 3) */}
+                    {ranking.position > 3 &&
+                      ranking.aboveCurrent.length > 0 && (
+                        <div>
+                          <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                            3 Acima de Você
+                          </div>
+                          <div className="space-y-2">
+                            {ranking.aboveCurrent.map((item) => (
+                              <div
+                                key={item.id}
+                                className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                              >
                                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                                  <span
-                                    className={`text-sm font-bold flex-shrink-0 ${
-                                      item.id === bet.id
-                                        ? "text-blue-700"
-                                        : index < 3
-                                        ? "text-yellow-600"
-                                        : "text-slate-700"
-                                    }`}
-                                  >
+                                  <span className="text-sm font-bold text-slate-700 flex-shrink-0">
                                     #{item.position}
                                   </span>
                                   {item.logo ? (
@@ -825,251 +1023,193 @@ export default function HomePage() {
                                       />
                                     </div>
                                   ) : null}
-                                  <span
-                                    className={`text-sm truncate ${
-                                      item.id === bet.id
-                                        ? "font-semibold text-blue-900"
-                                        : index < 3
-                                        ? "font-medium text-slate-900"
-                                        : "text-slate-900"
-                                    }`}
-                                  >
+                                  <span className="text-sm text-slate-900 truncate">
                                     {item.name}
                                   </span>
                                 </div>
-                                <span
-                                  className={`text-xs font-semibold flex-shrink-0 ml-2 ${
-                                    item.id === bet.id
-                                      ? "text-blue-700"
-                                      : index < 3
-                                      ? "text-yellow-600"
-                                      : "text-slate-600"
-                                  }`}
-                                >
+                                <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
                                   {item.score}
                                 </span>
                               </div>
                             ))}
                           </div>
                         </div>
+                      )}
 
-                        {/* 3 Above Current (if position > 3) */}
-                        {ranking.position > 3 &&
-                          ranking.aboveCurrent.length > 0 && (
-                            <div>
-                              <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                                3 Acima de Você
-                              </div>
-                              <div className="space-y-2">
-                                {ranking.aboveCurrent.map((item) => (
-                                  <div
-                                    key={item.id}
-                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                                  >
-                                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                                      <span className="text-sm font-bold text-slate-700 flex-shrink-0">
-                                        #{item.position}
-                                      </span>
-                                      {item.logo ? (
-                                        <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
-                                          <Image
-                                            src={item.logo}
-                                            alt={item.name}
-                                            fill
-                                            className="object-cover"
-                                            sizes="24px"
-                                            unoptimized
-                                          />
-                                        </div>
-                                      ) : null}
-                                      <span className="text-sm text-slate-900 truncate">
-                                        {item.name}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
-                                      {item.score}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                        {/* Current Position Highlight */}
-                        <div
-                          className={`${
-                            ranking.position > 3 ? "mt-2" : ""
-                          } pt-2 border-t border-slate-200`}
-                        >
-                          <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
-                            Sua Posição
+                    {/* Current Position Highlight */}
+                    <div
+                      className={`${
+                        ranking.position > 3 ? "mt-2" : ""
+                      } pt-2 border-t border-slate-200`}
+                    >
+                      <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
+                        Sua Posição
+                      </div>
+                      <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-blue-700">
+                              #{ranking.position}
+                            </span>
+                            <span className="text-sm font-semibold text-blue-900 truncate">
+                              {bet.name}
+                            </span>
                           </div>
-                          <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-blue-700">
-                                  #{ranking.position}
+                          <span className="text-xs font-semibold text-blue-700">
+                            {rating.score}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 3 Below Current */}
+                    {ranking.belowCurrent.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                          3 Abaixo de Você
+                        </div>
+                        <div className="space-y-2">
+                          {ranking.belowCurrent.map((item) => (
+                            <div
+                              key={item.id}
+                              className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                            >
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-sm font-bold text-slate-700 flex-shrink-0">
+                                  #{item.position}
                                 </span>
-                                <span className="text-sm font-semibold text-blue-900 truncate">
-                                  {bet.name}
+                                {item.logo ? (
+                                  <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                    <Image
+                                      src={item.logo}
+                                      alt={item.name}
+                                      fill
+                                      className="object-cover"
+                                      sizes="24px"
+                                      unoptimized
+                                    />
+                                  </div>
+                                ) : null}
+                                <span className="text-sm text-slate-900 truncate">
+                                  {item.name}
                                 </span>
                               </div>
-                              <span className="text-xs font-semibold text-blue-700">
-                                {rating.score}
+                              <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
+                                {item.score}
                               </span>
                             </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Quick Insights */}
+                    {ranking.position > 10 && (
+                      <div className="pt-2 border-t border-slate-200">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                          <div className="text-xs font-semibold text-blue-900 mb-1">
+                            💡 Insights
+                          </div>
+                          <div className="text-xs text-blue-700 space-y-1">
+                            <div>
+                              Você está{" "}
+                              <span className="font-semibold">
+                                {ranking.position - 1}
+                              </span>{" "}
+                              posições atrás do Top 10
+                            </div>
+                            {ranking.aboveCurrent.length > 0 && (
+                              <div>
+                                Próximo alvo:{" "}
+                                <span className="font-semibold">
+                                  {ranking.aboveCurrent[0].name}
+                                </span>{" "}
+                                ({ranking.aboveCurrent[0].score} pts)
+                              </div>
+                            )}
                           </div>
                         </div>
+                      </div>
+                    )}
 
-                        {/* 3 Below Current */}
-                        {ranking.belowCurrent.length > 0 && (
-                          <div>
-                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                              3 Abaixo de Você
-                            </div>
-                            <div className="space-y-2">
-                                {ranking.belowCurrent.map((item) => (
-                                  <div
-                                    key={item.id}
-                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
-                                  >
-                                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                                      <span className="text-sm font-bold text-slate-700 flex-shrink-0">
-                                        #{item.position}
-                                      </span>
-                                      {item.logo ? (
-                                        <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
-                                          <Image
-                                            src={item.logo}
-                                            alt={item.name}
-                                            fill
-                                            className="object-cover"
-                                            sizes="24px"
-                                            unoptimized
-                                          />
-                                        </div>
-                                      ) : null}
-                                      <span className="text-sm text-slate-900 truncate">
-                                        {item.name}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
-                                      {item.score}
-                                    </span>
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Quick Insights */}
-                        {ranking.position > 10 && (
-                          <div className="pt-2 border-t border-slate-200">
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                              <div className="text-xs font-semibold text-blue-900 mb-1">
-                                💡 Insights
-                              </div>
-                              <div className="text-xs text-blue-700 space-y-1">
-                                <div>
-                                  Você está{" "}
-                                  <span className="font-semibold">
-                                    {ranking.position - 1}
-                                  </span>{" "}
-                                  posições atrás do Top 10
-                                </div>
-                                {ranking.aboveCurrent.length > 0 && (
-                                  <div>
-                                    Próximo alvo:{" "}
-                                    <span className="font-semibold">
-                                      {ranking.aboveCurrent[0].name}
-                                    </span>{" "}
-                                    ({ranking.aboveCurrent[0].score} pts)
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Expand Button */}
-                        {ranking.allRanking &&
-                          ranking.allRanking.length > 0 && (
-                            <div className="pt-2 border-t border-slate-200">
-                              <Button
-                                onClick={() => setIsRankingExpanded(true)}
-                                variant="outline"
-                                className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-sm"
-                              >
-                                Ver Ranking Completo ({ranking.total} casas)
-                                <ChevronDown className="w-4 h-4 ml-2" />
-                              </Button>
-                            </div>
-                          )}
-                      </>
-                    ) : (
-                      <>
-                        {/* Full Ranking */}
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                              Ranking Completo
-                            </div>
-                            <Button
-                              onClick={() => setIsRankingExpanded(false)}
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 px-2 text-xs text-slate-600 hover:text-slate-900"
-                            >
-                              Fechar
-                            </Button>
-                          </div>
-                          <div className="space-y-2 max-h-96 overflow-y-auto">
-                            {ranking.allRanking?.map((item) => (
-                              <div
-                                key={item.id}
-                                className={`flex items-center justify-between p-2 rounded-lg ${
+                    {/* Expand Button */}
+                    {ranking.allRanking && ranking.allRanking.length > 0 && (
+                      <div className="pt-2 border-t border-slate-200">
+                        <Button
+                          onClick={() => setIsRankingExpanded(true)}
+                          variant="outline"
+                          className="w-full border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-sm"
+                        >
+                          Ver Ranking Completo ({ranking.total} casas)
+                          <ChevronDown className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {/* Full Ranking */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                          Ranking Completo
+                        </div>
+                        <Button
+                          onClick={() => setIsRankingExpanded(false)}
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-xs text-slate-600 hover:text-slate-900"
+                        >
+                          Fechar
+                        </Button>
+                      </div>
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {ranking.allRanking?.map((item) => (
+                          <div
+                            key={item.id}
+                            className={`flex items-center justify-between p-2 rounded-lg ${
+                              item.id === bet.id
+                                ? "bg-blue-100 border-2 border-blue-500"
+                                : "bg-white border border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`text-sm font-bold ${
                                   item.id === bet.id
-                                    ? "bg-blue-100 border-2 border-blue-500"
-                                    : "bg-white border border-slate-200"
+                                    ? "text-blue-700"
+                                    : "text-slate-700"
                                 }`}
                               >
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className={`text-sm font-bold ${
-                                      item.id === bet.id
-                                        ? "text-blue-700"
-                                        : "text-slate-700"
-                                    }`}
-                                  >
-                                    #{item.position}
-                                  </span>
-                                  <span
-                                    className={`text-sm truncate ${
-                                      item.id === bet.id
-                                        ? "font-semibold text-blue-900"
-                                        : "text-slate-900"
-                                    }`}
-                                  >
-                                    {item.name}
-                                  </span>
-                                </div>
-                                <span
-                                  className={`text-xs font-semibold ${
-                                    item.id === bet.id
-                                      ? "text-blue-700"
-                                      : "text-slate-600"
-                                  }`}
-                                >
-                                  {item.score}
-                                </span>
-                              </div>
-                            ))}
+                                #{item.position}
+                              </span>
+                              <span
+                                className={`text-sm truncate ${
+                                  item.id === bet.id
+                                    ? "font-semibold text-blue-900"
+                                    : "text-slate-900"
+                                }`}
+                              >
+                                {item.name}
+                              </span>
+                            </div>
+                            <span
+                              className={`text-xs font-semibold ${
+                                item.id === bet.id
+                                  ? "text-blue-700"
+                                  : "text-slate-600"
+                              }`}
+                            >
+                              {item.score}
+                            </span>
                           </div>
-                        </div>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
 
@@ -1159,10 +1299,15 @@ export default function HomePage() {
                                         param.type === "rating" ||
                                         paramDef?.type === "rating";
                                       if (isRating) {
-                                        const ratingValue =
+                                        let ratingValue =
                                           typeof param.value === "string"
                                             ? parseFloat(param.value)
                                             : Number(param.value);
+                                        // Cap rating at 5
+                                        ratingValue = Math.min(
+                                          5,
+                                          Math.max(0, ratingValue)
+                                        );
                                         if (
                                           !isNaN(ratingValue) &&
                                           ratingValue >= 0 &&

@@ -82,7 +82,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     valueText: valueText !== undefined ? (valueText || null) : null,
     valueNumber: valueNumber !== undefined ? (valueNumber ? new Decimal(valueNumber) : null) : null,
     valueBoolean: valueBoolean !== undefined ? (valueBoolean || null) : null,
-    valueRating: valueRating !== undefined ? (valueRating || null) : null,
+    valueRating: valueRating !== undefined ? (valueRating ? Math.min(5, Math.max(0, valueRating)) : null) : null,
   };
 
   let parameter;

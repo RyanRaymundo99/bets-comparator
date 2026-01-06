@@ -33,7 +33,9 @@ function calculateOverallScore(bet: {
     }
     // Rating: multiplica por 20 para ficar de 0-100
     else if (param.valueRating !== null && param.valueRating !== undefined) {
-      paramScore = param.valueRating * 20; // 5 stars = 100
+      // Cap rating at 5 before calculating score
+      const cappedRating = Math.min(5, Math.max(0, param.valueRating));
+      paramScore = cappedRating * 20; // 5 stars = 100
       hasValue = true;
     }
     // Number: normalização simples

@@ -94,8 +94,9 @@ export async function PATCH(
         historyValue.valueBoolean = Boolean(value);
         break;
       case "rating":
-        dataToUpdate.valueRating = parseInt(value, 10);
-        historyValue.valueRating = parseInt(value, 10);
+        const ratingValue = Math.min(5, Math.max(0, parseInt(value, 10)));
+        dataToUpdate.valueRating = ratingValue;
+        historyValue.valueRating = ratingValue;
         break;
       default:
         return NextResponse.json(

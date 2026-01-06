@@ -217,13 +217,19 @@ function ComparisonPageContent() {
     
     if (ratingParams.length === 0) return 0;
     
-    const avgRating = ratingParams.reduce((sum, p) => sum + (p.valueRating || 0), 0) / ratingParams.length;
+    const avgRating = ratingParams.reduce((sum, p) => {
+      // Cap each rating at 5 before averaging
+      const cappedRating = Math.min(5, Math.max(0, p.valueRating || 0));
+      return sum + cappedRating;
+    }, 0) / ratingParams.length;
     return Math.round(avgRating * 20); // Convert 0-5 rating to 0-100 score
   };
 
   const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
+    // Cap rating at 5
+    const cappedRating = Math.min(5, Math.max(0, rating));
+    const fullStars = Math.floor(cappedRating);
+    const hasHalfStar = cappedRating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
     return (

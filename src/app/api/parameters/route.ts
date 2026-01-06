@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       valueText: valueText !== undefined ? valueText : null,
       valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
       valueBoolean: valueBoolean !== undefined ? valueBoolean : null,
-      valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
+      valueRating: valueRating !== undefined ? Math.min(5, Math.max(0, parseInt(valueRating.toString()))) : null,
     };
 
     if (existingParameter) {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
             valueText: valueText || null,
             valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
             valueBoolean: valueBoolean || null,
-            valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
+            valueRating: valueRating !== undefined ? Math.min(5, Math.max(0, parseInt(valueRating.toString()))) : null,
             notes: notes || "Atualização via admin",
           },
         });
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
           valueText: valueText || null,
           valueNumber: valueNumber !== undefined ? new Decimal(valueNumber) : null,
           valueBoolean: valueBoolean || null,
-          valueRating: valueRating !== undefined ? parseInt(valueRating.toString()) : null,
+          valueRating: valueRating !== undefined ? Math.min(5, Math.max(0, parseInt(valueRating.toString()))) : null,
           notes: notes || "Valor inicial",
         },
       });
