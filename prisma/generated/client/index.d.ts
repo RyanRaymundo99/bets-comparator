@@ -11319,12 +11319,12 @@ export namespace Prisma {
 
   export type UserParameterAvgAggregateOutputType = {
     valueNumber: Decimal | null
-    valueRating: number | null
+    valueRating: Decimal | null
   }
 
   export type UserParameterSumAggregateOutputType = {
     valueNumber: Decimal | null
-    valueRating: number | null
+    valueRating: Decimal | null
   }
 
   export type UserParameterMinAggregateOutputType = {
@@ -11335,7 +11335,7 @@ export namespace Prisma {
     valueText: string | null
     valueNumber: Decimal | null
     valueBoolean: boolean | null
-    valueRating: number | null
+    valueRating: Decimal | null
     unit: string | null
     description: string | null
     type: string | null
@@ -11351,7 +11351,7 @@ export namespace Prisma {
     valueText: string | null
     valueNumber: Decimal | null
     valueBoolean: boolean | null
-    valueRating: number | null
+    valueRating: Decimal | null
     unit: string | null
     description: string | null
     type: string | null
@@ -11532,7 +11532,7 @@ export namespace Prisma {
     valueText: string | null
     valueNumber: Decimal | null
     valueBoolean: boolean | null
-    valueRating: number | null
+    valueRating: Decimal | null
     unit: string | null
     description: string | null
     type: string | null
@@ -11655,7 +11655,7 @@ export namespace Prisma {
       valueText: string | null
       valueNumber: Prisma.Decimal | null
       valueBoolean: boolean | null
-      valueRating: number | null
+      valueRating: Prisma.Decimal | null
       unit: string | null
       description: string | null
       type: string | null
@@ -12093,7 +12093,7 @@ export namespace Prisma {
     readonly valueText: FieldRef<"UserParameter", 'String'>
     readonly valueNumber: FieldRef<"UserParameter", 'Decimal'>
     readonly valueBoolean: FieldRef<"UserParameter", 'Boolean'>
-    readonly valueRating: FieldRef<"UserParameter", 'Int'>
+    readonly valueRating: FieldRef<"UserParameter", 'Decimal'>
     readonly unit: FieldRef<"UserParameter", 'String'>
     readonly description: FieldRef<"UserParameter", 'String'>
     readonly type: FieldRef<"UserParameter", 'String'>
@@ -15781,7 +15781,7 @@ export namespace Prisma {
     valueText?: StringNullableFilter<"UserParameter"> | string | null
     valueNumber?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: BoolNullableFilter<"UserParameter"> | boolean | null
-    valueRating?: IntNullableFilter<"UserParameter"> | number | null
+    valueRating?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     unit?: StringNullableFilter<"UserParameter"> | string | null
     description?: StringNullableFilter<"UserParameter"> | string | null
     type?: StringNullableFilter<"UserParameter"> | string | null
@@ -15821,7 +15821,7 @@ export namespace Prisma {
     valueText?: StringNullableFilter<"UserParameter"> | string | null
     valueNumber?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: BoolNullableFilter<"UserParameter"> | boolean | null
-    valueRating?: IntNullableFilter<"UserParameter"> | number | null
+    valueRating?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     unit?: StringNullableFilter<"UserParameter"> | string | null
     description?: StringNullableFilter<"UserParameter"> | string | null
     type?: StringNullableFilter<"UserParameter"> | string | null
@@ -15864,7 +15864,7 @@ export namespace Prisma {
     valueText?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
     valueNumber?: DecimalNullableWithAggregatesFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: BoolNullableWithAggregatesFilter<"UserParameter"> | boolean | null
-    valueRating?: IntNullableWithAggregatesFilter<"UserParameter"> | number | null
+    valueRating?: DecimalNullableWithAggregatesFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     unit?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
     description?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
     type?: StringNullableWithAggregatesFilter<"UserParameter"> | string | null
@@ -16807,7 +16807,7 @@ export namespace Prisma {
     valueText?: string | null
     valueNumber?: Decimal | DecimalJsLike | number | string | null
     valueBoolean?: boolean | null
-    valueRating?: number | null
+    valueRating?: Decimal | DecimalJsLike | number | string | null
     unit?: string | null
     description?: string | null
     type?: string | null
@@ -16825,7 +16825,7 @@ export namespace Prisma {
     valueText?: string | null
     valueNumber?: Decimal | DecimalJsLike | number | string | null
     valueBoolean?: boolean | null
-    valueRating?: number | null
+    valueRating?: Decimal | DecimalJsLike | number | string | null
     unit?: string | null
     description?: string | null
     type?: string | null
@@ -16841,7 +16841,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16859,7 +16859,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16876,7 +16876,7 @@ export namespace Prisma {
     valueText?: string | null
     valueNumber?: Decimal | DecimalJsLike | number | string | null
     valueBoolean?: boolean | null
-    valueRating?: number | null
+    valueRating?: Decimal | DecimalJsLike | number | string | null
     unit?: string | null
     description?: string | null
     type?: string | null
@@ -16892,7 +16892,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16909,7 +16909,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19928,7 +19928,7 @@ export namespace Prisma {
     valueText?: string | null
     valueNumber?: Decimal | DecimalJsLike | number | string | null
     valueBoolean?: boolean | null
-    valueRating?: number | null
+    valueRating?: Decimal | DecimalJsLike | number | string | null
     unit?: string | null
     description?: string | null
     type?: string | null
@@ -19944,7 +19944,7 @@ export namespace Prisma {
     valueText?: string | null
     valueNumber?: Decimal | DecimalJsLike | number | string | null
     valueBoolean?: boolean | null
-    valueRating?: number | null
+    valueRating?: Decimal | DecimalJsLike | number | string | null
     unit?: string | null
     description?: string | null
     type?: string | null
@@ -20086,7 +20086,7 @@ export namespace Prisma {
     valueText?: StringNullableFilter<"UserParameter"> | string | null
     valueNumber?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: BoolNullableFilter<"UserParameter"> | boolean | null
-    valueRating?: IntNullableFilter<"UserParameter"> | number | null
+    valueRating?: DecimalNullableFilter<"UserParameter"> | Decimal | DecimalJsLike | number | string | null
     unit?: StringNullableFilter<"UserParameter"> | string | null
     description?: StringNullableFilter<"UserParameter"> | string | null
     type?: StringNullableFilter<"UserParameter"> | string | null
@@ -20796,7 +20796,7 @@ export namespace Prisma {
     valueText?: string | null
     valueNumber?: Decimal | DecimalJsLike | number | string | null
     valueBoolean?: boolean | null
-    valueRating?: number | null
+    valueRating?: Decimal | DecimalJsLike | number | string | null
     unit?: string | null
     description?: string | null
     type?: string | null
@@ -20812,7 +20812,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20828,7 +20828,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20844,7 +20844,7 @@ export namespace Prisma {
     valueText?: NullableStringFieldUpdateOperationsInput | string | null
     valueNumber?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     valueBoolean?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    valueRating?: NullableIntFieldUpdateOperationsInput | number | null
+    valueRating?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null

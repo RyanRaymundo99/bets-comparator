@@ -20,11 +20,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Build Strategy - Plataforma de Negociação",
+  title: "Bets Comparator - Plataforma de Comparação de Casas de Apostas",
   description:
-    "Plataforma avançada de negociação de criptoativos com ferramentas profissionais",
-  keywords: "criptomoedas, negociação, bitcoin, ethereum, trading",
-  authors: [{ name: "Build Strategy" }],
+    "Plataforma SaaS de comparação de casas de apostas regulamentadas no Brasil",
+  keywords: "casas de apostas, comparação, apostas esportivas, betcomparison",
+  authors: [{ name: "Bets Comparator" }],
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",

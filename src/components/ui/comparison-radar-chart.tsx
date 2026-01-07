@@ -94,10 +94,11 @@ function calculateCategoryScore(
       validParams++;
       filledParams++;
     }
-    // Rating: multiplica por 20 para ficar de 0-100
+    // Rating: divide por 10 (armazenado como *10) e multiplica por 20 para ficar de 0-100
     else if (param.valueRating !== null && param.valueRating !== undefined) {
-      // Cap rating at 5 before calculating score
-      const cappedRating = Math.min(5, Math.max(0, param.valueRating));
+      // Rating is stored as ×10 (45 = 4.5), so divide by 10, then cap at 5
+      const rating = Number(param.valueRating) / 10;
+      const cappedRating = Math.min(5, Math.max(0, rating));
       paramScore = cappedRating * 20; // 5 stars = 100
       hasValue = true;
       validParams++;

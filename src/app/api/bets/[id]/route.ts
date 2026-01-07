@@ -37,10 +37,15 @@ export async function GET(
       bet.parameters.map((param) => [param.name, param])
     );
 
+    // Create a map of defined parameters by name
+    const definedParamsMap = new Map(
+      PARAMETER_DEFINITIONS.map((paramDef) => [paramDef.name, paramDef])
+    );
+
     // Merge all defined parameters with existing ones
     const allParameters = PARAMETER_DEFINITIONS.map((paramDef) => {
       const existingParam = existingParamsMap.get(paramDef.name);
-      
+
       if (existingParam) {
         // Return existing parameter with history
         return {
@@ -71,7 +76,24 @@ export async function GET(
       }
     });
 
-    // Return bet with all parameters (existing + missing)
+    // Add any existing parameters that are NOT in PARAMETER_DEFINITIONS
+    // This includes category rating parameters (__category_rating_*)
+    bet.parameters.forEach((param) => {
+      if (!definedParamsMap.has(param.name)) {
+        // This is a parameter that exists in DB but not in definitions (e.g., category ratings)
+        allParameters.push({
+          ...param,
+          // Ensure it has all required fields - use existing values or defaults
+          category: param.category ?? null,
+          type: param.type ?? null,
+          unit: param.unit ?? null,
+          description: param.description ?? null,
+          options: param.options ?? [],
+        } as (typeof allParameters)[0]);
+      }
+    });
+
+    // Return bet with all parameters (existing + missing + category ratings)
     return NextResponse.json({
       success: true,
       bet: {
@@ -194,7 +216,10 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ success: true, message: "Bet deleted successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Bet deleted successfully",
+    });
   } catch (error) {
     console.error("Error deleting bet:", error);
     return NextResponse.json(
@@ -203,4 +228,3 @@ export async function DELETE(
     );
   }
 }
-

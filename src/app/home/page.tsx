@@ -115,6 +115,7 @@ interface HomeData {
     unit?: string | null;
     trend: "up" | "down" | "stable";
     type?: string | null;
+    valueRating?: number | null;
   }>;
 }
 
@@ -213,27 +214,33 @@ export default function HomePage() {
 
   const renderStars = (rating: number) => {
     // Cap rating at 5
-    const cappedRating = Math.min(5, Math.max(0, rating));
-    const fullStars = Math.floor(cappedRating);
-    const hasHalfStar = cappedRating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const clampedRating = Math.max(0, Math.min(Number(rating), 5));
+    const fullStars = Math.floor(clampedRating);
+    const partialFill = clampedRating - fullStars; // Decimal exato (ex: 0.1, 0.2, 0.5)
+    const emptyStars = 5 - fullStars - (partialFill > 0 ? 1 : 0);
 
     return (
       <div className="flex items-center gap-1">
+        {/* Estrelas completas */}
         {Array.from({ length: fullStars }).map((_, i) => (
           <Star
             key={`full-${i}`}
             className="w-5 h-5 text-yellow-500 fill-yellow-500"
           />
         ))}
-        {hasHalfStar && (
+        {/* Estrela parcial com preenchimento proporcional */}
+        {partialFill > 0 && (
           <div className="relative w-5 h-5">
             <Star className="w-5 h-5 text-gray-300 fill-gray-300" />
-            <div className="absolute inset-0 overflow-hidden w-1/2">
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${partialFill * 100}%` }}
+            >
               <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             </div>
           </div>
         )}
+        {/* Estrelas vazias */}
         {Array.from({ length: emptyStars }).map((_, i) => (
           <Star
             key={`empty-${i}`}
@@ -1036,39 +1043,64 @@ export default function HomePage() {
                         </div>
                       )}
 
-                    {/* Current Position Highlight */}
-                    <div
-                      className={`${
-                        ranking.position > 3 ? "mt-2" : ""
-                      } pt-2 border-t border-slate-200`}
-                    >
-                      <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
-                        Sua Posição
-                      </div>
-                      <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-blue-700">
-                              #{ranking.position}
-                            </span>
-                            <span className="text-sm font-semibold text-blue-900 truncate">
-                              {bet.name}
-                            </span>
-                          </div>
-                          <span className="text-xs font-semibold text-blue-700">
-                            {rating.score}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 3 Below Current */}
-                    {ranking.belowCurrent.length > 0 && (
+                    {/* Principais Concorrentes */}
+                    {(ranking.aboveCurrent.length > 0 ||
+                      ranking.belowCurrent.length > 0) && (
                       <div>
                         <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                          3 Abaixo de Você
+                          PRINCIPAIS CONCORRENTES
                         </div>
                         <div className="space-y-2">
+                          {/* Above Current */}
+                          {ranking.aboveCurrent.map((item) => (
+                            <div
+                              key={item.id}
+                              className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200"
+                            >
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-sm font-bold text-slate-700 flex-shrink-0">
+                                  #{item.position}
+                                </span>
+                                {item.logo ? (
+                                  <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-slate-200">
+                                    <Image
+                                      src={item.logo}
+                                      alt={item.name}
+                                      fill
+                                      className="object-cover"
+                                      sizes="24px"
+                                      unoptimized
+                                    />
+                                  </div>
+                                ) : null}
+                                <span className="text-sm text-slate-900 truncate">
+                                  {item.name}
+                                </span>
+                              </div>
+                              <span className="text-xs font-semibold text-slate-600 flex-shrink-0 ml-2">
+                                {item.score}
+                              </span>
+                            </div>
+                          ))}
+
+                          {/* Current Position Highlight */}
+                          <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-blue-700">
+                                  #{ranking.position}
+                                </span>
+                                <span className="text-sm font-semibold text-blue-900 truncate">
+                                  {bet.name}
+                                </span>
+                              </div>
+                              <span className="text-xs font-semibold text-blue-700">
+                                {rating.score}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Below Current */}
                           {ranking.belowCurrent.map((item) => (
                             <div
                               key={item.id}
@@ -1102,6 +1134,31 @@ export default function HomePage() {
                         </div>
                       </div>
                     )}
+
+                    {/* Current Position Highlight (only if no above/below) */}
+                    {ranking.aboveCurrent.length === 0 &&
+                      ranking.belowCurrent.length === 0 && (
+                        <div className="pt-2 border-t border-slate-200">
+                          <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
+                            Sua Posição
+                          </div>
+                          <div className="p-2 rounded-lg bg-blue-100 border-2 border-blue-500">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-blue-700">
+                                  #{ranking.position}
+                                </span>
+                                <span className="text-sm font-semibold text-blue-900 truncate">
+                                  {bet.name}
+                                </span>
+                              </div>
+                              <span className="text-xs font-semibold text-blue-700">
+                                {rating.score}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                     {/* Quick Insights */}
                     {ranking.position > 10 && (
@@ -1231,14 +1288,80 @@ export default function HomePage() {
                   <CardContent className="p-0">
                     {/* Category Header */}
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-slate-200">
-                      <div className="flex items-center gap-3">
-                        <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
-                        <h3 className="text-xl font-bold text-slate-900">
-                          {category}
-                        </h3>
-                        <span className="text-sm text-slate-500 font-normal">
-                          ({categoryDefs.length} parâmetros)
-                        </span>
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
+                          <h3 className="text-xl font-bold text-slate-900">
+                            {category}
+                          </h3>
+                          <span className="text-sm text-slate-500 font-normal">
+                            ({categoryDefs.length} parâmetros)
+                          </span>
+                        </div>
+
+                        {/* Nota Geral da Categoria */}
+                        {(() => {
+                          const categoryRatingParam = parameters.find(
+                            (p) => p.name === `__category_rating_${category}`
+                          );
+                          const categoryRating =
+                            categoryRatingParam?.valueRating
+                              ? Number(categoryRatingParam.valueRating)
+                              : null;
+
+                          if (categoryRating === null) return null;
+
+                          return (
+                            <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200 shadow-sm">
+                              <span className="text-sm font-medium text-slate-600">
+                                Nota Geral:
+                              </span>
+                              <div className="flex items-center gap-0.5">
+                                {Array.from({ length: 5 }).map((_, i) => {
+                                  const fullStars = Math.floor(categoryRating);
+                                  const partialFill =
+                                    categoryRating - fullStars;
+
+                                  if (i < fullStars) {
+                                    return (
+                                      <Star
+                                        key={i}
+                                        className="w-4 h-4 text-yellow-500 fill-yellow-500"
+                                      />
+                                    );
+                                  } else if (
+                                    i === fullStars &&
+                                    partialFill > 0
+                                  ) {
+                                    return (
+                                      <div key={i} className="relative w-4 h-4">
+                                        <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+                                        <div
+                                          className="absolute inset-0 overflow-hidden"
+                                          style={{
+                                            width: `${partialFill * 100}%`,
+                                          }}
+                                        >
+                                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                        </div>
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <Star
+                                        key={i}
+                                        className="w-4 h-4 text-gray-300 fill-gray-300"
+                                      />
+                                    );
+                                  }
+                                })}
+                              </div>
+                              <span className="text-sm font-bold text-slate-900">
+                                {categoryRating.toFixed(1)}/5
+                              </span>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -1313,12 +1436,22 @@ export default function HomePage() {
                                           ratingValue >= 0 &&
                                           ratingValue <= 5
                                         ) {
+                                          const clampedRating = Math.max(
+                                            0,
+                                            Math.min(ratingValue, 5)
+                                          );
                                           const fullStars =
-                                            Math.floor(ratingValue);
-                                          const hasHalfStar =
-                                            ratingValue % 1 >= 0.5;
+                                            Math.floor(clampedRating);
+                                          const partialFill =
+                                            clampedRating - fullStars;
+                                          const emptyStars =
+                                            5 -
+                                            fullStars -
+                                            (partialFill > 0 ? 1 : 0);
+
                                           return (
                                             <div className="flex items-center gap-1.5">
+                                              {/* Estrelas completas */}
                                               {Array.from({
                                                 length: fullStars,
                                               }).map((_, i) => (
@@ -1327,19 +1460,25 @@ export default function HomePage() {
                                                   className="w-4 h-4 text-yellow-500 fill-yellow-500"
                                                 />
                                               ))}
-                                              {hasHalfStar && (
+                                              {/* Estrela parcial com preenchimento proporcional */}
+                                              {partialFill > 0 && (
                                                 <div className="relative w-4 h-4">
                                                   <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
-                                                  <div className="absolute inset-0 overflow-hidden w-1/2">
+                                                  <div
+                                                    className="absolute inset-0 overflow-hidden"
+                                                    style={{
+                                                      width: `${
+                                                        partialFill * 100
+                                                      }%`,
+                                                    }}
+                                                  >
                                                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                                                   </div>
                                                 </div>
                                               )}
+                                              {/* Estrelas vazias */}
                                               {Array.from({
-                                                length:
-                                                  5 -
-                                                  fullStars -
-                                                  (hasHalfStar ? 1 : 0),
+                                                length: emptyStars,
                                               }).map((_, i) => (
                                                 <Star
                                                   key={`empty-${i}`}
@@ -1347,7 +1486,7 @@ export default function HomePage() {
                                                 />
                                               ))}
                                               <span className="ml-1 text-sm font-medium text-slate-700">
-                                                {ratingValue.toFixed(1)}
+                                                {clampedRating.toFixed(1)}
                                               </span>
                                             </div>
                                           );

@@ -288,21 +288,43 @@ export default function BetParametersViewPage() {
       );
     }
     if (param.valueRating !== null && param.valueRating !== undefined) {
-      // Cap rating at 5
-      const rating = Math.min(5, Math.max(0, param.valueRating));
+      // Rating is stored as ×10 (45 = 4.5), so divide by 10
+      const rating = Number(param.valueRating) / 10;
+      const fullStars = Math.floor(rating);
+      const partialFill = rating - fullStars;
+      const emptyStars = 5 - fullStars - (partialFill > 0 ? 1 : 0);
       return (
         <div className="space-y-2">
           <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {/* Estrelas completas */}
+            {Array.from({ length: fullStars }).map((_, i) => (
               <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < rating
-                    ? "text-yellow-500 fill-yellow-500"
-                    : "text-slate-300"
-                }`}
+                key={`full-${i}`}
+                className="w-4 h-4 text-yellow-500 fill-yellow-500"
               />
             ))}
+            {/* Estrela parcial */}
+            {partialFill > 0 && (
+              <div className="relative w-4 h-4">
+                <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+                <div 
+                  className="absolute inset-0 overflow-hidden"
+                  style={{ width: `${partialFill * 100}%` }}
+                >
+                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                </div>
+              </div>
+            )}
+            {/* Estrelas vazias */}
+            {Array.from({ length: emptyStars }).map((_, i) => (
+              <Star
+                key={`empty-${i}`}
+                className="w-4 h-4 text-gray-300 fill-gray-300"
+              />
+            ))}
+            <span className="ml-2 text-sm font-medium text-slate-600">
+              {rating.toFixed(1)}/5
+            </span>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
             <div
@@ -680,18 +702,57 @@ export default function BetParametersViewPage() {
           
           if (categoryDefs.length === 0) return null;
 
+          // Pegar nota geral da categoria
+          const categoryRatingParam = (parametersByCategory[category] || []).find(
+            (p) => p.name === `__category_rating_${category}`
+          ) || bet.parameters?.find((p: { name: string }) => p.name === `__category_rating_${category}`);
+          const categoryRating = categoryRatingParam?.valueRating
+            ? Number(categoryRatingParam.valueRating) / 10
+            : null;
+
           return (
             <Card
               key={category}
               className="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden"
             >
               <CardHeader className="pb-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-slate-200">
-                <CardTitle className="text-slate-900 text-xl font-bold flex items-center">
-                  <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full mr-3" />
-                  {category}
-                  <span className="ml-3 text-sm text-slate-500 font-normal">
-                    ({categoryDefs.length} parâmetros)
-                  </span>
+                <CardTitle className="text-slate-900 text-xl font-bold flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center">
+                    <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full mr-3" />
+                    {category}
+                    <span className="ml-3 text-sm text-slate-500 font-normal">
+                      ({categoryDefs.length} parâmetros)
+                    </span>
+                  </div>
+                  
+                  {/* Nota Geral da Categoria */}
+                  {categoryRating !== null && (
+                    <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border border-slate-200 shadow-sm">
+                      <span className="text-sm font-medium text-slate-600">Nota Geral:</span>
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => {
+                          const fullStars = Math.floor(categoryRating);
+                          const partialFill = categoryRating - fullStars;
+                          
+                          if (i < fullStars) {
+                            return <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />;
+                          } else if (i === fullStars && partialFill > 0) {
+                            return (
+                              <div key={i} className="relative w-4 h-4">
+                                <Star className="w-4 h-4 text-gray-300 fill-gray-300" />
+                                <div className="absolute inset-0 overflow-hidden" style={{ width: `${partialFill * 100}%` }}>
+                                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                </div>
+                              </div>
+                            );
+                          } else {
+                            return <Star key={i} className="w-4 h-4 text-gray-300 fill-gray-300" />;
+                          }
+                        })}
+                      </div>
+                      <span className="text-sm font-bold text-slate-900">{categoryRating.toFixed(1)}/5</span>
+                    </div>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">

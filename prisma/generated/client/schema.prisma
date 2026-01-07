@@ -126,7 +126,7 @@ model Parameter {
   valueText    String? // For text values
   valueNumber  Decimal? @db.Decimal(20, 2) // For numeric values
   valueBoolean Boolean? // For yes/no values
-  valueRating  Int? // For star ratings (0-5)
+  valueRating  Int? // For star ratings (stored as value * 10, e.g., 4.5 = 45)
 
   unit        String? // e.g., "R$", "%", "score"
   description String?  @db.Text // Longer descriptions
@@ -150,7 +150,7 @@ model ParameterHistory {
   valueText    String?
   valueNumber  Decimal? @db.Decimal(20, 2)
   valueBoolean Boolean?
-  valueRating  Int?
+  valueRating  Int? // For star ratings (stored as value * 10, e.g., 4.5 = 45)
 
   notes     String?   @db.Text // Optional notes about why the value changed
   createdAt DateTime  @default(now())
@@ -183,7 +183,7 @@ model UserParameter {
   valueText    String? // For text values
   valueNumber  Decimal? @db.Decimal(20, 2) // For numeric values
   valueBoolean Boolean? // For yes/no values
-  valueRating  Int? // For star ratings (0-5)
+  valueRating  Decimal? @db.Decimal(3, 1) // For star ratings (0.0-5.0)
 
   unit        String? // e.g., "R$", "%", "score"
   description String?  @db.Text
