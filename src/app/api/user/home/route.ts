@@ -7,7 +7,11 @@ import {
   withErrorHandling,
 } from "@/lib/api-response";
 import { getSession } from "@/lib/auth-helpers";
-import { PARAMETER_DEFINITIONS, PARAMETER_CATEGORIES, CATEGORY_WEIGHTS } from "@/lib/parameter-definitions";
+import {
+  PARAMETER_DEFINITIONS,
+  PARAMETER_CATEGORIES,
+  CATEGORY_WEIGHTS,
+} from "@/lib/parameter-definitions";
 
 // Helper function to calculate overall score for a bet
 // Agora usa média ponderada das notas gerais de cada categoria
@@ -23,17 +27,17 @@ function calculateOverallScore(bet: {
 }): number {
   // Buscar as notas gerais de cada categoria (parâmetros __category_rating_*)
   const categoryRatings: Record<string, number> = {};
-  
+
   bet.parameters.forEach((param) => {
     // Verificar se é um parâmetro de nota geral de categoria
-    if (param.name && param.name.startsWith('__category_rating_')) {
-      const category = param.name.replace('__category_rating_', '');
+    if (param.name && param.name.startsWith("__category_rating_")) {
+      const category = param.name.replace("__category_rating_", "");
       // valueRating é armazenado como inteiro * 10 (4.5 → 45), então dividimos por 10
       if (param.valueRating !== null && param.valueRating !== undefined) {
         categoryRatings[category] = Number(param.valueRating) / 10;
       }
     }
-    
+
     let paramScore = 0;
     let hasValue = false;
 
@@ -80,7 +84,7 @@ function calculateOverallScore(bet: {
   });
 
   if (totalWeight === 0) return 0;
-  
+
   // Retornar a média ponderada
   return Math.round(weightedSum / totalWeight);
 }
@@ -153,7 +157,10 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     parameters: bet.parameters.map((p) => ({
       name: p.name,
       valueText: p.valueText,
-      valueNumber: p.valueNumber !== null && p.valueNumber !== undefined ? Number(p.valueNumber) : null,
+      valueNumber:
+        p.valueNumber !== null && p.valueNumber !== undefined
+          ? Number(p.valueNumber)
+          : null,
       valueBoolean: p.valueBoolean,
       valueRating: p.valueRating,
       category: p.category,
@@ -179,7 +186,10 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
       parameters: b.parameters.map((p) => ({
         name: p.name,
         valueText: p.valueText,
-        valueNumber: p.valueNumber !== null && p.valueNumber !== undefined ? Number(p.valueNumber) : null,
+        valueNumber:
+          p.valueNumber !== null && p.valueNumber !== undefined
+            ? Number(p.valueNumber)
+            : null,
         valueBoolean: p.valueBoolean,
         valueRating: p.valueRating,
         category: p.category,
@@ -191,7 +201,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   betsWithScores.sort((a, b) => b.score - a.score);
 
   // Find current bet position
-  const currentPosition = betsWithScores.findIndex((b) => b.bet.id === bet.id) + 1;
+  const currentPosition =
+    betsWithScores.findIndex((b) => b.bet.id === bet.id) + 1;
   const totalBets = betsWithScores.length;
 
   // Get top 10
@@ -205,23 +216,26 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   }));
 
   // Get 3 positions above current (if available and not in top 3)
-  const aboveCurrent = currentPosition > 3
-    ? betsWithScores
-        .slice(Math.max(0, currentPosition - 4), currentPosition - 1) // Get positions before current
-        .filter((b) => b.bet.id !== bet.id) // Exclude current bet
-        .slice(-3) // Take only last 3
-        .map((b) => {
-          const actualIndex = betsWithScores.findIndex((item) => item.bet.id === b.bet.id);
-          return {
-            id: b.bet.id,
-            name: b.bet.name,
-            score: b.score,
-            position: actualIndex + 1,
-            logo: b.bet.logo,
-            betId: b.bet.betId,
-          };
-        })
-    : [];
+  const aboveCurrent =
+    currentPosition > 3
+      ? betsWithScores
+          .slice(Math.max(0, currentPosition - 4), currentPosition - 1) // Get positions before current
+          .filter((b) => b.bet.id !== bet.id) // Exclude current bet
+          .slice(-3) // Take only last 3
+          .map((b) => {
+            const actualIndex = betsWithScores.findIndex(
+              (item) => item.bet.id === b.bet.id
+            );
+            return {
+              id: b.bet.id,
+              name: b.bet.name,
+              score: b.score,
+              position: actualIndex + 1,
+              logo: b.bet.logo,
+              betId: b.bet.betId,
+            };
+          })
+      : [];
 
   // Get 3 positions below current (if available)
   const belowCurrent = betsWithScores
@@ -229,7 +243,9 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     .filter((b) => b.bet.id !== bet.id) // Exclude current bet
     .slice(0, 3) // Take only 3
     .map((b, index) => {
-      const actualIndex = betsWithScores.findIndex((item) => item.bet.id === b.bet.id);
+      const actualIndex = betsWithScores.findIndex(
+        (item) => item.bet.id === b.bet.id
+      );
       return {
         id: b.bet.id,
         name: b.bet.name,
@@ -258,7 +274,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   // Process all defined parameters, filling in missing ones
   const parametersWithTrends = PARAMETER_DEFINITIONS.map((paramDef) => {
     const existingParam = existingParamsMap.get(paramDef.name);
-    
+
     if (existingParam) {
       // Parameter exists in database
       const previousHistory = existingParam.history[0];
@@ -266,25 +282,49 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
       let previousValue: number | string | boolean | null = null;
 
       // Get current value
-      if (existingParam.valueNumber !== null && existingParam.valueNumber !== undefined) {
+      if (
+        existingParam.valueNumber !== null &&
+        existingParam.valueNumber !== undefined
+      ) {
         currentValue = Number(existingParam.valueNumber);
-      } else if (existingParam.valueText !== null && existingParam.valueText !== undefined) {
+      } else if (
+        existingParam.valueText !== null &&
+        existingParam.valueText !== undefined
+      ) {
         currentValue = existingParam.valueText;
-      } else if (existingParam.valueBoolean !== null && existingParam.valueBoolean !== undefined) {
+      } else if (
+        existingParam.valueBoolean !== null &&
+        existingParam.valueBoolean !== undefined
+      ) {
         currentValue = existingParam.valueBoolean;
-      } else if (existingParam.valueRating !== null && existingParam.valueRating !== undefined) {
+      } else if (
+        existingParam.valueRating !== null &&
+        existingParam.valueRating !== undefined
+      ) {
         currentValue = existingParam.valueRating;
       }
 
       // Get previous value from history
       if (previousHistory) {
-        if (previousHistory.valueNumber !== null && previousHistory.valueNumber !== undefined) {
+        if (
+          previousHistory.valueNumber !== null &&
+          previousHistory.valueNumber !== undefined
+        ) {
           previousValue = Number(previousHistory.valueNumber);
-        } else if (previousHistory.valueText !== null && previousHistory.valueText !== undefined) {
+        } else if (
+          previousHistory.valueText !== null &&
+          previousHistory.valueText !== undefined
+        ) {
           previousValue = previousHistory.valueText;
-        } else if (previousHistory.valueBoolean !== null && previousHistory.valueBoolean !== undefined) {
+        } else if (
+          previousHistory.valueBoolean !== null &&
+          previousHistory.valueBoolean !== undefined
+        ) {
           previousValue = previousHistory.valueBoolean;
-        } else if (previousHistory.valueRating !== null && previousHistory.valueRating !== undefined) {
+        } else if (
+          previousHistory.valueRating !== null &&
+          previousHistory.valueRating !== undefined
+        ) {
           previousValue = previousHistory.valueRating;
         }
       }
@@ -293,13 +333,27 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 
       // Format display value
       let displayValue = "-";
-      if (existingParam.valueText !== null && existingParam.valueText !== undefined) {
+      if (
+        existingParam.valueText !== null &&
+        existingParam.valueText !== undefined
+      ) {
         displayValue = existingParam.valueText;
-      } else if (existingParam.valueNumber !== null && existingParam.valueNumber !== undefined) {
-        displayValue = Number(existingParam.valueNumber).toLocaleString("pt-BR");
-      } else if (existingParam.valueBoolean !== null && existingParam.valueBoolean !== undefined) {
+      } else if (
+        existingParam.valueNumber !== null &&
+        existingParam.valueNumber !== undefined
+      ) {
+        displayValue = Number(existingParam.valueNumber).toLocaleString(
+          "pt-BR"
+        );
+      } else if (
+        existingParam.valueBoolean !== null &&
+        existingParam.valueBoolean !== undefined
+      ) {
         displayValue = existingParam.valueBoolean ? "Sim" : "Não";
-      } else if (existingParam.valueRating !== null && existingParam.valueRating !== undefined) {
+      } else if (
+        existingParam.valueRating !== null &&
+        existingParam.valueRating !== undefined
+      ) {
         displayValue = `${existingParam.valueRating}/5`;
       }
 
@@ -311,7 +365,9 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         unit: existingParam.unit || paramDef.unit,
         trend,
         type: existingParam.type || paramDef.type,
-        valueRating: existingParam.valueRating ? Number(existingParam.valueRating) / 10 : null, // Convert from ×10 to 0-5 for display
+        valueRating: existingParam.valueRating
+          ? Number(existingParam.valueRating) / 10
+          : null, // Convert from ×10 to 0-5 for display
       };
     } else {
       // Parameter doesn't exist in database - return empty
@@ -360,4 +416,3 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     parameters: parametersWithTrends,
   });
 });
-
