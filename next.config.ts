@@ -78,6 +78,9 @@ const nextConfig: NextConfig = {
     ppr: false, // Can enable when stable
   },
 
+  // Turbopack config (empty to allow webpack usage)
+  turbopack: {},
+
   // Server external packages
   serverExternalPackages: ["@prisma/client", "prisma"],
 
