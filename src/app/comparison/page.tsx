@@ -219,7 +219,6 @@ function ComparisonPageContent() {
     
     if (ratingParams.length === 0) return 0;
     
-<<<<<<< HEAD
     // Rating é armazenado como inteiro * 10, então dividimos por 10
     const avgRating = ratingParams.reduce((sum, p) => {
       // Rating is stored as ×10 (45 = 4.5), so divide by 10, then cap at 5

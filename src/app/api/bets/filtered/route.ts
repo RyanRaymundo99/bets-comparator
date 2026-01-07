@@ -30,7 +30,15 @@ function calculateOverallScore(bet: {
   const categoryRatings: Record<string, number> = {};
   
   bet.parameters.forEach((param) => {
-<<<<<<< HEAD
+    // Verificar se é um parâmetro de nota geral de categoria
+    if (param.name && param.name.startsWith('__category_rating_')) {
+      const category = param.name.replace('__category_rating_', '');
+      // valueRating é armazenado como inteiro * 10 (4.5 → 45), então dividimos por 10
+      if (param.valueRating !== null && param.valueRating !== undefined) {
+        categoryRatings[category] = Number(param.valueRating) / 10;
+      }
+    }
+    
     let paramScore = 0;
     let hasValue = false;
 
@@ -56,15 +64,6 @@ function calculateOverallScore(bet: {
         paramScore = Math.min(100, numValue);
       } else {
         paramScore = Math.min(100, numValue * 2);
-      }
-    }
-    
-    // Verificar se é um parâmetro de nota geral de categoria
-    if (param.name && param.name.startsWith('__category_rating_')) {
-      const category = param.name.replace('__category_rating_', '');
-      // valueRating é armazenado como inteiro * 10 (4.5 → 45), então dividimos por 10
-      if (param.valueRating !== null && param.valueRating !== undefined) {
-        categoryRatings[category] = Number(param.valueRating) / 10;
       }
     }
   });
