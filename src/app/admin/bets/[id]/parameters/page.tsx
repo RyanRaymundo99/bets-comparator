@@ -94,6 +94,9 @@ export default function BetParametersPage() {
   const [parameterValues, setParameterValues] = useState<
     Record<string, string | number | boolean | null>
   >({});
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
   const [historyDialog, setHistoryDialog] = useState<{
     open: boolean;
     parameterId: string | null;
@@ -169,6 +172,16 @@ export default function BetParametersPage() {
   const handleSaveParameter = async (def: ParameterDefinition) => {
     const value = parameterValues[def.name];
 
+    // Check for validation errors
+    if (validationErrors[def.name]) {
+      toast({
+        variant: "destructive",
+        title: "Erro de validação",
+        description: validationErrors[def.name],
+      });
+      return;
+    }
+
     // Skip empty values
     if (value === undefined || value === "" || value === null) {
       toast({
@@ -213,13 +226,27 @@ export default function BetParametersPage() {
             typeof value === "boolean" ? value : Boolean(value);
           break;
         case "rating":
-          // Accept comma or dot as decimal separator, clamp to 0-5
+          // Accept comma or dot as decimal separator, validate 0-5 range
           const ratingStr = String(value).replace(",", ".");
           const ratingValue =
             typeof value === "number" ? value : parseFloat(ratingStr);
-          const clampedRating = Math.min(5, Math.max(0, ratingValue));
-          // Store both 0-5 (for API) and ×10 (for POST requests)
-          paramData.valueRating = clampedRating; // Will be converted to ×10 by API
+          
+          // Validate rating is within 0-5 range
+          if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
+            toast({
+              variant: "destructive",
+              title: "Erro de validação",
+              description: "A avaliação deve estar entre 0 e 5.",
+            });
+            setSavingParams((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(def.name);
+              return newSet;
+            });
+            return;
+          }
+          
+          paramData.valueRating = ratingValue; // Will be converted to ×10 by API
           break;
         case "number":
         case "currency":
@@ -319,6 +346,16 @@ export default function BetParametersPage() {
     const categoryRatingKey = `__category_rating_${category}`;
     const value = parameterValues[categoryRatingKey];
 
+    // Check for validation errors
+    if (validationErrors[categoryRatingKey]) {
+      toast({
+        variant: "destructive",
+        title: "Erro de validação",
+        description: validationErrors[categoryRatingKey],
+      });
+      return;
+    }
+
     if (
       value === undefined ||
       value === null ||
@@ -346,11 +383,11 @@ export default function BetParametersPage() {
       const ratingValue =
         typeof value === "number" ? value : parseFloat(ratingStr);
 
-      // Valida e limita o valor entre 0 e 5
+      // Valida o valor entre 0 e 5
       if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
         toast({
           variant: "destructive",
-          title: "Erro",
+          title: "Erro de validação",
           description: "A nota deve ser um número entre 0 e 5",
         });
         setSavingParams((prev) => {
@@ -361,17 +398,15 @@ export default function BetParametersPage() {
         return;
       }
 
-      const clampedRating = Number(
-        Math.max(0, Math.min(ratingValue, 5)).toFixed(1)
-      );
+      const finalRating = Number(ratingValue.toFixed(1));
 
       console.log("Saving category rating:", {
         category,
         categoryRatingKey,
         originalValue: value,
         ratingValue,
-        clampedRating,
-        clampedRatingType: typeof clampedRating,
+        finalRating,
+        finalRatingType: typeof finalRating,
         existingParam: existingParam?.id,
       });
 
@@ -380,7 +415,7 @@ export default function BetParametersPage() {
         name: categoryRatingKey,
         category: category,
         type: "rating",
-        valueRating: Math.round(clampedRating * 10), // Store as ×10 for POST
+        valueRating: Math.round(finalRating * 10), // Store as ×10 for POST
       };
 
       let response;
@@ -389,7 +424,7 @@ export default function BetParametersPage() {
       if (existingParam?.id) {
         // PATCH expects 0-5 value, API will convert to ×10
         const requestBody = {
-          value: Number(clampedRating), // Send 0-5, API converts to ×10
+          value: Number(finalRating), // Send 0-5, API converts to ×10
           notes: null,
         };
         console.log("PATCH request:", {
@@ -415,7 +450,7 @@ export default function BetParametersPage() {
         // Ensure valueRating is a number
         const postData = {
           ...paramData,
-          valueRating: Number(clampedRating),
+          valueRating: Number(finalRating),
         };
         console.log(
           "POST request:",
@@ -455,15 +490,15 @@ export default function BetParametersPage() {
             type: savedParameter.type,
             valueRating: savedParameter.valueRating,
             savedRating,
-            expectedRating: clampedRating,
-            match: Math.abs((savedRating || 0) - clampedRating) < 0.1, // Allow small floating point differences
+            expectedRating: finalRating,
+            match: Math.abs((savedRating || 0) - finalRating) < 0.1, // Allow small floating point differences
           });
 
-          if (Math.abs((savedRating || 0) - clampedRating) >= 0.1) {
+          if (Math.abs((savedRating || 0) - finalRating) >= 0.1) {
             console.warn(
               "Warning: Saved rating doesn't match expected value!",
               {
-                expected: clampedRating,
+                expected: finalRating,
                 saved: savedRating,
                 rawValue: savedParameter.valueRating,
               }
@@ -586,6 +621,16 @@ export default function BetParametersPage() {
   };
 
   const handleSaveAll = async () => {
+    // Check for validation errors before saving
+    if (Object.keys(validationErrors).length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Erros de validação",
+        description: "Corrija os erros de validação antes de salvar.",
+      });
+      return;
+    }
+
     try {
       setSaving(true);
       let successCount = 0;
@@ -912,6 +957,12 @@ export default function BetParametersPage() {
                 }
                 onChange={(e) => {
                   const text = e.target.value;
+                  // Limpa erro ao começar a digitar
+                  if (validationErrors[def.name]) {
+                    const newErrors = { ...validationErrors };
+                    delete newErrors[def.name];
+                    setValidationErrors(newErrors);
+                  }
                   // Se vazio, limpa o valor
                   if (text === "") {
                     const newValues = { ...parameterValues };
@@ -923,24 +974,43 @@ export default function BetParametersPage() {
                   setParameterValues({ ...parameterValues, [def.name]: text });
                 }}
                 onBlur={(e) => {
-                  // Ao sair do campo, converte para número se possível
+                  // Ao sair do campo, valida e converte para número
                   const text = e.target.value;
                   if (text === "") return;
                   const normalized = text.replace(",", ".");
                   const num = parseFloat(normalized);
-                  if (!isNaN(num)) {
-                    const clamped = Math.max(0, Math.min(num, 5));
+                  if (isNaN(num)) {
+                    setValidationErrors({
+                      ...validationErrors,
+                      [def.name]: "Valor inválido. Digite um número entre 0 e 5.",
+                    });
+                  } else if (num < 0 || num > 5) {
+                    setValidationErrors({
+                      ...validationErrors,
+                      [def.name]: "Valor deve estar entre 0 e 5.",
+                    });
+                  } else {
+                    // Valor válido, armazena
                     setParameterValues({
                       ...parameterValues,
-                      [def.name]: clamped,
+                      [def.name]: num,
                     });
                   }
                 }}
-                className="w-20 px-3 py-2 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-500 text-center font-bold"
+                className={`w-20 px-3 py-2 bg-white text-slate-900 rounded-md border focus:outline-none focus:ring-2 text-center font-bold ${
+                  validationErrors[def.name]
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-slate-300 focus:ring-yellow-500"
+                }`}
                 placeholder="4,5"
               />
               <span className="text-slate-500 font-medium">/5</span>
             </div>
+            {validationErrors[def.name] && (
+              <div className="w-full text-red-600 text-sm mt-1 font-medium">
+                {validationErrors[def.name]}
+              </div>
+            )}
           </div>
         );
 
@@ -1276,6 +1346,12 @@ export default function BetParametersPage() {
                           }
                           onChange={(e) => {
                             const text = e.target.value;
+                            // Limpa erro ao começar a digitar
+                            if (validationErrors[categoryRatingKey]) {
+                              const newErrors = { ...validationErrors };
+                              delete newErrors[categoryRatingKey];
+                              setValidationErrors(newErrors);
+                            }
                             if (text === "") {
                               const newValues = { ...parameterValues };
                               delete newValues[categoryRatingKey];
@@ -1289,20 +1365,34 @@ export default function BetParametersPage() {
                             });
                           }}
                           onBlur={(e) => {
-                            // Ao sair do campo, converte para número se possível
+                            // Ao sair do campo, valida e converte para número
                             const text = e.target.value;
                             if (text === "") return;
                             const normalized = text.replace(",", ".");
                             const num = parseFloat(normalized);
-                            if (!isNaN(num)) {
-                              const clamped = Math.max(0, Math.min(num, 5));
+                            if (isNaN(num)) {
+                              setValidationErrors({
+                                ...validationErrors,
+                                [categoryRatingKey]: "Valor inválido. Digite um número entre 0 e 5.",
+                              });
+                            } else if (num < 0 || num > 5) {
+                              setValidationErrors({
+                                ...validationErrors,
+                                [categoryRatingKey]: "Valor deve estar entre 0 e 5.",
+                              });
+                            } else {
+                              // Valor válido, armazena
                               setParameterValues({
                                 ...parameterValues,
-                                [categoryRatingKey]: clamped,
+                                [categoryRatingKey]: num,
                               });
                             }
                           }}
-                          className="w-16 px-2 py-1 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-500 text-center font-bold text-sm"
+                          className={`w-16 px-2 py-1 bg-white text-slate-900 rounded-md border focus:outline-none focus:ring-2 text-center font-bold text-sm ${
+                            validationErrors[categoryRatingKey]
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-slate-300 focus:ring-yellow-500"
+                          }`}
                           placeholder="4,5"
                         />
                         <span className="text-sm text-slate-500">/5</span>
@@ -1312,7 +1402,8 @@ export default function BetParametersPage() {
                           onClick={() => handleSaveCategoryRating(category)}
                           disabled={
                             savingParams.has(categoryRatingKey) ||
-                            categoryRatingValue === 0
+                            categoryRatingValue === 0 ||
+                            !!validationErrors[categoryRatingKey]
                           }
                           className="ml-2 h-7 px-3 bg-blue-600 hover:bg-blue-700 text-white"
                         >
@@ -1324,6 +1415,11 @@ export default function BetParametersPage() {
                           <span className="ml-1 text-xs">Salvar</span>
                         </Button>
                       </div>
+                      {validationErrors[categoryRatingKey] && (
+                        <div className="w-full text-red-600 text-xs font-medium mt-1">
+                          {validationErrors[categoryRatingKey]}
+                        </div>
+                      )}
                     </div>
                   </CardTitle>
                 </CardHeader>
