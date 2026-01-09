@@ -50,7 +50,8 @@ export async function GET(
           } else if (p.valueBoolean !== null) {
             value = p.valueBoolean;
           } else if (p.valueRating !== null) {
-            value = p.valueRating;
+            // Rating is stored as ×10 (35 = 3.5), so divide by 10 for AI analysis
+            value = Number(p.valueRating) / 10;
           }
           
           // Skip parameters with null values

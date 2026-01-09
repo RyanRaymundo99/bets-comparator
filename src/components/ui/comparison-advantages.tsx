@@ -115,25 +115,29 @@ function findAdvantages(bet1: Bet, bet2: Bet): {
       param2?.valueRating !== null &&
       param2?.valueRating !== undefined
     ) {
-      if (param1.valueRating > param2.valueRating) {
-        const diff = param1.valueRating - param2.valueRating;
-        const percentage = ((diff / param2.valueRating) * 100).toFixed(1);
+      // Rating is stored as ×10 (35 = 3.5), so divide by 10
+      const rating1 = Number(param1.valueRating) / 10;
+      const rating2 = Number(param2.valueRating) / 10;
+      
+      if (rating1 > rating2) {
+        const diff = rating1 - rating2;
+        const percentage = ((diff / rating2) * 100).toFixed(1);
         bet1Advantages.push({
           parameter: paramName,
           description: `Avaliação ${percentage}% melhor`,
-          value1: `${param1.valueRating}/5`,
-          value2: `${param2.valueRating}/5`,
+          value1: `${rating1.toFixed(1)}/5`,
+          value2: `${rating2.toFixed(1)}/5`,
           difference: `${diff.toFixed(1)} estrelas a mais`,
           percentage: parseFloat(percentage),
         });
-      } else if (param2.valueRating > param1.valueRating) {
-        const diff = param2.valueRating - param1.valueRating;
-        const percentage = ((diff / param1.valueRating) * 100).toFixed(1);
+      } else if (rating2 > rating1) {
+        const diff = rating2 - rating1;
+        const percentage = ((diff / rating1) * 100).toFixed(1);
         bet2Advantages.push({
           parameter: paramName,
           description: `Avaliação ${percentage}% melhor`,
-          value1: `${param1.valueRating}/5`,
-          value2: `${param2.valueRating}/5`,
+          value1: `${rating1.toFixed(1)}/5`,
+          value2: `${rating2.toFixed(1)}/5`,
           difference: `${diff.toFixed(1)} estrelas a mais`,
           percentage: parseFloat(percentage),
         });
