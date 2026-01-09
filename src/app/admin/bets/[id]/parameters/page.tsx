@@ -342,215 +342,6 @@ export default function BetParametersPage() {
   };
 
   // Função para salvar a nota geral de uma categoria
-  const handleSaveCategoryRating = async (category: string) => {
-    const categoryRatingKey = `__category_rating_${category}`;
-    const value = parameterValues[categoryRatingKey];
-
-    // Check for validation errors
-    if (validationErrors[categoryRatingKey]) {
-      toast({
-        variant: "destructive",
-        title: "Erro de validação",
-        description: validationErrors[categoryRatingKey],
-      });
-      return;
-    }
-
-    if (
-      value === undefined ||
-      value === null ||
-      value === "" ||
-      (typeof value === "number" && value === 0 && String(value) === "0")
-    ) {
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Selecione uma nota antes de salvar",
-      });
-      return;
-    }
-
-    setSavingParams((prev) => new Set(prev).add(categoryRatingKey));
-
-    try {
-      // Find existing parameter
-      const existingParam = bet?.parameters.find(
-        (p) => p.name === categoryRatingKey
-      );
-
-      // Aceita vírgula ou ponto como separador decimal e garante que é um número válido
-      const ratingStr = String(value).replace(",", ".");
-      const ratingValue =
-        typeof value === "number" ? value : parseFloat(ratingStr);
-
-      // Valida o valor entre 0 e 5
-      if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
-        toast({
-          variant: "destructive",
-          title: "Erro de validação",
-          description: "A nota deve ser um número entre 0 e 5",
-        });
-        setSavingParams((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(categoryRatingKey);
-          return newSet;
-        });
-        return;
-      }
-
-      const finalRating = Number(ratingValue.toFixed(1));
-
-      console.log("Saving category rating:", {
-        category,
-        categoryRatingKey,
-        originalValue: value,
-        ratingValue,
-        finalRating,
-        finalRatingType: typeof finalRating,
-        existingParam: existingParam?.id,
-      });
-
-      const paramData = {
-        betId,
-        name: categoryRatingKey,
-        category: category,
-        type: "rating",
-        valueRating: Math.round(finalRating * 10), // Store as ×10 for POST
-      };
-
-      let response;
-      let responseData;
-
-      if (existingParam?.id) {
-        // PATCH expects 0-5 value, API will convert to ×10
-        const requestBody = {
-          value: Number(finalRating), // Send 0-5, API converts to ×10
-          notes: null,
-        };
-        console.log("PATCH request:", {
-          id: existingParam.id,
-          body: requestBody,
-          bodyString: JSON.stringify(requestBody),
-        });
-
-        response = await fetch(`/api/parameters/${existingParam.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
-        responseData = await response.json();
-        console.log("PATCH response:", {
-          status: response.status,
-          ok: response.ok,
-          data: responseData,
-        });
-      } else {
-        // Ensure valueRating is a number
-        const postData = {
-          ...paramData,
-          valueRating: Number(finalRating),
-        };
-        console.log(
-          "POST request:",
-          postData,
-          "Stringified:",
-          JSON.stringify(postData)
-        );
-
-        response = await fetch("/api/parameters", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        });
-        responseData = await response.json();
-        console.log("POST response:", {
-          status: response.status,
-          ok: response.ok,
-          data: responseData,
-        });
-      }
-
-      // Check both response.ok and response.success
-      if (response.ok && responseData.success) {
-        // Verify the parameter was actually saved with the correct value
-        const savedParameter = responseData.parameter;
-        if (savedParameter) {
-          const savedRating =
-            savedParameter.valueRating !== null &&
-            savedParameter.valueRating !== undefined
-              ? Number(savedParameter.valueRating) / 10
-              : null;
-          console.log("Save successful! Saved parameter:", {
-            id: savedParameter.id,
-            name: savedParameter.name,
-            type: savedParameter.type,
-            valueRating: savedParameter.valueRating,
-            savedRating,
-            expectedRating: finalRating,
-            match: Math.abs((savedRating || 0) - finalRating) < 0.1, // Allow small floating point differences
-          });
-
-          if (Math.abs((savedRating || 0) - finalRating) >= 0.1) {
-            console.warn(
-              "Warning: Saved rating doesn't match expected value!",
-              {
-                expected: finalRating,
-                saved: savedRating,
-                rawValue: savedParameter.valueRating,
-              }
-            );
-          }
-
-          // Update the local state immediately to reflect the saved value
-          setParameterValues((prev) => ({
-            ...prev,
-            [categoryRatingKey]: savedRating,
-          }));
-        } else {
-          console.warn(
-            "Warning: Response success but no parameter in response:",
-            responseData
-          );
-        }
-
-        toast({
-          title: "Nota geral salva!",
-          description: `Nota da categoria "${category}" foi salva com sucesso`,
-        });
-        // Refresh the data to show the updated value
-        await fetchBet();
-      } else {
-        const errorMsg = responseData.error || "Falha ao salvar nota geral";
-        console.error("Error saving category rating:", {
-          status: response.status,
-          ok: response.ok,
-          success: responseData.success,
-          error: errorMsg,
-          fullResponse: responseData,
-        });
-        throw new Error(errorMsg);
-      }
-    } catch (error) {
-      console.error("Error saving category rating:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description:
-          error instanceof Error ? error.message : "Falha ao salvar nota geral",
-      });
-    } finally {
-      setSavingParams((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(categoryRatingKey);
-        return newSet;
-      });
-    }
-  };
-
   const handleViewHistory = async (def: ParameterDefinition) => {
     const existingParam = bet?.parameters.find((p) => p.name === def.name);
 
@@ -1248,36 +1039,21 @@ export default function BetParametersPage() {
             const params = getParametersByCategory(category);
             if (params.length === 0) return null;
 
-            // Pegar a nota geral manual do grupo
-            const categoryRatingKey = `__category_rating_${category}`;
-            const categoryRating = parameterValues[categoryRatingKey];
-            const categoryRatingValue =
-              categoryRating !== null && categoryRating !== undefined
-                ? Number(categoryRating)
-                : 0;
-
-            // Handler para clique nas estrelas da categoria
-            const handleCategoryStarClick = (
-              starIndex: number,
-              event: React.MouseEvent<HTMLDivElement>
-            ) => {
-              const rect = event.currentTarget.getBoundingClientRect();
-              const clickX = event.clientX - rect.left;
-              const starWidth = rect.width;
-              const clickPosition = Math.max(
-                0,
-                Math.min(1, clickX / starWidth)
-              );
-              const decimalPart = Math.round(clickPosition * 10) / 10;
-              const newRating = Math.max(
-                0.1,
-                Math.min(5, starIndex + decimalPart)
-              );
-              setParameterValues({
-                ...parameterValues,
-                [categoryRatingKey]: newRating,
-              });
-            };
+            // Calcular a nota geral automaticamente (média dos ratings da categoria)
+            const categoryRatingParams = params.filter(def => def.type === 'rating');
+            const categoryRatingValues = categoryRatingParams
+              .map(def => {
+                const existingParam = bet?.parameters.find(p => p.name === def.name);
+                if (existingParam?.valueRating !== null && existingParam?.valueRating !== undefined) {
+                  return Number(existingParam.valueRating) / 10; // Divide by 10 to get 0-5 scale
+                }
+                return null;
+              })
+              .filter((v): v is number => v !== null);
+            
+            const categoryRatingValue = categoryRatingValues.length > 0
+              ? categoryRatingValues.reduce((sum, v) => sum + v, 0) / categoryRatingValues.length
+              : 0;
 
             return (
               <Card
@@ -1294,13 +1070,13 @@ export default function BetParametersPage() {
                       </span>
                     </div>
 
-                    {/* Nota Geral do Grupo - Manual */}
+                    {/* Nota Geral do Grupo - Calculada Automaticamente */}
                     <div className="flex items-center gap-3 bg-white rounded-xl px-4 py-2 border border-slate-200 shadow-sm flex-wrap">
                       <span className="text-sm font-medium text-slate-600">
                         Nota Geral:
                       </span>
                       <div className="flex items-center gap-2 flex-wrap">
-                        {/* Estrelas clicáveis */}
+                        {/* Estrelas (somente leitura) */}
                         <div className="flex items-center gap-0.5">
                           {[0, 1, 2, 3, 4].map((starIndex) => {
                             const fullStars = Math.floor(categoryRatingValue);
@@ -1312,11 +1088,8 @@ export default function BetParametersPage() {
                             return (
                               <div
                                 key={starIndex}
-                                className="relative w-5 h-5 cursor-pointer transition-transform hover:scale-110"
-                                onClick={(e) =>
-                                  handleCategoryStarClick(starIndex, e)
-                                }
-                                title={`Clique para avaliar`}
+                                className="relative w-5 h-5"
+                                title={`Média calculada: ${categoryRatingValue.toFixed(1)}`}
                               >
                                 <Star className="w-5 h-5 text-gray-300 fill-gray-300 absolute inset-0" />
                                 {isFull && (
@@ -1335,91 +1108,18 @@ export default function BetParametersPage() {
                           })}
                         </div>
 
-                        {/* Input manual para nota da categoria */}
-                        <Input
-                          type="text"
-                          value={
-                            categoryRating !== null &&
-                            categoryRating !== undefined
-                              ? String(categoryRating)
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const text = e.target.value;
-                            // Limpa erro ao começar a digitar
-                            if (validationErrors[categoryRatingKey]) {
-                              const newErrors = { ...validationErrors };
-                              delete newErrors[categoryRatingKey];
-                              setValidationErrors(newErrors);
-                            }
-                            if (text === "") {
-                              const newValues = { ...parameterValues };
-                              delete newValues[categoryRatingKey];
-                              setParameterValues(newValues);
-                              return;
-                            }
-                            // Guarda o texto como está (permite digitar livremente)
-                            setParameterValues({
-                              ...parameterValues,
-                              [categoryRatingKey]: text,
-                            });
-                          }}
-                          onBlur={(e) => {
-                            // Ao sair do campo, valida e converte para número
-                            const text = e.target.value;
-                            if (text === "") return;
-                            const normalized = text.replace(",", ".");
-                            const num = parseFloat(normalized);
-                            if (isNaN(num)) {
-                              setValidationErrors({
-                                ...validationErrors,
-                                [categoryRatingKey]: "Valor inválido. Digite um número entre 0 e 5.",
-                              });
-                            } else if (num < 0 || num > 5) {
-                              setValidationErrors({
-                                ...validationErrors,
-                                [categoryRatingKey]: "Valor deve estar entre 0 e 5.",
-                              });
-                            } else {
-                              // Valor válido, armazena
-                              setParameterValues({
-                                ...parameterValues,
-                                [categoryRatingKey]: num,
-                              });
-                            }
-                          }}
-                          className={`w-16 px-2 py-1 bg-white text-slate-900 rounded-md border focus:outline-none focus:ring-2 text-center font-bold text-sm ${
-                            validationErrors[categoryRatingKey]
-                              ? "border-red-500 focus:ring-red-500"
-                              : "border-slate-300 focus:ring-yellow-500"
-                          }`}
-                          placeholder="4,5"
-                        />
+                        {/* Valor calculado (somente leitura) */}
+                        <span className="text-sm font-bold text-slate-900">
+                          {categoryRatingValue > 0 ? categoryRatingValue.toFixed(1) : "N/A"}
+                        </span>
                         <span className="text-sm text-slate-500">/5</span>
-                        {/* Botão Salvar Nota do Grupo */}
-                        <Button
-                          size="sm"
-                          onClick={() => handleSaveCategoryRating(category)}
-                          disabled={
-                            savingParams.has(categoryRatingKey) ||
-                            categoryRatingValue === 0 ||
-                            !!validationErrors[categoryRatingKey]
-                          }
-                          className="ml-2 h-7 px-3 bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          {savingParams.has(categoryRatingKey) ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <Save className="h-3 w-3" />
-                          )}
-                          <span className="ml-1 text-xs">Salvar</span>
-                        </Button>
+                        
+                        {categoryRatingValues.length > 0 && (
+                          <span className="text-xs text-slate-500 italic ml-2">
+                            (média de {categoryRatingValues.length} {categoryRatingValues.length === 1 ? 'avaliação' : 'avaliações'})
+                          </span>
+                        )}
                       </div>
-                      {validationErrors[categoryRatingKey] && (
-                        <div className="w-full text-red-600 text-xs font-medium mt-1">
-                          {validationErrors[categoryRatingKey]}
-                        </div>
-                      )}
                     </div>
                   </CardTitle>
                 </CardHeader>
