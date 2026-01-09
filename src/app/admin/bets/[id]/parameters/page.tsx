@@ -450,12 +450,12 @@ export default function BetParametersPage() {
       let successCount = 0;
       let errorCount = 0;
 
-      // Save each parameter
+      // Save only changed parameters
       for (const def of PARAMETER_DEFINITIONS) {
         const value = parameterValues[def.name];
 
-        // Skip empty values
-        if (value === undefined || value === "" || value === null) {
+        // Skip if not changed or empty
+        if (!changedParameters.has(def.name) || value === undefined || value === "" || value === null) {
           continue;
         }
 
@@ -526,9 +526,16 @@ export default function BetParametersPage() {
         }
       }
 
-      // Save category ratings (star ratings for each category)
+      // Note: Category ratings are now auto-calculated, not saved manually
+      // Skip category rating parameters - they should not be tracked as changed
       for (const category of PARAMETER_CATEGORIES) {
         const categoryRatingKey = `__category_rating_${category}`;
+        
+        // Skip if not in changed parameters
+        if (!changedParameters.has(categoryRatingKey)) {
+          continue;
+        }
+        
         const value = parameterValues[categoryRatingKey];
 
         // Skip empty or zero values
