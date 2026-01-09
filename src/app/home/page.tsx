@@ -147,7 +147,7 @@ function ParameterDetailModal({
             </div>
             <div className="text-2xl font-bold text-slate-900">
               {parameter.type === 'rating' && parameter.valueRating !== null && parameter.valueRating !== undefined
-                ? `${(Number(parameter.valueRating) / 10).toFixed(1)}/5`
+                ? `${Number(parameter.valueRating).toFixed(1)}/5`
                 : `${parameter.value} ${parameter.unit || ""}`}
             </div>
           </div>
