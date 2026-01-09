@@ -992,8 +992,8 @@ export default function BetParametersPage() {
             </Button>
             <Button
               onClick={handleSaveAll}
-              disabled={saving}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={saving || Object.keys(validationErrors).length > 0}
+              className="bg-green-600 hover:bg-green-700 text-white"
             >
               {saving ? (
                 <>
@@ -1003,7 +1003,24 @@ export default function BetParametersPage() {
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Salvar Todos os Parâmetros
+                  Salvar Todas as Alterações
+                  {Object.keys(parameterValues).filter(
+                    (k) =>
+                      parameterValues[k] !== "" &&
+                      parameterValues[k] !== undefined &&
+                      parameterValues[k] !== null
+                  ).length > 0 && (
+                    <span className="ml-2 bg-white text-green-600 px-2 py-0.5 rounded-full text-sm font-bold">
+                      {
+                        Object.keys(parameterValues).filter(
+                          (k) =>
+                            parameterValues[k] !== "" &&
+                            parameterValues[k] !== undefined &&
+                            parameterValues[k] !== null
+                        ).length
+                      }
+                    </span>
+                  )}
                 </>
               )}
             </Button>
@@ -1134,9 +1151,6 @@ export default function BetParametersPage() {
                           <TableHead className="font-semibold text-slate-900">
                             Valor
                           </TableHead>
-                          <TableHead className="w-[150px] font-semibold text-slate-900 text-center">
-                            Ações
-                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1177,25 +1191,6 @@ export default function BetParametersPage() {
                                 </div>
                               </TableCell>
                               <TableCell>{renderInput(def)}</TableCell>
-                              <TableCell>
-                                <div className="flex items-center justify-center gap-2">
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleSaveParameter(def)}
-                                    disabled={!hasValue || isSaving}
-                                    className="bg-green-600 hover:bg-green-700 text-white"
-                                  >
-                                    {isSaving ? (
-                                      <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        Salvando...
-                                      </>
-                                    ) : (
-                                      "Salvar"
-                                    )}
-                                  </Button>
-                                </div>
-                              </TableCell>
                             </TableRow>
                           );
                         })}
@@ -1384,20 +1379,20 @@ export default function BetParametersPage() {
         </Dialog>
 
         {/* Bottom Save Button */}
-        <div className="sticky bottom-8 flex justify-center gap-4">
+        <div className="sticky bottom-8 flex justify-center gap-4 z-50">
           <Button
             onClick={handleViewAllHistory}
             size="lg"
-            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+            className="bg-slate-600 hover:bg-slate-700 text-white shadow-lg"
           >
             <History className="w-5 h-5 mr-2" />
             Histórico de Alterações
           </Button>
           <Button
             onClick={handleSaveAll}
-            disabled={saving}
+            disabled={saving || Object.keys(validationErrors).length > 0}
             size="lg"
-            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+            className="bg-green-600 hover:bg-green-700 text-white shadow-xl hover:shadow-2xl transition-all"
           >
             {saving ? (
               <>
@@ -1407,15 +1402,24 @@ export default function BetParametersPage() {
             ) : (
               <>
                 <Save className="w-5 h-5 mr-2" />
-                Salvar Todos os Parâmetros (
-                {
-                  Object.keys(parameterValues).filter(
-                    (k) =>
-                      parameterValues[k] !== "" &&
-                      parameterValues[k] !== undefined
-                  ).length
-                }{" "}
-                preenchidos)
+                Salvar Todas as Alterações
+                {Object.keys(parameterValues).filter(
+                  (k) =>
+                    parameterValues[k] !== "" &&
+                    parameterValues[k] !== undefined &&
+                    parameterValues[k] !== null
+                ).length > 0 && (
+                  <span className="ml-2 bg-white text-green-600 px-2 py-0.5 rounded-full text-sm font-bold">
+                    {
+                      Object.keys(parameterValues).filter(
+                        (k) =>
+                          parameterValues[k] !== "" &&
+                          parameterValues[k] !== undefined &&
+                          parameterValues[k] !== null
+                      ).length
+                    }
+                  </span>
+                )}
               </>
             )}
           </Button>
