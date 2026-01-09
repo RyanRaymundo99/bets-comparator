@@ -94,6 +94,9 @@ export default function BetParametersPage() {
   const [parameterValues, setParameterValues] = useState<
     Record<string, string | number | boolean | null>
   >({});
+  const [changedParameters, setChangedParameters] = useState<Set<string>>(
+    new Set()
+  );
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
@@ -117,6 +120,26 @@ export default function BetParametersPage() {
   const [loadingAllHistory, setLoadingAllHistory] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+
+  // Helper function to update parameter values and track changes
+  const updateParameterValue = (paramName: string, newValue: string | number | boolean | null) => {
+    setParameterValues((prev) => ({ ...prev, [paramName]: newValue }));
+    setChangedParameters((prev) => new Set(prev).add(paramName));
+  };
+
+  // Helper function to delete parameter value
+  const deleteParameterValue = (paramName: string) => {
+    setParameterValues((prev) => {
+      const newValues = { ...prev };
+      delete newValues[paramName];
+      return newValues;
+    });
+    setChangedParameters((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(paramName);
+      return newSet;
+    });
+  };
 
   useEffect(() => {
     fetchBet();
@@ -593,6 +616,8 @@ export default function BetParametersPage() {
 
       // Refresh the data
       await fetchBet();
+      // Clear changed parameters after successful save
+      setChangedParameters(new Set());
     } catch (error) {
       console.error("Error saving parameters:", error);
       toast({
@@ -614,9 +639,7 @@ export default function BetParametersPage() {
           <div className="flex items-center space-x-2">
             <button
               type="button"
-              onClick={() =>
-                setParameterValues({ ...parameterValues, [def.name]: true })
-              }
+              onClick={() => updateParameterValue(def.name, true)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 value === true
                   ? "bg-green-600 text-white"
@@ -627,9 +650,7 @@ export default function BetParametersPage() {
             </button>
             <button
               type="button"
-              onClick={() =>
-                setParameterValues({ ...parameterValues, [def.name]: false })
-              }
+              onClick={() => updateParameterValue(def.name, false)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 value === false
                   ? "bg-red-600 text-white"
@@ -640,11 +661,7 @@ export default function BetParametersPage() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                const newValues = { ...parameterValues };
-                delete newValues[def.name];
-                setParameterValues(newValues);
-              }}
+              onClick={() => deleteParameterValue(def.name)}
               className="px-4 py-2 rounded-md text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200"
             >
               Limpar
@@ -675,7 +692,7 @@ export default function BetParametersPage() {
           const decimalPart = Math.round(clickPosition * 10) / 10;
           const newRating = starIndex + decimalPart;
           const finalRating = Math.max(0.1, Math.min(5, newRating));
-          setParameterValues({ ...parameterValues, [def.name]: finalRating });
+          updateParameterValue(def.name, finalRating);
         };
 
         // Função para renderizar estrelas clicáveis
@@ -756,13 +773,11 @@ export default function BetParametersPage() {
                   }
                   // Se vazio, limpa o valor
                   if (text === "") {
-                    const newValues = { ...parameterValues };
-                    delete newValues[def.name];
-                    setParameterValues(newValues);
+                    deleteParameterValue(def.name);
                     return;
                   }
                   // Guarda o texto como está (permite digitar livremente)
-                  setParameterValues({ ...parameterValues, [def.name]: text });
+                  updateParameterValue(def.name, text);
                 }}
                 onBlur={(e) => {
                   // Ao sair do campo, valida e converte para número
@@ -782,10 +797,7 @@ export default function BetParametersPage() {
                     });
                   } else {
                     // Valor válido, armazena
-                    setParameterValues({
-                      ...parameterValues,
-                      [def.name]: num,
-                    });
+                    updateParameterValue(def.name, num);
                   }
                 }}
                 className={`w-20 px-3 py-2 bg-white text-slate-900 rounded-md border focus:outline-none focus:ring-2 text-center font-bold ${
@@ -809,12 +821,7 @@ export default function BetParametersPage() {
         return (
           <select
             value={value !== null && value !== undefined ? String(value) : ""}
-            onChange={(e) =>
-              setParameterValues({
-                ...parameterValues,
-                [def.name]: e.target.value,
-              })
-            }
+            onChange={(e) => updateParameterValue(def.name, e.target.value)}
             className="w-full px-4 py-2 bg-white border-slate-300 text-slate-900 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Selecione...</option>
@@ -836,12 +843,7 @@ export default function BetParametersPage() {
               type="number"
               step="0.01"
               value={value !== null && value !== undefined ? String(value) : ""}
-              onChange={(e) =>
-                setParameterValues({
-                  ...parameterValues,
-                  [def.name]: e.target.value,
-                })
-              }
+              onChange={(e) => updateParameterValue(def.name, e.target.value)}
               placeholder="0.00"
               className="pl-10 bg-white border-slate-300 text-slate-900"
             />
@@ -857,12 +859,7 @@ export default function BetParametersPage() {
               min="0"
               max="100"
               value={value !== null && value !== undefined ? String(value) : ""}
-              onChange={(e) =>
-                setParameterValues({
-                  ...parameterValues,
-                  [def.name]: e.target.value,
-                })
-              }
+              onChange={(e) => updateParameterValue(def.name, e.target.value)}
               placeholder="0.0"
               className="pr-8 bg-white border-slate-300 text-slate-900"
             />
@@ -877,12 +874,7 @@ export default function BetParametersPage() {
           <Input
             type="number"
             value={value !== null && value !== undefined ? String(value) : ""}
-            onChange={(e) =>
-              setParameterValues({
-                ...parameterValues,
-                [def.name]: e.target.value,
-              })
-            }
+            onChange={(e) => updateParameterValue(def.name, e.target.value)}
             placeholder="Digite um número"
             className="bg-gray-800 border-gray-700 text-white"
           />
@@ -898,12 +890,7 @@ export default function BetParametersPage() {
           return (
             <Textarea
               value={value !== null && value !== undefined ? String(value) : ""}
-              onChange={(e) =>
-                setParameterValues({
-                  ...parameterValues,
-                  [def.name]: e.target.value,
-                })
-              }
+              onChange={(e) => updateParameterValue(def.name, e.target.value)}
               placeholder={def.description || "Digite o texto"}
               className="bg-white border-slate-300 text-slate-900 min-h-[80px]"
             />
@@ -913,12 +900,7 @@ export default function BetParametersPage() {
           <Input
             type="text"
             value={value !== null && value !== undefined ? String(value) : ""}
-            onChange={(e) =>
-              setParameterValues({
-                ...parameterValues,
-                [def.name]: e.target.value,
-              })
-            }
+            onChange={(e) => updateParameterValue(def.name, e.target.value)}
             placeholder={def.description || "Digite o texto"}
             className="bg-gray-800 border-gray-700 text-white"
           />
@@ -1004,21 +986,9 @@ export default function BetParametersPage() {
                 <>
                   <Save className="w-4 h-4 mr-2" />
                   Salvar Todas as Alterações
-                  {Object.keys(parameterValues).filter(
-                    (k) =>
-                      parameterValues[k] !== "" &&
-                      parameterValues[k] !== undefined &&
-                      parameterValues[k] !== null
-                  ).length > 0 && (
+                  {changedParameters.size > 0 && (
                     <span className="ml-2 bg-white text-green-600 px-2 py-0.5 rounded-full text-sm font-bold">
-                      {
-                        Object.keys(parameterValues).filter(
-                          (k) =>
-                            parameterValues[k] !== "" &&
-                            parameterValues[k] !== undefined &&
-                            parameterValues[k] !== null
-                        ).length
-                      }
+                      {changedParameters.size}
                     </span>
                   )}
                 </>
@@ -1403,21 +1373,9 @@ export default function BetParametersPage() {
               <>
                 <Save className="w-5 h-5 mr-2" />
                 Salvar Todas as Alterações
-                {Object.keys(parameterValues).filter(
-                  (k) =>
-                    parameterValues[k] !== "" &&
-                    parameterValues[k] !== undefined &&
-                    parameterValues[k] !== null
-                ).length > 0 && (
+                {changedParameters.size > 0 && (
                   <span className="ml-2 bg-white text-green-600 px-2 py-0.5 rounded-full text-sm font-bold">
-                    {
-                      Object.keys(parameterValues).filter(
-                        (k) =>
-                          parameterValues[k] !== "" &&
-                          parameterValues[k] !== undefined &&
-                          parameterValues[k] !== null
-                      ).length
-                    }
+                    {changedParameters.size}
                   </span>
                 )}
               </>
