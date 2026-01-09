@@ -354,7 +354,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         existingParam.valueRating !== null &&
         existingParam.valueRating !== undefined
       ) {
-        displayValue = `${existingParam.valueRating}/5`;
+        // Rating is stored as ×10 (35 = 3.5), so divide by 10
+        displayValue = `${(Number(existingParam.valueRating) / 10).toFixed(1)}`;
       }
 
       return {
