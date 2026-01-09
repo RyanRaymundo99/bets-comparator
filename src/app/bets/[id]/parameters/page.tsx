@@ -175,7 +175,7 @@ export default function BetParametersViewPage() {
       .filter((r): r is number => r !== null && r !== undefined);
     const avgRating =
       ratings.length > 0
-        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length / 10 // Divide by 10 to convert from stored format (x10)
         : 0;
 
     const yesCount = booleanParams.filter((p) => p.valueBoolean === true).length;
@@ -234,7 +234,7 @@ export default function BetParametersViewPage() {
       })
       .map((p) => ({
         name: p.name.length > 20 ? p.name.substring(0, 20) + "..." : p.name,
-        rating: p.valueRating || 0,
+        rating: (p.valueRating || 0) / 10, // Divide by 10 to convert from stored format (x10)
         fullName: p.name,
       }));
   }, [bet]);
